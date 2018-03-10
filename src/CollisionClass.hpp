@@ -94,7 +94,7 @@ namespace Physics {
 	};
 
 	class Collision {
-	private:
+	public:
 		/*
 		 * Points :
 		 * A : centre du cercle en mouvement (object.position)
@@ -102,20 +102,19 @@ namespace Physics {
 		 * F : position du cercle en collision
 		 * E : Point sur la trajectoire le plus proche de la cible
 		 *
+		 * u : vecteur unitaire de la dirrection de la force de la target sur l'obj
 		 * */
 		bool hit =  false;
 
 		Vec2f vecAF{};
+		Vec2f u{};
 
 		Circle object{};
 		Vec2f frameMove{};
 
-		Circle target{};
-
 	public:
 		void load(Circle object, Circle target, Vec2f frameMove) {
 			this->object = object;
-			this->target = target;
 			this->frameMove = frameMove;
 
 			float RayonAB = object.rayon + target.rayon;
@@ -128,27 +127,30 @@ namespace Physics {
 
 					float AE = ProduitScalaire(Vec2f(frameMove).Normalize(), vecAB);//distance avant le point le plus proche
 
-					float BE = vecAB.Length() - AE;
+					float BE2 = vecAB.Length2() - AE * AE;
 
-					if (BE < RayonAB) {
+					float RayonAB2 = RayonAB * RayonAB;
 
-						float AF = AE - RayonAB - BE;
+					if (BE2 < RayonAB2) {
+
+						float AF = AE - std::sqrt(RayonAB2 - BE2);
 
 						if (AF < frameMove.Length()) {
 							//ils se touche forcément
 							vecAF = Vec2f(frameMove).setLength(AF);
+
+							Vec2f vecFB = vecAB - vecAF;
+
+							u = vecFB.rotate().Normalize();
 
 							hit = true;
 						}
 					}
 				}
 			}
-
-			hit = false;
 		}
 
 		void load(Circle object, Line target, Vec2f frameMove) {
-			bool hit = false;
 
 			Point2f F = ClosestPointOnLine(target, object.position);
 			Vec2f vecFA(F, object.position);
@@ -168,18 +170,20 @@ namespace Physics {
 
 						if (Vec2f(M, I).Length() <= (target.Length() / 2)) {
 
-							Point2f G = E - (frameMove * object.rayon * Vec2f(E, object.position).Length()) /
+							Point2f F = E - (frameMove * object.rayon * Vec2f(E, object.position).Length()) /
 											(vecFA.Length() * frameMove.Length());
 
-							Vec2f vecAG(object.position, G);
+							vecAF = Vec2f(object.position, F);
 
 							Vec2f vecEA(E, object.position);
 
-							if (vecAG.Length2() < frameMove.Length2() || vecEA.Length2() < object.rayon * object.rayon) {
+							if (vecAF.Length2() < frameMove.Length2() || vecEA.Length2() < object.rayon * object.rayon) {
 
 								//ils se touchent forcément
 
 								hit = true;
+
+								u = target.getVector().Normalize();
 							}
 						} else if (Vec2f(M, I).Length() <= (target.Length() / 2 + object.rayon)) {
 							Point2f B;
@@ -190,17 +194,18 @@ namespace Physics {
 								B = target.pointB;
 							}
 
-							//hit = load(object, Circle(B, 0), frameMove);
+							load(object, Circle(B, 0), frameMove);
 						}
 					}
 				}
 			}
-
-
-			hit = false;
 		}
 
-		Collision(Circle object, Circle target, Vec2f frameMove) : object(object), target(target), frameMove(frameMove) {
+		Collision(Circle object, Circle target, Vec2f frameMove) : object(object), frameMove(frameMove) {
+			load(object, target, frameMove);
+		}
+
+		Collision(Circle object, Line target, Vec2f frameMove) : object(object), frameMove(frameMove) {
 			load(object, target, frameMove);
 		}
 
@@ -212,23 +217,16 @@ namespace Physics {
 			return frameMove;
 		}
 
-		Vec2f getBounce(Vec2f speed) {
+		Vec2f getRoll(Vec2f *speed) {
 
-			Point2f F = object.position + vecAF;
+			*speed = u * ProduitScalaire(u, *speed);
 
-			Vec2f vecFB(F, target.position);
+			Vec2f vecFH = u * ProduitScalaire(u, frameMove - vecAF);
 
-			Vec2f u = Vec2f(-vecFB.y, vecFB.x).Normalize();
-
-			Vec2f vecFH = u * ProduitScalaire(u, Vec2f(F, object.position + frameMove));
-
-			frameMove.x = vecAF.x + vecFH.x;
-			frameMove.y = vecAF.y + vecFH.y;
-
-			return u * ProduitScalaire(u, speed);
+			return vecAF + vecFH;
 		}
 
-		/*Vec2f getRoll() {
+		/*Vec2f getBounce() {
 
 			Vec2f vecGI = target.getVector().Normalize() * ProduitScalaire(target.getVector().Normalize(), Vec2f(G, D));
 
@@ -260,7 +258,7 @@ namespace Physics {
 
 		static bool collision(CircleStatic circle1, CircleStatic circle2);
 
-		bool checkCollision(CircleDynamic *Object);
+		bool checkCollision(CircleDynamic *object);
 
 		bool computeCollision(CircleDynamic *object, Circle target, Vec2f *frameMove);
 

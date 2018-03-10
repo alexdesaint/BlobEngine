@@ -6,13 +6,7 @@ using namespace Geometrie;
 
 //Line
 
-float Line::Length() {
-	return std::sqrt((pointB.x - pointA.x) * (pointB.x - pointA.x) + (pointB.y - pointA.y) * (pointB.y - pointA.y));
-}
 
-float Line::Length2() {
-	return (pointB.x - pointA.x) * (pointB.x - pointA.x) + (pointB.y - pointA.y) * (pointB.y - pointA.y);
-}
 
 //Fonctions
 float Geometrie::ProduitScalaire(Vec2f A, Vec2f B) {

@@ -86,6 +86,10 @@ namespace  Geometrie {
 			return *this;
 		}
 
+		Mat2 rotate() {
+			return {-y, x};
+		}
+
 		float getOrientation() {
 			return std::atan2(y, x);
 		}
@@ -104,19 +108,28 @@ namespace  Geometrie {
 		Point2f position;
 	};
 
-	struct Line	{
+	class Line	{
+	public:
+		Point2f pointA;
+		Point2f pointB;
+
+		Line() : pointA(), pointB() {}
 		Line(Point2f a, Point2f b) : pointA(a), pointB(b) {}
+
 		Vec2f getVector()  {
 			return {pointB.x - pointA.x, pointB.y - pointA.y};
 		}
 
-		Point2f pointA;
-		Point2f pointB;
+		float Length2() {
+			return (pointB.x - pointA.x) * (pointB.x - pointA.x) + (pointB.y - pointA.y) * (pointB.y - pointA.y);
+		}
 
-		float Length();
-		float Length2();
+		float Length() {
+			return std::sqrt(Length2());
+		}
+
 		float getOrientation() {
-			return std::atan2(pointB.x - pointA.x, pointB.y - pointA.y);
+			return std::atan2(pointB.y - pointA.y, pointB.x - pointA.x);
 		}
 	};
 

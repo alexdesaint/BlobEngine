@@ -66,35 +66,43 @@ bool CollisionDetector::collision(CircleStatic circle1, CircleStatic circle2) {
 	return Line(circle1.mainCircle.position, circle2.mainCircle.position).Length() <= (circle1.mainCircle.rayon + circle2.mainCircle.rayon);
 }
 
-bool CollisionDetector::checkCollision(CircleDynamic *Object) {
+bool CollisionDetector::checkCollision(CircleDynamic *object) {
 
-	Vec2f frameMove = Object->speed * timeFlow;
+	Vec2f frameMove = object->speed * timeFlow;
 
 	bool hit = false;
 	for (CircleDynamic *target : CircleDynamicElements) {
-		if (target != Object) {
-			if(computeCollision(Object, target->mainCircle, &frameMove)) {
+		if (target != object) {
+			Collision c(object->mainCircle, target->mainCircle, frameMove);
+
+			if(c.hitTarget()) {
 				hit = true;
-				target->hit(*Object);
+				target->hit(*object);
 			}
 		}
 	}
 
 	for (CircleStatic *target : CircleStaticElements) {
-		if(computeCollision(Object, target->mainCircle, &frameMove)){
+		Collision c(object->mainCircle, target->mainCircle, frameMove);
+
+		if(c.hitTarget()) {
 			hit = true;
-			target->hit(*Object);
+			target->hit(*object);
 		}
 	}
 
 	for (LineStatic *target : LineStaticElements) {
-		if(computeCollision(Object, target, &frameMove)){
-			hit = true;
-			target->hit(*Object);
+		for (Line line : target->lines) {
+			Collision c(object->mainCircle, line, frameMove);
+
+			if(c.hitTarget()) {
+				hit = true;
+				target->hit(*object);
+			}
 		}
 	}
 
-	Object->mainCircle.position = Object->mainCircle.position + frameMove;
+	object->mainCircle.position = object->mainCircle.position + frameMove;
 
 	return hit;
 }

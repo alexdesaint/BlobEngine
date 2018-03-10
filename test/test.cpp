@@ -7,82 +7,195 @@ using namespace Physics;
 
 class CircleObject{
 private:
-public:
 	Circle circle;
 	sf::CircleShape circleShape;
-	Vec2f move;
+	Line move;
+	sf::RectangleShape line;
 
-	explicit CircleObject(int x, int y, int r, int mx, int my) {
-		move.x = mx;
-		move.y = my;
+public:
 
+	explicit CircleObject(int x, int y, int r) {
 		circle.position.x = x;
 		circle.position.y = y;
 		circle.rayon = r;
 
 		circleShape.setRadius(r);
-		circleShape.setOrigin(circle.rayon / 2, circle.rayon / 2);
+		circleShape.setOrigin(circle.rayon, circle.rayon);
 		circleShape.setPosition(circle.position.x, circle.position.y);
 		circleShape.setFillColor(sf::Color::Green);
 	}
 
-	void draw(sf::RenderWindow *window){
-		window->draw(circleShape);
+	explicit CircleObject(Point2f p, float r) {
+		circle.position = p;
+		circle.rayon = r;
+
+		circleShape.setRadius(r);
+		circleShape.setOrigin(circle.rayon, circle.rayon);
+		circleShape.setPosition(circle.position.x, circle.position.y);
+		circleShape.setFillColor(sf::Color::Green);
 	}
 
-	Circle getCircle(){
-		return circle;
-	}
+	explicit CircleObject(int x, int y, int r, int mx, int my) : move(Point2f(x, y), Point2f(mx, my)) {
 
-	Vec2f getMove(){
-		return move;
-	}
-};
+		line.setPosition(x, y);
+		line.setSize(sf::Vector2f(move.Length(), 4));
+		line.setOrigin(0, 2);
+		line.setFillColor(sf::Color::Blue);
+		line.setRotation(move.getOrientation() * 180 / PI);
 
-class CircleTarget{
-private:
-public:
-	Circle circle;
-	sf::CircleShape circleShape;
-
-	explicit CircleTarget(int x, int y, int r) {
 		circle.position.x = x;
 		circle.position.y = y;
 		circle.rayon = r;
 
 		circleShape.setRadius(r);
-		circleShape.setOrigin(circle.rayon / 2, circle.rayon / 2);
+		circleShape.setOrigin(circle.rayon, circle.rayon);
 		circleShape.setPosition(circle.position.x, circle.position.y);
-		circleShape.setFillColor(sf::Color::Red);
+		circleShape.setFillColor(sf::Color::White);
+	}
+
+	void draw(sf::RenderWindow *window) {
+		window->draw(circleShape);
+		window->draw(line);
+	}
+
+	Circle getCircle() {
+		return circle;
+	}
+
+	Vec2f getMove() {
+		return move.getVector();
+	}
+
+	void setDestination(int x, int y) {
+		move.pointB.x = x;
+		move.pointB.y = y;
+		line.setSize(sf::Vector2f(move.Length(), 4));
+		line.setRotation(move.getOrientation() * 180 / PI);
+		//std::cout << move.getVector().x << ":" << move.getVector().y << " --> " << move.getOrientation() * 180 / PI << std::endl;
+	}
+
+	void setColor(sf::Color c){
+		circleShape.setFillColor(c);
+	}
+};
+
+class LineObject {
+private:
+	Line line;
+	sf::RectangleShape rectangleShape;
+
+public:
+
+	explicit LineObject(int ax, int ay, int bx, int by) {
+		line.pointA.x = ax;
+		line.pointA.y = ay;
+		line.pointB.x = bx;
+		line.pointB.y = by;
+
+		rectangleShape.setSize(sf::Vector2f(line.Length(), line.Length()));
+		rectangleShape.setPosition(ax, ay);
+		rectangleShape.setFillColor(sf::Color::Green);
 	}
 
 	void draw(sf::RenderWindow *window){
-		window->draw(circleShape);
+		window->draw(rectangleShape);
 	}
 
-	Circle getCircle(){
-		return circle;
+	void setColor(sf::Color c){
+		rectangleShape.setFillColor(c);
+	}
+
+	Line getLine() {
+		return line;
 	}
 };
 
 int main() {
 
-	sf::RenderWindow window(sf::VideoMode(400, 400), "BlobEngine test");
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
 
-	CircleObject object(10, 10,10, 20, 20);
-	CircleTarget target(40, 40,10);
+	sf::RenderWindow window(sf::VideoMode(600, 600), "BlobEngine test", sf::Style::Close, settings);
 
-	Collision c(object.getCircle(), target.getCircle(), object.getMove());
+	CircleObject object(50, 50, 25, 20, 20), target(300, 300, 50);
+
+	LineObject line(300, 50, 300, 150);
+
+	bool left = false;
 
 	while (window.isOpen()) {
+		window.clear();
+
 		sf::Event event;
+		sf::Mouse::Button mouseButton;
+
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed)
-				window.close();
+			switch (event.type){
+				case sf::Event::Closed :
+					window.close();
+					break;
+				case sf::Event::MouseButtonPressed :
+					mouseButton = event.mouseButton.button;
+					switch(mouseButton){
+						case sf::Mouse::Left :
+							left = true;
+							break;
+					}
+					break;
+				case sf::Event::MouseButtonReleased :
+					mouseButton = event.mouseButton.button;
+					switch(mouseButton){
+						case sf::Mouse::Left :
+							left = false;
+							break;
+					}
+					break;
+			}
 		}
 
-		window.clear();
+		if(left)
+			object.setDestination(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+
+		Collision c(object.getCircle(), target.getCircle(), object.getMove());
+
+		if(c.hitTarget()) {
+			target.setColor(sf::Color::Red);
+
+			CircleObject hitPoint(object.getCircle().position + c.vecAF, object.getCircle().rayon);
+			hitPoint.setColor(sf::Color::Yellow);
+			hitPoint.draw(&window);
+
+			Vec2f useless;
+
+			CircleObject rollPoint(object.getCircle().position + c.getRoll(&useless), object.getCircle().rayon);
+			rollPoint.setColor(sf::Color::Yellow);
+			rollPoint.draw(&window);
+		}
+		else{
+			target.setColor(sf::Color::Green);
+		}
+
+		Collision c2(object.getCircle(), line.getLine(), object.getMove());
+
+		if(c2.hitTarget()) {
+			line.setColor(sf::Color::Red);
+
+			CircleObject hitPoint(object.getCircle().position + c2.vecAF, object.getCircle().rayon);
+			hitPoint.setColor(sf::Color::Yellow);
+			hitPoint.draw(&window);
+
+			Vec2f useless;
+
+			CircleObject rollPoint(object.getCircle().position + c2.getRoll(&useless), object.getCircle().rayon);
+			rollPoint.setColor(sf::Color::Yellow);
+			rollPoint.draw(&window);
+		}
+		else{
+			line.setColor(sf::Color::Green);
+		}
+
+		line.draw(&window);
 		object.draw(&window);
 		target.draw(&window);
 		window.display();
