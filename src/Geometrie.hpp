@@ -4,7 +4,7 @@
 
 #define PI 3.14159265f
 
-namespace  Geometrie {
+namespace  BlobEngine {
 
 	template <typename T>
 	class Mat2{
@@ -59,25 +59,30 @@ namespace  Geometrie {
 			return {x / a, y / a};
 		}
 
-		float Length() {
-			return std::sqrt(x * x + y * y);
-		}
-
-		float Length2() {
+		float length2() {
 			return x * x + y * y;
 		}
 
-		Mat2 Normalize() {
-			float length = Length();
-			x = x / length;
-			y = y / length;
+		float length() {
+			return std::sqrt(length2());
+		}
+
+		float scalaire(Mat2 B) {
+			return x * B.x + y * B.y;
+		}
+
+		Mat2 normalize() {
+			float l = length();
+			x = x / l;
+			y = y / l;
 
 			return *this;
 		}
 
 		Mat2 setLength(float newLength)  {
-			float oldLength = Length();
+			float oldLength = length();
 			float Rapport;
+
 			if (oldLength != 0) {
 				Rapport = newLength / oldLength;
 				x *= Rapport;
@@ -102,10 +107,11 @@ namespace  Geometrie {
 
 	class Circle {
 	public:
-		Circle() : rayon(0) {}
-		Circle(Point2f position, float rayon) : rayon(rayon), position(position) {}
 		float rayon = 0;
 		Point2f position;
+
+		Circle() : rayon(0) {}
+		Circle(Point2f position, float rayon) : rayon(rayon), position(position) {}
 	};
 
 	class Line	{
@@ -131,11 +137,44 @@ namespace  Geometrie {
 		float getOrientation() {
 			return std::atan2(pointB.y - pointA.y, pointB.x - pointA.x);
 		}
-	};
 
-	float ProduitScalaire(Vec2f A, Vec2f B);
-	float Distance(Point2f PointA, Point2f PointB);
-	float Distance2(Point2f PointA, Point2f PointB);
-	bool Intersection(Line A, Line B, Point2f *inter);
-	Point2f ClosestPointOnLine(Line line, Point2f point);
+		Point2f closestPointTo(Point2f point) {
+
+			float A1 = pointB.y - pointA.y;
+			float B1 = pointA.x - pointB.x;;
+			float C1 = A1*pointA.x + B1*pointA.y;
+			float C2 = -B1*point.x + A1*point.y;
+
+			float det = A1*A1 - -B1*B1;
+
+			if (det != 0) {
+				return {((A1*C1 - B1*C2) / det), ((A1*C2 - -B1*C1) / det)};
+			}
+			else {
+				return point;
+			}
+		}
+
+		Point2f getIntersectionPoint(Line B) {
+
+			float A1 = pointA.x - pointB.x;
+
+			float B1 = B.pointA.x - B.pointB.x;
+
+			float A2 = pointA.y - pointB.y;
+
+			float B2 = B.pointA.y - B.pointB.y;
+
+			float det = A1*B2 - A2*B1;
+
+			if (det == 0)
+				return {};
+
+			float C1 = pointB.y * pointA.x - pointB.x * pointA.y;
+
+			float C2 = B.pointB.y * B.pointA.x - B.pointB.x * B.pointA.y;
+
+			return {(C1*B1 - A1*C2) / det, (C1*B2 - A2*C2) / det};
+		}
+	};
 };

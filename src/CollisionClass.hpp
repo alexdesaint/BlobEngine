@@ -4,8 +4,7 @@
 #include <chrono>
 #include "Geometrie.hpp"
 
-namespace Physics {
-	using namespace Geometrie;
+namespace BlobEngine {
 
 	enum Reaction{
 		BOUNCE,
@@ -22,9 +21,11 @@ namespace Physics {
 	public:
 		unsigned int objectType;
 
-		explicit PhysicalObject(unsigned int objectType) : objectType(objectType) { };
+		explicit PhysicalObject(unsigned int objectType) : objectType(objectType) { }
 
-		virtual Reaction hit(const PhysicalObject& from) { }
+		virtual Reaction hit(const PhysicalObject& from) {
+			return IGNORE;
+		}
 	};
 
 	class CircleStatic : PhysicalObject {
@@ -33,6 +34,7 @@ namespace Physics {
 	private:
 		CollisionDetector* collisionDetector;
 
+		static std::list<CircleStatic*> elements;
 	protected:
 		Circle mainCircle{};
 		std::list<Circle> circles{};
@@ -77,7 +79,7 @@ namespace Physics {
 		CollisionDetector* collisionDetector;
 
 	protected:
-		std::list<Geometrie::Line> lines{};
+		std::list<Line> lines{};
 
 		virtual void enableCollision();
 
@@ -102,7 +104,7 @@ namespace Physics {
 		 * F : position du cercle en collision
 		 * E : Point sur la trajectoire le plus proche de la cible
 		 *
-		 * u : vecteur unitaire de la dirrection de la force de la target sur l'obj
+		 * u : vecteur unitaire de la dirrection du glissement
 		 * */
 		bool hit =  false;
 
@@ -119,15 +121,15 @@ namespace Physics {
 
 			float RayonAB = object.rayon + target.rayon;
 
-			if (frameMove.Length() > Distance(object.position, target.position) - RayonAB) {//si la distance qui les sépare est plus courte que le vecteur vitesse
+			Vec2f vecAB(object.position, target.position);
 
-				Vec2f vecAB(object.position, target.position);
+			if (frameMove.length() > vecAB.length() - RayonAB) {//si la distance qui les sépare est plus courte que le vecteur vitesse
 
-				if (ProduitScalaire(frameMove, vecAB) > 0) {// si il ne sont pas de dirrection opposé
+				if (frameMove.scalaire(vecAB) > 0) {// si il ne sont pas de dirrection opposé
 
-					float AE = ProduitScalaire(Vec2f(frameMove).Normalize(), vecAB);//distance avant le point le plus proche
+					float AE = Vec2f(frameMove).normalize().scalaire(vecAB);//distance avant le point le plus proche
 
-					float BE2 = vecAB.Length2() - AE * AE;
+					float BE2 = vecAB.length2() - AE * AE;
 
 					float RayonAB2 = RayonAB * RayonAB;
 
@@ -135,13 +137,13 @@ namespace Physics {
 
 						float AF = AE - std::sqrt(RayonAB2 - BE2);
 
-						if (AF < frameMove.Length()) {
+						if (AF < frameMove.length()) {
 							//ils se touche forcément
 							vecAF = Vec2f(frameMove).setLength(AF);
 
 							Vec2f vecFB = vecAB - vecAF;
 
-							u = vecFB.rotate().Normalize();
+							u = vecFB.rotate().normalize();
 
 							hit = true;
 						}
@@ -152,50 +154,47 @@ namespace Physics {
 
 		void load(Circle object, Line target, Vec2f frameMove) {
 
-			Point2f F = ClosestPointOnLine(target, object.position);
+			Point2f F = target.closestPointTo(object.position);
 			Vec2f vecFA(F, object.position);
 
-			if (object.rayon + frameMove.Length() > vecFA.Length()) {
-				if (ProduitScalaire(vecFA, frameMove) < 0) {
+			if (object.rayon + frameMove.length() > vecFA.length()) {
+				if (vecFA.scalaire(frameMove) < 0) {
 
-					Point2f E, I;
 					Point2f D = object.position + frameMove;
 
-					if (Intersection(target, Line(D, object.position + Vec2f(object.position, F).setLength(object.rayon)), &I)) {
+					Point2f I = target.getIntersectionPoint(Line(D, object.position + Vec2f(object.position, F).setLength(object.rayon)));
 
-						Intersection(target, Line(D, object.position), &E);
-						//cercle de milieu de du segment à demi seg + rayon cercle
+					Point2f E = target.getIntersectionPoint(Line(D, object.position));
 
-						Point2f M = (target.pointA + target.pointB) / 2;
+					Point2f M = (target.pointA + target.pointB) / 2;
 
-						if (Vec2f(M, I).Length() <= (target.Length() / 2)) {
+					if (Vec2f(M, I).length() <= (target.Length() / 2)) {
 
-							Point2f F = E - (frameMove * object.rayon * Vec2f(E, object.position).Length()) /
-											(vecFA.Length() * frameMove.Length());
+						Point2f F = E - (frameMove * object.rayon * Vec2f(E, object.position).length()) /
+										(vecFA.length() * frameMove.length());
 
-							vecAF = Vec2f(object.position, F);
+						vecAF = Vec2f(object.position, F);
 
-							Vec2f vecEA(E, object.position);
+						Vec2f vecEA(E, object.position);
 
-							if (vecAF.Length2() < frameMove.Length2() || vecEA.Length2() < object.rayon * object.rayon) {
+						if (vecAF.length2() < frameMove.length2() || vecEA.length2() < object.rayon * object.rayon) {
 
-								//ils se touchent forcément
+							//ils se touchent forcément
 
-								hit = true;
+							hit = true;
 
-								u = target.getVector().Normalize();
-							}
-						} else if (Vec2f(M, I).Length() <= (target.Length() / 2 + object.rayon)) {
-							Point2f B;
-
-							if (Vec2f(target.pointA, E).Length2() < Vec2f(target.pointB, E).Length2()) {
-								B = target.pointA;
-							} else {
-								B = target.pointB;
-							}
-
-							load(object, Circle(B, 0), frameMove);
+							u = target.getVector().normalize();
 						}
+					} else if (Vec2f(M, I).length() <= (target.Length() / 2 + object.rayon)) {
+						Point2f B;
+
+						if (Vec2f(target.pointA, E).length2() < Vec2f(target.pointB, E).length2()) {
+							B = target.pointA;
+						} else {
+							B = target.pointB;
+						}
+
+						load(object, Circle(B, 0), frameMove);
 					}
 				}
 			}
@@ -213,32 +212,14 @@ namespace Physics {
 			return hit;
 		}
 
-		Vec2f getFrameMove() {
-			return frameMove;
-		}
-
 		Vec2f getRoll(Vec2f *speed) {
 
-			*speed = u * ProduitScalaire(u, *speed);
+			*speed = u * u.scalaire(*speed);
 
-			Vec2f vecFH = u * ProduitScalaire(u, frameMove - vecAF);
+			Vec2f vecFH = u * u.scalaire(frameMove - vecAF);
 
 			return vecAF + vecFH;
 		}
-
-		/*Vec2f getBounce() {
-
-			Vec2f vecGI = target.getVector().Normalize() * ProduitScalaire(target.getVector().Normalize(), Vec2f(G, D));
-
-			frameMove->x = vecAG.x + vecGI.x;
-			frameMove->y = vecAG.y + vecGI.y;
-
-			Vec2f vecGJ = target.getVector().Normalize() *
-						  ProduitScalaire(target.getVector().Normalize(), object->speed);
-
-			object->speed.x = vecGJ.x;
-			object->speed.y = vecGJ.y;
-		}*/
 	};
 
 	class CollisionDetector {
@@ -248,7 +229,7 @@ namespace Physics {
 		friend class LineDynamic;
 
 	private:
-		std::list<CircleStatic*>	CircleStaticElements{};
+
 		std::list<CircleDynamic*>	CircleDynamicElements{};
 		std::list<LineStatic*>		LineStaticElements{};
 
@@ -259,10 +240,6 @@ namespace Physics {
 		static bool collision(CircleStatic circle1, CircleStatic circle2);
 
 		bool checkCollision(CircleDynamic *object);
-
-		bool computeCollision(CircleDynamic *object, Circle target, Vec2f *frameMove);
-
-		bool computeCollision(CircleDynamic *object, LineStatic *lines, Vec2f *frameMove);
 
 	public:
 		CollisionDetector() {
