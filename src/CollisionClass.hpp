@@ -32,16 +32,22 @@ namespace BlobEngine {
 		friend class CollisionDetector;
 		friend class CircleDynamic;
 	private:
-		CollisionDetector* collisionDetector;
+		static CollisionDetector* collisionDetector;
 
 		static std::list<CircleStatic*> elements;
+		std::list<CircleStatic*>::iterator elementIt{};
 	protected:
 		Circle mainCircle{};
 		std::list<Circle> circles{};
 
-		virtual void enableCollision();
+		virtual void enableCollision() {
+			elements.push_front(this);
+			elementIt = elements.begin();
+		}
 
-		virtual void disableCollision();
+		virtual void disableCollision() {
+			elements.erase(elementIt);
+		}
 
 	public:
 		explicit CircleStatic(CollisionDetector* c, unsigned int objectType) : PhysicalObject(objectType), collisionDetector(c) {
@@ -56,21 +62,34 @@ namespace BlobEngine {
 	class CircleDynamic : CircleStatic{
 		friend class CollisionDetector;
 
+	private:
+		static std::list<CircleStatic*> elements;
+		std::list<CircleStatic*>::iterator elementIt{};
 	protected:
 		Vec2f speed{};
 		Circle mainCircle{};
 
-		bool CheckCollision();
-		bool HitCircle(CircleStatic *circleStatic);
+		void enableCollision() override {
+			elements.push_front(this);
+			elementIt = elements.begin();
+		}
 
-		void enableCollision() override;
-		void disableCollision() override;
+		void disableCollision() override {
+			elements.erase(elementIt);
+		}
+
+		bool CircleDynamic::CheckCollision() {
+			return collisionDetector->checkCollision(this);
+		}
 
 	public:
 		explicit CircleDynamic(CollisionDetector* c, unsigned int objectType) : CircleStatic(c, objectType){
 			enableCollision();
 		}
-		~CircleDynamic() override;
+
+		~CircleDynamic() override {
+			disableCollision();
+		}
 	};
 
 	class LineStatic  : PhysicalObject {
@@ -229,11 +248,10 @@ namespace BlobEngine {
 		friend class LineDynamic;
 
 	private:
-
 		std::list<CircleDynamic*>	CircleDynamicElements{};
 		std::list<LineStatic*>		LineStaticElements{};
 
-		float timeFlow{};
+		float timeFlow;
 
 		float getElapsedTime();
 
@@ -242,8 +260,8 @@ namespace BlobEngine {
 		bool checkCollision(CircleDynamic *object);
 
 	public:
-		CollisionDetector() {
-			timeFlow = getElapsedTime();
+		CollisionDetector() : timeFlow(getElapsedTime()){
+			CircleStatic::elements = {};
 		}
 
 		void update() {

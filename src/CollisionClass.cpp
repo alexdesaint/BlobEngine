@@ -4,37 +4,12 @@
 #include "CollisionClass.hpp"
 
 namespace BlobEngine {
-//CircleStatic
 
-	void CircleStatic::enableCollision() {
-		elements.push_back(this);
-	}
-
-	void CircleStatic::disableCollision() {
-		elements.remove(this);
-	}
+	std::list<CircleStatic*> CircleStatic::elements;
 
 //CircleDynamic
 
-	CircleDynamic::~CircleDynamic() {
-		disableCollision();
-	}
 
-	void CircleDynamic::enableCollision() {
-		collisionDetector->CircleDynamicElements.push_back(this);
-	}
-
-	void CircleDynamic::disableCollision() {
-		collisionDetector->CircleDynamicElements.remove(this);
-	}
-
-	bool CircleDynamic::CheckCollision() {
-		return collisionDetector->checkCollision(this);
-	}
-
-	bool CircleDynamic::HitCircle(CircleStatic *circleStatic) {
-
-	}
 
 //LineStatic
 	void LineStatic::enableCollision() {
@@ -91,7 +66,7 @@ namespace BlobEngine {
 				}
 			}
 		}
-
+/*
 		for (CircleStatic *target : CircleStatic::elements) {
 			Collision c(object->mainCircle, target->mainCircle, frameMove);
 
@@ -113,7 +88,7 @@ namespace BlobEngine {
 				}
 			}
 		}
-
+*/
 		for (LineStatic *target : LineStaticElements) {
 			for (Line line : target->lines) {
 				Collision c(object->mainCircle, line, frameMove);
