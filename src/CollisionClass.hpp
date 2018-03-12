@@ -15,9 +15,10 @@ namespace BlobEngine {
 
 	class CollisionDetector;
 
-	class CircleDynamic;
-
 	class PhysicalObject{
+		friend CollisionDetector;
+	protected:
+		static CollisionDetector* collisionDetector;
 	public:
 		unsigned int objectType;
 
@@ -30,27 +31,24 @@ namespace BlobEngine {
 
 	class CircleStatic : PhysicalObject {
 		friend class CollisionDetector;
-		friend class CircleDynamic;
 	private:
-		static CollisionDetector* collisionDetector;
-
 		static std::list<CircleStatic*> elements;
 		std::list<CircleStatic*>::iterator elementIt{};
 	protected:
 		Circle mainCircle{};
-		std::list<Circle> circles{};
+		//std::list<Circle> circles{};
 
-		virtual void enableCollision() {
+		void enableCollision() {
 			elements.push_front(this);
 			elementIt = elements.begin();
 		}
 
-		virtual void disableCollision() {
+		void disableCollision() {
 			elements.erase(elementIt);
 		}
 
 	public:
-		explicit CircleStatic(CollisionDetector* c, unsigned int objectType) : PhysicalObject(objectType), collisionDetector(c) {
+		explicit CircleStatic(unsigned int objectType) : PhysicalObject(objectType) {
 			enableCollision();
 		}
 
@@ -59,35 +57,32 @@ namespace BlobEngine {
 		}
 	};
 
-	class CircleDynamic : CircleStatic{
+	class CircleDynamic : PhysicalObject {
 		friend class CollisionDetector;
-
 	private:
-		static std::list<CircleStatic*> elements;
-		std::list<CircleStatic*>::iterator elementIt{};
+		static std::list<CircleDynamic*> elements;
+		std::list<CircleDynamic*>::iterator elementIt{};
 	protected:
 		Vec2f speed{};
 		Circle mainCircle{};
 
-		void enableCollision() override {
+		void enableCollision() {
 			elements.push_front(this);
 			elementIt = elements.begin();
 		}
 
-		void disableCollision() override {
+		void disableCollision() {
 			elements.erase(elementIt);
 		}
 
-		bool CircleDynamic::CheckCollision() {
-			return collisionDetector->checkCollision(this);
-		}
+		bool CheckCollision();
 
 	public:
-		explicit CircleDynamic(CollisionDetector* c, unsigned int objectType) : CircleStatic(c, objectType){
+		explicit CircleDynamic(unsigned int objectType) : PhysicalObject(objectType){
 			enableCollision();
 		}
 
-		~CircleDynamic() override {
+		~CircleDynamic() {
 			disableCollision();
 		}
 	};
@@ -95,17 +90,22 @@ namespace BlobEngine {
 	class LineStatic  : PhysicalObject {
 		friend class CollisionDetector;
 	private:
-		CollisionDetector* collisionDetector;
-
+		static std::list<LineStatic*> elements;
+		std::list<LineStatic*>::iterator elementIt{};
 	protected:
 		std::list<Line> lines{};
 
-		virtual void enableCollision();
+		void enableCollision() {
+			elements.push_front(this);
+			elementIt = elements.begin();
+		}
 
-		virtual void disableCollision();
+		void disableCollision() {
+			elements.erase(elementIt);
+		}
 
 	public:
-		explicit LineStatic(CollisionDetector* c, unsigned int objectType) : PhysicalObject(objectType), collisionDetector(c) {
+		explicit LineStatic(unsigned int objectType) : PhysicalObject(objectType) {
 			enableCollision();
 		}
 
@@ -245,12 +245,8 @@ namespace BlobEngine {
 		friend class CircleStatic;
 		friend class CircleDynamic;
 		friend class LineStatic;
-		friend class LineDynamic;
 
 	private:
-		std::list<CircleDynamic*>	CircleDynamicElements{};
-		std::list<LineStatic*>		LineStaticElements{};
-
 		float timeFlow;
 
 		float getElapsedTime();
@@ -261,6 +257,8 @@ namespace BlobEngine {
 
 	public:
 		CollisionDetector() : timeFlow(getElapsedTime()){
+			PhysicalObject::collisionDetector = this;
+
 			CircleStatic::elements = {};
 		}
 

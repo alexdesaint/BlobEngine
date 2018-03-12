@@ -122,7 +122,7 @@ private:
 	sf::RectangleShape shape;
 
 public:
-	explicit Box(CollisionDetector *collisionDetector, Point2f position) : LineStatic(collisionDetector, 0) {
+	explicit Box(Point2f position) : LineStatic(0) {
 
 		shape.setSize(sf::Vector2f(20, 20));
 		shape.setOrigin(10, 10);
@@ -150,7 +150,7 @@ private:
 	sf::CircleShape shape;
 
 public:
-	explicit Box2(CollisionDetector *collisionDetector, Point2f position) : CircleStatic(collisionDetector, 0) {
+	explicit Box2(Point2f position) : CircleStatic(0) {
 
 		mainCircle.position = position;
 		mainCircle.rayon = 20;
@@ -206,7 +206,7 @@ private:
 	}
 public:
 
-	explicit Player(CollisionDetector *collisionDetector) : CircleDynamic(collisionDetector, 0) {
+	explicit Player() : CircleDynamic(0) {
 		mainCircle.position.x = 50;
 		mainCircle.position.y = 500;
 		mainCircle.rayon = 10;
@@ -236,165 +236,168 @@ public:
 
 int main() {
 
-	sf::ContextSettings settings;
-	settings.antialiasingLevel = 8;
+	try {
 
-	unsigned int width = 620, height = 620;
+		sf::ContextSettings settings;
+		settings.antialiasingLevel = 8;
 
-	sf::RenderWindow window(sf::VideoMode(width, height), "BlobEngine test", sf::Style::Close, settings);
+		unsigned int width = 620, height = 620;
 
-	CollisionDetector collisionDetector;
+		sf::RenderWindow window(sf::VideoMode(width, height), "BlobEngine test", sf::Style::Close, settings);
 
-	CircleObject object(50, 50, 25, 20, 20), target(300, 300, 50);
+		CollisionDetector collisionDetector;
 
-	LineObject line(300, 50, 300, 150);
+		CircleObject object(50, 50, 25, 20, 20), target(300, 300, 50);
 
-	std::list<Box> boxs;
+		LineObject line(300, 50, 300, 150);
 
-	Player player(&collisionDetector);
+		std::list<Box> boxs;
 
-	Box2 box2(&collisionDetector, Point2f(500, 500));
+		Player player;
 
-	for(int i = 0; i < width; i+=20) {
-		boxs.emplace_back(&collisionDetector, Point2f(10 + i, 410));
-		boxs.emplace_back(&collisionDetector, Point2f(10 + i, height - 10));
-	}
+		Box2 box2(Point2f(500, 500));
 
-	for(int i = 420; i < height - 20; i+=20) {
-		boxs.emplace_back(&collisionDetector, Point2f(10, 10 + i));
-		boxs.emplace_back(&collisionDetector, Point2f(width - 10, 10 + i));
-	}
+		for (int i = 0; i < width; i += 20) {
+			boxs.emplace_back(Point2f(10 + i, 410));
+			boxs.emplace_back(Point2f(10 + i, height - 10));
+		}
 
-	bool left = false;
+		for (int i = 420; i < height - 20; i += 20) {
+			boxs.emplace_back(Point2f(10, 10 + i));
+			boxs.emplace_back(Point2f(width - 10, 10 + i));
+		}
 
-	while (window.isOpen()) {
-		window.clear();
+		bool left = false;
 
-		sf::Keyboard::Key Key;
-		sf::Event event;
-		sf::Mouse::Button mouseButton;
+		while (window.isOpen()) {
+			window.clear();
 
-		while (window.pollEvent(event))
-		{
-			switch (event.type){
-				case sf::Event::Closed :
-					window.close();
-					break;
-				case sf::Event::MouseButtonPressed :
-					mouseButton = event.mouseButton.button;
-					switch(mouseButton){
-						case sf::Mouse::Left :
-							left = true;
-							break;
-					}
-					break;
-				case sf::Event::MouseButtonReleased :
-					mouseButton = event.mouseButton.button;
-					switch(mouseButton){
-						case sf::Mouse::Left :
-							left = false;
-							break;
-					}
-					break;
-				case sf::Event::KeyPressed :
-					Key = event.key.code;
+			sf::Keyboard::Key Key;
+			sf::Event event;
+			sf::Mouse::Button mouseButton;
 
-					switch(Key) {
-						case sf::Keyboard::Left :
-							player.keyPress(directions::LEFT);
-							break;
-						case sf::Keyboard::Right :
-							player.keyPress(directions::RIGHT);
-							break;
-						case sf::Keyboard::Up :
-							player.keyPress(directions::UP);
-							break;
-						case sf::Keyboard::Down :
-							player.keyPress(directions::DOWN);
-							break;
-						default:
-							break;
-					}
-					break;
-				case sf::Event::KeyReleased :
-					Key = event.key.code;
+			while (window.pollEvent(event)) {
+				switch (event.type) {
+					case sf::Event::Closed :
+						window.close();
+						break;
+					case sf::Event::MouseButtonPressed :
+						mouseButton = event.mouseButton.button;
+						switch (mouseButton) {
+							case sf::Mouse::Left :
+								left = true;
+								break;
+						}
+						break;
+					case sf::Event::MouseButtonReleased :
+						mouseButton = event.mouseButton.button;
+						switch (mouseButton) {
+							case sf::Mouse::Left :
+								left = false;
+								break;
+						}
+						break;
+					case sf::Event::KeyPressed :
+						Key = event.key.code;
 
-					switch(Key) {
-						case sf::Keyboard::Left :
-							player.keyReleased(directions::LEFT);
-							break;
-						case sf::Keyboard::Right :
-							player.keyReleased(directions::RIGHT);
-							break;
-						case sf::Keyboard::Up :
-							player.keyReleased(directions::UP);
-							break;
-						case sf::Keyboard::Down :
-							player.keyReleased(directions::DOWN);
-							break;
-						default:
-							break;
-					}
-					break;
+						switch (Key) {
+							case sf::Keyboard::Left :
+								player.keyPress(directions::LEFT);
+								break;
+							case sf::Keyboard::Right :
+								player.keyPress(directions::RIGHT);
+								break;
+							case sf::Keyboard::Up :
+								player.keyPress(directions::UP);
+								break;
+							case sf::Keyboard::Down :
+								player.keyPress(directions::DOWN);
+								break;
+							default:
+								break;
+						}
+						break;
+					case sf::Event::KeyReleased :
+						Key = event.key.code;
+
+						switch (Key) {
+							case sf::Keyboard::Left :
+								player.keyReleased(directions::LEFT);
+								break;
+							case sf::Keyboard::Right :
+								player.keyReleased(directions::RIGHT);
+								break;
+							case sf::Keyboard::Up :
+								player.keyReleased(directions::UP);
+								break;
+							case sf::Keyboard::Down :
+								player.keyReleased(directions::DOWN);
+								break;
+							default:
+								break;
+						}
+						break;
+				}
 			}
+
+			if (left)
+				object.setDestination(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+
+			Collision c(object.getCircle(), target.getCircle(), object.getMove());
+
+			if (c.hitTarget()) {
+				target.setColor(sf::Color::Red);
+
+				CircleObject hitPoint(object.getCircle().position + c.vecAF, object.getCircle().rayon);
+				hitPoint.setColor(sf::Color::Yellow);
+				hitPoint.draw(&window);
+
+				Vec2f useless;
+
+				CircleObject rollPoint(object.getCircle().position + c.getRoll(&useless), object.getCircle().rayon);
+				rollPoint.setColor(sf::Color::Yellow);
+				rollPoint.draw(&window);
+			} else {
+				target.setColor(sf::Color::Green);
+			}
+
+			Collision c2(object.getCircle(), line.getLine(), object.getMove());
+
+			if (c2.hitTarget()) {
+				line.setColor(sf::Color::Red);
+
+				CircleObject hitPoint(object.getCircle().position + c2.vecAF, object.getCircle().rayon);
+				hitPoint.setColor(sf::Color::Yellow);
+				hitPoint.draw(&window);
+
+				Vec2f useless;
+
+				CircleObject rollPoint(object.getCircle().position + c2.getRoll(&useless), object.getCircle().rayon);
+				rollPoint.setColor(sf::Color::Yellow);
+				rollPoint.draw(&window);
+			} else {
+				line.setColor(sf::Color::Green);
+			}
+
+			line.draw(&window);
+			object.draw(&window);
+			target.draw(&window);
+
+			//test cd
+			collisionDetector.update();
+
+			for(Box box : boxs)
+				box.draw(&window);
+
+			player.draw(&window);
+
+			box2.draw(&window);
+
+			window.display();
 		}
-
-		if(left)
-			object.setDestination(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-
-		Collision c(object.getCircle(), target.getCircle(), object.getMove());
-
-		if(c.hitTarget()) {
-			target.setColor(sf::Color::Red);
-
-			CircleObject hitPoint(object.getCircle().position + c.vecAF, object.getCircle().rayon);
-			hitPoint.setColor(sf::Color::Yellow);
-			hitPoint.draw(&window);
-
-			Vec2f useless;
-
-			CircleObject rollPoint(object.getCircle().position + c.getRoll(&useless), object.getCircle().rayon);
-			rollPoint.setColor(sf::Color::Yellow);
-			rollPoint.draw(&window);
-		}
-		else{
-			target.setColor(sf::Color::Green);
-		}
-
-		Collision c2(object.getCircle(), line.getLine(), object.getMove());
-
-		if(c2.hitTarget()) {
-			line.setColor(sf::Color::Red);
-
-			CircleObject hitPoint(object.getCircle().position + c2.vecAF, object.getCircle().rayon);
-			hitPoint.setColor(sf::Color::Yellow);
-			hitPoint.draw(&window);
-
-			Vec2f useless;
-
-			CircleObject rollPoint(object.getCircle().position + c2.getRoll(&useless), object.getCircle().rayon);
-			rollPoint.setColor(sf::Color::Yellow);
-			rollPoint.draw(&window);
-		}
-		else{
-			line.setColor(sf::Color::Green);
-		}
-
-		line.draw(&window);
-		object.draw(&window);
-		target.draw(&window);
-
-		//test cd
-		collisionDetector.update();
-
-		for(Box box : boxs)
-			box.draw(&window);
-		player.draw(&window);
-
-		box2.draw(&window);
-
-		window.display();
 	}
-
+	catch (std::exception &e){
+		std::cout << e.what() << std::endl;
+	}
 	return 0;
 }

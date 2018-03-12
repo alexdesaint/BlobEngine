@@ -5,20 +5,25 @@
 
 namespace BlobEngine {
 
+//PhysicalObject
+
+	CollisionDetector* PhysicalObject::collisionDetector;
+
+//CircleStatic
+
 	std::list<CircleStatic*> CircleStatic::elements;
 
 //CircleDynamic
 
+	std::list<CircleDynamic*> CircleDynamic::elements;
 
+	bool CircleDynamic::CheckCollision() {
+		return collisionDetector->checkCollision(this);
+	}
 
 //LineStatic
-	void LineStatic::enableCollision() {
-		collisionDetector->LineStaticElements.push_back(this);
-	}
 
-	void LineStatic::disableCollision() {
-		collisionDetector->LineStaticElements.remove(this);
-	}
+	std::list<LineStatic*> LineStatic::elements;
 
 //CollisionDetector
 
@@ -43,7 +48,7 @@ namespace BlobEngine {
 		Vec2f frameMove = object->speed * timeFlow;
 
 		bool hit = false;
-		for (CircleDynamic *target : CircleDynamicElements) {
+		for (CircleDynamic *target : CircleDynamic::elements) {
 			if (target != object) {
 				Collision c(object->mainCircle, target->mainCircle, frameMove);
 
@@ -66,7 +71,7 @@ namespace BlobEngine {
 				}
 			}
 		}
-/*
+
 		for (CircleStatic *target : CircleStatic::elements) {
 			Collision c(object->mainCircle, target->mainCircle, frameMove);
 
@@ -88,8 +93,8 @@ namespace BlobEngine {
 				}
 			}
 		}
-*/
-		for (LineStatic *target : LineStaticElements) {
+
+		for (LineStatic *target : LineStatic::elements) {
 			for (Line line : target->lines) {
 				Collision c(object->mainCircle, line, frameMove);
 
