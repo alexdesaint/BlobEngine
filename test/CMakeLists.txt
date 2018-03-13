@@ -11,5 +11,4 @@ else()
     message(WARNING "SFML not found")
 endif()
 
-
-target_link_libraries (Test ${EXECUTABLE_NAME} ${SFML_LIBRARIES};${SFML_DEPENDENCIES} -static-libgcc -static-libstdc++ -static -lpthread)
+target_link_libraries (Test BlobEngine ${SFML_LIBRARIES};${SFML_DEPENDENCIES} -static-libgcc -static-libstdc++ -static -lpthread)

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "../src/CollisionClass.hpp"
+#include "../BlobEngine/CollisionClass.hpp"
 
 using namespace BlobEngine;
 
@@ -166,9 +166,41 @@ public:
 	}
 };
 
-class Player : CircleDynamic{
+class BounceBall : CircleDynamic{
 private:
 	float maxSpeed, orientation;
+	sf::CircleShape shape;
+
+	Reaction hit(const BlobEngine::PhysicalObject& from) override {
+		return BOUNCE;
+	}
+public:
+
+	explicit BounceBall() : CircleDynamic(0) {
+
+		speed.x = 400;
+		speed.y = 400;
+
+		mainCircle.position.x = 100;
+		mainCircle.position.y = 500;
+		mainCircle.rayon = 10;
+		orientation = 0;
+
+		shape.setRadius(mainCircle.rayon);
+		shape.setOrigin(10, 10);
+		shape.setPosition(sf::Vector2f(mainCircle.position.x, mainCircle.position.y));
+		maxSpeed = 200;
+	}
+
+	void draw(sf::RenderWindow *window) {
+		shape.setPosition(sf::Vector2f(mainCircle.position.x, mainCircle.position.y));
+		window->draw(shape);
+	}
+};
+
+class Player : CircleDynamic{
+private:
+	float maxSpeed;
 	sf::CircleShape shape;
 	sf::Clock clock;
 
@@ -196,9 +228,7 @@ private:
 		}
 
 		if (Acceleration.x != 0 || Acceleration.y != 0) {
-			orientation = Acceleration.getOrientation();
 			speed = Acceleration.setLength(maxSpeed);
-			CheckCollision();
 		}
 		else {
 			speed = Vec2f();
@@ -210,7 +240,6 @@ public:
 		mainCircle.position.x = 50;
 		mainCircle.position.y = 500;
 		mainCircle.rayon = 10;
-		orientation = 0;
 
 		shape.setRadius(mainCircle.rayon);
 		shape.setOrigin(10, 10);
@@ -244,6 +273,7 @@ int main() {
 		unsigned int width = 620, height = 620;
 
 		sf::RenderWindow window(sf::VideoMode(width, height), "BlobEngine test", sf::Style::Close, settings);
+		window.setFramerateLimit(60);
 
 		CollisionDetector collisionDetector;
 
@@ -251,9 +281,11 @@ int main() {
 
 		LineObject line(300, 50, 300, 150);
 
-		std::list<Box> boxs;
+		std::list<Box2> boxs;
 
 		Player player;
+
+		BounceBall bounceBall;
 
 		Box2 box2(Point2f(500, 500));
 
@@ -273,7 +305,7 @@ int main() {
 			window.clear();
 
 			sf::Keyboard::Key Key;
-			sf::Event event;
+			sf::Event event{};
 			sf::Mouse::Button mouseButton;
 
 			while (window.pollEvent(event)) {
@@ -337,6 +369,8 @@ int main() {
 								break;
 						}
 						break;
+					default:
+						break;
 				}
 			}
 
@@ -345,6 +379,8 @@ int main() {
 
 			Collision c(object.getCircle(), target.getCircle(), object.getMove());
 
+			Vec2f useless;
+
 			if (c.hitTarget()) {
 				target.setColor(sf::Color::Red);
 
@@ -352,11 +388,13 @@ int main() {
 				hitPoint.setColor(sf::Color::Yellow);
 				hitPoint.draw(&window);
 
-				Vec2f useless;
-
 				CircleObject rollPoint(object.getCircle().position + c.getRoll(&useless), object.getCircle().rayon);
 				rollPoint.setColor(sf::Color::Yellow);
 				rollPoint.draw(&window);
+
+				CircleObject bouncePoint(object.getCircle().position + c.getBounce(&useless), object.getCircle().rayon);
+				bouncePoint.setColor(sf::Color::Magenta);
+				bouncePoint.draw(&window);
 			} else {
 				target.setColor(sf::Color::Green);
 			}
@@ -370,11 +408,13 @@ int main() {
 				hitPoint.setColor(sf::Color::Yellow);
 				hitPoint.draw(&window);
 
-				Vec2f useless;
-
 				CircleObject rollPoint(object.getCircle().position + c2.getRoll(&useless), object.getCircle().rayon);
 				rollPoint.setColor(sf::Color::Yellow);
 				rollPoint.draw(&window);
+
+				CircleObject bouncePoint(object.getCircle().position + c2.getBounce(&useless), object.getCircle().rayon);
+				bouncePoint.setColor(sf::Color::Magenta);
+				bouncePoint.draw(&window);
 			} else {
 				line.setColor(sf::Color::Green);
 			}
@@ -384,19 +424,24 @@ int main() {
 			target.draw(&window);
 
 			//test cd
-			collisionDetector.update();
+			if(collisionDetector.update()){
+				window.setTitle(sf::String(std::to_string(collisionDetector.getFPS())));
+			}
 
-			for(Box box : boxs)
-				box.draw(&window);
+			std::list<Box2>::iterator it;
+			for (it = boxs.begin(); it != boxs.end(); ++it){
+				it->draw(&window);
+			}
 
 			player.draw(&window);
+
+			bounceBall.draw(&window);
 
 			box2.draw(&window);
 
 			window.display();
 		}
-	}
-	catch (std::exception &e){
+	} catch (std::exception &e) {
 		std::cout << e.what() << std::endl;
 	}
 	return 0;
