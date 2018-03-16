@@ -281,7 +281,7 @@ int main() {
 
 		LineObject line(300, 50, 300, 150);
 
-		std::list<Box2> boxs;
+		std::list<Box> boxs;
 
 		Player player;
 
@@ -377,7 +377,9 @@ int main() {
 			if (left)
 				object.setDestination(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
-			Collision c(object.getCircle(), target.getCircle(), object.getMove());
+			PhysicalObject reallyUseless(0);
+
+			Collision c(object.getCircle(), target.getCircle(), object.getMove(), &reallyUseless);
 
 			Vec2f useless;
 
@@ -399,7 +401,7 @@ int main() {
 				target.setColor(sf::Color::Green);
 			}
 
-			Collision c2(object.getCircle(), line.getLine(), object.getMove());
+			Collision c2(object.getCircle(), line.getLine(), object.getMove(), &reallyUseless);
 
 			if (c2.hitTarget()) {
 				line.setColor(sf::Color::Red);
@@ -428,8 +430,7 @@ int main() {
 				window.setTitle(sf::String(std::to_string(collisionDetector.getFPS())));
 			}
 
-			std::list<Box2>::iterator it;
-			for (it = boxs.begin(); it != boxs.end(); ++it){
+			for (auto it = boxs.begin(); it != boxs.end(); ++it){
 				it->draw(&window);
 			}
 
