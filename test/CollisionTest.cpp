@@ -1,114 +1,9 @@
 #include <iostream>
+#include <list>
 #include <SFML/Graphics.hpp>
-#include "../BlobEngine/CollisionClass.hpp"
+#include <BlobEngine/CollisionDetector.hpp>
 
 using namespace BlobEngine;
-
-class CircleObject{
-private:
-	Circle circle;
-	sf::CircleShape circleShape;
-	Line move;
-	sf::RectangleShape line;
-
-public:
-
-	explicit CircleObject(int x, int y, int r) {
-		circle.position.x = x;
-		circle.position.y = y;
-		circle.rayon = r;
-
-		circleShape.setRadius(r);
-		circleShape.setOrigin(circle.rayon, circle.rayon);
-		circleShape.setPosition(circle.position.x, circle.position.y);
-		circleShape.setFillColor(sf::Color::Green);
-	}
-
-	explicit CircleObject(Point2f p, float r) {
-		circle.position = p;
-		circle.rayon = r;
-
-		circleShape.setRadius(r);
-		circleShape.setOrigin(circle.rayon, circle.rayon);
-		circleShape.setPosition(circle.position.x, circle.position.y);
-		circleShape.setFillColor(sf::Color::Green);
-	}
-
-	explicit CircleObject(int x, int y, int r, int mx, int my) : move(Point2f(x, y), Point2f(mx, my)) {
-
-		line.setPosition(x, y);
-		line.setSize(sf::Vector2f(move.Length(), 4));
-		line.setOrigin(0, 2);
-		line.setFillColor(sf::Color::Blue);
-		line.setRotation(move.getOrientation() * 180 / PI);
-
-		circle.position.x = x;
-		circle.position.y = y;
-		circle.rayon = r;
-
-		circleShape.setRadius(r);
-		circleShape.setOrigin(circle.rayon, circle.rayon);
-		circleShape.setPosition(circle.position.x, circle.position.y);
-		circleShape.setFillColor(sf::Color::White);
-	}
-
-	void draw(sf::RenderWindow *window) {
-		window->draw(circleShape);
-		window->draw(line);
-	}
-
-	Circle getCircle() {
-		return circle;
-	}
-
-	Vec2f getMove() {
-		return move.getVector();
-	}
-
-	void setDestination(int x, int y) {
-		move.pointB.x = x;
-		move.pointB.y = y;
-		line.setSize(sf::Vector2f(move.Length(), 4));
-		line.setRotation(move.getOrientation() * 180 / PI);
-		//std::cout << move.getVector().x << ":" << move.getVector().y << " --> " << move.getOrientation() * 180 / PI << std::endl;
-	}
-
-	void setColor(sf::Color c){
-		circleShape.setFillColor(c);
-	}
-};
-
-class LineObject {
-private:
-	Line line;
-	sf::RectangleShape rectangleShape;
-
-public:
-
-	explicit LineObject(int ax, int ay, int bx, int by) {
-		line.pointA.x = ax;
-		line.pointA.y = ay;
-		line.pointB.x = bx;
-		line.pointB.y = by;
-
-		rectangleShape.setSize(sf::Vector2f(line.Length(), line.Length()));
-		rectangleShape.setPosition(ax, ay);
-		rectangleShape.setFillColor(sf::Color::Green);
-	}
-
-	void draw(sf::RenderWindow *window){
-		window->draw(rectangleShape);
-	}
-
-	void setColor(sf::Color c){
-		rectangleShape.setFillColor(c);
-	}
-
-	Line getLine() {
-		return line;
-	}
-};
-//Collosion D test
 
 enum directions{
 	UP = 0,
@@ -117,7 +12,7 @@ enum directions{
 	RIGHT = 3
 };
 
-class Box : LineStatic{
+class Box : public LineStatic{
 private:
 	sf::RectangleShape shape;
 
@@ -145,7 +40,7 @@ public:
 	}
 };
 
-class Box2 : CircleStatic{
+class Box2 : public CircleStatic{
 private:
 	sf::CircleShape shape;
 
@@ -166,7 +61,7 @@ public:
 	}
 };
 
-class BounceBall : CircleDynamic{
+class BounceBall : public CircleDynamic{
 private:
 	float maxSpeed, orientation;
 	sf::CircleShape shape;
@@ -198,7 +93,7 @@ public:
 	}
 };
 
-class Player : CircleDynamic{
+class Player : public CircleDynamic{
 private:
 	float maxSpeed;
 	sf::CircleShape shape;
@@ -266,7 +161,6 @@ public:
 int main() {
 
 	try {
-
 		sf::ContextSettings settings;
 		settings.antialiasingLevel = 8;
 
@@ -277,29 +171,34 @@ int main() {
 
 		CollisionDetector collisionDetector;
 
-		CircleObject object(50, 50, 25, 20, 20), target(300, 300, 50);
-
-		LineObject line(300, 50, 300, 150);
-
 		std::list<Box> boxs;
 
 		Player player;
+		collisionDetector.addObject(&player);
 
 		BounceBall bounceBall;
+		collisionDetector.addObject(&bounceBall);
 
 		Box2 box2(Point2f(500, 500));
+		collisionDetector.addObject(&box2);
 
 		for (int i = 0; i < width; i += 20) {
 			boxs.emplace_back(Point2f(10 + i, 410));
+			collisionDetector.addObject(&boxs.back());
+
 			boxs.emplace_back(Point2f(10 + i, height - 10));
+			collisionDetector.addObject(&boxs.back());
 		}
 
 		for (int i = 420; i < height - 20; i += 20) {
 			boxs.emplace_back(Point2f(10, 10 + i));
+			collisionDetector.addObject(&boxs.back());
+
 			boxs.emplace_back(Point2f(width - 10, 10 + i));
+			collisionDetector.addObject(&boxs.back());
 		}
 
-		bool left = false;
+		int count = 0;
 
 		while (window.isOpen()) {
 			window.clear();
@@ -312,22 +211,6 @@ int main() {
 				switch (event.type) {
 					case sf::Event::Closed :
 						window.close();
-						break;
-					case sf::Event::MouseButtonPressed :
-						mouseButton = event.mouseButton.button;
-						switch (mouseButton) {
-							case sf::Mouse::Left :
-								left = true;
-								break;
-						}
-						break;
-					case sf::Event::MouseButtonReleased :
-						mouseButton = event.mouseButton.button;
-						switch (mouseButton) {
-							case sf::Mouse::Left :
-								left = false;
-								break;
-						}
 						break;
 					case sf::Event::KeyPressed :
 						Key = event.key.code;
@@ -374,61 +257,13 @@ int main() {
 				}
 			}
 
-			if (left)
-				object.setDestination(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+			collisionDetector.update();
 
-			PhysicalObject reallyUseless(0);
-
-			Collision c(object.getCircle(), target.getCircle(), object.getMove(), &reallyUseless);
-
-			Vec2f useless;
-
-			if (c.hitTarget()) {
-				target.setColor(sf::Color::Red);
-
-				CircleObject hitPoint(object.getCircle().position + c.vecAF, object.getCircle().rayon);
-				hitPoint.setColor(sf::Color::Yellow);
-				hitPoint.draw(&window);
-
-				CircleObject rollPoint(object.getCircle().position + c.getRoll(&useless), object.getCircle().rayon);
-				rollPoint.setColor(sf::Color::Yellow);
-				rollPoint.draw(&window);
-
-				CircleObject bouncePoint(object.getCircle().position + c.getBounce(&useless), object.getCircle().rayon);
-				bouncePoint.setColor(sf::Color::Magenta);
-				bouncePoint.draw(&window);
-			} else {
-				target.setColor(sf::Color::Green);
-			}
-
-			Collision c2(object.getCircle(), line.getLine(), object.getMove(), &reallyUseless);
-
-			if (c2.hitTarget()) {
-				line.setColor(sf::Color::Red);
-
-				CircleObject hitPoint(object.getCircle().position + c2.vecAF, object.getCircle().rayon);
-				hitPoint.setColor(sf::Color::Yellow);
-				hitPoint.draw(&window);
-
-				CircleObject rollPoint(object.getCircle().position + c2.getRoll(&useless), object.getCircle().rayon);
-				rollPoint.setColor(sf::Color::Yellow);
-				rollPoint.draw(&window);
-
-				CircleObject bouncePoint(object.getCircle().position + c2.getBounce(&useless), object.getCircle().rayon);
-				bouncePoint.setColor(sf::Color::Magenta);
-				bouncePoint.draw(&window);
-			} else {
-				line.setColor(sf::Color::Green);
-			}
-
-			line.draw(&window);
-			object.draw(&window);
-			target.draw(&window);
-
-			//test cd
-			if(collisionDetector.update()){
+			if(count == 60){
 				window.setTitle(sf::String(std::to_string(collisionDetector.getFPS())));
+				count = 0;
 			}
+			count++;
 
 			for (auto it = boxs.begin(); it != boxs.end(); ++it){
 				it->draw(&window);

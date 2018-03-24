@@ -31,20 +31,24 @@ namespace BlobEngine {
 	void CollisionDetector::checkCollision(CircleDynamic *object) {
 
 		Vec2f frameMove = object->speed * timeFlow;
+		bool hit;
+		//do {
 
-		bool hit = false;
-
-		do {
-			std::list<Hit> collisionList{};
-			PhysicalObject *objectList = nullptr;
+			Hit* lastHit = nullptr;
+			PhysicalObject *lastHitTarget = nullptr;
 
 			for (CircleDynamic *target : circleDynamicList) {
 				if (target != object) {
 					Hit c(object->mainCircle, target->mainCircle, frameMove);
 
 					if (c.hitTarget()) {
-						collisionList.emplace_back(c);
-						objectList = target;
+						if(lastHit == nullptr){
+							lastHit = &c;
+							lastHitTarget = target;
+						} else if(c.isCloserObstacle(*lastHit)) {
+							lastHit = &c;
+							lastHitTarget = target;
+						}
 					}
 				}
 			}
@@ -53,8 +57,13 @@ namespace BlobEngine {
 				Hit c(object->mainCircle, target->mainCircle, frameMove);
 
 				if (c.hitTarget()) {
-					collisionList.emplace_back(c);
-					objectList = target;
+					if(lastHit == nullptr){
+						lastHit = &c;
+						lastHitTarget = target;
+					} else if(c.isCloserObstacle(*lastHit)) {
+						lastHit = &c;
+						lastHitTarget = target;
+					}
 				}
 			}
 
@@ -63,44 +72,43 @@ namespace BlobEngine {
 					Hit c(object->mainCircle, line, frameMove);
 
 					if (c.hitTarget()) {
-						collisionList.emplace_back(c);
-						objectList = target;
+						if(lastHit == nullptr){
+							lastHit = &c;
+							lastHitTarget = target;
+						} else if(c.isCloserObstacle(*lastHit)) {
+							lastHit = &c;
+							lastHitTarget = target;
+						}
 					}
 				}
 			}
 
-			if (collisionList.size() > 1) {
-				collisionList.sort(Hit::isCloserObstacle);
-			}
-
-			if (!collisionList.empty()) {
+			if (lastHit != nullptr) {
 				hit = true;
 
-				auto it = collisionList.front();
+				object->mainCircle.position = object->mainCircle.position + lastHit->getHitPoint();
 
-				objectList->hit(*object);
-
-				object->mainCircle.position = object->mainCircle.position + it.getHitPoint();
-
-				switch (object->hit(*objectList)) {
+				switch (object->hit(*lastHitTarget)) {
 					case BOUNCE:
-						frameMove = it.getBounce(&object->speed);
+						frameMove = lastHit->getBounce(&object->speed);
 						break;
 					case STOP:
 						frameMove.reset();
 						object->speed.reset();
 						break;
 					case ROLL:
-						frameMove = it.getRoll(&object->speed);
+						frameMove = lastHit->getRoll(&object->speed);
 						break;
 					case IGNORE:
-						frameMove = frameMove - it.getHitPoint();
+						frameMove = frameMove - lastHit->getHitPoint();
 						break;
 				}
+
+				object->mainCircle.position = object->mainCircle.position + frameMove;
 			} else {
 				object->mainCircle.position = object->mainCircle.position + frameMove;
 				hit = false;
 			}
-		}while((!hit) && frameMove.isNull());
+		//}while(hit && !frameMove.isNull());
 	}
 }

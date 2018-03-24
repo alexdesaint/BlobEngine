@@ -54,8 +54,8 @@ namespace BlobEngine {
 			return vecAF;
 		}
 
-		static bool isCloserObstacle(Hit first, Hit second) {
-			return (first.vecAF.length2() < second.vecAF.length2());
+		bool isCloserObstacle(Hit second) {
+			return (vecAF.length2() < second.vecAF.length2());
 		}
 	};
 }

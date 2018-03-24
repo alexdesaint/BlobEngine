@@ -63,6 +63,7 @@ namespace BlobEngine {
 	};
 
 	class CircleStatic : PhysicalObject {
+		friend CollisionDetector;
 	protected:
 		Circle mainCircle{};
 		//std::list<Circle> circles{};
@@ -76,6 +77,7 @@ namespace BlobEngine {
 	};
 
 	class CircleDynamic : PhysicalObject {
+		friend CollisionDetector;
 	protected:
 		Vec2f speed{};
 		Circle mainCircle{};
@@ -93,6 +95,7 @@ namespace BlobEngine {
 	};
 
 	class LineStatic  : PhysicalObject {
+		friend CollisionDetector;
 	protected:
 		std::deque<Line> lines{};
 
