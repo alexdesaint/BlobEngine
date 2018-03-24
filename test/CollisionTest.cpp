@@ -265,8 +265,8 @@ int main() {
 			}
 			count++;
 
-			for (auto it = boxs.begin(); it != boxs.end(); ++it){
-				it->draw(&window);
+			for (auto &box : boxs) {
+				box.draw(&window);
 			}
 
 			player.draw(&window);

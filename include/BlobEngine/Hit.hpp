@@ -34,6 +34,8 @@ namespace BlobEngine {
 
 		void load(Circle object, Line target, Vec2f frameMove);
 
+		Hit() {};
+		
 		Hit(Circle object, Circle circleTarget, Vec2f frameMove) : frameMove(frameMove) {
 			load(object, circleTarget, frameMove);
 		}

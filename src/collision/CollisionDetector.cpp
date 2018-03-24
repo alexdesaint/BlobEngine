@@ -34,7 +34,7 @@ namespace BlobEngine {
 		bool hit;
 		//do {
 
-			Hit* lastHit = nullptr;
+			Hit lastHit;
 			PhysicalObject *lastHitTarget = nullptr;
 
 			for (CircleDynamic *target : circleDynamicList) {
@@ -42,11 +42,11 @@ namespace BlobEngine {
 					Hit c(object->mainCircle, target->mainCircle, frameMove);
 
 					if (c.hitTarget()) {
-						if(lastHit == nullptr){
-							lastHit = &c;
+						if(lastHitTarget == nullptr){
+							lastHit = c;
 							lastHitTarget = target;
-						} else if(c.isCloserObstacle(*lastHit)) {
-							lastHit = &c;
+						} else if(c.isCloserObstacle(lastHit)) {
+							lastHit = c;
 							lastHitTarget = target;
 						}
 					}
@@ -57,11 +57,11 @@ namespace BlobEngine {
 				Hit c(object->mainCircle, target->mainCircle, frameMove);
 
 				if (c.hitTarget()) {
-					if(lastHit == nullptr){
-						lastHit = &c;
+					if(lastHitTarget == nullptr){
+						lastHit = c;
 						lastHitTarget = target;
-					} else if(c.isCloserObstacle(*lastHit)) {
-						lastHit = &c;
+					} else if(c.isCloserObstacle(lastHit)) {
+						lastHit = c;
 						lastHitTarget = target;
 					}
 				}
@@ -72,35 +72,35 @@ namespace BlobEngine {
 					Hit c(object->mainCircle, line, frameMove);
 
 					if (c.hitTarget()) {
-						if(lastHit == nullptr){
-							lastHit = &c;
+						if(lastHitTarget == nullptr){
+							lastHit = c;
 							lastHitTarget = target;
-						} else if(c.isCloserObstacle(*lastHit)) {
-							lastHit = &c;
+						} else if(c.isCloserObstacle(lastHit)) {
+							lastHit = c;
 							lastHitTarget = target;
 						}
 					}
 				}
 			}
 
-			if (lastHit != nullptr) {
+			if (lastHitTarget != nullptr) {
 				hit = true;
 
-				object->mainCircle.position = object->mainCircle.position + lastHit->getHitPoint();
+				object->mainCircle.position = object->mainCircle.position + lastHit.getHitPoint();
 
 				switch (object->hit(*lastHitTarget)) {
 					case BOUNCE:
-						frameMove = lastHit->getBounce(&object->speed);
+						frameMove = lastHit.getBounce(&object->speed);
 						break;
 					case STOP:
 						frameMove.reset();
 						object->speed.reset();
 						break;
 					case ROLL:
-						frameMove = lastHit->getRoll(&object->speed);
+						frameMove = lastHit.getRoll(&object->speed);
 						break;
 					case IGNORE:
-						frameMove = frameMove - lastHit->getHitPoint();
+						frameMove = frameMove - lastHit.getHitPoint();
 						break;
 				}
 
