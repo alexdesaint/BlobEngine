@@ -19,9 +19,10 @@ namespace BlobEngine {
 
 	class PhysicalObject{
 		friend CollisionDetector;
-	protected:
+	public:
 		unsigned int objectType;
-
+		
+	protected:
 		explicit PhysicalObject(unsigned int objectType) : objectType(objectType) { }
 
 		std::deque<PhysicalObject*>::iterator elementIt;

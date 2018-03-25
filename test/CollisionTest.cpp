@@ -71,14 +71,14 @@ private:
 	}
 public:
 
-	explicit BounceBall() : CircleDynamic(0) {
+	explicit BounceBall(int x, int y, int r) : CircleDynamic(0) {
 
 		speed.x = 400;
 		speed.y = 400;
 
-		mainCircle.position.x = 100;
-		mainCircle.position.y = 500;
-		mainCircle.rayon = 10;
+		mainCircle.position.x = x;
+		mainCircle.position.y = y;
+		mainCircle.rayon = r;
 		orientation = 0;
 
 		shape.setRadius(mainCircle.rayon);
@@ -131,10 +131,10 @@ private:
 	}
 public:
 
-	explicit Player() : CircleDynamic(0) {
-		mainCircle.position.x = 50;
-		mainCircle.position.y = 500;
-		mainCircle.rayon = 10;
+	explicit Player(int x, int y, int r) : CircleDynamic(0) {
+		mainCircle.position.x = x;
+		mainCircle.position.y = y;
+		mainCircle.rayon = r;
 
 		shape.setRadius(mainCircle.rayon);
 		shape.setOrigin(10, 10);
@@ -164,7 +164,7 @@ int main() {
 		sf::ContextSettings settings;
 		settings.antialiasingLevel = 8;
 
-		unsigned int width = 620, height = 620;
+		unsigned int width = 620, height = 220;
 
 		sf::RenderWindow window(sf::VideoMode(width, height), "BlobEngine test", sf::Style::Close, settings);
 		window.setFramerateLimit(60);
@@ -173,28 +173,36 @@ int main() {
 
 		std::list<Box> boxs;
 
-		Player player;
+		Player player(width/4, height/2, 10);
 		collisionDetector.addObject(&player);
 
-		BounceBall bounceBall;
+		BounceBall bounceBall(3*width/4, height/2, 10);
 		collisionDetector.addObject(&bounceBall);
 
-		Box2 box2(Point2f(500, 500));
+		Box2 box2(Point2f(width/2, height/2));
 		collisionDetector.addObject(&box2);
 
 		for (int i = 0; i < width; i += 20) {
-			boxs.emplace_back(Point2f(10 + i, 410));
+			boxs.emplace_back(Point2f(10 + i, 10));
 			collisionDetector.addObject(&boxs.back());
 
 			boxs.emplace_back(Point2f(10 + i, height - 10));
 			collisionDetector.addObject(&boxs.back());
 		}
 
-		for (int i = 420; i < height - 20; i += 20) {
+		for (int i = 20; i < height - 20; i += 20) {
 			boxs.emplace_back(Point2f(10, 10 + i));
 			collisionDetector.addObject(&boxs.back());
 
 			boxs.emplace_back(Point2f(width - 10, 10 + i));
+			collisionDetector.addObject(&boxs.back());
+		}
+		
+		for (int i = 40; i < height - 40; i += 40) {
+			boxs.emplace_back(Point2f(50, 10 + i));
+			collisionDetector.addObject(&boxs.back());
+			
+			boxs.emplace_back(Point2f(width - 50, 10 + i));
 			collisionDetector.addObject(&boxs.back());
 		}
 

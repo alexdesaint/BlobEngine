@@ -14,5 +14,5 @@ subdirs(src)
 subdirs(test)
 
 enable_testing()
-#add_test(NAME MyTest COMMAND Test)
-#add_test(NAME HitTest COMMAND HitTest)
+add_test(NAME CollisionTest COMMAND CollisionTest)
+add_test(NAME HitTest COMMAND HitTest)

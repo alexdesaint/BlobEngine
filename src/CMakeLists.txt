@@ -5,4 +5,4 @@ add_subdirectory(collision)
 
 add_library(BlobEngine)
 set_target_properties(BlobEngine PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(BlobEngine CollisionDetector)
+target_link_libraries(BlobEngine Collision Geometrie BlobException)
