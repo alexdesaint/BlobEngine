@@ -114,9 +114,9 @@ namespace BlobEngine {
 		unsigned int frameCount = 0;
 		float frameCountTimer = 0;
 
-		std::deque<CircleStatic*> circleStaticList;
-		std::deque<CircleDynamic*> circleDynamicList;
-		std::deque<LineStatic*> lineStaticList;
+		std::deque<CircleStatic*> circleStaticList{};
+		std::deque<CircleDynamic*> circleDynamicList{};
+		std::deque<LineStatic*> lineStaticList{};
 
 		float getElapsedTime();
 

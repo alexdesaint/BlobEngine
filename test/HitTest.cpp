@@ -174,47 +174,70 @@ int main() {
 
 			if (left)
 				object.setDestination(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-			
-			Vec2f useless;
-			
-			Hit lastHit;
-			CircleObject *lastHitCircle = nullptr;
-			
-			for(auto &circle : circleList){
+
+			for (auto &circle : circleList) {
 				circle.setColor(sf::Color::Green);
-				
-				Hit c(object.getCircle(), circle.getCircle(), object.getMove());
-				
-				if (c.hitTarget()) {
-					
-					if (lastHitCircle == nullptr) {
-						lastHit = c;
-						lastHitCircle = &circle;
-					} else if (c.isCloserObstacle(lastHit)) {
-						lastHit = c;
-						lastHitCircle = &circle;
+			}
+			Vec2f useless;
+
+			bool hit;
+			int count = 0;
+
+			Vec2f frameMove = object.getMove();
+			Circle nextCircle = object.getCircle();
+
+			do {
+
+				Hit lastHit;
+				CircleObject *lastHitCircle = nullptr;
+
+				for (auto &circle : circleList) {
+
+					Hit c(nextCircle, circle.getCircle(), frameMove);
+
+					if (c.hitTarget()) {
+
+						if (lastHitCircle == nullptr) {
+							lastHit = c;
+							lastHitCircle = &circle;
+						} else if (c.isCloserObstacle(lastHit)) {
+							lastHit = c;
+							lastHitCircle = &circle;
+						}
 					}
 				}
-			}
-			
-			if(lastHitCircle != nullptr) {
-				lastHitCircle->setColor(sf::Color::Red);
 				
-				Vec2f vecToHitPoint = object.getCircle().position + lastHit.getHitPoint();
+				Vec2f vecToHitPoint = nextCircle.position + lastHit.getHitPoint();
 				float rayon = object.getCircle().rayon;
-				
-				CircleObject hitPoint(vecToHitPoint, rayon);
-				hitPoint.setColor(sf::Color::Yellow);
-				hitPoint.draw(&window);
-				
-				CircleObject rollPoint(vecToHitPoint + lastHit.getRoll(&useless), rayon);
-				rollPoint.setColor(sf::Color::Yellow);
-				rollPoint.draw(&window);
-				
-				CircleObject bouncePoint(vecToHitPoint + lastHit.getBounce(&useless), rayon);
-				bouncePoint.setColor(sf::Color::Magenta);
-				bouncePoint.draw(&window);
-			}
+
+				if (lastHitCircle != nullptr) {
+					hit = true;
+
+					lastHitCircle->setColor(sf::Color::Red);
+
+					CircleObject hitPoint(vecToHitPoint, rayon);
+					hitPoint.setColor(sf::Color::Yellow);
+					hitPoint.draw(&window);
+
+					//CircleObject rollPoint(vecToHitPoint + lastHit.getRoll(&useless), rayon);
+					//rollPoint.setColor(sf::Color::Yellow);
+					//rollPoint.draw(&window);
+
+
+
+					frameMove = lastHit.getBounce(&useless);
+
+					nextCircle.position = vecToHitPoint;
+				}else{
+					hit = false;
+
+					CircleObject bouncePoint(vecToHitPoint + frameMove, rayon);
+					bouncePoint.setColor(sf::Color::Magenta);
+					bouncePoint.draw(&window);
+				}
+
+				count++;
+			}while(hit && count < 7);
 
 			Hit c2(object.getCircle(), line.getLine(), object.getMove());
 

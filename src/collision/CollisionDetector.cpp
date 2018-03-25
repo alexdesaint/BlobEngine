@@ -31,15 +31,17 @@ namespace BlobEngine {
 	void CollisionDetector::checkCollision(CircleDynamic *object) {
 
 		Vec2f frameMove = object->speed * timeFlow;
+		Circle nextCircle = object->mainCircle;
 		bool hit;
-		//do {
+		unsigned int count = 0;
+		do {
 
 			Hit lastHit;
 			PhysicalObject *lastHitTarget = nullptr;
 
 			for (CircleDynamic *target : circleDynamicList) {
 				if (target != object) {
-					Hit c(object->mainCircle, target->mainCircle, frameMove);
+					Hit c(nextCircle, target->mainCircle, frameMove);
 
 					if (c.hitTarget()) {
 						if(lastHitTarget == nullptr){
@@ -54,7 +56,7 @@ namespace BlobEngine {
 			}
 
 			for (CircleStatic *target : circleStaticList) {
-				Hit c(object->mainCircle, target->mainCircle, frameMove);
+				Hit c(nextCircle, target->mainCircle, frameMove);
 
 				if (c.hitTarget()) {
 					if(lastHitTarget == nullptr){
@@ -69,7 +71,7 @@ namespace BlobEngine {
 
 			for (LineStatic *target : lineStaticList) {
 				for (Line line : target->lines) {
-					Hit c(object->mainCircle, line, frameMove);
+					Hit c(nextCircle, line, frameMove);
 
 					if (c.hitTarget()) {
 						if(lastHitTarget == nullptr){
@@ -103,12 +105,12 @@ namespace BlobEngine {
 						frameMove = frameMove - lastHit.getHitPoint();
 						break;
 				}
-
-				object->mainCircle.position = object->mainCircle.position + frameMove;
 			} else {
 				object->mainCircle.position = object->mainCircle.position + frameMove;
 				hit = false;
 			}
-		//}while(hit && !frameMove.isNull());
+
+			count++;
+		}while(hit && !frameMove.isNull() && count < 50);
 	}
 }
