@@ -12,9 +12,44 @@ enum directions{
 	RIGHT = 3
 };
 
-class Box : public LineStatic{
+class Box : public LineStatic {
 private:
 	sf::RectangleShape shape;
+
+	int colorState = 0;
+
+	Reaction hit(const BlobEngine::PhysicalObject& from) {
+
+		sf::Color c = shape.getFillColor();
+
+		switch (colorState){
+			case 0 :
+				c.r-=15;
+				c.g+=15;
+
+				if(c.g == 255)
+					colorState = 1;
+				break;
+			case 1 :
+				c.g-=15;
+				c.b+=15;
+
+				if(c.b == 255)
+					colorState = 2;
+				break;
+			case 2 :
+				c.b-=15;
+				c.r+=15;
+
+				if(c.r == 255)
+					colorState = 0;
+				break;
+		}
+
+		shape.setFillColor(c);
+
+		return IGNORE;
+	}
 
 public:
 	explicit Box(Point2f position) : LineStatic(0) {
@@ -22,7 +57,7 @@ public:
 		shape.setSize(sf::Vector2f(20, 20));
 		shape.setOrigin(10, 10);
 		shape.setPosition(sf::Vector2f(position.x, position.y));
-		shape.setFillColor(sf::Color(255, 150, 0));
+		shape.setFillColor(sf::Color(255, 0, 0));
 
 		Point2f a = position + Point2f(10, 10);
 		Point2f b = position + Point2f(10, -10);

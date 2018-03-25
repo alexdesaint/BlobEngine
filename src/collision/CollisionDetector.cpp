@@ -121,6 +121,8 @@ namespace BlobEngine {
 
 				object->mainCircle.position = object->mainCircle.position + lastHit.getHitPoint();
 
+				lastHitTarget->hit(*object);
+
 				switch (object->hit(*lastHitTarget)) {
 					case BOUNCE:
 						frameMove = lastHit.getBounce(&object->speed);
