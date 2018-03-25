@@ -174,42 +174,28 @@ int main() {
 		std::list<Box> boxs;
 
 		Player player(width/2, height/4, 10);
-		collisionDetector.addObject(&player);
 
 		BounceBall bounceBall(width/2, 3*height/4, 10);
-		collisionDetector.addObject(&bounceBall);
 
 		Box2 box1(Point2f(width/4, height/2));
-		collisionDetector.addObject(&box1);
 
 		Box2 box2(Point2f(width/2, height/2));
-		collisionDetector.addObject(&box2);
 
 		Box2 box3(Point2f(3*width/4, height/2));
-		collisionDetector.addObject(&box3);
 
 		for (int i = 0; i < width; i += 20) {
 			boxs.emplace_back(Point2f(10 + i, 10));
-			collisionDetector.addObject(&boxs.back());
-
 			boxs.emplace_back(Point2f(10 + i, height - 10));
-			collisionDetector.addObject(&boxs.back());
 		}
 
 		for (int i = 20; i < height - 20; i += 20) {
 			boxs.emplace_back(Point2f(10, 10 + i));
-			collisionDetector.addObject(&boxs.back());
-
 			boxs.emplace_back(Point2f(width - 10, 10 + i));
-			collisionDetector.addObject(&boxs.back());
 		}
 		
 		for (int i = 40; i < height - 40; i += 40) {
 			boxs.emplace_back(Point2f(50, 10 + i));
-			collisionDetector.addObject(&boxs.back());
-			
 			boxs.emplace_back(Point2f(width - 50, 10 + i));
-			collisionDetector.addObject(&boxs.back());
 		}
 
 		int count = 0;

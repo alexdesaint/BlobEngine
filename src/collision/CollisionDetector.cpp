@@ -11,11 +11,42 @@ namespace BlobEngine {
 
 //CircleStatic
 
+	void CircleStatic::enableCollision() {
+		CollisionDetector::circleStaticList.push_front(this);
+		elementIt = CollisionDetector::circleStaticList.begin();
+	}
+
+	void CircleStatic::disableCollision() {
+		CollisionDetector::circleStaticList.erase(elementIt);
+	}
+
 //CircleDynamic
+
+	void CircleDynamic::enableCollision() {
+		CollisionDetector::circleDynamicList.push_front(this);
+		elementIt = CollisionDetector::circleDynamicList.begin();
+	}
+
+	void CircleDynamic::disableCollision() {
+		CollisionDetector::circleDynamicList.erase(elementIt);
+	}
 
 //LineStatic
 
+	void LineStatic::enableCollision() {
+		CollisionDetector::lineStaticList.push_front(this);
+		elementIt = CollisionDetector::lineStaticList.begin();
+	}
+
+	void LineStatic::disableCollision() {
+		CollisionDetector::lineStaticList.erase(elementIt);
+	}
+
 //CollisionDetector
+
+	thread_local std::deque<CircleStatic*> CollisionDetector::circleStaticList{};
+	thread_local std::deque<CircleDynamic*> CollisionDetector::circleDynamicList{};
+	thread_local std::deque<LineStatic*> CollisionDetector::lineStaticList{};
 
 	float CollisionDetector::getElapsedTime() {
 		static std::chrono::high_resolution_clock::time_point lastFrameTime;
