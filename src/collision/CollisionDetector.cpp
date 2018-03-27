@@ -1,8 +1,8 @@
 #include <list>
+#include <chrono>
 
-#include <BlobEngine/Geometrie.hpp>
-#include <BlobEngine/Hit.hpp>
 #include <BlobEngine/CollisionDetector.hpp>
+
 
 
 namespace BlobEngine {
@@ -59,91 +59,77 @@ namespace BlobEngine {
 		return diff.count();
 	}
 
-	void CollisionDetector::checkCollision(CircleDynamic *object) {
+	PhysicalObject *CollisionDetector::getClosetObject(Circle object, Vec2f frameMove, Hit &hit) {
 
-		Vec2f frameMove = object->speed * timeFlow;
-		Circle nextCircle = object->mainCircle;
-		bool hit;
-		unsigned int count = 0;
-		do {
+		PhysicalObject *lastHitTarget = nullptr;
 
-			Hit lastHit;
-			PhysicalObject *lastHitTarget = nullptr;
+		for (CircleDynamic *target : circleDynamicList) {
+			Hit c(object, target->mainCircle, frameMove);
 
-			for (CircleDynamic *target : circleDynamicList) {
-				if (target != object) {
-					Hit c(nextCircle, target->mainCircle, frameMove);
-
-					if (c.hitTarget()) {
-						if(lastHitTarget == nullptr){
-							lastHit = c;
-							lastHitTarget = target;
-						} else if(c.isCloserObstacle(lastHit)) {
-							lastHit = c;
-							lastHitTarget = target;
-						}
-					}
+			if (c.hitTarget()) {
+				if (lastHitTarget == nullptr) {
+					hit = c;
+					lastHitTarget = target;
+				} else if (c.isCloserObstacle(hit)) {
+					hit = c;
+					lastHitTarget = target;
 				}
 			}
+		}
 
-			for (CircleStatic *target : circleStaticList) {
-				Hit c(nextCircle, target->mainCircle, frameMove);
+		for (CircleStatic *target : circleStaticList) {
+			Hit c(object, target->mainCircle, frameMove);
+
+			if (c.hitTarget()) {
+				if (lastHitTarget == nullptr) {
+					hit = c;
+					lastHitTarget = target;
+				} else if (c.isCloserObstacle(hit)) {
+					hit = c;
+					lastHitTarget = target;
+				}
+			}
+		}
+
+		for (LineStatic *target : lineStaticList) {
+			for (Line line : target->lines) {
+				Hit c(object, line, frameMove);
 
 				if (c.hitTarget()) {
-					if(lastHitTarget == nullptr){
-						lastHit = c;
+					if (lastHitTarget == nullptr) {
+						hit = c;
 						lastHitTarget = target;
-					} else if(c.isCloserObstacle(lastHit)) {
-						lastHit = c;
+					} else if (c.isCloserObstacle(hit)) {
+						hit = c;
 						lastHitTarget = target;
 					}
 				}
 			}
+		}
 
-			for (LineStatic *target : lineStaticList) {
-				for (Line line : target->lines) {
-					Hit c(nextCircle, line, frameMove);
+		return lastHitTarget;
+	}
 
-					if (c.hitTarget()) {
-						if(lastHitTarget == nullptr){
-							lastHit = c;
-							lastHitTarget = target;
-						} else if(c.isCloserObstacle(lastHit)) {
-							lastHit = c;
-							lastHitTarget = target;
-						}
-					}
-				}
-			}
+	void CollisionDetector::checkCollision(CircleDynamic &object) {
 
-			if (lastHitTarget != nullptr) {
-				hit = true;
+		Vec2f frameMove = object.speed * timeFlow;
+		Circle nextCircle = object.mainCircle;
+		Hit hit;
+		PhysicalObject *target;
 
-				object->mainCircle.position = object->mainCircle.position + lastHit.getHitPoint();
+		do {
+			target = getClosetObject(nextCircle, frameMove, hit);
 
-				lastHitTarget->hit(*object);
+			if (target != nullptr) {
+				object.mainCircle.position = object.mainCircle.position + hit.getVecToTarget();
 
-				switch (object->hit(*lastHitTarget)) {
-					case BOUNCE:
-						frameMove = lastHit.getBounce(&object->speed);
-						break;
-					case STOP:
-						frameMove.reset();
-						object->speed.reset();
-						break;
-					case ROLL:
-						frameMove = lastHit.getRoll(&object->speed);
-						break;
-					case IGNORE:
-						frameMove = frameMove - lastHit.getHitPoint();
-						break;
-				}
+				target->hit(object);
+
+				frameMove = hit.getReactionVec(object.hit(*target), object.speed);
 			} else {
-				object->mainCircle.position = object->mainCircle.position + frameMove;
-				hit = false;
+				object.mainCircle.position = object.mainCircle.position + frameMove;
 			}
 
-			count++;
-		}while(hit && !frameMove.isNull() && count < 50);
+		} while (target != nullptr && !object.speed.isNull());
 	}
 }

@@ -83,26 +83,37 @@ namespace BlobEngine {
 		}
 	}
 
-	Vec2f Hit::getRoll(Vec2f *speed) {
+	Vec2f Hit::getReactionVec(Reaction reaction, Vec2f &speed) {
+		Vec2f framemove{};
+		float speedLenght;
+		Vec2f u;
 
-		Vec2f u = n.rotate();
+		switch (reaction) {
+			case BOUNCE:
+				framemove = (n * (2 * n.scalaire(frameMove - vecAF)) - (frameMove - vecAF)) * -1.0f;// * frameMove;
 
-		*speed = u * u.scalaire(*speed);
+				speedLenght = speed.length();
 
-		Vec2f vecFH = u * u.scalaire(frameMove - vecAF);
+				speed = framemove;
 
-		return vecFH;
-	}
+				speed.setLength(speed.length());
 
-	Vec2f Hit::getBounce(Vec2f *speed) {
-		Vec2f vecFH = (n * (2 * n.scalaire(frameMove - vecAF)) - (frameMove - vecAF)) * -1.0f;// * frameMove;
+				break;
+			case STOP:
+				speed.reset();
+				break;
+			case ROLL:
+				u = n.rotate();
 
-		float speedLenght = speed->length();
+				speed = u * u.scalaire(speed);
 
-		*speed = vecFH;
+				framemove = u * u.scalaire(frameMove - vecAF);
+				break;
+			case IGNORE:
+				framemove = frameMove - getVecToTarget();
+				break;
+		}
 
-		speed->setLength(speedLenght);
-
-		return vecFH;
+		return framemove;
 	}
 }

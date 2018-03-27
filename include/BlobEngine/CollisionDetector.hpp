@@ -1,19 +1,12 @@
 #pragma once
 
-#include <chrono>
-#include <iostream>
 #include <deque>
-#include "Geometrie.hpp"
-#include "BlobException.hpp"
+#include <BlobEngine/Geometrie.hpp>
+#include <BlobEngine/Hit.hpp>
+#include <BlobEngine/BlobException.hpp>
+#include <BlobEngine/Reaction.hpp>
 
 namespace BlobEngine {
-
-	enum Reaction{
-		BOUNCE,
-		STOP,
-		ROLL,
-		IGNORE
-	};
 
 	class CollisionDetector;
 
@@ -54,7 +47,7 @@ namespace BlobEngine {
 		}
 	};
 
-	class CircleDynamic : PhysicalObject {
+	class CircleDynamic : public PhysicalObject {
 		friend CollisionDetector;
 	private:
 		std::deque<CircleDynamic*>::iterator elementIt{};
@@ -112,9 +105,12 @@ namespace BlobEngine {
 
 		float getElapsedTime();
 
-		void checkCollision(CircleDynamic *object);
-
 	public:
+
+		PhysicalObject *getClosetObject(Circle object, Vec2f frameMove, Hit &hit);
+
+		void checkCollision(CircleDynamic &object);
+
 		CollisionDetector() : timeFlow(getElapsedTime()) {}
 
 		void update() {
@@ -123,9 +119,9 @@ namespace BlobEngine {
 			if(timeFlow > 0.2f)
 				timeFlow = 0.2f;
 
-			for (CircleDynamic *object : circleDynamicList){
+			for (auto &object : circleDynamicList) {
 				if(!object->speed.isNull())
-					checkCollision(object);
+					checkCollision(*object);
 			}
 
 			frameCountTimer += timeFlow;

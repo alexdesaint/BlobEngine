@@ -2,75 +2,145 @@
 #include <list>
 #include <SFML/Graphics.hpp>
 #include <BlobEngine/Hit.hpp>
+#include <BlobEngine/CollisionDetector.hpp>
 
 using namespace BlobEngine;
 
-class CircleObject{
+class StaticLine {
 private:
-	Circle circle;
-	sf::CircleShape circleShape;
-	Line move;
 	sf::RectangleShape line;
+	sf::CircleShape base;
+public:
+	explicit StaticLine(int x, int y, int mx, int my, sf::Color color) {
+		Vec2f speed = Vec2f(Point2f(x, y), Point2f(mx, my));
+
+		line.setFillColor(color);
+		line.setPosition(x, y);
+		line.setSize(sf::Vector2f(speed.length(), 4));
+		line.setOrigin(0, 2);
+		line.setRotation(speed.getOrientationDeg());
+
+		base.setFillColor(color);
+		base.setPosition(x, y);
+		base.setRadius(2);
+		base.setOrigin(2, 2);
+	}
+
+	explicit StaticLine(Point2f o, Point2f d, sf::Color color) {
+		Vec2f speed = Vec2f(o, d);
+
+		line.setFillColor(color);
+
+		line.setPosition(o.x, o.y);
+		line.setSize(sf::Vector2f(speed.length(), 4));
+		line.setOrigin(0, 2);
+		line.setRotation(speed.getOrientationDeg());
+
+		base.setFillColor(color);
+		base.setPosition(o.x, o.y);
+		base.setRadius(2);
+		base.setOrigin(2, 2);
+	}
+
+	void draw(sf::RenderWindow *window) {
+		window->draw(line);
+		window->draw(base);
+	}
+
+	void update(float length, float orient) {
+		line.setSize(sf::Vector2f(length, 4));
+		line.setRotation(orient);
+	}
+};
+
+class MainCircle : public CircleDynamic {
+private:
+	sf::CircleShape circleShape;
+	StaticLine line;
 
 public:
 
-	explicit CircleObject(int x, int y, int r) {
-		circle.position.x = x;
-		circle.position.y = y;
-		circle.rayon = r;
-
-		circleShape.setRadius(r);
-		circleShape.setOrigin(circle.rayon, circle.rayon);
-		circleShape.setPosition(circle.position.x, circle.position.y);
-		circleShape.setFillColor(sf::Color::Green);
+	Reaction hit(const BlobEngine::PhysicalObject &from) override {
+		return BOUNCE;
 	}
 
-	explicit CircleObject(Point2f p, float r) {
-		circle.position = p;
-		circle.rayon = r;
+	explicit MainCircle(int x, int y, int r, int mx, int my) : CircleDynamic(0), line(x, y, mx, my, sf::Color::Blue) {
+
+		speed = Vec2f(Point2f(x, y), Point2f(mx, my));
+
+		mainCircle.position.x = x;
+		mainCircle.position.y = y;
+		mainCircle.rayon = r;
 
 		circleShape.setRadius(r);
-		circleShape.setOrigin(circle.rayon, circle.rayon);
-		circleShape.setPosition(circle.position.x, circle.position.y);
-		circleShape.setFillColor(sf::Color::Green);
-	}
-
-	explicit CircleObject(int x, int y, int r, int mx, int my) : move(Point2f(x, y), Point2f(mx, my)) {
-
-		line.setPosition(x, y);
-		line.setSize(sf::Vector2f(move.Length(), 4));
-		line.setOrigin(0, 2);
-		line.setFillColor(sf::Color::Blue);
-		line.setRotation(move.getOrientation() * 180 / PI);
-
-		circle.position.x = x;
-		circle.position.y = y;
-		circle.rayon = r;
-
-		circleShape.setRadius(r);
-		circleShape.setOrigin(circle.rayon, circle.rayon);
-		circleShape.setPosition(circle.position.x, circle.position.y);
+		circleShape.setOrigin(mainCircle.rayon, mainCircle.rayon);
+		circleShape.setPosition(mainCircle.position.x, mainCircle.position.y);
 		circleShape.setFillColor(sf::Color::White);
 	}
 
 	void draw(sf::RenderWindow *window) {
 		window->draw(circleShape);
-		window->draw(line);
+		line.draw(window);
 	}
 
 	Circle getCircle() {
-		return circle;
+		return mainCircle;
 	}
 
 	Vec2f getMove() {
-		return move.getVector();
+		return speed;
 	}
 
 	void setDestination(int x, int y) {
-		move.pointB.x = x;
-		move.pointB.y = y;
-		line.setSize(sf::Vector2f(move.Length(), 4));
-		line.setRotation(move.getOrientation() * 180 / PI);
+		speed = Vec2f(mainCircle.position, Point2f(x, y));
+
+		line.update(speed.length(), speed.getOrientationDeg());
+	}
+
+	void setColor(sf::Color c) {
+		circleShape.setFillColor(c);
+	}
+};
+
+class StaticCircle : public CircleStatic {
+private:
+	sf::CircleShape circleShape;
+
+	Reaction hit(const BlobEngine::PhysicalObject &from) override {
+		circleShape.setFillColor(sf::Color::Red);
+
+		return IGNORE;
+	}
+
+public:
+
+	explicit StaticCircle(int x, int y, float r) : CircleStatic(0) {
+		mainCircle.position.x = x;
+		mainCircle.position.y = y;
+		mainCircle.rayon = r;
+
+		circleShape.setRadius(r);
+		circleShape.setOrigin(mainCircle.rayon, mainCircle.rayon);
+		circleShape.setPosition(mainCircle.position.x, mainCircle.position.y);
+		circleShape.setFillColor(sf::Color::Green);
+	}
+
+	explicit StaticCircle(Vec2f position, float r) : CircleStatic(0) {
+		mainCircle.position = position;
+		mainCircle.rayon = r;
+
+		circleShape.setRadius(r);
+		circleShape.setOrigin(mainCircle.rayon, mainCircle.rayon);
+		circleShape.setPosition(mainCircle.position.x, mainCircle.position.y);
+		circleShape.setFillColor(sf::Color::Green);
+	}
+
+	void draw(sf::RenderWindow *window) {
+		window->draw(circleShape);
+	}
+
+	Circle getCircle() {
+		return mainCircle;
 	}
 
 	void setColor(sf::Color c){
@@ -78,34 +148,44 @@ public:
 	}
 };
 
-class LineObject {
+class StaticRect : LineStatic {
 private:
-	Line line;
-	sf::RectangleShape rectangleShape;
+	sf::RectangleShape shape;
+
+	Reaction hit(const BlobEngine::PhysicalObject &from) override {
+		shape.setFillColor(sf::Color::Red);
+
+		return IGNORE;
+	}
 
 public:
 
-	explicit LineObject(int ax, int ay, int bx, int by) {
-		line.pointA.x = ax;
-		line.pointA.y = ay;
-		line.pointB.x = bx;
-		line.pointB.y = by;
+	explicit StaticRect(int x, int y, int r) : LineStatic(0) {
 
-		rectangleShape.setSize(sf::Vector2f(4, line.Length()));
-		rectangleShape.setPosition(ax, ay);
-		rectangleShape.setFillColor(sf::Color::Green);
+		shape.setSize(sf::Vector2f(r * 2, r * 2));
+		shape.setOrigin(r, r);
+		shape.setPosition(sf::Vector2f(x, y));
+		shape.setFillColor(sf::Color(255, 0, 0));
+
+		Vec2f position(x, y);
+
+		Point2f a = position + Point2f(r, r);
+		Point2f b = position + Point2f(r, -r);
+		Point2f c = position + Point2f(-r, -r);
+		Point2f d = position + Point2f(-r, r);
+
+		lines.emplace_back(a, b);
+		lines.emplace_back(b, c);
+		lines.emplace_back(c, d);
+		lines.emplace_back(d, a);
 	}
 
 	void draw(sf::RenderWindow *window){
-		window->draw(rectangleShape);
+		window->draw(shape);
 	}
 
 	void setColor(sf::Color c){
-		rectangleShape.setFillColor(c);
-	}
-
-	Line getLine() {
-		return line;
+		shape.setFillColor(c);
 	}
 };
 
@@ -115,24 +195,36 @@ int main() {
 		sf::ContextSettings settings;
 		settings.antialiasingLevel = 8;
 
-		unsigned int width = 600, height = 600;
+		unsigned int windowWidth = 600, windowHeight = 600, width = 440, height = 440, widthOff =
+				(windowWidth - width) / 2, heightOff = (windowHeight - height) / 2;
 
-		sf::RenderWindow window(sf::VideoMode(width, height), "BlobEngine test", sf::Style::Close, settings);
+		sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "BlobEngine test", sf::Style::Close,
+								settings);
 		window.setFramerateLimit(60);
 
-		CircleObject object(300, 300, 25, 40, 300);
-		
-		std::list<CircleObject> circleList;
-		
-		for(int i = 40; i < width/2; i += 80){
-			circleList.emplace_back(i, 40, 30);
-		}
-		
-		for(int i = 120; i < height; i += 80){
-			circleList.emplace_back(40, i, 30);
+		CollisionDetector collisionDetector;
+
+		MainCircle object(300, 300, 20, 580, 300);
+
+		std::list<StaticCircle> circleList;
+
+		for (int i = 20; i < width; i += 80) {
+			circleList.emplace_back(i + widthOff, 20 + heightOff, 20);
 		}
 
-		LineObject line(500, 450, 500, 550);
+		for (int i = 100; i < height - 80; i += 80) {
+			circleList.emplace_back(20 + widthOff, i + heightOff, 20);
+		}
+
+		std::list<StaticRect> rectList;
+
+		for (int i = 20; i < width; i += 80) {
+			rectList.emplace_back(i + widthOff, height - 20 + heightOff, 20);
+		}
+
+		for (int i = 100; i < height - 80; i += 80) {
+			rectList.emplace_back(width - 20 + widthOff, i + heightOff, 20);
+		}
 
 		bool left = false;
 
@@ -178,92 +270,57 @@ int main() {
 			for (auto &circle : circleList) {
 				circle.setColor(sf::Color::Green);
 			}
+			for (auto &r : rectList) {
+				r.setColor(sf::Color::Green);
+			}
+
 			Vec2f useless;
 
-			bool hit;
 			int count = 0;
-
+			PhysicalObject *target;
 			Vec2f frameMove = object.getMove();
 			Circle nextCircle = object.getCircle();
+			Hit hit;
 
 			do {
-
-				Hit lastHit;
-				CircleObject *lastHitCircle = nullptr;
-
-				for (auto &circle : circleList) {
-
-					Hit c(nextCircle, circle.getCircle(), frameMove);
-
-					if (c.hitTarget()) {
-
-						if (lastHitCircle == nullptr) {
-							lastHit = c;
-							lastHitCircle = &circle;
-						} else if (c.isCloserObstacle(lastHit)) {
-							lastHit = c;
-							lastHitCircle = &circle;
-						}
-					}
-				}
-				
-				Vec2f vecToHitPoint = nextCircle.position + lastHit.getHitPoint();
 				float rayon = object.getCircle().rayon;
 
-				if (lastHitCircle != nullptr) {
-					hit = true;
+				target = collisionDetector.getClosetObject(nextCircle, frameMove, hit);
 
-					lastHitCircle->setColor(sf::Color::Red);
+				if (target != nullptr) {
 
-					CircleObject hitPoint(vecToHitPoint, rayon);
+					target->hit(object);
+
+					frameMove = hit.getReactionVec(object.hit(*target), useless);
+
+					StaticLine line(nextCircle.position, nextCircle.position + hit.getVecToTarget(), sf::Color::Red);
+
+					nextCircle.position = nextCircle.position + hit.getVecToTarget();
+
+					StaticCircle hitPoint(nextCircle.position, rayon);
 					hitPoint.setColor(sf::Color::Yellow);
 					hitPoint.draw(&window);
-
-					//CircleObject rollPoint(vecToHitPoint + lastHit.getRoll(&useless), rayon);
-					//rollPoint.setColor(sf::Color::Yellow);
-					//rollPoint.draw(&window);
-
-
-
-					frameMove = lastHit.getBounce(&useless);
-
-					nextCircle.position = vecToHitPoint;
+					line.draw(&window);
 				}else{
-					hit = false;
-
-					CircleObject bouncePoint(vecToHitPoint + frameMove, rayon);
+					StaticCircle bouncePoint(nextCircle.position + frameMove, rayon);
 					bouncePoint.setColor(sf::Color::Magenta);
 					bouncePoint.draw(&window);
+
+					StaticLine line(nextCircle.position, nextCircle.position + frameMove, sf::Color::Red);
+					line.draw(&window);
 				}
 
 				count++;
-			}while(hit && count < 7);
+			} while (target != nullptr && count < 50);
 
-			Hit c2(object.getCircle(), line.getLine(), object.getMove());
-
-			if (c2.hitTarget()) {
-				line.setColor(sf::Color::Red);
-
-				CircleObject hitPoint(object.getCircle().position + c2.getHitPoint(), object.getCircle().rayon);
-				hitPoint.setColor(sf::Color::Yellow);
-				hitPoint.draw(&window);
-
-				CircleObject rollPoint(object.getCircle().position + c2.getHitPoint() + c2.getRoll(&useless), object.getCircle().rayon);
-				rollPoint.setColor(sf::Color::Yellow);
-				rollPoint.draw(&window);
-
-				CircleObject bouncePoint(object.getCircle().position + c2.getHitPoint() + c2.getBounce(&useless), object.getCircle().rayon);
-				bouncePoint.setColor(sf::Color::Magenta);
-				bouncePoint.draw(&window);
-			} else {
-				line.setColor(sf::Color::Green);
+			for (auto &r : rectList) {
+				r.draw(&window);
 			}
 
 			for(auto &c : circleList){
 				c.draw(&window);
 			}
-			
-			line.draw(&window);
+
 			object.draw(&window);
 
 			window.display();

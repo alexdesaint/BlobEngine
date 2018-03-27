@@ -5,7 +5,8 @@
 #ifndef BLOBENGINE_HIT_HPP
 #define BLOBENGINE_HIT_HPP
 
-#include "Geometrie.hpp"
+#include <BlobEngine/Geometrie.hpp>
+#include <BlobEngine/Reaction.hpp>
 
 namespace BlobEngine {
 
@@ -48,11 +49,9 @@ namespace BlobEngine {
 			return hit;
 		}
 
-		Vec2f getRoll(Vec2f *speed);
+		Vec2f getReactionVec(Reaction reaction, Vec2f &speed);
 
-		Vec2f getBounce(Vec2f *speed);
-
-		Vec2f getHitPoint() {
+		Vec2f getVecToTarget() {
 			return vecAF;
 		}
 
