@@ -132,7 +132,6 @@ class Player : public CircleDynamic{
 private:
 	float maxSpeed;
 	sf::CircleShape shape;
-	sf::Clock clock;
 
 	std::array<bool, 4> command = {false, false, false, false};
 
@@ -141,7 +140,6 @@ private:
 	}
 
 	void update() {
-		float TimeFlow = clock.restart().asSeconds();
 		Vec2f Acceleration;
 
 		if (command[directions::LEFT]) {

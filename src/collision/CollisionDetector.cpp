@@ -111,7 +111,9 @@ namespace BlobEngine {
 	}
 
 	void CollisionDetector::checkCollision(CircleDynamic &object) {
-
+		
+		object.disableCollision();
+		
 		Vec2f frameMove = object.speed * timeFlow;
 		Circle nextCircle = object.mainCircle;
 		Hit hit;
@@ -121,15 +123,18 @@ namespace BlobEngine {
 			target = getClosetObject(nextCircle, frameMove, hit);
 
 			if (target != nullptr) {
-				object.mainCircle.position = object.mainCircle.position + hit.getVecToTarget();
-
 				target->hit(object);
-
+				
 				frameMove = hit.getReactionVec(object.hit(*target), object.speed);
+				
+				object.mainCircle.position = object.mainCircle.position + hit.getVecToTarget();
+				
 			} else {
 				object.mainCircle.position = object.mainCircle.position + frameMove;
 			}
 
 		} while (target != nullptr && !object.speed.isNull());
+		
+		object.enableCollision();
 	}
 }

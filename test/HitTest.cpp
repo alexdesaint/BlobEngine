@@ -6,6 +6,13 @@
 
 using namespace BlobEngine;
 
+enum directions{
+	UP = 0,
+	DOWN = 1,
+	LEFT = 2,
+	RIGHT = 3
+};
+
 class StaticLine {
 private:
 	sf::RectangleShape line;
@@ -56,16 +63,43 @@ public:
 class MainCircle : public CircleDynamic {
 private:
 	sf::CircleShape circleShape;
-	StaticLine line;
-
+	std::array<bool, 4> command = {false, false, false, false};
+	sf::Clock clock;
+	
+	void update() {
+		float TimeFlow = clock.restart().asSeconds();
+		Vec2f Acceleration;
+		
+		if (command[directions::LEFT]) {
+			Acceleration.x -= 1;
+		}
+		if (command[directions::RIGHT]) {
+			Acceleration.x += 1;
+		}
+		if (command[directions::UP]) {
+			Acceleration.y -= 1;
+		}
+		if (command[directions::DOWN]) {
+			Acceleration.y += 1;
+		}
+		
+		if (!Acceleration.isNull()) {
+			mainCircle.position = mainCircle.position + Acceleration.setLength(100) * TimeFlow;
+		}
+		
+		circleShape.setPosition(mainCircle.position.x, mainCircle.position.y);
+	}
+	
 public:
 
 	Reaction hit(const BlobEngine::PhysicalObject &from) override {
-		return BOUNCE;
+		return ROLL;
 	}
 
-	explicit MainCircle(int x, int y, int r, int mx, int my) : CircleDynamic(0), line(x, y, mx, my, sf::Color::Blue) {
+	explicit MainCircle(int x, int y, int r, int mx, int my) : CircleDynamic(0) {
 
+		disableCollision();
+		
 		speed = Vec2f(Point2f(x, y), Point2f(mx, my));
 
 		mainCircle.position.x = x;
@@ -79,8 +113,9 @@ public:
 	}
 
 	void draw(sf::RenderWindow *window) {
+		update();
+		
 		window->draw(circleShape);
-		line.draw(window);
 	}
 
 	Circle getCircle() {
@@ -93,12 +128,18 @@ public:
 
 	void setDestination(int x, int y) {
 		speed = Vec2f(mainCircle.position, Point2f(x, y));
-
-		line.update(speed.length(), speed.getOrientationDeg());
 	}
 
 	void setColor(sf::Color c) {
 		circleShape.setFillColor(c);
+	}
+	
+	void keyPress(directions d) {
+		command[d] = true;
+	}
+	
+	void keyReleased(directions d) {
+		command[d] = false;
 	}
 };
 
@@ -204,7 +245,7 @@ int main() {
 
 		CollisionDetector collisionDetector;
 
-		MainCircle object(300, 300, 20, 580, 300);
+		MainCircle object(300, 300, 20, 300, 300);
 
 		std::list<StaticCircle> circleList;
 
@@ -221,6 +262,9 @@ int main() {
 		for (int i = 20; i < width; i += 80) {
 			rectList.emplace_back(i + widthOff, height - 20 + heightOff, 20);
 		}
+		
+		rectList.emplace_back(width - 20 + widthOff, height/2 + heightOff - 80, 20);
+		rectList.emplace_back(width - 20 + widthOff, height/2 + heightOff, 20);
 
 		for (int i = 100; i < height - 80; i += 80) {
 			rectList.emplace_back(width - 20 + widthOff, i + heightOff, 20);
@@ -233,6 +277,7 @@ int main() {
 
 			sf::Event event{};
 			sf::Mouse::Button mouseButton;
+			sf::Keyboard::Key Key;
 
 			while (window.pollEvent(event)) {
 				switch (event.type) {
@@ -254,6 +299,46 @@ int main() {
 						switch (mouseButton) {
 							case sf::Mouse::Left :
 								left = false;
+								break;
+							default:
+								break;
+						}
+						break;
+					case sf::Event::KeyPressed :
+						Key = event.key.code;
+						
+						switch (Key) {
+							case sf::Keyboard::Left :
+								object.keyPress(directions::LEFT);
+								break;
+							case sf::Keyboard::Right :
+								object.keyPress(directions::RIGHT);
+								break;
+							case sf::Keyboard::Up :
+								object.keyPress(directions::UP);
+								break;
+							case sf::Keyboard::Down :
+								object.keyPress(directions::DOWN);
+								break;
+							default:
+								break;
+						}
+						break;
+					case sf::Event::KeyReleased :
+						Key = event.key.code;
+						
+						switch (Key) {
+							case sf::Keyboard::Left :
+								object.keyReleased(directions::LEFT);
+								break;
+							case sf::Keyboard::Right :
+								object.keyReleased(directions::RIGHT);
+								break;
+							case sf::Keyboard::Up :
+								object.keyReleased(directions::UP);
+								break;
+							case sf::Keyboard::Down :
+								object.keyReleased(directions::DOWN);
 								break;
 							default:
 								break;
