@@ -68,8 +68,8 @@ namespace  BlobEngine {
 			return x * B.x + y * B.y;
 		}
 
-		Mat2 normalize() {
-			return *this = *this / length();
+		Mat2 getNormal() {
+			return *this / length();
 		}
 
 		Mat2 setLength(float newLength);

@@ -16,7 +16,7 @@ namespace BlobEngine {
 
 			if (frameMove.scalaire(vecAB) > 0) {// si il ne sont pas de dirrection opposé
 
-				float AE = Vec2f(frameMove).normalize().scalaire(vecAB);//distance avant le point le plus proche
+				float AE = Vec2f(frameMove).getNormal().scalaire(vecAB);//distance avant le point le plus proche
 
 				float BE2 = vecAB.length2() - AE * AE;
 
@@ -32,7 +32,7 @@ namespace BlobEngine {
 
 						Vec2f vecFB = (vecAB * -1.0f) + vecAF;
 
-						n = vecFB.normalize();
+						n = vecFB.getNormal();
 
 						hit = true;
 					}
@@ -45,11 +45,13 @@ namespace BlobEngine {
 
 		Point2f C = target.closestPointTo(object.position);
 		Vec2f vecCA(C, object.position);
-		n = vecCA.normalize();
+		n = vecCA.getNormal();
 
 		if (object.rayon + frameMove.length() > vecCA.length()) {
-			if (vecCA.scalaire(frameMove) < 0) {
-				
+			float a = vecCA.scalaire(frameMove);
+
+			if (a < 0) {
+
 				Point2f G = object.position - n * object.rayon;
 				
 				Point2f I = target.getIntersectionPoint(Line(G, G + frameMove));
@@ -58,7 +60,7 @@ namespace BlobEngine {
 				
 				if (Vec2f(M, I).length() <= (target.Length() / 2)) {
 					
-					if (Vec2f(G, I).scalaire(frameMove) > 0) {// si il ne sont pas de dirrection opposé
+					//if (Vec2f(G, I).scalaire(frameMove) > 0) {// si il ne sont pas de dirrection opposé
 						
 						Point2f F = I + n * object.rayon;
 						
@@ -70,7 +72,7 @@ namespace BlobEngine {
 							
 							hit = true;
 						}
-					}
+					//}
 				} else if (Vec2f(M, I).length() <= (target.Length() / 2 + object.rayon)) {
 					Point2f B;
 					
