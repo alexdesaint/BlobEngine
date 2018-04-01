@@ -19,8 +19,8 @@ namespace BlobEngine {
 			
 			line.setFillColor(color);
 			line.setPosition(x, y);
-			line.setSize(sf::Vector2f(speed.length(), 4));
-			line.setOrigin(0, 2);
+			line.setSize(sf::Vector2f(speed.length(), 1));
+			line.setOrigin(0, 0);
 			line.setRotation(speed.getOrientationDeg());
 			
 			base.setFillColor(color);
@@ -35,8 +35,8 @@ namespace BlobEngine {
 			line.setFillColor(color);
 			
 			line.setPosition(o.x, o.y);
-			line.setSize(sf::Vector2f(speed.length(), 4));
-			line.setOrigin(0, 2);
+			line.setSize(sf::Vector2f(speed.length(), 1));
+			line.setOrigin(0, 0);
 			line.setRotation(speed.getOrientationDeg());
 			
 			base.setFillColor(color);
@@ -60,22 +60,24 @@ namespace BlobEngine {
 														   std::deque<CircleStatic *> circleStaticList,
 														   std::deque<CircleDynamic *> circleDynamicList,
 														   std::deque<LineStatic *> lineStaticList,
-														   CircleDynamic object,
-														   std::deque<Line> trajectoryComputed) :
+														   Circle object,
+														   Vec2f frameMove,
+														   std::deque<Point2f> trajectoryComputed) :
 			errorMsg(errorMsg),
 			trajectoryComputed(std::move(trajectoryComputed)),
-			object(object) {
+			object(object),
+			frameMove(frameMove) {
 		
 		for (CircleDynamic *target : circleDynamicList) {
-			this->circleDynamicList.emplace_back(*target);
+			this->circleDynamicList.emplace_back(target->mainCircle);
 		}
 		
 		for (CircleStatic *target : circleStaticList) {
-			this->circleStaticList.emplace_back(*target);
+			this->circleStaticList.emplace_back(target->mainCircle);
 		}
 		
 		for (LineStatic *target : lineStaticList) {
-			this->lineStaticList.emplace_back(*target);
+			this->lineStaticList.emplace_back(target->lines);
 		}
 	}
 	
@@ -105,58 +107,68 @@ namespace BlobEngine {
 						break;
 				}
 			}
-			
-			for (CircleStatic &target : circleStaticList) {
+
+			for (auto &target : circleStaticList) {
 				sf::CircleShape shape;
 				shape.setFillColor(sf::Color::Green);
-				
-				shape.setPosition(target.mainCircle.position.x, target.mainCircle.position.y);
-				shape.setOrigin(target.mainCircle.rayon, target.mainCircle.rayon);
-				shape.setRadius(target.mainCircle.rayon);
+
+				shape.setPosition(target.position.x, target.position.y);
+				shape.setOrigin(target.rayon, target.rayon);
+				shape.setRadius(target.rayon);
 				
 				window.draw(shape);
 			}
-			
-			for (LineStatic &target : lineStaticList) {
-				sf::RectangleShape shape;
+
+			for (auto &target : lineStaticList) {
+				sf::ConvexShape shape;
+
+				shape.setPointCount(target.size());
+
+				size_t count = 0;
+				for (auto point : target) {
+					shape.setPoint(count, sf::Vector2f(point.x, point.y));
+
+					count++;
+				}
+
+
 				shape.setFillColor(sf::Color::Green);
 				
-				shape.setSize(sf::Vector2f(20, 20));
-				shape.setOrigin(10, 10);
-				
-				shape.setPosition(sf::Vector2f(target.lines.front().pointA.x - 10, target.lines.front().pointA.y - 10));
-				
 				window.draw(shape);
 			}
-			
-			for (CircleDynamic &target : circleDynamicList) {
+
+			for (auto &target : circleDynamicList) {
 				sf::CircleShape shape;
 				shape.setFillColor(sf::Color::Blue);
-				
-				shape.setPosition(target.mainCircle.position.x, target.mainCircle.position.y);
-				shape.setOrigin(target.mainCircle.rayon, target.mainCircle.rayon);
-				shape.setRadius(target.mainCircle.rayon);
+
+				shape.setPosition(target.position.x, target.position.y);
+				shape.setOrigin(target.rayon, target.rayon);
+				shape.setRadius(target.rayon);
 				
 				window.draw(shape);
 			}
 			
 			sf::CircleShape shape;
 			shape.setFillColor(sf::Color::Red);
-			
-			shape.setPosition(object.mainCircle.position.x, object.mainCircle.position.y);
-			shape.setOrigin(object.mainCircle.rayon, object.mainCircle.rayon);
-			shape.setRadius(object.mainCircle.rayon);
+
+			shape.setPosition(object.position.x, object.position.y);
+			shape.setOrigin(object.rayon, object.rayon);
+			shape.setRadius(object.rayon);
 			
 			window.draw(shape);
-			
-			StaticLine s(object.mainCircle.position, object.mainCircle.position + object.speed, sf::Color::Magenta);
+
+			StaticLine s(object.position, object.position + frameMove, sf::Color::Magenta);
 			
 			s.draw(&window);
-			
-			for (Line &line : trajectoryComputed){
-				StaticLine s(line.pointA, line.pointB, sf::Color::Yellow);
-				
-				s.draw(&window);
+
+			for (auto &line : trajectoryComputed) {
+				sf::RectangleShape shape1(sf::Vector2f(1, 1));
+
+				shape1.setPosition(line.x, line.y);
+				//shape1.setOrigin(2, 2);
+				shape1.setFillColor(sf::Color::Yellow);
+
+				window.draw(shape1);
 			}
 			
 			window.display();

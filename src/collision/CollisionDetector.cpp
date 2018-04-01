@@ -44,9 +44,9 @@ namespace BlobEngine {
 
 //CollisionDetector
 
-	thread_local std::deque<CircleStatic*> CollisionDetector::circleStaticList{};
-	thread_local std::deque<CircleDynamic*> CollisionDetector::circleDynamicList{};
-	thread_local std::deque<LineStatic*> CollisionDetector::lineStaticList{};
+	std::deque<CircleStatic *> CollisionDetector::circleStaticList{};
+	std::deque<CircleDynamic *> CollisionDetector::circleDynamicList{};
+	std::deque<LineStatic *> CollisionDetector::lineStaticList{};
 
 	float CollisionDetector::getElapsedTime() {
 		static std::chrono::high_resolution_clock::time_point lastFrameTime;
@@ -92,17 +92,39 @@ namespace BlobEngine {
 		}
 
 		for (LineStatic *target : lineStaticList) {
-			for (Line line : target->lines) {
-				Hit c(object, line, frameMove);
+			if (target->lines.size() > 1) {
+				int count = 0;
+				Point2f lastPoint = target->lines.back();
 
-				if (c.hitTarget()) {
-					if (lastHitTarget == nullptr) {
-						hit = c;
-						lastHitTarget = target;
-					} else if (c.isCloserObstacle(hit)) {
-						hit = c;
-						lastHitTarget = target;
+				for (Point2f point : target->lines) {
+					Hit c(object, point, frameMove);
+
+					if (c.hitTarget()) {
+						if (lastHitTarget == nullptr) {
+							hit = c;
+							lastHitTarget = target;
+						} else if (c.isCloserObstacle(hit)) {
+							hit = c;
+							lastHitTarget = target;
+						}
 					}
+
+					Line line(point, lastPoint);
+
+					Hit cl(object, line, frameMove);
+
+					if (cl.hitTarget()) {
+						if (lastHitTarget == nullptr) {
+							hit = cl;
+							lastHitTarget = target;
+						} else if (cl.isCloserObstacle(hit)) {
+							hit = cl;
+							lastHitTarget = target;
+						}
+					}
+
+					lastPoint = point;
+					count++;
 				}
 			}
 		}
@@ -121,33 +143,24 @@ namespace BlobEngine {
 		
 		//Error managment :
 		unsigned int count = 0;
-		std::deque<Line> trajectoryComputed{};
+		std::deque<Point2f> trajectoryComputed{};
 		Circle originCircle = object.mainCircle;
+		Vec2f originSpeed = object.speed;
 
 		do {
 			target = getClosetObject(nextCircle, frameMove, hit);
 
-			
-			
 			if (target != nullptr) {
 				target->hit(object);
 				
 				frameMove = hit.getReactionVec(object.hit(*target), object.speed);
 				
-				Point2f a = object.mainCircle.position;
-				
 				object.mainCircle.position = object.mainCircle.position + hit.getVecToTarget();
-				
-				Point2f b = object.mainCircle.position;
-				
-				trajectoryComputed.emplace_back(a, b);
+
+				trajectoryComputed.emplace_back(object.mainCircle.position);
 				
 			} else {
-				Point2f a = object.mainCircle.position;
-				
 				object.mainCircle.position = object.mainCircle.position + frameMove;
-				
-				Point2f b = object.mainCircle.position;
 			}
 			
 			//Error managment :
@@ -158,7 +171,8 @@ namespace BlobEngine {
 												 circleStaticList,
 												 circleDynamicList,
 												 lineStaticList,
-												 object,
+												 originCircle,
+												 originSpeed,
 												 trajectoryComputed);
 			}
 			

@@ -31,18 +31,24 @@ namespace BlobEngine {
 		Vec2f frameMove{};
 
 	public:
-		void load(Circle object, Circle target, Vec2f frameMove);
+		void load(Circle object, Point2f target);
 
-		void load(Circle object, Line target, Vec2f frameMove);
+		void load(Circle object, Circle target);
+
+		void load(Circle object, Line target);
 
 		Hit() {};
-		
-		Hit(Circle object, Circle circleTarget, Vec2f frameMove) : frameMove(frameMove) {
-			load(object, circleTarget, frameMove);
+
+		Hit(Circle object, Point2f target, Vec2f frameMove) : frameMove(frameMove) {
+			load(object, target);
 		}
 
-		Hit(Circle object, Line lineTarget, Vec2f frameMove) : frameMove(frameMove) {
-			load(object, lineTarget, frameMove);
+		Hit(Circle object, Circle target, Vec2f frameMove) : frameMove(frameMove) {
+			load(object, target);
+		}
+
+		Hit(Circle object, Line target, Vec2f frameMove) : frameMove(frameMove) {
+			load(object, target);
 		}
 
 		bool hitTarget() {

@@ -215,10 +215,10 @@ public:
 		Point2f c = position + Point2f(-r, -r);
 		Point2f d = position + Point2f(-r, r);
 
-		lines.emplace_back(a, b);
-		lines.emplace_back(b, c);
-		lines.emplace_back(c, d);
-		lines.emplace_back(d, a);
+		lines.emplace_back(a);
+		lines.emplace_back(b);
+		lines.emplace_back(c);
+		lines.emplace_back(d);
 	}
 
 	void draw(sf::RenderWindow *window){
@@ -242,6 +242,9 @@ int main() {
 		sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "BlobEngine test", sf::Style::Close,
 								settings);
 		window.setFramerateLimit(60);
+
+		sf::Font font;
+		font.loadFromFile("FFFFORWA.TTF");
 
 		CollisionDetector collisionDetector;
 
@@ -368,8 +371,6 @@ int main() {
 			Hit hit;
 
 			do {
-				float rayon = object.getCircle().rayon;
-
 				target = collisionDetector.getClosetObject(nextCircle, frameMove, hit);
 
 				if (target != nullptr) {
@@ -382,21 +383,30 @@ int main() {
 
 					nextCircle.position = nextCircle.position + hit.getVecToTarget();
 
-					StaticCircle hitPoint(nextCircle.position, rayon);
-					hitPoint.setColor(sf::Color::Yellow);
-					hitPoint.draw(&window);
+					sf::CircleShape circleShape;
+					circleShape.setRadius(nextCircle.rayon);
+					circleShape.setOrigin(nextCircle.rayon, nextCircle.rayon);
+					circleShape.setPosition(nextCircle.position.x, nextCircle.position.y);
+					circleShape.setFillColor(sf::Color::Yellow);
+
+					window.draw(circleShape);
+
 					line.draw(&window);
 				}else{
-					StaticCircle bouncePoint(nextCircle.position + frameMove, rayon);
-					bouncePoint.setColor(sf::Color::Magenta);
-					bouncePoint.draw(&window);
+					sf::CircleShape circleShape;
+					circleShape.setRadius(nextCircle.rayon);
+					circleShape.setOrigin(nextCircle.rayon, nextCircle.rayon);
+					circleShape.setPosition(nextCircle.position.x + frameMove.x, nextCircle.position.y + frameMove.y);
+					circleShape.setFillColor(sf::Color::Magenta);
+
+					window.draw(circleShape);
 
 					StaticLine line(nextCircle.position, nextCircle.position + frameMove, sf::Color::Red);
 					line.draw(&window);
 				}
 
 				count++;
-			} while (target != nullptr && count < 50);
+			} while (target != nullptr && count < 500);
 
 			for (auto &r : rectList) {
 				r.draw(&window);
@@ -407,17 +417,13 @@ int main() {
 			}
 
 			object.draw(&window);
-			
-			//text
-			sf::Font font;
-			font.loadFromFile("FFFFORWA.TTF");
 
-			//sf::Text text("hello", font);
-			//text.setCharacterSize(30);
-			//text.setStyle(sf::Text::Bold);
-			//text.setColor(sf::Color::Red);
+			sf::Text text(std::to_string(count), font);
+			text.setCharacterSize(30);
+			text.setStyle(sf::Text::Bold);
+			text.setFillColor(sf::Color::Red);
 
-			//window.draw(text);
+			window.draw(text);
 			
 			window.display();
 		}

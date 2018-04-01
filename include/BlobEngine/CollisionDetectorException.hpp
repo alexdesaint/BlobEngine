@@ -14,13 +14,14 @@ namespace BlobEngine {
 	class CollisionDetectorException : public std::exception {
 	private:
 		const char *errorMsg;
-		
-		std::deque<Line> trajectoryComputed{};
-		
-		std::deque<CircleStatic> circleStaticList{};
-		std::deque<CircleDynamic> circleDynamicList{};
-		std::deque<LineStatic> lineStaticList{};
-		CircleDynamic object;
+
+		std::deque<Point2f> trajectoryComputed{};
+
+		std::deque<Circle> circleStaticList{};
+		std::deque<Circle> circleDynamicList{};
+		std::deque<std::deque<Point2f>> lineStaticList{};
+		Circle object;
+		Vec2f frameMove;
 	
 	public:
 		
@@ -28,8 +29,9 @@ namespace BlobEngine {
 											std::deque<CircleStatic*>,
 											std::deque<CircleDynamic*>,
 											std::deque<LineStatic*>,
-											CircleDynamic,
-											std::deque<Line>);
+											Circle object,
+											Vec2f frameMove,
+											std::deque<Point2f>);
 		
 		void showDebugWindow();
 		

@@ -4,8 +4,41 @@
 
 namespace BlobEngine {
 
-	void Hit::load(Circle object, Circle target, Vec2f frameMove) {
-		this->frameMove = frameMove;
+	void Hit::load(Circle object, Point2f target) {
+
+		Vec2f vecAB(object.position, target);
+
+		if (frameMove.length() >
+			vecAB.length() - object.rayon) {//si la distance qui les sépare est plus courte que le vecteur vitesse
+
+			if (frameMove.scalaire(vecAB) > 0) {// si il ne sont pas de dirrection opposé
+
+				float AE = Vec2f(frameMove).getNormal().scalaire(vecAB);//distance avant le point le plus proche
+
+				float BE2 = vecAB.length2() - AE * AE;
+
+				float RayonAB2 = object.rayon * object.rayon;
+
+				if (BE2 < RayonAB2) {
+
+					float AF = AE - std::sqrt(RayonAB2 - BE2);
+
+					if (AF < frameMove.length()) {
+						//ils se touche forcément
+						vecAF = Vec2f(frameMove).setLength(AF);
+
+						Vec2f vecFB = (vecAB * -1.0f) + vecAF;
+
+						n = vecFB.getNormal();
+
+						hit = true;
+					}
+				}
+			}
+		}
+	}
+
+	void Hit::load(Circle object, Circle target) {
 
 		float RayonAB = object.rayon + target.rayon;
 
@@ -41,54 +74,35 @@ namespace BlobEngine {
 		}
 	}
 
-	void Hit::load(Circle object, Line target, Vec2f frameMove) {
+	void Hit::load(Circle object, Line target) {
 
 		Point2f C = target.closestPointTo(object.position);
 		Vec2f vecCA(C, object.position);
-		n = vecCA.getNormal();
 
-		if (object.rayon + frameMove.length() > vecCA.length()) {
+		if (object.rayon + frameMove.length() >= vecCA.length() && vecCA.length() >= 3 * object.rayon / 4) {
 
 			if (vecCA.scalaire(frameMove) < 0) {
+
+				n = vecCA.getNormal();
 
 				Point2f G = object.position - n * object.rayon;
 				
 				Point2f I = target.getIntersectionPoint(Line(G, G + frameMove));
 				
 				Point2f M = (target.pointA + target.pointB) / 2;
-				
-				if(vecCA.scalaire(Vec2f(G, C)) >= 0 && Vec2f(M, C).length() >= (target.Length() / 2)) {
-					Point2f B;
-					
-					if (Vec2f(target.pointA, C).length2() < Vec2f(target.pointB, C).length2()) {
-						B = target.pointA;
-					} else {
-						B = target.pointB;
-					}
-					
-					load(object, Circle(B, 0), frameMove);
-				}else if (Vec2f(M, I).length() <= (target.Length() / 2)) {
-						
+
+				if (Vec2f(M, I).length() <= (target.Length() / 2)) {
+
 					Point2f F = I + n * object.rayon;
-					
+
 					vecAF = Vec2f(object.position, F);
-					
+
 					if (vecAF.length2() < frameMove.length2()) {
-						
+
 						//ils se touchent forcément
-						
+
 						hit = true;
 					}
-				} else if (Vec2f(M, I).length() <= (target.Length() / 2 + object.rayon)) {
-					Point2f B;
-					
-					if (Vec2f(target.pointA, I).length2() < Vec2f(target.pointB, I).length2()) {
-						B = target.pointA;
-					} else {
-						B = target.pointB;
-					}
-					
-					load(object, Circle(B, 0), frameMove);
 				}
 			}
 		}

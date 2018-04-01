@@ -65,10 +65,10 @@ public:
 		Point2f c = position + Point2f(-10, -10);
 		Point2f d = position + Point2f(-10, 10);
 
-		lines.emplace_back(a, b);
-		lines.emplace_back(b, c);
-		lines.emplace_back(c, d);
-		lines.emplace_back(d, a);
+		lines.emplace_back(a);
+		lines.emplace_back(b);
+		lines.emplace_back(c);
+		lines.emplace_back(d);
 	}
 
 	void draw(sf::RenderWindow *window) {

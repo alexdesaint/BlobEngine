@@ -78,7 +78,7 @@ namespace BlobEngine {
 	private:
 		std::deque<LineStatic*>::iterator elementIt{};
 	protected:
-		std::deque<Line> lines{};
+		std::deque<Point2f> lines{};
 
 		void enableCollision();
 
@@ -103,9 +103,9 @@ namespace BlobEngine {
 		unsigned int frameCount = 0;
 		float frameCountTimer = 0;
 
-		thread_local static std::deque<CircleStatic*> circleStaticList;
-		thread_local static std::deque<CircleDynamic*> circleDynamicList;
-		thread_local static std::deque<LineStatic*> lineStaticList;
+		static std::deque<CircleStatic *> circleStaticList;
+		static std::deque<CircleDynamic *> circleDynamicList;
+		static std::deque<LineStatic *> lineStaticList;
 
 		float getElapsedTime();
 
