@@ -48,9 +48,8 @@ namespace BlobEngine {
 		n = vecCA.getNormal();
 
 		if (object.rayon + frameMove.length() > vecCA.length()) {
-			float a = vecCA.scalaire(frameMove);
 
-			if (a < 0) {
+			if (vecCA.scalaire(frameMove) < 0) {
 
 				Point2f G = object.position - n * object.rayon;
 				
@@ -58,21 +57,28 @@ namespace BlobEngine {
 				
 				Point2f M = (target.pointA + target.pointB) / 2;
 				
-				if (Vec2f(M, I).length() <= (target.Length() / 2)) {
+				if(vecCA.scalaire(Vec2f(G, C)) >= 0 && Vec2f(M, C).length() >= (target.Length() / 2)) {
+					Point2f B;
 					
-					//if (Vec2f(G, I).scalaire(frameMove) > 0) {// si il ne sont pas de dirrection opposé
+					if (Vec2f(target.pointA, C).length2() < Vec2f(target.pointB, C).length2()) {
+						B = target.pointA;
+					} else {
+						B = target.pointB;
+					}
+					
+					load(object, Circle(B, 0), frameMove);
+				}else if (Vec2f(M, I).length() <= (target.Length() / 2)) {
 						
-						Point2f F = I + n * object.rayon;
+					Point2f F = I + n * object.rayon;
+					
+					vecAF = Vec2f(object.position, F);
+					
+					if (vecAF.length2() < frameMove.length2()) {
 						
-						vecAF = Vec2f(object.position, F);
+						//ils se touchent forcément
 						
-						if (vecAF.length2() < frameMove.length2()) {
-							
-							//ils se touchent forcément
-							
-							hit = true;
-						}
-					//}
+						hit = true;
+					}
 				} else if (Vec2f(M, I).length() <= (target.Length() / 2 + object.rayon)) {
 					Point2f B;
 					
@@ -84,7 +90,6 @@ namespace BlobEngine {
 					
 					load(object, Circle(B, 0), frameMove);
 				}
-				
 			}
 		}
 	}

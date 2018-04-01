@@ -9,6 +9,7 @@
 namespace BlobEngine {
 
 	class CollisionDetector;
+	class CollisionDetectorException;
 
 	class PhysicalObject{
 		friend CollisionDetector;
@@ -27,6 +28,7 @@ namespace BlobEngine {
 
 	class CircleStatic : PhysicalObject {
 		friend CollisionDetector;
+		friend CollisionDetectorException;
 	private:
 		std::deque<CircleStatic*>::iterator elementIt{};
 	protected:
@@ -49,6 +51,7 @@ namespace BlobEngine {
 
 	class CircleDynamic : public PhysicalObject {
 		friend CollisionDetector;
+		friend CollisionDetectorException;
 	private:
 		std::deque<CircleDynamic*>::iterator elementIt{};
 	protected:
@@ -71,6 +74,7 @@ namespace BlobEngine {
 
 	class LineStatic  : PhysicalObject {
 		friend CollisionDetector;
+		friend CollisionDetectorException;
 	private:
 		std::deque<LineStatic*>::iterator elementIt{};
 	protected:

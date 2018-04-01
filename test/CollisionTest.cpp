@@ -2,6 +2,7 @@
 #include <list>
 #include <SFML/Graphics.hpp>
 #include <BlobEngine/CollisionDetector.hpp>
+#include <BlobEngine/CollisionDetectorException.hpp>
 
 using namespace BlobEngine;
 
@@ -208,7 +209,7 @@ int main() {
 
 		Player player(width/2, height/4, 10);
 
-		BounceBall bounceBall(width/2, 3*height/4, 10);
+		//BounceBall bounceBall(width/2, 3*height/4, 10);
 
 		Box2 box1(Point2f(width/4, height/2));
 
@@ -291,7 +292,7 @@ int main() {
 			}
 
 			collisionDetector.update();
-
+			
 			if(count == 60){
 				window.setTitle(sf::String(std::to_string(collisionDetector.getFPS())));
 				count = 0;
@@ -304,7 +305,7 @@ int main() {
 
 			player.draw(&window);
 
-			bounceBall.draw(&window);
+			//bounceBall.draw(&window);
 
 			box1.draw(&window);
 			box2.draw(&window);
@@ -312,7 +313,11 @@ int main() {
 
 			window.display();
 		}
-	} catch (std::exception &e) {
+	}
+	catch (CollisionDetectorException &e){
+		e.showDebugWindow();
+	}
+	catch (std::exception &e) {
 		std::cout << e.what() << std::endl;
 	}
 	return 0;

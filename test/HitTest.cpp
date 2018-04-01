@@ -407,7 +407,18 @@ int main() {
 			}
 
 			object.draw(&window);
+			
+			//text
+			sf::Font font;
+			font.loadFromFile("FFFFORWA.TTF");
 
+			//sf::Text text("hello", font);
+			//text.setCharacterSize(30);
+			//text.setStyle(sf::Text::Bold);
+			//text.setColor(sf::Color::Red);
+
+			//window.draw(text);
+			
 			window.display();
 		}
 	} catch (std::exception &e) {

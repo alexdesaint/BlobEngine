@@ -2,7 +2,7 @@
 #include <chrono>
 
 #include <BlobEngine/CollisionDetector.hpp>
-
+#include <BlobEngine/CollisionDetectorException.hpp>
 
 
 namespace BlobEngine {
@@ -118,21 +118,50 @@ namespace BlobEngine {
 		Circle nextCircle = object.mainCircle;
 		Hit hit;
 		PhysicalObject *target;
+		
+		//Error managment :
+		unsigned int count = 0;
+		std::deque<Line> trajectoryComputed{};
+		Circle originCircle = object.mainCircle;
 
 		do {
 			target = getClosetObject(nextCircle, frameMove, hit);
 
+			
+			
 			if (target != nullptr) {
 				target->hit(object);
 				
 				frameMove = hit.getReactionVec(object.hit(*target), object.speed);
 				
+				Point2f a = object.mainCircle.position;
+				
 				object.mainCircle.position = object.mainCircle.position + hit.getVecToTarget();
 				
+				Point2f b = object.mainCircle.position;
+				
+				trajectoryComputed.emplace_back(a, b);
+				
 			} else {
+				Point2f a = object.mainCircle.position;
+				
 				object.mainCircle.position = object.mainCircle.position + frameMove;
+				
+				Point2f b = object.mainCircle.position;
 			}
-
+			
+			//Error managment :
+			count++;
+			
+			if(count > 50){
+				throw CollisionDetectorException("infinite collision compute",
+												 circleStaticList,
+												 circleDynamicList,
+												 lineStaticList,
+												 object,
+												 trajectoryComputed);
+			}
+			
 		} while (target != nullptr && !object.speed.isNull());
 		
 		object.enableCollision();
