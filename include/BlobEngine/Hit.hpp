@@ -58,6 +58,8 @@ namespace BlobEngine {
 		Vec2f getReactionVec(Reaction reaction, Vec2f &speed);
 
 		Vec2f getVecToTarget() {
+			vecAF.round(2);
+
 			return vecAF;
 		}
 

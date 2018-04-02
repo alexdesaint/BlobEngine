@@ -58,13 +58,13 @@ namespace  BlobEngine {
 			return {x / a, y / a};
 		}
 
-		float length2() {
+		double length2() {
 			return x * x + y * y;
 		}
 
-		float length();
+		double length();
 
-		float scalaire(Mat2 B) {
+		double scalaire(Mat2 B) {
 			return x * B.x + y * B.y;
 		}
 
@@ -72,15 +72,15 @@ namespace  BlobEngine {
 			return *this / length();
 		}
 
-		Mat2 setLength(float newLength);
+		Mat2 setLength(double newLength);
 
 		Mat2 rotate() {
 			return {-y, x};
 		}
 
-		float getOrientationRad();
+		double getOrientationRad();
 
-		float getOrientationDeg();
+		double getOrientationDeg();
 
 		void reset(){
 			x = 0;
@@ -90,23 +90,28 @@ namespace  BlobEngine {
 		bool isNull() {
 			return ((x == 0) && (y == 0));
 		}
+
+		void round(int v);
 	};
 
 	template class Mat2<int>;
-	template class Mat2<float>;
+
+	template
+	class Mat2<double>;
 
 	typedef Mat2<int> Point2i;
-	typedef Mat2<float> Point2f;
+	typedef Mat2<double> Point2f;
 	typedef Mat2<int> Vec21;
-	typedef Mat2<float> Vec2f;
+	typedef Mat2<double> Vec2f;
 
 	class Circle {
 	public:
-		float rayon = 0;
+		double rayon = 0;
 		Point2f position;
 
 		Circle() : rayon(0) {}
-		Circle(Point2f position, float rayon) : rayon(rayon), position(position) {}
+
+		Circle(Point2f position, double rayon) : rayon(rayon), position(position) {}
 	};
 
 	class Line	{
@@ -121,13 +126,13 @@ namespace  BlobEngine {
 			return {pointB.x - pointA.x, pointB.y - pointA.y};
 		}
 
-		float Length2() {
+		double Length2() {
 			return (pointB.x - pointA.x) * (pointB.x - pointA.x) + (pointB.y - pointA.y) * (pointB.y - pointA.y);
 		}
 
-		float Length();
+		double Length();
 
-		float getOrientation();
+		double getOrientation();
 
 		Point2f closestPointTo(Point2f point);
 

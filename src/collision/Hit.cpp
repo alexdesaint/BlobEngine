@@ -2,7 +2,12 @@
 
 #include <cmath>
 
+
 namespace BlobEngine {
+
+	double round(double v) {
+		return std::round(v * 1000) / 1000;
+	}
 
 	void Hit::load(Circle object, Point2f target) {
 
@@ -13,15 +18,15 @@ namespace BlobEngine {
 
 			if (frameMove.scalaire(vecAB) > 0) {// si il ne sont pas de dirrection opposé
 
-				float AE = Vec2f(frameMove).getNormal().scalaire(vecAB);//distance avant le point le plus proche
+				double AE = Vec2f(frameMove).getNormal().scalaire(vecAB);//distance avant le point le plus proche
 
-				float BE2 = vecAB.length2() - AE * AE;
+				double BE2 = round(vecAB.length2() - AE * AE);
 
-				float RayonAB2 = object.rayon * object.rayon;
+				double RayonAB2 = object.rayon * object.rayon;
 
 				if (BE2 < RayonAB2) {
 
-					float AF = AE - std::sqrt(RayonAB2 - BE2);
+					double AF = AE - std::sqrt(RayonAB2 - BE2);
 
 					if (AF < frameMove.length()) {
 						//ils se touche forcément
@@ -40,7 +45,7 @@ namespace BlobEngine {
 
 	void Hit::load(Circle object, Circle target) {
 
-		float RayonAB = object.rayon + target.rayon;
+		double RayonAB = object.rayon + target.rayon;
 
 		Vec2f vecAB(object.position, target.position);
 
@@ -49,15 +54,15 @@ namespace BlobEngine {
 
 			if (frameMove.scalaire(vecAB) > 0) {// si il ne sont pas de dirrection opposé
 
-				float AE = Vec2f(frameMove).getNormal().scalaire(vecAB);//distance avant le point le plus proche
+				double AE = Vec2f(frameMove).getNormal().scalaire(vecAB);//distance avant le point le plus proche
 
-				float BE2 = vecAB.length2() - AE * AE;
+				double BE2 = round(vecAB.length2() - AE * AE);
 
-				float RayonAB2 = RayonAB * RayonAB;
+				double RayonAB2 = RayonAB * RayonAB;
 
 				if (BE2 < RayonAB2) {
 
-					float AF = AE - std::sqrt(RayonAB2 - BE2);
+					double AF = AE - std::sqrt(RayonAB2 - BE2);
 
 					if (AF < frameMove.length()) {
 						//ils se touche forcément
@@ -88,20 +93,23 @@ namespace BlobEngine {
 				Point2f G = object.position - n * object.rayon;
 				
 				Point2f I = target.getIntersectionPoint(Line(G, G + frameMove));
-				
-				Point2f M = (target.pointA + target.pointB) / 2;
 
-				if (Vec2f(M, I).length() <= (target.Length() / 2)) {
+				if (Vec2f(I, G).scalaire(frameMove) < 0) {
 
-					Point2f F = I + n * object.rayon;
+					Point2f M = (target.pointA + target.pointB) / 2;
 
-					vecAF = Vec2f(object.position, F);
+					if (Vec2f(M, I).length() <= (target.Length() / 2)) {
 
-					if (vecAF.length2() < frameMove.length2()) {
+						Point2f F = I + n * object.rayon;
 
-						//ils se touchent forcément
+						vecAF = Vec2f(object.position, F);
 
-						hit = true;
+						if (vecAF.length2() < frameMove.length2()) {
+
+							//ils se touchent forcément
+
+							hit = true;
+						}
 					}
 				}
 			}
@@ -110,7 +118,7 @@ namespace BlobEngine {
 
 	Vec2f Hit::getReactionVec(Reaction reaction, Vec2f &speed) {
 		Vec2f framemove{};
-		float speedLenght;
+		double speedLenght;
 		Vec2f u;
 
 		switch (reaction) {
@@ -138,6 +146,9 @@ namespace BlobEngine {
 				framemove = frameMove - getVecToTarget();
 				break;
 		}
+		framemove.round(2);
+		speed.round(2);
+
 
 		return framemove;
 	}

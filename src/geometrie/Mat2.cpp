@@ -5,24 +5,24 @@
 namespace BlobEngine {
 
 	template<typename T>
-	float Mat2<T>::length() {
+	double Mat2<T>::length() {
 		return std::sqrt(length2());
 	}
 
 	template<typename T>
-	float Mat2<T>::getOrientationRad() {
+	double Mat2<T>::getOrientationRad() {
 		return std::atan2(y, x);
 	}
 
 	template<typename T>
-	float Mat2<T>::getOrientationDeg() {
+	double Mat2<T>::getOrientationDeg() {
 		return std::atan2(y, x) * 180 / PI;
 	}
 
 	template<typename T>
-	Mat2<T> Mat2<T>::setLength(float newLength) {
-		float oldLength = length();
-		float Rapport;
+	Mat2<T> Mat2<T>::setLength(double newLength) {
+		double oldLength = length();
+		double Rapport;
 
 		if (oldLength != 0) {
 			Rapport = newLength / oldLength;
@@ -30,5 +30,11 @@ namespace BlobEngine {
 			y *= Rapport;
 		}
 		return *this;
+	}
+
+	template<typename T>
+	void Mat2<T>::round(int v) {
+		v = (int) pow(10, v);
+		x = std::round(x * v) / v;
 	}
 }
