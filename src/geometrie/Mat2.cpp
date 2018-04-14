@@ -32,9 +32,10 @@ namespace BlobEngine {
 		return *this;
 	}
 
-	template<typename T>
+	/*template<typename T>
 	void Mat2<T>::round(int v) {
 		v = (int) pow(10, v);
 		x = std::round(x * v) / v;
-	}
+		y = std::round(y * v) / v;
+	}*/
 }

@@ -175,7 +175,7 @@ namespace BlobEngine {
 												 originSpeed,
 												 trajectoryComputed);
 			}
-			
+
 		} while (target != nullptr && !object.speed.isNull());
 		
 		object.enableCollision();

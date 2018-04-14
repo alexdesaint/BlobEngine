@@ -2,7 +2,10 @@
 #include <list>
 #include <SFML/Graphics.hpp>
 #include <BlobEngine/Hit.hpp>
+
+#define BLOBENGINE_DEBUG_COLLISION
 #include <BlobEngine/CollisionDetector.hpp>
+
 
 using namespace BlobEngine;
 
@@ -234,7 +237,7 @@ int main() {
 
 	try {
 		sf::ContextSettings settings;
-		settings.antialiasingLevel = 8;
+		settings.antialiasingLevel = 0;
 
 		unsigned int windowWidth = 600, windowHeight = 600, width = 440, height = 440, widthOff =
 				(windowWidth - width) / 2, heightOff = (windowHeight - height) / 2;
@@ -251,28 +254,34 @@ int main() {
 		MainCircle object(300, 300, 20, 300, 300);
 
 		std::list<StaticCircle> circleList;
-
-		for (int i = 20; i < width; i += 80) {
-			circleList.emplace_back(i + widthOff, 20 + heightOff, 20);
-		}
-
-		for (int i = 100; i < height - 80; i += 80) {
-			circleList.emplace_back(20 + widthOff, i + heightOff, 20);
-		}
-
 		std::list<StaticRect> rectList;
 
-		for (int i = 20; i < width; i += 80) {
-			rectList.emplace_back(i + widthOff, height - 20 + heightOff, 20);
-		}
-		
-		rectList.emplace_back(width - 20 + widthOff, height/2 + heightOff - 80, 20);
-		rectList.emplace_back(width - 20 + widthOff, height/2 + heightOff, 20);
+		bool simpleDemo = true;
 
-		for (int i = 100; i < height - 80; i += 80) {
-			rectList.emplace_back(width - 20 + widthOff, i + heightOff, 20);
-		}
+		if (simpleDemo == true) {
+			circleList.emplace_back(400, 200, 20);
+			rectList.emplace_back(400, 300, 20);
+		} else {
 
+			for (int i = 20; i < width; i += 80) {
+				circleList.emplace_back(i + widthOff, 20 + heightOff, 20);
+			}
+
+			for (int i = 100; i < height - 80; i += 80) {
+				circleList.emplace_back(20 + widthOff, i + heightOff, 20);
+			}
+
+			for (int i = 20; i < width; i += 80) {
+				rectList.emplace_back(i + widthOff, height - 20 + heightOff, 20);
+			}
+
+			rectList.emplace_back(width - 20 + widthOff, height / 2 + heightOff - 80, 20);
+			rectList.emplace_back(width - 20 + widthOff, height / 2 + heightOff, 20);
+
+			for (int i = 100; i < height - 80; i += 80) {
+				rectList.emplace_back(width - 20 + widthOff, i + heightOff, 20);
+			}
+		}
 		bool left = false;
 
 		while (window.isOpen()) {
@@ -375,8 +384,6 @@ int main() {
 
 				if (target != nullptr) {
 
-					target->hit(object);
-
 					frameMove = hit.getReactionVec(object.hit(*target), useless);
 
 					StaticLine line(nextCircle.position, nextCircle.position + hit.getVecToTarget(), sf::Color::Red);
@@ -418,14 +425,26 @@ int main() {
 
 			object.draw(&window);
 
-			sf::Text text(std::to_string(count), font);
+			sf::Text text("Number of hit : " + std::to_string(count), font);
 			text.setCharacterSize(30);
 			text.setStyle(sf::Text::Bold);
 			text.setFillColor(sf::Color::Red);
+			text.setPosition(10, 10);
+			window.draw(text);
 
+			text.setString(std::to_string(object.getCircle().position.x) + ":" +
+						   std::to_string(object.getCircle().position.y));
+			text.setCharacterSize(10);
+			text.setFillColor(sf::Color::Blue);
+			text.setStyle(sf::Text::Regular);
+			text.setPosition(object.getCircle().position.x, object.getCircle().position.y);
 			window.draw(text);
 			
 			window.display();
+
+			if (count == 500) {
+
+			}
 		}
 	} catch (std::exception &e) {
 		std::cout << e.what() << std::endl;
