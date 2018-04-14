@@ -63,11 +63,13 @@ public:
 	}
 };
 
-class MainCircle : public CircleDynamic {
+class MainCircle {
 private:
 	sf::CircleShape circleShape;
 	std::array<bool, 4> command = {false, false, false, false};
 	sf::Clock clock;
+	Circle mainCircle;
+	Vec2f speed;
 	
 	void update() {
 		float TimeFlow = clock.restart().asSeconds();
@@ -95,13 +97,7 @@ private:
 	
 public:
 
-	Reaction hit(const BlobEngine::PhysicalObject &from) override {
-		return ROLL;
-	}
-
-	explicit MainCircle(int x, int y, int r, int mx, int my) : CircleDynamic(0) {
-
-		disableCollision();
+	explicit MainCircle(int x, int y, int r, int mx, int my) {
 		
 		speed = Vec2f(Point2f(x, y), Point2f(mx, my));
 
@@ -321,15 +317,19 @@ int main() {
 						
 						switch (Key) {
 							case sf::Keyboard::Left :
+							case sf::Keyboard::Q :
 								object.keyPress(directions::LEFT);
 								break;
 							case sf::Keyboard::Right :
+							case sf::Keyboard::D :
 								object.keyPress(directions::RIGHT);
 								break;
 							case sf::Keyboard::Up :
+							case sf::Keyboard::Z :
 								object.keyPress(directions::UP);
 								break;
 							case sf::Keyboard::Down :
+							case sf::Keyboard::S :
 								object.keyPress(directions::DOWN);
 								break;
 							default:
@@ -341,15 +341,19 @@ int main() {
 						
 						switch (Key) {
 							case sf::Keyboard::Left :
+							case sf::Keyboard::Q :
 								object.keyReleased(directions::LEFT);
 								break;
 							case sf::Keyboard::Right :
+							case sf::Keyboard::D :
 								object.keyReleased(directions::RIGHT);
 								break;
 							case sf::Keyboard::Up :
+							case sf::Keyboard::Z :
 								object.keyReleased(directions::UP);
 								break;
 							case sf::Keyboard::Down :
+							case sf::Keyboard::S :
 								object.keyReleased(directions::DOWN);
 								break;
 							default:
@@ -384,7 +388,7 @@ int main() {
 
 				if (target != nullptr) {
 
-					frameMove = hit.getReactionVec(object.hit(*target), useless);
+					frameMove = hit.getReactionVec(ROLL, useless);
 
 					StaticLine line(nextCircle.position, nextCircle.position + hit.getVecToTarget(), sf::Color::Red);
 

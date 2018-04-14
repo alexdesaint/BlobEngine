@@ -107,12 +107,12 @@ namespace  BlobEngine {
 
 	class Circle {
 	public:
-		double rayon = 0;
+		float rayon = 0;
 		Point2f position;
 
 		Circle() : rayon(0) {}
 
-		Circle(Point2f position, double rayon) : rayon(rayon), position(position) {}
+		Circle(Point2f position, float rayon) : rayon(rayon), position(position) {}
 	};
 
 	class Line	{
