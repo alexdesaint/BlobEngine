@@ -67,9 +67,11 @@ namespace  BlobEngine {
 		T scalaire(Mat2 B) {
 			return x * B.x + y * B.y;
 		}
-
-		Mat2 getNormal() {
-			return *this / length();
+		
+		Mat2<float> getNormal() {
+			double l = length();
+			
+			return {(float) ((x) / l), (float) ((y) / l)};
 		}
 
 		Mat2 setLength(double newLength);
@@ -95,15 +97,20 @@ namespace  BlobEngine {
 	};
 
 	template
-	class Mat2<long int>;
-
+	class Mat2<int>;
+	
 	template
 	class Mat2<float>;
-
-	typedef Mat2<long int> Point2i;
+	
+	template
+	class Mat2<double>;
+	
+	typedef Mat2<int> Point2i;
 	typedef Mat2<float> Point2f;
-	typedef Mat2<long int> Vec21;
+	typedef Mat2<double> Point2d;
+	typedef Mat2<int> Vec2i;
 	typedef Mat2<float> Vec2f;
+	typedef Mat2<double> Vec2d;
 
 	class Circle {
 	public:

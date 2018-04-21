@@ -10,84 +10,63 @@ namespace BlobEngine {
 		return std::round(v * 1000) / 1000;
 	}
 
-	void Hit::load(Circle object, Point2f target) {
-
-		Vec2f vecAB(object.position, target);
-
-		if (frameMove.length() >
-			vecAB.length() - object.rayon) {//si la distance qui les sépare est plus courte que le vecteur vitesse
-
-			if (frameMove.scalaire(vecAB) > 0) {// si il ne sont pas de dirrection opposé
-
-				Point2f E = Line(object.position, object.position + frameMove).closestPointTo(target);
-
-				double BE2 = Vec2f(target, E).length2();
-
-				double RayonAB2 = object.rayon * object.rayon;
-
-				if (BE2 < RayonAB2) {
-
-					double AE = Vec2f(object.position, E).length();
-
-					double AF = AE - std::sqrt(RayonAB2 - BE2);
-
-					if (AF < frameMove.length()) {
-						//ils se touche forcément
-						vecAF = Vec2f(frameMove).setLength(AF);
-
-						Vec2f vecFB = (vecAB * -1.0f) + vecAF;
-
-						n = vecFB.getNormal();
-
-						hit = true;
-					}
-				}
-			}
-		}
-	}
-
 	void Hit::load(Circle object, Circle target) {
 
 		double RayonAB = object.rayon + target.rayon;
-
-		Vec2f vecAB(object.position, target.position);
-
+		
+		Vec2i vecAB(A, B);
+		
+		double moveLength = frameMove.length();
+		
 		if (frameMove.length() >
 			vecAB.length() - RayonAB) {//si la distance qui les sépare est plus courte que le vecteur vitesse
-
-			if (frameMove.scalaire(vecAB) > 0) {// si il ne sont pas de dirrection opposé
-
-				double AE = Vec2f(frameMove).getNormal().scalaire(vecAB);//distance avant le point le plus proche
-
-				double BE2 = vecAB.length2() - AE * AE;
-
-				double RayonAB2 = RayonAB * RayonAB;
-
-				if (BE2 < RayonAB2) {
-
-					double AF = AE - std::sqrt(RayonAB2 - BE2);
-
-					if (AF > 0.01f) {
+			
+			double length2 = vecAB.length2();
+			
+			if (vecAB.length2() >= RayonAB * RayonAB) {
+				
+				if (frameMove.scalaire(vecAB) > 0) {// si il ne sont pas de dirrection opposé
+					
+					Point2i E = Line(A, A + frameMove).closestPointTo(B);
+					
+					double BE2 = Vec2i(B, E).length2();
+					
+					double RayonAB2 = RayonAB * RayonAB;
+					
+					if (BE2 < RayonAB2) {
+						
+						double AE = Vec2i(A, E).length();
+						
+						double AF = AE - std::sqrt(RayonAB2 - BE2);
+						
 						if (AF < frameMove.length()) {
 							//ils se touche forcément
-							vecAF = Vec2f(frameMove).setLength(AF);
-
-							Vec2f vecFB = (vecAB * -1.0f) + vecAF;
-
+							vecAF = Vec2i(frameMove).setLength(AF);
+							
+							Vec2i vecFB = (vecAB * -1.0f) + vecAF;
+							
 							n = vecFB.getNormal();
-
+							
 							hit = true;
 						}
 					}
 				}
+			} else {
+				Vec2i newAB = Vec2i(vecAB).setLength(object.rayon + target.rayon);
+				
+				Vec2i coor = vecAB - newAB;
+				rectificationPosition = object.position + coor;
+				
+				superposition = true;
+				hit = true;
 			}
 		}
 	}
 
 	void Hit::load(Circle object, Line target) {
-
-		Point2f C = target.closestPointTo(object.position);
-		Vec2f vecCA(C, object.position);
+		
+		Point2i C = target.closestPointTo(object.position);
+		Vec2i vecCA(C, object.position);
 
 		double vecCALength = vecCA.length();
 
@@ -98,20 +77,20 @@ namespace BlobEngine {
 				if (vecCA.scalaire(frameMove) < 0) {
 
 					n = vecCA.getNormal();
-
-					Point2f G = object.position - n * object.rayon;
-
-					Point2f I = target.getIntersectionPoint(Line(G, G + frameMove));
-
-					Point2f F = I + n * object.rayon;
-
-					vecAF = Vec2f(object.position, F);
-
-					if (vecAF.scalaire(frameMove) > 0) {
-
-						Point2f M = (target.pointA + target.pointB) / 2;
-
-						if (Vec2f(M, I).length() <= (target.Length() / 2)) {
+					
+					Point2i G{object.position.x - n.x * object.rayon, object.position.y - n.y * object.rayon};
+					
+					Point2i I = target.getIntersectionPoint(Line(G, G + frameMove));
+					
+					Point2i F = I + n * object.rayon;
+					
+					vecAF = Vec2i(object.position, F);
+					
+					if (vecAF.scalaire(frameMove) >= 0) {
+						
+						Point2i M = (target.pointA + target.pointB) / 2;
+						
+						if (Vec2i(M, I).length() <= (target.Length() / 2)) {
 
 							if (vecAF.length2() < frameMove.length2()) {//ils se touchent forcément
 
@@ -121,19 +100,27 @@ namespace BlobEngine {
 					}
 				}
 			} else {
-				Point2f M = (target.pointA + target.pointB) / 2;
-
-				if (Vec2f(M, C).length() <= (target.Length() / 2)) {
-					//std::cout << "superposition detected" << std::endl;
+				Point2i M = (target.pointA + target.pointB) / 2;
+				
+				if (Vec2i(M, C).length() <= (target.Length() / 2)) {
+					n = vecCA.getNormal();
+					
+					Point2i G = object.position - n * object.rayon;
+					
+					rectificationPosition = object.position + Vec2i(G, C);
+					
+					superposition = true;
+					
+					hit = true;
 				}
 			}
 		}
 	}
 
 	Vec2f Hit::getReactionVec(Reaction reaction, Vec2f &speed) {
-		Vec2f framemove{};
+		Vec2i framemove{};
 		double speedLenght;
-		Vec2f u;
+		Vec2i u;
 
 		switch (reaction) {
 			case BOUNCE:
@@ -161,12 +148,10 @@ namespace BlobEngine {
 				break;
 		}
 
-		if (framemove.x < 0.1f)
-			framemove.x = 0.0f;
-
-		if (framemove.y < 0.1f)
-			framemove.y = 0.0f;
-
 		return framemove;
+	}
+	
+	const Vec2f &Hit::getRectificationPosition() const {
+		return rectificationPosition;
 	}
 }

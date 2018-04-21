@@ -1,12 +1,14 @@
 #include <BlobEngine/Geometrie.hpp>
 
 #include <cmath>
+#include <iostream>
+#include <limits>
 
 namespace BlobEngine {
 
 	template<typename T>
 	double Mat2<T>::length() {
-		return std::sqrt(length2());
+		return std::nextafter(std::sqrt(length2()), std::numeric_limits<double>::infinity());
 	}
 
 	template<typename T>
@@ -21,14 +23,27 @@ namespace BlobEngine {
 
 	template<typename T>
 	Mat2<T> Mat2<T>::setLength(double newLength) {
-		double oldLength = length();
+		double oldLength = length2();
 		double Rapport;
-
+		newLength = newLength * newLength;
+		
 		if (oldLength != 0) {
-			Rapport = newLength / oldLength;
-			x *= Rapport;
-			y *= Rapport;
+			Rapport = sqrt(newLength / oldLength);
+			
+			if (x > 0)
+				x = (x * Rapport) + 1;
+			else
+				x = (x * Rapport) - 1;
+			
+			if (y > 0)
+				y = (y * Rapport) + 1;
+			else
+				y = (y * Rapport) - 1;
 		}
+		
+		if (length2() < newLength)
+			std::cout << "Error on setLength" << std::endl;
+		
 		return *this;
 	}
 

@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <BlobEngine/Hit.hpp>
 
-#define BLOBENGINE_DEBUG_COLLISION
 #include <BlobEngine/CollisionDetector.hpp>
 
 
@@ -89,7 +88,7 @@ private:
 		}
 		
 		if (!Acceleration.isNull()) {
-			mainCircle.position = mainCircle.position + Acceleration.setLength(100) * TimeFlow;
+			mainCircle.position = mainCircle.position + Acceleration.setLength(20) * TimeFlow;
 		}
 		
 		circleShape.setPosition(mainCircle.position.x, mainCircle.position.y);
@@ -153,8 +152,8 @@ private:
 	}
 
 public:
-
-	explicit StaticCircle(int x, int y, float r) : CircleStatic(0) {
+	
+	explicit StaticCircle(int x, int y, int r) : CircleStatic(0) {
 		mainCircle.position.x = x;
 		mainCircle.position.y = y;
 		mainCircle.rayon = r;
@@ -256,7 +255,7 @@ int main() {
 
 		if (simpleDemo == true) {
 			circleList.emplace_back(400, 200, 20);
-			rectList.emplace_back(400, 300, 20);
+			rectList.emplace_back(340, 300, 20);
 		} else {
 
 			for (int i = 20; i < width; i += 80) {
@@ -366,7 +365,7 @@ int main() {
 			}
 
 			if (left)
-				object.setDestination(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+				object.setDestination(sf::Mouse::getPosition(window).x * 100, sf::Mouse::getPosition(window).y * 100);
 
 			for (auto &circle : circleList) {
 				circle.setColor(sf::Color::Green);
@@ -387,27 +386,47 @@ int main() {
 				target = collisionDetector.getClosetObject(nextCircle, frameMove, hit);
 
 				if (target != nullptr) {
-
-					frameMove = hit.getReactionVec(ROLL, useless);
-
-					StaticLine line(nextCircle.position, nextCircle.position + hit.getVecToTarget(), sf::Color::Red);
-
-					nextCircle.position = nextCircle.position + hit.getVecToTarget();
-
-					sf::CircleShape circleShape;
-					circleShape.setRadius(nextCircle.rayon);
-					circleShape.setOrigin(nextCircle.rayon, nextCircle.rayon);
-					circleShape.setPosition(nextCircle.position.x, nextCircle.position.y);
-					circleShape.setFillColor(sf::Color::Yellow);
-
-					window.draw(circleShape);
-
-					line.draw(&window);
+					
+					if (!hit.superpositionOnTarget()) {
+						frameMove = hit.getReactionVec(ROLL, useless);
+						
+						StaticLine line(nextCircle.position, nextCircle.position + hit.getVecToTarget(),
+										sf::Color::Red);
+						
+						nextCircle.position = nextCircle.position + hit.getVecToTarget();
+						
+						sf::CircleShape circleShape;
+						circleShape.setRadius(nextCircle.rayon);
+						circleShape.setOrigin(nextCircle.rayon, nextCircle.rayon);
+						circleShape.setPosition(nextCircle.position.x, nextCircle.position.y);
+						circleShape.setFillColor(sf::Color::Yellow);
+						
+						window.draw(circleShape);
+						
+						line.draw(&window);
+					} else {
+						
+						StaticLine line(nextCircle.position, hit.getRectificationPosition(), sf::Color::Red);
+						
+						nextCircle.position = hit.getRectificationPosition();
+						
+						sf::CircleShape circleShape;
+						circleShape.setRadius(nextCircle.rayon);
+						circleShape.setOrigin(nextCircle.rayon, nextCircle.rayon);
+						circleShape.setPosition(nextCircle.position.x, nextCircle.position.y);
+						circleShape.setFillColor(sf::Color::Yellow);
+						
+						window.draw(circleShape);
+						
+						line.draw(&window);
+					}
+					
 				}else{
 					sf::CircleShape circleShape;
 					circleShape.setRadius(nextCircle.rayon);
 					circleShape.setOrigin(nextCircle.rayon, nextCircle.rayon);
-					circleShape.setPosition(nextCircle.position.x + frameMove.x, nextCircle.position.y + frameMove.y);
+					circleShape.setPosition((nextCircle.position.x + frameMove.x),
+											(nextCircle.position.y + frameMove.y));
 					circleShape.setFillColor(sf::Color::Magenta);
 
 					window.draw(circleShape);
@@ -417,7 +436,7 @@ int main() {
 				}
 
 				count++;
-			} while (target != nullptr && count < 500);
+			} while (target != nullptr && count < 30);
 
 			for (auto &r : rectList) {
 				r.draw(&window);

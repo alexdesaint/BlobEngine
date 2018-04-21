@@ -23,42 +23,63 @@ namespace BlobEngine {
 		 *
 		 * u : normalized vector
 		 * */
+		Point2i A, B;
+		
 		bool hit = false;
-
-		Vec2f vecAF{};
+		bool superposition = false;
+		
+		Vec2i vecAF{};
 		Vec2f n{};
-
-		Vec2f frameMove{};
-
-	public:
-		void load(Circle object, Point2f target);
-
+		
+		Vec2i frameMove{};
+		
+		Vec2i rectificationPosition{};
+		
 		void load(Circle object, Circle target);
-
+		
 		void load(Circle object, Line target);
-
-		Hit() {};
-
-		Hit(Circle object, Point2f target, Vec2f frameMove) : frameMove(frameMove) {
+	
+	public:
+		
+		Hit() = default;
+		
+		Hit(Circle object, Point2f target, Vec2f frameMove) : frameMove(static_cast<int>(frameMove.x * 100),
+																		static_cast<int>(frameMove.y * 100)),
+															  A(static_cast<int>(object.position.x * 100),
+																static_cast<int>(object.position.y * 100)),
+															  B(static_cast<int>(target.x * 100),
+																static_cast<int>(target.y * 100)) {
+			load(object, Circle(target, 0));
+		}
+		
+		Hit(Circle object, Circle target, Vec2f frameMove) : frameMove(static_cast<int>(frameMove.x * 100),
+																	   static_cast<int>(frameMove.y * 100)),
+															 A(static_cast<int>(object.position.x * 100),
+															   static_cast<int>(object.position.y * 100)),
+															 B(static_cast<int>(target.position.x * 100),
+															   static_cast<int>(target.position.y * 100)) {
 			load(object, target);
 		}
-
-		Hit(Circle object, Circle target, Vec2f frameMove) : frameMove(frameMove) {
+		
+		Hit(Circle object, Line target, Vec2f frameMove) : frameMove(static_cast<int>(frameMove.x * 100),
+																	 static_cast<int>(frameMove.y * 100)) {
 			load(object, target);
 		}
-
-		Hit(Circle object, Line target, Vec2f frameMove) : frameMove(frameMove) {
-			load(object, target);
-		}
-
+		
+		const Vec2f &getRectificationPosition() const;
+		
 		bool hitTarget() {
 			return hit;
+		}
+		
+		bool superpositionOnTarget() {
+			return superposition;
 		}
 
 		Vec2f getReactionVec(Reaction reaction, Vec2f &speed);
 
 		Vec2f getVecToTarget() {
-			return vecAF;
+			return {(float) vecAF.x / 100, (float) vecAF.y / 100};
 		}
 
 		bool isCloserObstacle(Hit second) {
