@@ -3,8 +3,9 @@
 #include <cmath>
 
 namespace BlobEngine {
-
-	Mat2<float> Line::closestPointTo(Point2f point) {
+	
+	template <typename T>
+	Mat2<T> Line<T>::closestPointTo(Mat2<T> point) {
 		
 		double A1 = pointB.y - pointA.y;
 		double B1 = pointA.x - pointB.x;;
@@ -14,13 +15,14 @@ namespace BlobEngine {
 		double det = A1 * A1 - -B1 * B1;
 
 		if (det != 0) {
-			return {(float) ((A1 * C1 - B1 * C2) / det), (float) ((A1 * C2 - -B1 * C1) / det)};
+			return {(T) ((A1 * C1 - B1 * C2) / det), (T) ((A1 * C2 - -B1 * C1) / det)};
 		} else {
 			return point;
 		}
 	}
-
-	Mat2<float> Line::getIntersectionPoint(Line B) {
+	
+	template <typename T>
+	Mat2<T> Line<T>::getIntersectionPoint(Line B) {
 		
 		double A1 = pointA.x - pointB.x;
 		
@@ -39,14 +41,16 @@ namespace BlobEngine {
 		
 		double C2 = B.pointB.y * B.pointA.x - B.pointB.x * B.pointA.y;
 		
-		return {(float) ((C1 * B1 - A1 * C2) / det), (float) ((C1 * B2 - A2 * C2) / det)};
+		return {(T) ((C1 * B1 - A1 * C2) / det), (T) ((C1 * B2 - A2 * C2) / det)};
 	}
-
-	double Line::Length() {
+	
+	template <typename T>
+	double Line<T>::Length() {
 		return std::sqrt(Length2());
 	}
-
-	double Line::getOrientation() {
+	
+	template <typename T>
+	double Line<T>::getOrientation() {
 		return std::atan2(pointB.y - pointA.y, pointB.x - pointA.x);
 	}
 }

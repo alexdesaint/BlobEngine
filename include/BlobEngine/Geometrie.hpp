@@ -121,14 +121,15 @@ namespace  BlobEngine {
 
 		Circle(Point2f position, float rayon) : rayon(rayon), position(position) {}
 	};
-
+	
+	template <typename T>
 	class Line	{
 	public:
-		Point2f pointA;
-		Point2f pointB;
+		Mat2<T> pointA;
+		Mat2<T> pointB;
 
 		Line() : pointA(), pointB() {}
-		Line(Point2f a, Point2f b) : pointA(a), pointB(b) {}
+		Line(Mat2<T> a, Mat2<T> b) : pointA(a), pointB(b) {}
 
 		Vec2f getVector()  {
 			return {pointB.x - pointA.x, pointB.y - pointA.y};
@@ -141,9 +142,18 @@ namespace  BlobEngine {
 		double Length();
 
 		double getOrientation();
-
-		Point2f closestPointTo(Point2f point);
-
-		Point2f getIntersectionPoint(Line B);
+		
+		Mat2<T> closestPointTo(Mat2<T> point);
+		
+		Mat2<T> getIntersectionPoint(Line B);
 	};
+	
+	template
+	class Line<int>;
+	
+	template
+	class Line<float>;
+	
+	template
+	class Line<double>;
 };
