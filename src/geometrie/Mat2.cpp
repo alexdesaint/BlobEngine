@@ -8,7 +8,7 @@ namespace BlobEngine {
 
 	template<typename T>
 	double Mat2<T>::length() {
-		return std::nextafter(std::sqrt(length2()), std::numeric_limits<double>::infinity());
+		return std::sqrt(length2());
 	}
 
 	template<typename T>
@@ -28,7 +28,7 @@ namespace BlobEngine {
 		newLength = newLength * newLength;
 		
 		if (oldLength != 0) {
-			Rapport = sqrt(newLength / oldLength);
+			Rapport = std::sqrt(newLength / oldLength);
 			
 			if (x > 0)
 				x = (x * Rapport) + 1;

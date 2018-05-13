@@ -23,46 +23,45 @@ namespace BlobEngine {
 		 *
 		 * u : normalized vector
 		 * */
-		Point2i A, B;
+		Point2f A, B, F, D;
+		float rayonA, rayonB;
 		
 		bool hit = false;
 		bool superposition = false;
-		
-		Vec2i vecAF{};
+
 		Vec2f n{};
-		
-		Vec2i frameMove{};
-		
-		Vec2i rectificationPosition{};
-		
-		void load(Circle object, Circle target);
+
+		Vec2f frameMove{};
+
+		Vec2f rectificationPosition{};
+
+		void load();
 		
 		void load(Circle object, Line target);
 	
 	public:
 		
 		Hit() = default;
-		
-		Hit(Circle object, Point2f target, Vec2f frameMove) : frameMove(static_cast<int>(frameMove.x * 100),
-																		static_cast<int>(frameMove.y * 100)),
-															  A(static_cast<int>(object.position.x * 100),
-																static_cast<int>(object.position.y * 100)),
-															  B(static_cast<int>(target.x * 100),
-																static_cast<int>(target.y * 100)) {
-			load(object, Circle(target, 0));
+
+		Hit(Circle object, Point2f target, Vec2f frameMove) : frameMove(frameMove),
+															  A(object.position),
+															  B(target),
+															  rayonA(object.rayon),
+															  rayonB(0),
+															  D(A + frameMove) {
+			load();
 		}
-		
-		Hit(Circle object, Circle target, Vec2f frameMove) : frameMove(static_cast<int>(frameMove.x * 100),
-																	   static_cast<int>(frameMove.y * 100)),
-															 A(static_cast<int>(object.position.x * 100),
-															   static_cast<int>(object.position.y * 100)),
-															 B(static_cast<int>(target.position.x * 100),
-															   static_cast<int>(target.position.y * 100)) {
-			load(object, target);
+
+		Hit(Circle object, Circle target, Vec2f frameMove) : frameMove(frameMove),
+															 A(object.position),
+															 B(target.position),
+															 rayonA(object.rayon),
+															 rayonB(target.rayon),
+															 D(A + frameMove) {
+			load();
 		}
-		
-		Hit(Circle object, Line target, Vec2f frameMove) : frameMove(static_cast<int>(frameMove.x * 100),
-																	 static_cast<int>(frameMove.y * 100)) {
+
+		Hit(Circle object, Line target, Vec2f frameMove) : frameMove(frameMove) {
 			load(object, target);
 		}
 		
@@ -78,12 +77,12 @@ namespace BlobEngine {
 
 		Vec2f getReactionVec(Reaction reaction, Vec2f &speed);
 
-		Vec2f getVecToTarget() {
-			return {(float) vecAF.x / 100, (float) vecAF.y / 100};
+		Point2f getHitPoint() {
+			return F;
 		}
 
 		bool isCloserObstacle(Hit second) {
-			return (vecAF.length2() < second.vecAF.length2());
+			return (Vec2f(A, F).length2() < Vec2f(second.A, second.F).length2());
 		}
 	};
 }

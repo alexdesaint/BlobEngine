@@ -10,20 +10,17 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-include_directories(include)
-
-set(SFML_ROOT "${PROJECT_SOURCE_DIR}/../SFML")
-
-set(CMAKE_MODULE_PATH "${SFML_ROOT}/cmake/Modules")
+set(SFML_DIR "${PROJECT_SOURCE_DIR}/../SFML/lib/cmake/SFML")
 
 set(SFML_STATIC_LIBRARIES TRUE)
-find_package(SFML REQUIRED window graphics network audio system)
+find_package(SFML CONFIG COMPONENTS window graphics network audio system)
 if(SFML_FOUND)
 	include_directories(${SFML_INCLUDE_DIR})
 else()
 	message(WARNING "SFML not found")
 endif()
 
+include_directories(include)
 subdirs(src)
 subdirs(test)
 

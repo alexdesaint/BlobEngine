@@ -5,7 +5,6 @@
 
 #include <BlobEngine/CollisionDetector.hpp>
 
-
 using namespace BlobEngine;
 
 enum directions{
@@ -88,7 +87,7 @@ private:
 		}
 		
 		if (!Acceleration.isNull()) {
-			mainCircle.position = mainCircle.position + Acceleration.setLength(20) * TimeFlow;
+			mainCircle.position = mainCircle.position + Acceleration.setLength(200) * TimeFlow;
 		}
 		
 		circleShape.setPosition(mainCircle.position.x, mainCircle.position.y);
@@ -232,7 +231,7 @@ int main() {
 
 	try {
 		sf::ContextSettings settings;
-		settings.antialiasingLevel = 0;
+		settings.antialiasingLevel = 8;
 
 		unsigned int windowWidth = 600, windowHeight = 600, width = 440, height = 440, widthOff =
 				(windowWidth - width) / 2, heightOff = (windowHeight - height) / 2;
@@ -365,7 +364,7 @@ int main() {
 			}
 
 			if (left)
-				object.setDestination(sf::Mouse::getPosition(window).x * 100, sf::Mouse::getPosition(window).y * 100);
+				object.setDestination(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
 			for (auto &circle : circleList) {
 				circle.setColor(sf::Color::Green);
@@ -377,6 +376,9 @@ int main() {
 			Vec2f useless;
 
 			int count = 0;
+
+			std::list<Point2f> posHist;
+
 			PhysicalObject *target;
 			Vec2f frameMove = object.getMove();
 			Circle nextCircle = object.getCircle();
@@ -389,12 +391,12 @@ int main() {
 					
 					if (!hit.superpositionOnTarget()) {
 						frameMove = hit.getReactionVec(ROLL, useless);
-						
-						StaticLine line(nextCircle.position, nextCircle.position + hit.getVecToTarget(),
-										sf::Color::Red);
-						
-						nextCircle.position = nextCircle.position + hit.getVecToTarget();
-						
+
+						StaticLine line(nextCircle.position, hit.getHitPoint(), sf::Color::Red);
+
+						nextCircle.position = hit.getHitPoint();
+						posHist.push_back(hit.getHitPoint());
+
 						sf::CircleShape circleShape;
 						circleShape.setRadius(nextCircle.rayon);
 						circleShape.setOrigin(nextCircle.rayon, nextCircle.rayon);
@@ -405,7 +407,6 @@ int main() {
 						
 						line.draw(&window);
 					} else {
-						
 						StaticLine line(nextCircle.position, hit.getRectificationPosition(), sf::Color::Red);
 						
 						nextCircle.position = hit.getRectificationPosition();
@@ -454,6 +455,19 @@ int main() {
 			text.setFillColor(sf::Color::Red);
 			text.setPosition(10, 10);
 			window.draw(text);
+
+			text.setString("(coorX, coorY)");
+			text.setCharacterSize(12);
+			text.setStyle(sf::Text::Regular);
+			text.setFillColor(sf::Color::White);
+
+			int num = 0;
+			for (Point2f pos : posHist) {
+				text.setString("(" + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ")");
+				text.setPosition(10, 50 + num * 20);
+				window.draw(text);
+				num++;
+			}
 
 			text.setString(std::to_string(object.getCircle().position.x) + ":" +
 						   std::to_string(object.getCircle().position.y));
