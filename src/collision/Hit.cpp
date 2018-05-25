@@ -17,107 +17,78 @@ namespace BlobEngine {
 
 		Vec2f vecAB(A, B);
 
-		//si la distance qui les sépare est plus courte que le vecteur vitesse
-		if (frameMove.length() > vecAB.length() - rayonAB) {
+		//si la distance qui les sépare est langue que le vecteur vitesse
+		if (frameMove.length() <= vecAB.length() - rayonAB)
+			return;
 
-			float lengt2 = vecAB.length2();
+		/*
+		//si ils sont en superposition
+		if (vecAB.length2() < rayonAB * rayonAB) {
+			Vec2f newAB = Vec2f(vecAB).setLength(rayonAB);
+			
+			Vec2f coor = vecAB - newAB;
+			rectificationPosition = A + coor;
+			
+			superposition = true;
+			hit = true;
+		}
+		*/
 
-			//si ils ne sont pas en collision
-			if (vecAB.length2() >= rayonAB * rayonAB) {
+		// si il sont de dirrection opposé
+		if (frameMove.scalaire(vecAB) <= 0)
+			return;
 
-				// si il ne sont pas de dirrection opposé
-				if (frameMove.scalaire(vecAB) > 0) {
+		double dr = pow(frameMove.x, 2) + pow(frameMove.y, 2);
 
-					double dr = pow(frameMove.x, 2) + pow(frameMove.y, 2);
+		Point2f p1 = A - B;
+		Point2f p2 = D - B;
+		double determinant = p1.x * p2.y - p2.x * p1.y;
 
-					Point2f p1 = A - B;
-					Point2f p2 = D - B;
-					double determinant = p1.x * p2.y - p2.x * p1.y;
+		//callcul de l'éxisance des point d'intersections
+		double delta = rayonAB * rayonAB * dr - determinant * determinant;
 
-					//callcul de l'éxisance des point d'intersections
-					double delta = rayonAB * rayonAB * dr - determinant * determinant;
+		if (delta == 0) {
+			hit = true;
 
-					if (delta == 0) {
-						hit = true;
+			Point2f i;
 
-						Point2f i;
+			i.x = static_cast<float>((determinant * frameMove.y) / dr);
+			i.y = static_cast<float>((-determinant * frameMove.x) / dr);
 
-						i.x = static_cast<float>((determinant * frameMove.y) / dr);
-						i.y = static_cast<float>((-determinant * frameMove.x) / dr);
+			F = i + B;
 
-						F = i + B;
-
-						n = Vec2f((vecAB * -1.0f) + Vec2f(A, F)).getNormal();
-					} else if (delta > 0) {
-						Point2f i1, i2;
-
-						i1.x = static_cast<float>(
-								(determinant * frameMove.y + sng(frameMove.y) * frameMove.x * std::sqrt(delta)) / dr);
-						i2.x = static_cast<float>(
-								(determinant * frameMove.y - sng(frameMove.y) * frameMove.x * std::sqrt(delta)) / dr);
-
-						i1.y = static_cast<float>(
-								(-determinant * frameMove.x + std::abs(frameMove.y) * std::sqrt(delta)) / dr);
-						i2.y = static_cast<float>(
-								(-determinant * frameMove.x - std::abs(frameMove.y) * std::sqrt(delta)) / dr);
-
-						i1 = i1 + B;
-						i2 = i2 + B;
-
-						if (Vec2f(A, i1).length2() < Vec2f(A, i2).length2()) {
-							if (frameMove.scalaire(Vec2f(A, i1)) > 0) {
-								hit = true;
-								F = i1;
-
-								n = Vec2f((vecAB * -1.0f) + Vec2f(A, F)).getNormal();
-							}
-						} else {
-							if (frameMove.scalaire(Vec2f(A, i2)) > 0) {
-								hit = true;
-								F = i2;
-
-								n = Vec2f((vecAB * -1.0f) + Vec2f(A, F)).getNormal();
-							}
-						}
-					}
-
-					/*
-					 * ancienne partie :
-
-					Point2f E = Line(A, A + frameMove).closestPointTo(B);
+			n = Vec2f((vecAB * -1.0f) + Vec2f(A, F)).getNormal();
+		} else if (delta > 0) {
+			Point2f i1, i2;
+			
+			i1.x = static_cast<float>(
+					(determinant * frameMove.y + sng(frameMove.y) * frameMove.x * std::sqrt(delta)) / dr);
+			i2.x = static_cast<float>(
+					(determinant * frameMove.y - sng(frameMove.y) * frameMove.x * std::sqrt(delta)) / dr);
+			
+			i1.y = static_cast<float>(
+					(-determinant * frameMove.x + std::abs(frameMove.y) * std::sqrt(delta)) / dr);
+			i2.y = static_cast<float>(
+					(-determinant * frameMove.x - std::abs(frameMove.y) * std::sqrt(delta)) / dr);
+			
+			i1 = i1 + B;
+			i2 = i2 + B;
+			
+			if (Vec2f(A, i1).length2() < Vec2f(A, i2).length2()) {
+				if (frameMove.scalaire(Vec2f(A, i1)) > 0) {
+					hit = true;
+					F = i1;
 					
-					double BE2 = Vec2f(B, E).length2();
-					
-					double RayonAB2 = rayonAB * rayonAB;
-					
-					if (BE2 < RayonAB2) {
-						
-						double AE = Vec2f(A, E).length();
-						
-						double AF = AE - std::sqrt(RayonAB2 - BE2);
-						
-						if (AF < frameMove.length()) {
-							//ils se touche forcément
-							vecAF = Vec2f(frameMove).setLength(AF);
-							
-							Vec2f vecFB = (vecAB * -1.0f) + vecAF;
-							
-							n = vecFB.getNormal();
-							
-							hit = true;
-						}
-					}
-					*/
+					n = Vec2f((vecAB * -1.0f) + Vec2f(A, F)).getNormal();
 				}
-			} /*else {
-				Vec2f newAB = Vec2f(vecAB).setLength(rayonAB);
-				
-				Vec2f coor = vecAB - newAB;
-				rectificationPosition = A + coor;
-				
-				superposition = true;
-				hit = true;
-			}*/
+			} else {
+				if (frameMove.scalaire(Vec2f(A, i2)) > 0) {
+					hit = true;
+					F = i2;
+					
+					n = Vec2f((vecAB * -1.0f) + Vec2f(A, F)).getNormal();
+				}
+			}
 		}
 	}
 

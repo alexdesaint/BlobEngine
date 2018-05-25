@@ -254,7 +254,7 @@ int main() {
 
 		if (simpleDemo == true) {
 			circleList.emplace_back(400, 200, 20);
-			rectList.emplace_back(340, 300, 20);
+			//rectList.emplace_back(340, 300, 20);
 		} else {
 
 			for (int i = 20; i < width; i += 80) {
