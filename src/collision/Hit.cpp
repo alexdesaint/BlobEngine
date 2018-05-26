@@ -17,7 +17,7 @@ namespace BlobEngine {
 
 		Vec2f vecAB(A, B);
 
-		//si la distance qui les sépare est langue que le vecteur vitesse
+		//si la distance qui les sépare est plus longue que le vecteur vitesse
 		if (frameMove.length() <= vecAB.length() - rayonAB)
 			return;
 
