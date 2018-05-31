@@ -23,45 +23,48 @@ namespace BlobEngine {
 		 *
 		 * u : normalized vector
 		 * */
-		Point2f A, B, F, D;
+		Point2f A, B, F, D, H, G;
 		float rayonA, rayonB;
 		
 		bool hit = false;
 		bool superposition = false;
-
-		Vec2f n{};
-
-		Vec2f frameMove{};
+		
+		
+		Vec2f n{};//à virer
 
 		Vec2f rectificationPosition{};
 
 		void load();
 		
 		void load(Circle object, Line target);
+		
+		float sng(float x);
+		
+		Point2f getH();
 	
 	public:
 		
 		Hit() = default;
-
-		Hit(Circle object, Point2f target, Vec2f frameMove) : frameMove(frameMove),
-															  A(object.position),
-															  B(target),
-															  rayonA(object.rayon),
-															  rayonB(0),
-															  D(A + frameMove) {
+		
+		Hit(Circle object, Point2f target, Vec2f destination) :
+				A(object.position),
+				B(target),
+				rayonA(object.rayon),
+				rayonB(0),
+				D(destination) {
 			load();
 		}
-
-		Hit(Circle object, Circle target, Vec2f frameMove) : frameMove(frameMove),
-															 A(object.position),
-															 B(target.position),
-															 rayonA(object.rayon),
-															 rayonB(target.rayon),
-															 D(A + frameMove) {
+		
+		Hit(Circle object, Circle target, Point2f destination) :
+				A(object.position),
+				B(target.position),
+				rayonA(object.rayon),
+				rayonB(target.rayon),
+				D(destination) {
 			load();
 		}
-
-		Hit(Circle object, Line target, Vec2f frameMove) : frameMove(frameMove) {
+		
+		Hit(Circle object, Line target, Vec2f destination) : D(destination) {
 			load(object, target);
 		}
 		
@@ -74,8 +77,8 @@ namespace BlobEngine {
 		bool superpositionOnTarget() {
 			return superposition;
 		}
-
-		Vec2f getReactionVec(Reaction reaction, Vec2f &speed);
+		
+		Point2f getReactionVec(Reaction reaction, Vec2f &speed);
 
 		Point2f getHitPoint() {
 			return F;

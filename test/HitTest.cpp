@@ -67,7 +67,7 @@ private:
 	std::array<bool, 4> command = {false, false, false, false};
 	sf::Clock clock;
 	Circle mainCircle;
-	Vec2f speed;
+	Vec2f destination;
 	
 	void update() {
 		float TimeFlow = clock.restart().asSeconds();
@@ -97,7 +97,7 @@ public:
 
 	explicit MainCircle(int x, int y, int r, int mx, int my) {
 		
-		speed = Vec2f(Point2f(x, y), Point2f(mx, my));
+		destination = Point2f(mx, my);
 
 		mainCircle.position.x = x;
 		mainCircle.position.y = y;
@@ -118,13 +118,13 @@ public:
 	Circle getCircle() {
 		return mainCircle;
 	}
-
-	Vec2f getMove() {
-		return speed;
+	
+	Vec2f getDestination() {
+		return destination;
 	}
 
 	void setDestination(int x, int y) {
-		speed = Vec2f(mainCircle.position, Point2f(x, y));
+		destination = Point2f(x, y);
 	}
 
 	void setColor(sf::Color c) {
@@ -249,8 +249,8 @@ int main() {
 
 		std::list<StaticCircle> circleList;
 		std::list<StaticRect> rectList;
-
-		bool simpleDemo = true;
+		
+		bool simpleDemo = 0;
 
 		if (simpleDemo == true) {
 			circleList.emplace_back(400, 200, 20);
@@ -380,32 +380,34 @@ int main() {
 			std::list<Point2f> posHist;
 
 			PhysicalObject *target;
-			Vec2f frameMove = object.getMove();
+			Point2f destination = object.getDestination();
 			Circle nextCircle = object.getCircle();
 			Hit hit;
 
 			do {
-				target = collisionDetector.getClosetObject(nextCircle, frameMove, hit);
+				target = collisionDetector.getClosetObject(nextCircle, destination, hit);
 
 				if (target != nullptr) {
 					
 					if (!hit.superpositionOnTarget()) {
-						frameMove = hit.getReactionVec(ROLL, useless);
+						destination = hit.getReactionVec(ROLL, useless);
 
 						StaticLine line(nextCircle.position, hit.getHitPoint(), sf::Color::Red);
 
 						nextCircle.position = hit.getHitPoint();
+						
+						//----
 						posHist.push_back(hit.getHitPoint());
-
+						
 						sf::CircleShape circleShape;
 						circleShape.setRadius(nextCircle.rayon);
 						circleShape.setOrigin(nextCircle.rayon, nextCircle.rayon);
 						circleShape.setPosition(nextCircle.position.x, nextCircle.position.y);
 						circleShape.setFillColor(sf::Color::Yellow);
-						
 						window.draw(circleShape);
 						
 						line.draw(&window);
+						//----
 					} else {
 						StaticLine line(nextCircle.position, hit.getRectificationPosition(), sf::Color::Red);
 						
@@ -426,13 +428,12 @@ int main() {
 					sf::CircleShape circleShape;
 					circleShape.setRadius(nextCircle.rayon);
 					circleShape.setOrigin(nextCircle.rayon, nextCircle.rayon);
-					circleShape.setPosition((nextCircle.position.x + frameMove.x),
-											(nextCircle.position.y + frameMove.y));
+					circleShape.setPosition(destination.x, destination.y);
 					circleShape.setFillColor(sf::Color::Magenta);
 
 					window.draw(circleShape);
-
-					StaticLine line(nextCircle.position, nextCircle.position + frameMove, sf::Color::Red);
+					
+					StaticLine line(nextCircle.position, destination, sf::Color::Red);
 					line.draw(&window);
 				}
 

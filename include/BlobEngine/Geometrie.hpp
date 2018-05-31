@@ -150,17 +150,4 @@ namespace  BlobEngine {
 			return pointA.y - getGradient() * pointA.x;
 		}
 	};
-	
-	Point2f getSymetricalPoint(Point2f A, Line l){
-		float a = l.getGradient();
-		float b = l.getConstant();
-		
-		//rx = (-a² xa - 2a b + 2a ya + xa) / (a² + 1)
-		//ry = (a² ya + 2a xa + 2b - ya) / (a² + 1)
-		
-		return {
-			(- a * a * A.x - 2 * a * b + 2 * a * A.y + A.x) / (a * a + 1),
-			(a * a * A.y + 2 * a * A.x + 2 * b - A.y) / (a * a + 1)
-		};
-	}
 };
