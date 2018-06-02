@@ -28,6 +28,23 @@ namespace BlobEngine {
 		};
 	}
 	
+	Point2f Hit::getH_line() {
+		//a = (-xb + xf) / (yb - yf)
+		//b = -xf (-xb + xf) / (yb - yf) + yf
+		
+		float a = (B.x - C.x) / (B.y - C.y);
+		float b = F.y - F.x * a;
+		float delta = a * a + 1;
+		
+		//rx = (-a² xa - 2a b + 2a ya + xa) / (a² + 1)
+		//ry = (a² ya + 2a xa + 2b - ya) / (a² + 1)
+		
+		return {
+				(-a * a * D.x - 2 * a * b + 2 * a * D.y + D.x) / delta,
+				(a * a * D.y + 2 * a * D.x + 2 * b - D.y) / delta
+		};
+	}
+	
 	void Hit::load() {
 
 		float rayonAB = rayonA + rayonB;
@@ -101,33 +118,33 @@ namespace BlobEngine {
 		}
 	}
 
-	void Hit::load(Circle object, Line target) {
+	void Hit::load(Line target) {
 
-		Point2f C = target.closestPointTo(object.position);
-		Vec2f vecCA(C, object.position);
+		Point2f E = target.closestPointTo(A);
+		Vec2f vecEA(E, A);
 		Vec2f vecAD(A, D);
 
-		double vecCALength = vecCA.length();
+		double vecEALength = vecEA.length();
 		
-		if (object.rayon + vecAD.length() >= vecCALength) {
+		if (rayonA + vecAD.length() >= vecEALength) {
 
-			if (vecCALength >= object.rayon) {
+			//if (vecEALength >= object.rayon) {
 				
-				if (vecCA.scalaire(vecAD) < 0) {
+				if (vecEA.scalaire(vecAD) < 0) {
 
-					n = vecCA.getNormal();
+					n = vecEA.getNormal();
 
-					Point2f G{object.position.x - n.x * object.rayon, object.position.y - n.y * object.rayon};
+					Point2f K = vecEA.setLength(rayonA);
 					
-					Point2f I = target.getIntersectionPoint(Line(G, G + vecAD));
+					Point2f I = target.getIntersectionPoint(Line(K, K + vecAD));
 
-					F = I + n * object.rayon;
+					F = I + n * rayonA;
 
-					Vec2f vecAF = Vec2f(object.position, F);
+					Vec2f vecAF(A, F);
 					
 					if (vecAF.scalaire(vecAD) >= 0) {
 
-						Point2f M = (target.pointA + target.pointB) / 2;
+						Point2f M = (B + C) / 2;
 
 						if (Vec2f(M, I).length() <= (target.Length() / 2)) {
 							
@@ -138,21 +155,21 @@ namespace BlobEngine {
 						}
 					}
 				}
-			} else {
-				Point2f M = (target.pointA + target.pointB) / 2;
-
-				if (Vec2f(M, C).length() <= (target.Length() / 2)) {
-					n = vecCA.getNormal();
-
-					Point2f G = object.position - n * object.rayon;
-
-					rectificationPosition = object.position + Vec2f(G, C);
-					
-					superposition = true;
-					
-					hit = true;
-				}
-			}
+				/*} else {
+					Point2f M = (target.pointA + target.pointB) / 2;
+	
+					if (Vec2f(M, C).length() <= (target.Length() / 2)) {
+						n = vecEA.getNormal();
+	
+						Point2f G = object.position - n * object.rayon;
+	
+						rectificationPosition = object.position + Vec2f(G, C);
+						
+						superposition = true;
+						
+						hit = true;
+					}
+				}*/
 		}
 	}
 	
@@ -168,7 +185,7 @@ namespace BlobEngine {
 				
 				speed = destination;
 
-				speed.setLength(speedLenght);
+				//speed.setLength(speedLenght);
 				break;
 			case STOP:
 				speed.reset();
@@ -180,7 +197,7 @@ namespace BlobEngine {
 				
 				speed = destination;
 				
-				speed.setLength(speedLenght);
+				//speed.setLength(speedLenght);
 				break;
 			case IGNORE:
 				destination = D;

@@ -383,11 +383,13 @@ int main() {
 			Point2f destination = object.getDestination();
 			Circle nextCircle = object.getCircle();
 			Hit hit;
+			
+			bool finish = false;
 
 			do {
 				target = collisionDetector.getClosetObject(nextCircle, destination, hit);
 
-				if (target != nullptr) {
+				if (target != nullptr && count < 30) {
 					
 					if (!hit.superpositionOnTarget()) {
 						destination = hit.getReactionVec(ROLL, useless);
@@ -435,10 +437,12 @@ int main() {
 					
 					StaticLine line(nextCircle.position, destination, sf::Color::Red);
 					line.draw(&window);
+					
+					finish = true;
 				}
 
 				count++;
-			} while (target != nullptr && count < 30);
+			} while (!finish);
 
 			for (auto &r : rectList) {
 				r.draw(&window);

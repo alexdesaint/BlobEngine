@@ -23,7 +23,7 @@ namespace BlobEngine {
 		 *
 		 * u : normalized vector
 		 * */
-		Point2f A, B, F, D, H, G;
+		Point2f A, B, C, D, E, F, G, H;
 		float rayonA, rayonB;
 		
 		bool hit = false;
@@ -36,11 +36,12 @@ namespace BlobEngine {
 
 		void load();
 		
-		void load(Circle object, Line target);
+		void load(Line target);
 		
 		float sng(float x);
 		
 		Point2f getH();
+		Point2f getH_line();
 	
 	public:
 		
@@ -64,7 +65,12 @@ namespace BlobEngine {
 			load();
 		}
 		
-		Hit(Circle object, Line target, Vec2f destination) : D(destination) {
+		Hit(Circle object, Line target, Vec2f destination) :
+				A(object.position),
+				rayonA(object.rayon),
+				B(target.pointA),
+				C(target.pointB),
+				D(destination) {
 			load(object, target);
 		}
 		
