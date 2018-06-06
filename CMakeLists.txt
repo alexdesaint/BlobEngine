@@ -20,6 +20,12 @@ else()
 	message(WARNING "SFML not found")
 endif()
 
+file(GLOB_RECURSE Box2Dsrc
+		"Box2D/*.cpp"
+		)
+
+add_library(Box2D SHARED "${Box2Dsrc}")
+
 include_directories(include)
 subdirs(src)
 subdirs(test)
