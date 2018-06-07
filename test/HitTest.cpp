@@ -250,11 +250,11 @@ int main() {
 		std::list<StaticCircle> circleList;
 		std::list<StaticRect> rectList;
 		
-		bool simpleDemo = 0;
+		bool simpleDemo = 1;
 
 		if (simpleDemo == true) {
-			circleList.emplace_back(400, 200, 20);
-			//rectList.emplace_back(340, 300, 20);
+			//circleList.emplace_back(400, 200, 20);
+			rectList.emplace_back(340, 300, 20);
 		} else {
 
 			for (int i = 20; i < width; i += 80) {

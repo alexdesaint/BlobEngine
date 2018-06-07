@@ -1,65 +1,54 @@
-/*
-* Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-
+#include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
 
-// This is a simple example of building and running a simulation
-// using Box2D. Here we create a large ground box and a small dynamic
-// box.
-// There are no graphics for this example. Box2D is meant to be used
-// with your rendering engine in your game engine.
 int main(int argc, char **argv) {
 	B2_NOT_USED(argc);
 	B2_NOT_USED(argv);
+
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+
+	sf::RenderWindow window(sf::VideoMode(600, 600), "BlobEngine test", sf::Style::Close, settings);
+	window.setFramerateLimit(60);
+
+	b2Vec2 gravity(0.0f, 10.0f);// Define the gravity vector.
 	
-	// Define the gravity vector.
-	b2Vec2 gravity(0.0f, -10.0f);
-	
-	// Construct a world object, which will hold and simulate the rigid bodies.
-	b2World world(gravity);
+
+	b2World world(gravity);// Construct a world object
 	
 	// Define the ground body.
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, -10.0f);
-	
-	// Call the body factory which allocates memory for the ground body
-	// from a pool and creates the ground box shape (also from a pool).
-	// The body is also added to the world.
+	groundBodyDef.position.Set(0.0f, 500);
+
+	sf::RectangleShape ground;
+	ground.setPosition(0, 500);
+
 	b2Body *groundBody = world.CreateBody(&groundBodyDef);
-	
-	// Define the ground box shape.
-	b2PolygonShape groundBox;
-	
-	// The extents are the half-widths of the box.
-	groundBox.SetAsBox(50.0f, 10.0f);
-	
+
+	b2PolygonShape groundBox;// Define the ground box shape.
+
+	groundBox.SetAsBox(50.0f, 10.0f);// The extents are the half-widths of the box.
+	ground.setSize(sf::Vector2f(100, 20));
+	ground.setOrigin(ground.getSize().x/2, ground.getSize().y/2);
+
 	// Add the ground fixture to the ground body.
 	groundBody->CreateFixture(&groundBox, 0.0f);
-	
+
+	/***********************************************************************************************************/
+
 	// Define the dynamic body. We set its position and call the body factory.
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(0.0f, 4.0f);
+	bodyDef.position.Set(20, 4.0f);
 	b2Body *body = world.CreateBody(&bodyDef);
-	
+
+	sf::RectangleShape bodyShape(sf::Vector2f(bodyDef.position.x, bodyDef.position.y));
+	bodyShape.setSize(sf::Vector2f(20, 20));
+	bodyShape.setOrigin(bodyShape.getSize().x/2, bodyShape.getSize().y/2);
+
 	// Define another box shape for our dynamic body.
 	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(1.0f, 1.0f);
+	dynamicBox.SetAsBox(10, 10);
 	
 	// Define the dynamic body fixture.
 	b2FixtureDef fixtureDef;
@@ -82,16 +71,55 @@ int main(int argc, char **argv) {
 	int32 positionIterations = 2;
 	
 	// This is our little game loop.
-	for (int32 i = 0; i < 60; ++i) {
-		// Instruct the world to perform a single step of simulation.
-		// It is generally best to keep the time step and iterations fixed.
+	while (window.isOpen()) {
+		window.clear();
+
+		sf::Event event{};
+		sf::Mouse::Button mouseButton;
+		sf::Keyboard::Key Key;
+
+		while (window.pollEvent(event)) {
+			switch (event.type) {
+				case sf::Event::Closed :
+					window.close();
+					break;
+				case sf::Event::KeyPressed :
+					Key = event.key.code;
+
+					switch (Key) {
+						case sf::Keyboard::Left :
+						case sf::Keyboard::Q :
+							body->ApplyForce({-10000, 0}, body->GetLocalCenter(), true);
+							break;
+						case sf::Keyboard::Right :
+						case sf::Keyboard::D :
+							body->ApplyForce({10000, 0}, {0, 0}, true);
+							break;
+						case sf::Keyboard::Up :
+						case sf::Keyboard::Z :
+							break;
+						case sf::Keyboard::Down :
+						case sf::Keyboard::S :
+							body->ApplyAngularImpulse(100, true);
+							break;
+						default:
+							break;
+					}
+					break;
+			}
+		}
+
 		world.Step(timeStep, velocityIterations, positionIterations);
 		
-		// Now print the position and angle of the body.
 		b2Vec2 position = body->GetPosition();
-		float32 angle = body->GetAngle();
-		
-		printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
+
+		bodyShape.setPosition(position.x, position.y);
+		bodyShape.setRotation(body->GetAngle() * 57.295779513082320876798154814105f);
+
+		window.draw(ground);
+		window.draw(bodyShape);
+
+		window.display();
 	}
 	
 	// When the world destructor is called, all bodies and joints are freed. This can

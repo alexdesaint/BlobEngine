@@ -71,7 +71,7 @@ namespace BlobEngine {
 				B(target.pointA),
 				C(target.pointB),
 				D(destination) {
-			load(object, target);
+			load(target);
 		}
 		
 		const Vec2f &getRectificationPosition() const;

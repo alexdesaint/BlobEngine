@@ -126,51 +126,37 @@ namespace BlobEngine {
 
 		double vecEALength = vecEA.length();
 		
-		if (rayonA + vecAD.length() >= vecEALength) {
-
-			//if (vecEALength >= object.rayon) {
+		if (rayonA + vecAD.length() < vecEALength)
+			return;
 				
-				if (vecEA.scalaire(vecAD) < 0) {
+		if (vecEA.scalaire(vecAD) >= 0)
+			return;
 
-					n = vecEA.getNormal();
+		float a = (B.x - C.x) / (B.y - C.y);
+		float b = B.y - B.x * a;
 
-					Point2f K = vecEA.setLength(rayonA);
-					
-					Point2f I = target.getIntersectionPoint(Line(K, K + vecAD));
-
-					F = I + n * rayonA;
-
-					Vec2f vecAF(A, F);
-					
-					if (vecAF.scalaire(vecAD) >= 0) {
-
-						Point2f M = (B + C) / 2;
-
-						if (Vec2f(M, I).length() <= (target.Length() / 2)) {
-							
-							if (vecAF.length2() < vecAD.length2()) {//ils se touchent forcément
-
-								hit = true;
-							}
-						}
-					}
-				}
-				/*} else {
-					Point2f M = (target.pointA + target.pointB) / 2;
-	
-					if (Vec2f(M, C).length() <= (target.Length() / 2)) {
-						n = vecEA.getNormal();
-	
-						Point2f G = object.position - n * object.rayon;
-	
-						rectificationPosition = object.position + Vec2f(G, C);
-						
-						superposition = true;
-						
-						hit = true;
-					}
-				}*/
+		if(a * A.x + b < A.y){
+			b += rayonA * std::sqrt(1 + a * a);
+		} else {
+			b -= rayonA * std::sqrt(1 + a * a);
 		}
+
+		float c = (A.x - D.x) / (A.y - D.y);
+		float d = A.y - A.x * c;
+
+		float det = (d - c)/(a - b);
+
+		F = {det, a * det + c};
+
+		G = F;
+		H = F;
+
+		Point2f M = (B + C) / 2;
+
+		if(Vec2f(M, F).length2() - rayonA * rayonA > (target.Length() / 2) * (target.Length() / 2))
+			return;
+
+		hit = true;
 	}
 	
 	Point2f Hit::getReactionVec(Reaction reaction, Vec2f &speed) {
