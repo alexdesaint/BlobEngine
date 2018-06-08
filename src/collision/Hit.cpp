@@ -45,7 +45,7 @@ namespace BlobEngine {
 		};
 	}
 	
-	void Hit::load() {
+	bool Hit::load() {
 
 		float rayonAB = rayonA + rayonB;
 
@@ -54,11 +54,11 @@ namespace BlobEngine {
 		
 		// si il sont de dirrection opposé
 		if (vecAD.scalaire(vecAB) <= 0)
-			return;
+			return false;
 		
 		//si la distance qui les sépare est plus longue que le vecteur vitesse
 		if (vecAD.length() <= vecAB.length() - rayonAB)
-			return;
+			return false;
 
 		/*
 		//si ils sont en superposition
@@ -116,9 +116,11 @@ namespace BlobEngine {
 				}
 			}
 		}
+		
+		return true;
 	}
-
-	void Hit::load(Line target) {
+	
+	bool Hit::load(Line target) {
 
 		Point2f E = target.closestPointTo(A);
 		Vec2f vecEA(E, A);
@@ -127,10 +129,10 @@ namespace BlobEngine {
 		double vecEALength = vecEA.length();
 		
 		if (rayonA + vecAD.length() < vecEALength)
-			return;
+			return false;
 				
 		if (vecEA.scalaire(vecAD) >= 0)
-			return;
+			return false;
 
 		float a = (B.x - C.x) / (B.y - C.y);
 		float b = B.y - B.x * a;
@@ -154,9 +156,47 @@ namespace BlobEngine {
 		Point2f M = (B + C) / 2;
 
 		if(Vec2f(M, F).length2() - rayonA * rayonA > (target.Length() / 2) * (target.Length() / 2))
-			return;
+			return false;
 
 		hit = true;
+		
+		return true;
+	}
+	
+	bool Hit::load2(Line target) {
+		
+		Vec2f vecEA(E, A);
+		Vec2f vecAD(A, D);
+		
+		Vec2f position =
+				vecAD + A; //Vec2f(transform.c * p.x - transform.s * p.y, transform.s * p.x + transform.c * p.y);
+		Vec2f s = B - position;
+		float b = s.scalaire(s) - rayonA * rayonA;
+		
+		// Solve quadratic equation.
+		Vec2f r = C - B;
+		float c = s.scalaire(r);
+		float rr = r.scalaire(r);
+		float sigma = c * c - rr * b;
+		
+		// Check for negative discriminant and short segment.
+		if (sigma < 0.0f || rr < FLT_EPSILON) {
+			return false;
+		}
+		
+		// Find the point of intersection of the line with the circle.
+		float a = -(c + sqrt(sigma));
+		
+		// Is the intersection point on the segment?
+		if (0.0f <= a && a <= /*input.maxFraction*/1 * rr) {
+			a /= rr;
+			//output->fraction = a;
+			F = B + (r) * a;
+			//output->normal = (s + r * a).getNormal();
+			return true;
+		}
+		
+		return false;
 	}
 	
 	Point2f Hit::getReactionVec(Reaction reaction, Vec2f &speed) {

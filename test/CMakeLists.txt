@@ -11,4 +11,4 @@ add_executable(Box2DTest Box2DTest.cpp)
 target_link_libraries(Box2DTest Box2D sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread)
 
 add_executable(NewFonctionTest NewFonctionTest.cpp)
-target_link_libraries(NewFonctionTest sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread)
+target_link_libraries(NewFonctionTest Geometrie sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread)

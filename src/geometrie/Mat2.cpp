@@ -8,7 +8,7 @@ namespace BlobEngine {
 
 	template<typename T>
 	double Mat2<T>::length() {
-		return std::sqrt(length2());
+		return std::sqrt(x * x + y * y);
 	}
 
 	template<typename T>

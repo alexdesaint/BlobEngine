@@ -33,10 +33,12 @@ namespace BlobEngine {
 		Vec2f n{};//à virer
 
 		Vec2f rectificationPosition{};
-
-		void load();
 		
-		void load(Line target);
+		bool load();
+		
+		bool load(Line target);
+		
+		bool load2(Line target);
 		
 		float sng(float x);
 		
@@ -53,7 +55,7 @@ namespace BlobEngine {
 				rayonA(object.rayon),
 				rayonB(0),
 				D(destination) {
-			load();
+			//load();
 		}
 		
 		Hit(Circle object, Circle target, Point2f destination) :
@@ -62,7 +64,7 @@ namespace BlobEngine {
 				rayonA(object.rayon),
 				rayonB(target.rayon),
 				D(destination) {
-			load();
+			//load();
 		}
 		
 		Hit(Circle object, Line target, Vec2f destination) :
@@ -71,7 +73,7 @@ namespace BlobEngine {
 				B(target.pointA),
 				C(target.pointB),
 				D(destination) {
-			load(target);
+			hit = load2(target);
 		}
 		
 		const Vec2f &getRectificationPosition() const;

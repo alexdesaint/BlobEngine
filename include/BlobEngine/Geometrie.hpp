@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cfloat>
+
 #define PI 3.14159265f
 
 namespace  BlobEngine {
@@ -57,6 +59,25 @@ namespace  BlobEngine {
 		Mat2 operator/(T a) {
 			return {x / a, y / a};
 		}
+		
+		//test
+		/// Add a vector to this vector.
+		void operator+=(const Mat2<T> &v) {
+			x += v.x;
+			y += v.y;
+		}
+		
+		/// Subtract a vector from this vector.
+		void operator-=(const Mat2<T> &v) {
+			x -= v.x;
+			y -= v.y;
+		}
+		
+		/// Multiply this vector by a scalar.
+		void operator*=(float a) {
+			x *= a;
+			y *= a;
+		}
 
 		T length2() {
 			return x * x + y * y;
@@ -71,7 +92,9 @@ namespace  BlobEngine {
 		Mat2<float> getNormal() {
 			double l = length();
 			
-			return {(float) ((x) / l), (float) ((y) / l)};
+			double invLength = 1.0f / l;
+			
+			return {(float) (x * invLength), (float) (y * invLength)};
 		}
 
 		Mat2 setLength(double newLength);
