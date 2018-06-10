@@ -247,30 +247,37 @@ int main() {
 		font.loadFromFile("FFFFORWA.TTF");
 
 		CollisionDetector collisionDetector;
-
-		MainCircle object(300, 300, 20, 300, 300);
+		
+		MainCircle object(500, 380, 20, 300, 300);
 
 		std::list<StaticCircle> circleList;
-
-		for (int i = 20; i < width; i += 80) {
-			circleList.emplace_back(i + widthOff, 20 + heightOff, 20);
-		}
-
-		for (int i = 100; i < height - 80; i += 80) {
-			circleList.emplace_back(20 + widthOff, i + heightOff, 20);
-		}
-
 		std::list<StaticRect> rectList;
-
-		for (int i = 20; i < width; i += 80) {
-			rectList.emplace_back(i + widthOff, height - 20 + heightOff, 20);
-		}
 		
-		rectList.emplace_back(width - 20 + widthOff, height/2 + heightOff - 80, 20);
-		rectList.emplace_back(width - 20 + widthOff, height/2 + heightOff, 20);
-
-		for (int i = 100; i < height - 80; i += 80) {
-			rectList.emplace_back(width - 20 + widthOff, i + heightOff, 20);
+		bool simpleDemo = 1;
+		
+		if (simpleDemo == true) {
+			//circleList.emplace_back(400, 200, 20);
+			rectList.emplace_back(300, 300, 20);
+		} else {
+			
+			for (int i = 20; i < width; i += 80) {
+				circleList.emplace_back(i + widthOff, 20 + heightOff, 20);
+			}
+			
+			for (int i = 100; i < height - 80; i += 80) {
+				circleList.emplace_back(20 + widthOff, i + heightOff, 20);
+			}
+			
+			for (int i = 20; i < width; i += 80) {
+				rectList.emplace_back(i + widthOff, height - 20 + heightOff, 20);
+			}
+			
+			rectList.emplace_back(width - 20 + widthOff, height / 2 + heightOff - 80, 20);
+			rectList.emplace_back(width - 20 + widthOff, height / 2 + heightOff, 20);
+			
+			for (int i = 100; i < height - 80; i += 80) {
+				rectList.emplace_back(width - 20 + widthOff, i + heightOff, 20);
+			}
 		}
 
 		bool left = false;
