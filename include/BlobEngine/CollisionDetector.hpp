@@ -110,8 +110,8 @@ namespace BlobEngine {
 		float getElapsedTime();
 
 	public:
-
-		PhysicalObject *getClosetObject(Circle object, Vec2f frameMove, Hit &hit);
+		
+		PhysicalObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
 
 		void checkCollision(CircleDynamic &object);
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cfloat>
+
 #define PI 3.14159265f
 
 namespace  BlobEngine {
@@ -57,30 +59,53 @@ namespace  BlobEngine {
 		Mat2 operator/(T a) {
 			return {x / a, y / a};
 		}
+		
+		//test
+		/// Add a vector to this vector.
+		void operator+=(const Mat2<T> &v) {
+			x += v.x;
+			y += v.y;
+		}
+		
+		/// Subtract a vector from this vector.
+		void operator-=(const Mat2<T> &v) {
+			x -= v.x;
+			y -= v.y;
+		}
+		
+		/// Multiply this vector by a scalar.
+		void operator*=(float a) {
+			x *= a;
+			y *= a;
+		}
 
-		float length2() {
+		T length2() {
 			return x * x + y * y;
 		}
 
-		float length();
+		double length();
 
-		float scalaire(Mat2 B) {
+		T scalaire(Mat2 B) {
 			return x * B.x + y * B.y;
 		}
-
-		Mat2 getNormal() {
-			return *this / length();
+		
+		Mat2<float> getNormal() {
+			double l = length();
+			
+			double invLength = 1.0f / l;
+			
+			return {(float) (x * invLength), (float) (y * invLength)};
 		}
 
-		Mat2 setLength(float newLength);
+		Mat2 setLength(double newLength);
 
 		Mat2 rotate() {
 			return {-y, x};
 		}
 
-		float getOrientationRad();
+		double getOrientationRad();
 
-		float getOrientationDeg();
+		double getOrientationDeg();
 
 		void reset(){
 			x = 0;
@@ -90,15 +115,19 @@ namespace  BlobEngine {
 		bool isNull() {
 			return ((x == 0) && (y == 0));
 		}
+
+		//void round(int v);
 	};
+	
+	template
+	class Mat2<float>;
 
-	template class Mat2<int>;
-	template class Mat2<float>;
-
-	typedef Mat2<int> Point2i;
+	//typedef Mat2<int> Point2i;
 	typedef Mat2<float> Point2f;
-	typedef Mat2<int> Vec21;
+	//typedef Mat2<double> Point2d;
+	//typedef Mat2<int> Vec2i;
 	typedef Mat2<float> Vec2f;
+	//typedef Mat2<double> Vec2d;
 
 	class Circle {
 	public:
@@ -106,6 +135,7 @@ namespace  BlobEngine {
 		Point2f position;
 
 		Circle() : rayon(0) {}
+
 		Circle(Point2f position, float rayon) : rayon(rayon), position(position) {}
 	};
 
@@ -115,22 +145,32 @@ namespace  BlobEngine {
 		Point2f pointB;
 
 		Line() : pointA(), pointB() {}
+
 		Line(Point2f a, Point2f b) : pointA(a), pointB(b) {}
 
 		Vec2f getVector()  {
 			return {pointB.x - pointA.x, pointB.y - pointA.y};
 		}
 
-		float Length2() {
+		double Length2() {
 			return (pointB.x - pointA.x) * (pointB.x - pointA.x) + (pointB.y - pointA.y) * (pointB.y - pointA.y);
 		}
 
-		float Length();
+		double Length();
 
-		float getOrientation();
+		double getOrientation();
 
 		Point2f closestPointTo(Point2f point);
 
 		Point2f getIntersectionPoint(Line B);
+		
+		float getGradient(){
+			//(yb - ya)/(xb - xa)
+			return (pointB.y - pointA.y) / (pointB.x - pointA.x);
+		}
+		
+		float getConstant(){
+			return pointA.y - getGradient() * pointA.x;
+		}
 	};
 };

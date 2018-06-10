@@ -58,14 +58,16 @@ namespace BlobEngine {
 
 		return diff.count();
 	}
-
-	PhysicalObject *CollisionDetector::getClosetObject(Circle object, Vec2f frameMove, Hit &hit) {
-
-		PhysicalObject *lastHitTarget = nullptr;
-
+	
+	PhysicalObject *CollisionDetector::getClosetObject(Circle &object, Vec2f frameMove, Hit &hit) {
+		
+		PhysicalObject *lastHitTarget;
+		
+		lastHitTarget = nullptr;
+		
 		for (CircleDynamic *target : circleDynamicList) {
 			Hit c(object, target->mainCircle, frameMove);
-
+			
 			if (c.hitTarget()) {
 				if (lastHitTarget == nullptr) {
 					hit = c;
@@ -76,10 +78,10 @@ namespace BlobEngine {
 				}
 			}
 		}
-
+		
 		for (CircleStatic *target : circleStaticList) {
 			Hit c(object, target->mainCircle, frameMove);
-
+			
 			if (c.hitTarget()) {
 				if (lastHitTarget == nullptr) {
 					hit = c;
@@ -90,15 +92,15 @@ namespace BlobEngine {
 				}
 			}
 		}
-
+		
 		for (LineStatic *target : lineStaticList) {
 			if (target->lines.size() > 1) {
 				int count = 0;
 				Point2f lastPoint = target->lines.back();
-
+				
 				for (Point2f point : target->lines) {
 					Hit c(object, point, frameMove);
-
+					
 					if (c.hitTarget()) {
 						if (lastHitTarget == nullptr) {
 							hit = c;
@@ -108,12 +110,13 @@ namespace BlobEngine {
 							lastHitTarget = target;
 						}
 					}
-
+					
 					Line line(point, lastPoint);
-
+					
 					Hit cl(object, line, frameMove);
-
+					
 					if (cl.hitTarget()) {
+						
 						if (lastHitTarget == nullptr) {
 							hit = cl;
 							lastHitTarget = target;
@@ -122,7 +125,7 @@ namespace BlobEngine {
 							lastHitTarget = target;
 						}
 					}
-
+					
 					lastPoint = point;
 					count++;
 				}
@@ -154,8 +157,8 @@ namespace BlobEngine {
 				target->hit(object);
 				
 				frameMove = hit.getReactionVec(object.hit(*target), object.speed);
-				
-				object.mainCircle.position = object.mainCircle.position + hit.getVecToTarget();
+
+				object.mainCircle.position = hit.getHitPoint();
 
 				trajectoryComputed.emplace_back(object.mainCircle.position);
 				
@@ -175,7 +178,7 @@ namespace BlobEngine {
 												 originSpeed,
 												 trajectoryComputed);
 			}
-			
+
 		} while (target != nullptr && !object.speed.isNull());
 		
 		object.enableCollision();
