@@ -1,0 +1,266 @@
+#include <BlobEngine/glTF2/Loader.hpp>
+
+#include <BlobEngine/BlobException.hpp>
+#include <BlobEngine/FileReader.hpp>
+#include <BlobEngine/BlobGL/VertexBufferObject.hpp>
+#include <BlobEngine/BlobGL/VertexArrayObject.hpp>
+
+#include <BlobEngine/glTF2/Object.hpp>
+
+#include <array>
+#include <list>
+#include <iostream>
+
+#include <glm/mat4x4.hpp>
+
+using namespace std;
+
+namespace BlobEngine::glTF2 {
+
+	class Asset : public Object {
+	private:
+		string version;
+
+	public:
+		explicit Asset() {
+
+			goTo("asset");
+
+			version = getString("version");
+
+			if (version != "2.0")
+				throw BlobException(string("glTF : can't load version ") + version);
+		}
+	};
+
+	class Buffer : public Object {
+	public:
+
+		string uri; //!< The uri of the buffer. Can be a filepath, a data uri, etc. (required)
+		size_t byteLength; //!< The length of the buffer in bytes. (default: 0)
+
+		vector<uint8_t> data;
+
+		void load(int num) {
+			goToArrayElement("buffers", num);
+
+			uri = getString("uri");
+
+			if (hasMember("byteLength"))
+				byteLength = static_cast<size_t>(getInt("byteLength"));
+
+			cout << FileReader::getFilePath(path) + uri << endl;
+
+			FileReader fileReader(FileReader::getFilePath(path) + uri);
+
+			if (fileReader.getSize() != byteLength)
+				throw BlobException("File typeSize don't fit");
+
+			data.resize(byteLength);
+
+			for (int i = 0; i < byteLength; i++)
+				data[i] = fileReader.readNextByte();
+		}
+	};
+
+	//! A view into a buffer generally representing a subset of the buffer.
+	class BufferView : public Object {
+	public:
+		Buffer buffer; //! The ID of the buffer. (required)
+		int byteOffset{}; //! The offset into the buffer in bytes. (required)
+		int byteLength = 0; //! The length of the bufferView in bytes. (default: 0)
+
+		enum Target {
+			BufferViewTarget_ARRAY_BUFFER = 34962,
+			BufferViewTarget_ELEMENT_ARRAY_BUFFER = 34963
+		};
+
+		Target target; //! The target that the WebGL buffer should be bound to.
+
+		void load(int num) {
+
+			goToArrayElement("bufferViews", num);
+
+			byteOffset = getInt("byteOffset");
+
+			if (hasMember("byteLength"))
+				byteLength = getInt("byteLength");
+
+			target = static_cast<Target>(getInt("target"));
+
+			buffer.load(getInt("buffer"));
+		}
+	};
+
+	class Accessor : public Object, public BlobGL::VertexBufferObject {
+	public:
+		enum Type {
+			SCALAR, VEC2, VEC3, VEC4, MAT2, MAT3, MAT4
+		};
+
+	private:
+
+		static const size_t NUM_VALUES = 7;
+
+		struct TypeInfo {
+			const char *name;
+			unsigned int numOfComponents;
+		};
+
+		static const TypeInfo typeInfos[NUM_VALUES];
+
+	public:
+
+		enum ComponentType {
+			ComponentType_BYTE = 5120,
+			ComponentType_UNSIGNED_BYTE = 5121,
+			ComponentType_SHORT = 5122,
+			ComponentType_UNSIGNED_SHORT = 5123,
+			ComponentType_UNSIGNED_INT = 5125,
+			ComponentType_FLOAT = 5126
+		};
+
+		static Type getType(const char *str) {
+			for (size_t i = 0; i < NUM_VALUES; ++i) {
+				if (strcmp(typeInfos[i].name, str) == 0) {
+					return static_cast<Type>(i);
+				}
+			}
+			return SCALAR;
+		}
+
+		BufferView bufferView;            //!< The ID of the bufferView. (required)
+		unsigned int byteOffset;        //!< The offset relative to the start of the bufferView in bytes. (required)
+		ComponentType componentType;    //!< The datatype of components in the attribute. (required)
+		unsigned int count;                //!< The number of attributes referenced by this accessor. (required)
+		Type type;                        //!< Specifies if the attribute is a scalar, vector, or matrix. (required)
+		vector<float> max;                //!< Maximum value of each component in this attribute.
+		vector<float> min;                //!< Minimum value of each component in this attribute.
+
+		void load(int num) {
+
+			goToArrayElement("accessors", num);
+
+			bufferView.load(getInt("bufferView"));
+
+			componentType = (ComponentType) getInt("componentType");
+
+			type = getType(getString("type").c_str());
+
+			byteOffset = static_cast<unsigned int>(getInt("byteOffset"));
+
+			count = static_cast<unsigned int>(getInt("count"));
+		}
+	};
+
+	const Accessor::TypeInfo Accessor::typeInfos[NUM_VALUES] = {
+			{"SCALAR", 1},
+			{"VEC2",   2},
+			{"VEC3",   3},
+			{"VEC4",   4},
+			{"MAT2",   4},
+			{"MAT3",   9},
+			{"MAT4",   16}
+	};
+
+	class Mesh : public Object {
+	private:
+		class Primitive : public Object {
+		private:
+			class Attributes : public Object {
+			public:
+				Accessor position;
+
+				explicit Attributes(JsonNode value) : Object(value) {
+					position.load(getInt("POSITION"));
+				}
+			};
+
+		public:
+
+			Attributes attributes;
+
+			explicit Primitive(JsonNode value) : Object(value), attributes(getObject("attributes")) {
+			}
+		};
+
+	public:
+
+		vector<Primitive> primitives;
+
+		void load(int num) {
+			goToArrayElement("meshes", num);
+
+			int size = getArraySize("primitives");
+
+			for (unsigned int i = 0; i < size; i++) {
+				primitives.emplace_back(getArrayObject("primitives", i));
+			}
+		}
+	};
+
+	class Node : public Object {
+	public:
+		vector<Node> children;
+		Mesh mesh;
+
+		glm::mat4 matrix{};
+		glm::vec3 translation{};
+		glm::vec4 rotation{};
+		glm::vec3 scale{};
+
+		explicit Node(int num) {
+			goToArrayElement("nodes", num);
+
+			mesh.load(getInt("mesh"));
+		}
+	};
+
+	class Scene : public Object {
+	public:
+
+		vector<Node> nodes;
+
+		explicit Scene(JsonNode scene) : Object(scene) {
+
+			int size = getArraySize("nodes");
+
+			for (unsigned int i = 0; i < size; i++) {
+				nodes.emplace_back(getArrayInt("nodes", i));
+			}
+
+		}
+	};
+
+	class SceneManager : public Object {
+	public:
+
+		vector<Scene> scenes;
+
+		int defaultScene = 0;
+
+		Asset asset;
+
+		explicit SceneManager(const string &file) : Object(file), asset() {
+
+			if (hasMember("scene"))
+				defaultScene = getInt("scene");
+
+			if (hasMember("version"))
+				defaultScene = getInt("scene");
+
+			goTo("scenes");
+
+			int size = getArraySize();
+
+			for (unsigned int i = 0; i < size; i++) {
+				scenes.emplace_back(getArrayObject(i));
+			}
+		}
+	};
+
+	Loader::Loader(const string &path) {
+
+		SceneManager sceneManager(path);
+	}
+}

@@ -4,13 +4,15 @@
   <component name="CidrRootsConfiguration">
     <sourceRoots>
       <file path="$PROJECT_DIR$/Box2D" />
+      <file path="$PROJECT_DIR$/data" />
       <file path="$PROJECT_DIR$/include" />
+      <file path="$PROJECT_DIR$/lib" />
       <file path="$PROJECT_DIR$/src" />
       <file path="$PROJECT_DIR$/test" />
     </sourceRoots>
     <excludeRoots>
       <file path="$PROJECT_DIR$/bin" />
-      <file path="$PROJECT_DIR$/lib" />
+      <file path="$PROJECT_DIR$/cmake-build-debug" />
     </excludeRoots>
   </component>
 </project>

@@ -305,7 +305,7 @@ int main() {
 
 			player.draw(&window);
 
-			//bounceBall.draw(&window);
+			//bounceBall.clear(&window);
 
 			box1.draw(&window);
 			box2.draw(&window);

@@ -118,7 +118,7 @@ namespace  BlobEngine {
 
 		//void round(int v);
 	};
-	
+
 	template
 	class Mat2<float>;
 
