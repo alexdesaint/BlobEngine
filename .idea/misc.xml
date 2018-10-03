@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
-  <component name="CidrRootsConfiguration">
-    <sourceRoots>
-      <file path="$PROJECT_DIR$/Box2D" />
-      <file path="$PROJECT_DIR$/data" />
-      <file path="$PROJECT_DIR$/include" />
-      <file path="$PROJECT_DIR$/lib" />
-      <file path="$PROJECT_DIR$/src" />
-      <file path="$PROJECT_DIR$/test" />
-    </sourceRoots>
-    <excludeRoots>
-      <file path="$PROJECT_DIR$/bin" />
-      <file path="$PROJECT_DIR$/cmake-build-debug" />
-    </excludeRoots>
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="ES6" />
   </component>
 </project>

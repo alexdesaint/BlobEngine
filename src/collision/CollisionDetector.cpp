@@ -158,7 +158,7 @@ namespace BlobEngine {
 				
 				frameMove = hit.getReactionVec(object.hit(*target), object.speed);
 
-				object.mainCircle.position = hit.getHitPoint();
+				object.mainCircle.position += hit.getVecToTarget();
 
 				trajectoryComputed.emplace_back(object.mainCircle.position);
 				

@@ -22,6 +22,7 @@ if (NOT SFML_FOUND)
 endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/../SFML/include")
+message("${PROJECT_SOURCE_DIR}/../SFML/include")
 
 subdirs(src)
 subdirs(test)

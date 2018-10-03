@@ -19,8 +19,8 @@ target_link_libraries(SDLGraphicTest
 #STATIC
 target_link_libraries(SDLGraphicTest -static -static-libgcc -static-libstdc++ -lpthread)
 
-add_executable(NewFonctionTest NewFonctionTest.cpp)
-target_link_libraries(NewFonctionTest Geometrie sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread)
-
 add_executable(TestFileReader TestFileReader.cpp)
 target_link_libraries(TestFileReader Shape -static-libgcc -static-libstdc++ -static -lpthread)
+
+add_executable(Box2DTest Box2DTest.cpp)
+target_link_libraries(Box2DTest Box2D Geometrie sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread)
