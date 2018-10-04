@@ -11,9 +11,8 @@ int main(int argc, char *argv[]) {
 
 		BlobEngine::Graphic graphic(640, 480);
 
-		//BlobEngine::Shape shape("../data/sphere.obj");
-		BlobEngine::Shape shape(
-				"../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+		BlobEngine::Shape shape("../data/sphere.obj");
+		//BlobEngine::Shape shape("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
 
 		shape.setVertexShaderProgram(R"(
 #version 410

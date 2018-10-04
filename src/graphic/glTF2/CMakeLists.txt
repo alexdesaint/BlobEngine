@@ -1,1 +1,1 @@
-add_library(glTF2Loader Loader.cpp Object.cpp)
+add_library(glTF2Loader Loader.cpp JsonExplorer.cpp)

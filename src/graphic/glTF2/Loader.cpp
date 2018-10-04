@@ -5,7 +5,7 @@
 #include <BlobEngine/BlobGL/VertexBufferObject.hpp>
 #include <BlobEngine/BlobGL/VertexArrayObject.hpp>
 
-#include <BlobEngine/glTF2/Object.hpp>
+#include <BlobEngine/glTF2/JsonExplorer.hpp>
 
 #include <array>
 #include <list>
@@ -17,41 +17,45 @@ using namespace std;
 
 namespace BlobEngine::glTF2 {
 
-	class Asset : public Object {
+	class Asset{
 	private:
 		string version;
 
 	public:
-		explicit Asset() {
+		explicit Asset(JsonExplorer j) {
 
-			goTo("asset");
+			//j.goIn("asset");
 
-			version = getString("version");
+			version = j.getString("version");
+
+			cout << version << endl;
 
 			if (version != "2.0")
 				throw BlobException(string("glTF : can't load version ") + version);
 		}
 	};
 
-	class Buffer : public Object {
+	class Buffer {
 	public:
 
 		string uri; //!< The uri of the buffer. Can be a filepath, a data uri, etc. (required)
-		size_t byteLength; //!< The length of the buffer in bytes. (default: 0)
+		size_t byteLength = 0; //!< The length of the buffer in bytes. (default: 0)
 
 		vector<uint8_t> data;
 
-		void load(int num) {
-			goToArrayElement("buffers", num);
+		void load(int num, JsonExplorer explorer) {
+			explorer.goToBaseNode();
 
-			uri = getString("uri");
+			explorer.goToArrayElement("buffers", num);
 
-			if (hasMember("byteLength"))
-				byteLength = static_cast<size_t>(getInt("byteLength"));
+			uri = explorer.getString("uri");
 
-			cout << FileReader::getFilePath(path) + uri << endl;
+			if (explorer.hasMember("byteLength"))
+				byteLength = static_cast<size_t>(explorer.getInt("byteLength"));
 
-			FileReader fileReader(FileReader::getFilePath(path) + uri);
+			cout << FileReader::getFilePath(JsonExplorer::path) + uri << endl;
+
+			FileReader fileReader(FileReader::getFilePath(JsonExplorer::path) + uri);
 
 			if (fileReader.getSize() != byteLength)
 				throw BlobException("File typeSize don't fit");
@@ -60,11 +64,16 @@ namespace BlobEngine::glTF2 {
 
 			for (int i = 0; i < byteLength; i++)
 				data[i] = fileReader.readNextByte();
+
+			for(unsigned char &i : data)
+				std::cout << hex << uppercase << (unsigned int) i << ' ';
+
+			cout << endl;
 		}
 	};
 
 	//! A view into a buffer generally representing a subset of the buffer.
-	class BufferView : public Object {
+	class BufferView {
 	public:
 		Buffer buffer; //! The ID of the buffer. (required)
 		int byteOffset{}; //! The offset into the buffer in bytes. (required)
@@ -77,22 +86,24 @@ namespace BlobEngine::glTF2 {
 
 		Target target; //! The target that the WebGL buffer should be bound to.
 
-		void load(int num) {
+		void load(int num, JsonExplorer explorer) {
 
-			goToArrayElement("bufferViews", num);
+			explorer.goToBaseNode();
 
-			byteOffset = getInt("byteOffset");
+			explorer.goToArrayElement("bufferViews", num);
 
-			if (hasMember("byteLength"))
-				byteLength = getInt("byteLength");
+			byteOffset = explorer.getInt("byteOffset");
 
-			target = static_cast<Target>(getInt("target"));
+			if (explorer.hasMember("byteLength"))
+				byteLength = explorer.getInt("byteLength");
 
-			buffer.load(getInt("buffer"));
+			target = static_cast<Target>(explorer.getInt("target"));
+
+			buffer.load(explorer.getInt("buffer"), explorer);
 		}
 	};
 
-	class Accessor : public Object, public BlobGL::VertexBufferObject {
+	class Accessor {
 	public:
 		enum Type {
 			SCALAR, VEC2, VEC3, VEC4, MAT2, MAT3, MAT4
@@ -100,14 +111,14 @@ namespace BlobEngine::glTF2 {
 
 	private:
 
-		static const size_t NUM_VALUES = 7;
+		static const size_t NUM_TYPE = 7;
 
 		struct TypeInfo {
 			const char *name;
 			unsigned int numOfComponents;
 		};
 
-		static const TypeInfo typeInfos[NUM_VALUES];
+		static const TypeInfo typeInfos[NUM_TYPE];
 
 	public:
 
@@ -121,11 +132,12 @@ namespace BlobEngine::glTF2 {
 		};
 
 		static Type getType(const char *str) {
-			for (size_t i = 0; i < NUM_VALUES; ++i) {
+			for (size_t i = 0; i < NUM_TYPE; ++i) {
 				if (strcmp(typeInfos[i].name, str) == 0) {
 					return static_cast<Type>(i);
 				}
 			}
+			//TODO throw exeption when gatType fail
 			return SCALAR;
 		}
 
@@ -137,23 +149,25 @@ namespace BlobEngine::glTF2 {
 		vector<float> max;                //!< Maximum value of each component in this attribute.
 		vector<float> min;                //!< Minimum value of each component in this attribute.
 
-		void load(int num) {
+		void load(int num, JsonExplorer explorer) {
 
-			goToArrayElement("accessors", num);
+			explorer.goToBaseNode();
 
-			bufferView.load(getInt("bufferView"));
+			explorer.goToArrayElement("accessors", num);
 
-			componentType = (ComponentType) getInt("componentType");
+			bufferView.load(explorer.getInt("bufferView"), explorer);
 
-			type = getType(getString("type").c_str());
+			componentType = (ComponentType) explorer.getInt("componentType");
 
-			byteOffset = static_cast<unsigned int>(getInt("byteOffset"));
+			type = getType(explorer.getString("type").c_str());
 
-			count = static_cast<unsigned int>(getInt("count"));
+			byteOffset = static_cast<unsigned int>(explorer.getInt("byteOffset"));
+
+			count = static_cast<unsigned int>(explorer.getInt("count"));
 		}
 	};
 
-	const Accessor::TypeInfo Accessor::typeInfos[NUM_VALUES] = {
+	const Accessor::TypeInfo Accessor::typeInfos[NUM_TYPE] = {
 			{"SCALAR", 1},
 			{"VEC2",   2},
 			{"VEC3",   3},
@@ -163,16 +177,17 @@ namespace BlobEngine::glTF2 {
 			{"MAT4",   16}
 	};
 
-	class Mesh : public Object {
+	class Mesh {
 	private:
-		class Primitive : public Object {
+		class Primitive {
 		private:
-			class Attributes : public Object {
+
+			class Attributes {
 			public:
 				Accessor position;
 
-				explicit Attributes(JsonNode value) : Object(value) {
-					position.load(getInt("POSITION"));
+				explicit Attributes(JsonExplorer explorer) {
+					position.load(explorer.getInt("POSITION"), explorer);
 				}
 			};
 
@@ -180,26 +195,28 @@ namespace BlobEngine::glTF2 {
 
 			Attributes attributes;
 
-			explicit Primitive(JsonNode value) : Object(value), attributes(getObject("attributes")) {
+			explicit Primitive(JsonExplorer explorer) : attributes(explorer.getObject("attributes")) {
+
 			}
 		};
 
-	public:
-
 		vector<Primitive> primitives;
 
-		void load(int num) {
-			goToArrayElement("meshes", num);
+	public:
+		void load(int num, JsonExplorer explorer) {
+			explorer.goToBaseNode();
 
-			int size = getArraySize("primitives");
+			explorer.goToArrayElement("meshes", num);
+
+			int size = explorer.getArraySize("primitives");
 
 			for (unsigned int i = 0; i < size; i++) {
-				primitives.emplace_back(getArrayObject("primitives", i));
+				primitives.emplace_back(explorer.getArrayObject("primitives", i));
 			}
 		}
 	};
 
-	class Node : public Object {
+	class Node {
 	public:
 		vector<Node> children;
 		Mesh mesh;
@@ -209,52 +226,61 @@ namespace BlobEngine::glTF2 {
 		glm::vec4 rotation{};
 		glm::vec3 scale{};
 
-		explicit Node(int num) {
-			goToArrayElement("nodes", num);
+		explicit Node(int num, JsonExplorer explorer) {
+			explorer.goToBaseNode();
 
-			mesh.load(getInt("mesh"));
+			explorer.goToArrayElement("nodes", num);
+
+			mesh.load(explorer.getInt("mesh"), explorer);
 		}
 	};
 
-	class Scene : public Object {
+	class Scene {
 	public:
 
 		vector<Node> nodes;
 
-		explicit Scene(JsonNode scene) : Object(scene) {
+		explicit Scene(JsonExplorer explorer) {
 
-			int size = getArraySize("nodes");
+			int size = explorer.getArraySize("nodes");
 
 			for (unsigned int i = 0; i < size; i++) {
-				nodes.emplace_back(getArrayInt("nodes", i));
+				nodes.emplace_back(explorer.getArrayInt("nodes", i), explorer);
 			}
 
 		}
 	};
 
-	class SceneManager : public Object {
+	class SceneManager {
 	public:
 
 		vector<Scene> scenes;
 
 		int defaultScene = 0;
 
-		Asset asset;
+		explicit SceneManager(const string &file) {
 
-		explicit SceneManager(const string &file) : Object(file), asset() {
+			JsonExplorer baseNode(file);
 
-			if (hasMember("scene"))
-				defaultScene = getInt("scene");
+			Asset a(baseNode.getObject("asset"));
 
-			if (hasMember("version"))
-				defaultScene = getInt("scene");
+			if(baseNode.hasMember("asset"))
+				cout << "working" << endl;
+			else
+				cout << "not working" << endl;
 
-			goTo("scenes");
+			if (baseNode.hasMember("scene"))
+				defaultScene = baseNode.getInt("scene");
 
-			int size = getArraySize();
+			if (baseNode.hasMember("version"))
+				defaultScene = baseNode.getInt("scene");
+
+			JsonExplorer scenesObject = baseNode.getArray("scenes");
+
+			int size = scenesObject.getArraySize();
 
 			for (unsigned int i = 0; i < size; i++) {
-				scenes.emplace_back(getArrayObject(i));
+				scenes.emplace_back(scenesObject.getArrayObject(i));
 			}
 		}
 	};

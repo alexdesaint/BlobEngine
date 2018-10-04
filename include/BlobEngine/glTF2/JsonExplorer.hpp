@@ -31,25 +31,27 @@ typedef rapidjson::Value *JsonNode;
 
 namespace BlobEngine::glTF2 {
 
-	class Object {
+	class JsonExplorer {
 	private:
 
 		JsonNode value;
 
-	protected:
+		JsonNode getRapidArray(const char *name);
+
+	public:
 		static std::string path;
 
-		Object();
+		JsonExplorer();
 
-		explicit Object(JsonNode node);
+		explicit JsonExplorer(JsonNode node);
 
-		explicit Object(std::string file);
+		explicit JsonExplorer(std::string file);
 
-		~Object();
+		~JsonExplorer();
 
-		static JsonNode getBaseNode();
+		void goToBaseNode();
 
-		void goTo(const char *name);
+		void goIn(const char *name);
 
 		void goToArrayElement(const char *name, int num);
 
@@ -67,13 +69,17 @@ namespace BlobEngine::glTF2 {
 
 		std::string getString(const char *name);
 
-		JsonNode getObject(const char *name);
+		JsonExplorer getObject(const char *name);
 
-		JsonNode getArrayObject(int num);
+		JsonExplorer getArrayObject(int num);
 
-		JsonNode getArrayObject(const char *name, int num);
+		JsonExplorer getArrayObject(const char *name, int num);
 
-		JsonNode getArray(const char *name);
+		JsonExplorer getArray(const char *name);
+
+		void printType();
+
+		void printMembers();
 	};
 }
 

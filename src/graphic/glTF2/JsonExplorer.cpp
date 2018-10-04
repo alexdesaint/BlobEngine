@@ -1,11 +1,13 @@
-#include <BlobEngine/glTF2/Object.hpp>
+#include <BlobEngine/glTF2/JsonExplorer.hpp>
 
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
 #include <rapidjson/istreamwrapper.h>
+
 #include <BlobEngine/BlobException.hpp>
 
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 using rapidjson::Document;
@@ -15,17 +17,27 @@ namespace BlobEngine::glTF2 {
 
 	Document document;
 
-	string Object::path;
+	string JsonExplorer::path;
 
-	Object::Object() : value(&document) {
+	JsonNode JsonExplorer::getRapidArray(const char *name) {
+		if (!value->HasMember(name))
+			throw BlobException(string("Member ") + name + " can't be found");
+
+		if (!(*value)[name].IsArray())
+			throw BlobException(string("Member ") + name + " is not an array");
+
+		return &(*value)[name];
+	}
+
+	JsonExplorer::JsonExplorer() : value(&document) {
 
 	}
 
-	Object::Object(Value *node) : value(node) {
+	JsonExplorer::JsonExplorer(Value *node) : value(node) {
 
 	}
 
-	Object::Object(std::string p) : value(&document) {
+	JsonExplorer::JsonExplorer(std::string p) : value(&document) {
 
 		ifstream ifs(p);
 
@@ -40,15 +52,15 @@ namespace BlobEngine::glTF2 {
 
 	}
 
-	Object::~Object() {
+	JsonExplorer::~JsonExplorer() {
 
 	}
 
-	JsonNode Object::getBaseNode() {
-		return &document;
+	void JsonExplorer::goToBaseNode() {
+		value = &document;
 	}
 
-	void Object::goTo(const char *name) {
+	void JsonExplorer::goIn(const char *name) {
 		if (!value->HasMember(name))
 			throw BlobException(string("Member ") + name + " can't be found");
 
@@ -58,32 +70,43 @@ namespace BlobEngine::glTF2 {
 		value = &(*value)[name];
 	}
 
-	void Object::goToArrayElement(const char *name, int num) {
-		goTo(name);
+	void JsonExplorer::goToArrayElement(const char *name, int num) {
+		goIn(name);
 
-		value = getArrayObject(num);
+		if (!value->IsArray())
+			throw BlobException(string("Member is not an array"));
+
+		if (value->Size() < num + 1)
+			throw BlobException(string("Error : num out of bound"));
+
+		value = &(*value)[num];
 	}
 
-	bool Object::hasMember(const char *name) {
+	bool JsonExplorer::hasMember(const char *name) {
 		return value->HasMember(name);
 	}
 
-	int Object::getArraySize() {
+	int JsonExplorer::getArraySize() {
+
 		if (!value->IsArray())
 			throw BlobException(string("Member is not an array"));
 
 		return value->Size();
 	}
 
-	int Object::getArraySize(const char *name) {
+	int JsonExplorer::getArraySize(const char *name) {
+
+		if (!value->HasMember(name))
+			throw BlobException(string("Member ") + name + " can't be found");
+
 		if (!(*value)[name].IsArray())
 			throw BlobException(string("Member is not an array"));
 
 		return (*value)[name].Size();
 	}
 
-	int Object::getArrayInt(const char *name, int num) {
-		rapidjson::Value &n = *getArray(name);
+	int JsonExplorer::getArrayInt(const char *name, int num) {
+		rapidjson::Value &n = *getRapidArray(name);
 
 		if (n.Size() < num + 1)
 			throw BlobException(string("Error : num out of bound"));
@@ -94,8 +117,8 @@ namespace BlobEngine::glTF2 {
 		return n[num].GetInt();
 	}
 
-	string Object::getArrayString(const char *name, int num) {
-		rapidjson::Value &n = *getArray(name);
+	string JsonExplorer::getArrayString(const char *name, int num) {
+		rapidjson::Value &n = *getRapidArray(name);
 
 		if (n.Size() < num + 1)
 			throw BlobException(string("Error : num out of bound"));
@@ -106,7 +129,7 @@ namespace BlobEngine::glTF2 {
 		return n[num].GetString();
 	}
 
-	JsonNode Object::getArrayObject(int num) {
+	JsonExplorer JsonExplorer::getArrayObject(int num) {
 
 		if (!value->IsArray())
 			throw BlobException(string("Member is not an array"));
@@ -114,11 +137,11 @@ namespace BlobEngine::glTF2 {
 		if (value->Size() < num + 1)
 			throw BlobException(string("Error : num out of bound"));
 
-		return &value[num];
+		return JsonExplorer(&(*value)[num]);
 	}
 
-	JsonNode Object::getArrayObject(const char *name, int num) {
-		rapidjson::Value &n = *getArray(name);
+	JsonExplorer JsonExplorer::getArrayObject(const char *name, int num) {
+		rapidjson::Value &n = *getRapidArray(name);
 
 		if (n.Size() < num + 1)
 			throw BlobException(string("Error : num out of bound"));
@@ -126,20 +149,20 @@ namespace BlobEngine::glTF2 {
 		if (!n[num].IsObject())
 			throw BlobException(string("Member ") + name + " is not an object");
 
-		return &n[num];
+		return JsonExplorer(&n[num]);
 	}
 
-	JsonNode Object::getArray(const char *name) {
+	JsonExplorer JsonExplorer::getArray(const char *name) {
 		if (!value->HasMember(name))
 			throw BlobException(string("Member ") + name + " can't be found");
 
 		if (!(*value)[name].IsArray())
 			throw BlobException(string("Member ") + name + " is not an array");
 
-		return &(*value)[name];
+		return JsonExplorer(&(*value)[name]);
 	}
 
-	int Object::getInt(const char *name) {
+	int JsonExplorer::getInt(const char *name) {
 		if (!value->HasMember(name))
 			throw BlobException(string("Member ") + name + " can't be found");
 
@@ -149,7 +172,7 @@ namespace BlobEngine::glTF2 {
 		return (*value)[name].GetInt();
 	}
 
-	string Object::getString(const char *name) {
+	string JsonExplorer::getString(const char *name) {
 		if (!value->HasMember(name))
 			throw BlobException(string("Member ") + name + " can't be found");
 
@@ -159,13 +182,33 @@ namespace BlobEngine::glTF2 {
 		return (*value)[name].GetString();
 	}
 
-	JsonNode Object::getObject(const char *name) {
+	JsonExplorer JsonExplorer::getObject(const char *name) {
 		if (!value->HasMember(name))
 			throw BlobException(string("Member ") + name + " can't be found");
 
 		if (!(*value)[name].IsObject())
 			throw BlobException(string("Member ") + name + " is not an Json object");
 
-		return &(*value)[name];
+		return JsonExplorer(&(*value)[name]);
+	}
+
+	void JsonExplorer::printType() {
+		switch(value->GetType()) {
+			case rapidjson::kNullType:std::cout << "NullType";break;
+			case rapidjson::kFalseType:std::cout << "FalseType";break;
+			case rapidjson::kTrueType:std::cout << "TrueType";break;
+			case rapidjson::kObjectType:std::cout << "ObjectType";break;
+			case rapidjson::kArrayType:std::cout << "ArrayType";break;
+			case rapidjson::kStringType:std::cout << "StringType";break;
+			case rapidjson::kNumberType:std::cout << "NumberType";break;
+		}
+
+		std::cout << endl;
+	}
+
+	void JsonExplorer::printMembers() {
+		for (rapidjson::Value::MemberIterator itr = value->MemberBegin(); itr != value->MemberEnd(); ++itr) {
+			std::cout << itr->name.GetString() << endl;
+		}
 	}
 }
