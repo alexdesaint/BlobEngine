@@ -38,14 +38,16 @@ namespace BlobEngine {
 
 		ShaderProgram shaderProgram;
 
-		GLint mvpLocation;
+		GLint mvpLocation{};
 
 		void loadObjFile(std::string file);
 
 		void loadglTF(const std::string &file);
 
 	public:
-		explicit Shape(std::string file);
+		Shape(int i) {}
+
+		explicit Shape(const char* file);
 
 		void setVertexShaderProgram(const std::string &src) {
 			shaderProgram.addVertexShader(src);

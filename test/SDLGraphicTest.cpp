@@ -9,11 +9,11 @@ int main(int argc, char *argv[]) {
 
 	try {
 
-		BlobEngine::Graphic graphic(640, 480);
+		//BlobEngine::Graphic graphic(640, 480);
 
-		BlobEngine::Shape shape("../data/sphere.obj");
+		BlobEngine::Shape shape(1);//"../data/sphere.obj");
 		//BlobEngine::Shape shape("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
-
+/*
 		shape.setVertexShaderProgram(R"(
 #version 410
 
@@ -64,7 +64,9 @@ void main() {
 			graphic.draw(shape);
 
 			graphic.display();
+
 		}
+		 */
 	} catch (BlobException &exception) {
 		std::cout << exception.what() << std::endl;
 	}

@@ -12,12 +12,17 @@ target_link_libraries(SDLGraphicTest Graphic glad)
 #opengl
 target_link_libraries(SDLGraphicTest -lglu32 -lopengl32)
 #SDL
+
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
 target_link_libraries(SDLGraphicTest
-		-lmingw32 SDL2main SDL2-static
-		-mwindows -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
+		${SDL2_LIBRARIES}
+		#-lmingw32 SDL2main SDL2-static
+		#-mwindows -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
 		)
-#STATIC
-target_link_libraries(SDLGraphicTest -static -static-libgcc -static-libstdc++ -lpthread)
+
+#STATIC : -static -static-libgcc -static-libstdc++ -lpthread
 
 add_executable(TestFileReader TestFileReader.cpp)
 target_link_libraries(TestFileReader Shape -static-libgcc -static-libstdc++ -static -lpthread)

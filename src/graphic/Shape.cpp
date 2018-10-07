@@ -154,9 +154,9 @@ namespace BlobEngine {
 		glTF2::Loader loader(file);
 	}
 
-	Shape::Shape(std::string file) {
+	Shape::Shape(const char* file) {
 
-		std::string extention = file.substr(file.find_last_of('.') + 1);
+		/*std::string extention = file.substr(file.find_last_of('.') + 1);
 
 		if (extention == "obj") {
 			loadObjFile(file);
@@ -164,7 +164,7 @@ namespace BlobEngine {
 			loadglTF(file);
 		} else {
 			throw BlobException(std::string("Cannot open the file extention : *.") + extention);
-		}
+		}*/
 	}
 
 	void Shape::linkShaders() {

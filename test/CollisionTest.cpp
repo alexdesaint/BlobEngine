@@ -53,17 +53,20 @@ private:
 	}
 
 public:
-	explicit Box(Point2f position) : LineStatic(0) {
+	explicit Box(Point2f position, Point2f size = Point2f(20, 20)) : LineStatic(0) {
 
-		shape.setSize(sf::Vector2f(20, 20));
-		shape.setOrigin(10, 10);
+		shape.setSize(sf::Vector2f(size.x, size.y));
+		shape.setOrigin(size.x / 2, size.y / 2);
 		shape.setPosition(sf::Vector2f(position.x, position.y));
 		shape.setFillColor(sf::Color(255, 0, 0));
 
-		Point2f a = position + Point2f(10, 10);
-		Point2f b = position + Point2f(10, -10);
-		Point2f c = position + Point2f(-10, -10);
-		Point2f d = position + Point2f(-10, 10);
+		int x = static_cast<int>(size.x / 2);
+		int y = static_cast<int>(size.y / 2);
+
+		Point2f a = position + Point2f(x, y);
+		Point2f b = position + Point2f(x, -y);
+		Point2f c = position + Point2f(-x, -y);
+		Point2f d = position + Point2f(-x, y);
 
 		lines.emplace_back(a);
 		lines.emplace_back(b);
@@ -226,11 +229,13 @@ int main() {
 			boxs.emplace_back(Point2f(10, 10 + i));
 			boxs.emplace_back(Point2f(width - 10, 10 + i));
 		}
-		
+
 		for (int i = 40; i < height - 40; i += 40) {
-			boxs.emplace_back(Point2f(50, 10 + i));
+			boxs.emplace_back(Point2f(80, 10 + i), Point2f(80, 20));
 			boxs.emplace_back(Point2f(width - 50, 10 + i));
 		}
+
+
 
 		int count = 0;
 

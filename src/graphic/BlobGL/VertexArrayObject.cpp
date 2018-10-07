@@ -8,7 +8,7 @@ namespace BlobEngine::BlobGL {
 	}
 
 	VertexArrayObject::~VertexArrayObject() {
-		glDeleteVertexArrays(1, &vertexArrayObject);
+			glDeleteVertexArrays(1, &vertexArrayObject);
 	}
 
 	GLuint VertexArrayObject::getVertexArrayObject() const {

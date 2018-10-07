@@ -6,6 +6,7 @@
 #include <BlobEngine/Hit.hpp>
 #include <BlobEngine/CollisionDetector.hpp>
 #include <utility>
+#include <iostream>
 
 namespace BlobEngine {
 	
@@ -67,6 +68,7 @@ namespace BlobEngine {
 			trajectoryComputed(std::move(trajectoryComputed)),
 			object(object),
 			frameMove(frameMove) {
+		std::cout << errorMsg << std::endl;
 		
 		for (CircleDynamic *target : circleDynamicList) {
 			this->circleDynamicList.emplace_back(target->mainCircle);

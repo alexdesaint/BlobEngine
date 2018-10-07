@@ -244,7 +244,7 @@ int main() {
 		window.setFramerateLimit(60);
 
 		sf::Font font;
-		font.loadFromFile("FFFFORWA.TTF");
+		font.loadFromFile("../data/FFFFORWA.TTF");
 
 		CollisionDetector collisionDetector;
 		
@@ -255,7 +255,7 @@ int main() {
 		
 		bool simpleDemo = 1;
 		
-		if (simpleDemo == true) {
+		if (simpleDemo == false) {
 			//circleList.emplace_back(400, 200, 20);
 			rectList.emplace_back(300, 300, 20);
 		} else {
