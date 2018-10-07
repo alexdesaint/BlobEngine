@@ -35,6 +35,8 @@ namespace BlobEngine::BlobGL {
 		dataType = GL_UNSIGNED_BYTE;
 
 		glNamedBufferStorage(vertexBufferObject, typeSize * dataSize, data.data(), 0);
+
+		//TODO ajouter la taille du buffer à ajouter et l'offset
 	}
 
 	void VertexBufferObject::setData(const std::vector<glm::vec3> &data) {

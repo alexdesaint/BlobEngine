@@ -41,7 +41,7 @@ namespace BlobEngine::glTF2 {
 		string uri; //!< The uri of the buffer. Can be a filepath, a data uri, etc. (required)
 		size_t byteLength = 0; //!< The length of the buffer in bytes. (default: 0)
 
-		vector<uint8_t> data;
+		vector<GLubyte> data;
 
 		void load(int num, JsonExplorer explorer) {
 			explorer.goToBaseNode();
@@ -73,7 +73,7 @@ namespace BlobEngine::glTF2 {
 	};
 
 	//! A view into a buffer generally representing a subset of the buffer.
-	class BufferView {
+	class BufferView  : public BlobGL::VertexBufferObject  {
 	public:
 		Buffer buffer; //! The ID of the buffer. (required)
 		int byteOffset{}; //! The offset into the buffer in bytes. (required)
@@ -84,10 +84,11 @@ namespace BlobEngine::glTF2 {
 			BufferViewTarget_ELEMENT_ARRAY_BUFFER = 34963
 		};
 
-		Target target; //! The target that the WebGL buffer should be bound to.
+		Target target = BufferViewTarget_ARRAY_BUFFER; //! The target that the WebGL buffer should be bound to.
 
 		void load(int num, JsonExplorer explorer) {
 
+			//loading Json Data
 			explorer.goToBaseNode();
 
 			explorer.goToArrayElement("bufferViews", num);
@@ -100,13 +101,18 @@ namespace BlobEngine::glTF2 {
 			target = static_cast<Target>(explorer.getInt("target"));
 
 			buffer.load(explorer.getInt("buffer"), explorer);
+
+			// Creating VBO
+
+			setData(buffer.data);
+
 		}
 	};
 
-	class Accessor {
+class Accessor : public BlobGL::VertexArrayObject {
 	public:
 		enum Type {
-			SCALAR, VEC2, VEC3, VEC4, MAT2, MAT3, MAT4
+			SCALAR = 1, VEC2 = 2, VEC3 = 3, VEC4 = 4, MAT2 = 4, MAT3 = 9, MAT4 = 16
 		};
 
 	private:
@@ -115,7 +121,7 @@ namespace BlobEngine::glTF2 {
 
 		struct TypeInfo {
 			const char *name;
-			unsigned int numOfComponents;
+			Type type;
 		};
 
 		static const TypeInfo typeInfos[NUM_TYPE];
@@ -132,9 +138,9 @@ namespace BlobEngine::glTF2 {
 		};
 
 		static Type getType(const char *str) {
-			for (size_t i = 0; i < NUM_TYPE; ++i) {
-				if (strcmp(typeInfos[i].name, str) == 0) {
-					return static_cast<Type>(i);
+			for (auto typeInfo : typeInfos) {
+				if (strcmp(typeInfo.name, str) == 0) {
+					return typeInfo.type;
 				}
 			}
 			//TODO throw exeption when gatType fail
@@ -151,6 +157,7 @@ namespace BlobEngine::glTF2 {
 
 		void load(int num, JsonExplorer explorer) {
 
+			//Json loading
 			explorer.goToBaseNode();
 
 			explorer.goToArrayElement("accessors", num);
@@ -164,17 +171,20 @@ namespace BlobEngine::glTF2 {
 			byteOffset = static_cast<unsigned int>(explorer.getInt("byteOffset"));
 
 			count = static_cast<unsigned int>(explorer.getInt("count"));
+
+			//VAO
+			addBuffer(bufferView, type, 0, 0);
 		}
 	};
 
 	const Accessor::TypeInfo Accessor::typeInfos[NUM_TYPE] = {
-			{"SCALAR", 1},
-			{"VEC2",   2},
-			{"VEC3",   3},
-			{"VEC4",   4},
-			{"MAT2",   4},
-			{"MAT3",   9},
-			{"MAT4",   16}
+			{"SCALAR", SCALAR},
+			{"VEC2",   VEC2},
+			{"VEC3",   VEC3},
+			{"VEC4",   VEC4},
+			{"MAT2",   MAT2},
+			{"MAT3",   MAT3},
+			{"MAT4",   MAT4}
 	};
 
 	class Mesh {

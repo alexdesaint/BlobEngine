@@ -33,21 +33,20 @@ namespace BlobEngine {
 		glm::mat4 rotateMatrix = glm::mat4(1.f);
 		glm::mat4 scaleMatrix = glm::mat4(1.f);
 
-		VertexBufferObject vboPoints;
-		VertexBufferObject vboColor;
+		//VertexBufferObject vboPoints;
+		//VertexBufferObject vboColor;
 
 		ShaderProgram shaderProgram;
 
 		GLint mvpLocation{};
 
-		void loadObjFile(std::string file);
+		//void loadObjFile(std::string file);
 
-		void loadglTF(const std::string &file);
+		//void loadglTF(const std::string &file);
 
 	public:
-		Shape(int i) {}
 
-		explicit Shape(const char* file);
+		//explicit Shape(std::string file);
 
 		void setVertexShaderProgram(const std::string &src) {
 			shaderProgram.addVertexShader(src);

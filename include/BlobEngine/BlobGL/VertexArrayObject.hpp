@@ -28,7 +28,8 @@ namespace BlobEngine::BlobGL {
 
 		~VertexArrayObject();
 
-		void addBuffer(const VertexBufferObject &, GLint numValuePerVertex, GLuint indexPositoin, GLuint outPosition);
+		void addBuffer(const VertexBufferObject &vbo, GLint numValuePerVertex, GLuint indexPositoin,
+					   GLuint outPosition);
 
 		//void addBuffer(const VertexBufferObject<GLubyte>&, GLuint indexPositoin, GLuint outPosition);
 
