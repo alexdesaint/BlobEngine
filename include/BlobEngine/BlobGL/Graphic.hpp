@@ -40,7 +40,7 @@ namespace BlobEngine {
 
 		void resize(unsigned int w, unsigned int h);
 
-		void draw(Shape &shape);
+		void draw(unsigned int shaderProgram, unsigned int vao, int mvpLocation, int numOfPoints);
 
 		bool isOpen() const;
 	};

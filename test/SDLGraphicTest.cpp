@@ -1,4 +1,4 @@
-#include <BlobEngine/Graphic.hpp>
+#include <BlobEngine/BlobGL/Graphic.hpp>
 #include <BlobEngine/Shape.hpp>
 
 #include <BlobEngine/Time.hpp>
@@ -7,11 +7,11 @@
 //#include <BlobEngine/glTF2/Loader.hpp>
 
 #include <BlobEngine/BlobException.hpp>
-#include <BlobEngine/FileReader.hpp>
+
 #include <BlobEngine/BlobGL/VertexBufferObject.hpp>
 #include <BlobEngine/BlobGL/VertexArrayObject.hpp>
 
-#include <BlobEngine/glTF2/JsonExplorer.hpp>
+#include <BlobEngine/Reader/JsonExplorer.hpp>
 
 #include <array>
 #include <list>
@@ -38,43 +38,6 @@ namespace BlobEngine::glTF2 {
 
 			if (version != "2.0")
 				throw BlobException(string("glTF : can't load version ") + version);
-		}
-	};
-
-	class Buffer {
-	public:
-
-		string uri; //!< The uri of the buffer. Can be a filepath, a data uri, etc. (required)
-		size_t byteLength = 0; //!< The length of the buffer in bytes. (default: 0)
-
-		vector<GLubyte> data;
-
-		void load(int num, JsonExplorer explorer) {
-			explorer.goToBaseNode();
-
-			explorer.goToArrayElement("buffers", num);
-
-			uri = explorer.getString("uri");
-
-			if (explorer.hasMember("byteLength"))
-				byteLength = static_cast<size_t>(explorer.getInt("byteLength"));
-
-			cout << FileReader::getFilePath(JsonExplorer::path) + uri << endl;
-
-			FileReader fileReader(FileReader::getFilePath(JsonExplorer::path) + uri);
-
-			if (fileReader.getSize() != byteLength)
-				throw BlobException("File typeSize don't fit");
-
-			data.resize(byteLength);
-
-			for (int i = 0; i < byteLength; i++)
-				data[i] = fileReader.readNextByte();
-
-			for (unsigned char &i : data)
-				std::cout << hex << uppercase << (unsigned int) i << ' ';
-
-			cout << endl;
 		}
 	};
 
@@ -233,63 +196,40 @@ namespace BlobEngine::glTF2 {
 				primitives.emplace_back(explorer.getArrayObject("primitives", i));
 			}
 		}
+
+		GLuint getVAO() {
+			return primitives[0].attributes.accessor.getVertexArrayObject();
+		}
 	};
 
-	class Node : public Shape {
+	class Shape {
 	public:
-		vector<Node> children;
+		vector<Shape> children;
 		Mesh mesh;
 
 		// déjà dans Shape
-		//glm::mat4 matrix{};
-		//glm::vec3 translation{};
-		//glm::vec4 rotation{};
-		//glm::vec3 scale{};
+		glm::mat4 matrix{};
+		glm::vec3 translation{};
+		glm::vec4 rotation{};
+		glm::vec3 scale{};
 
-		explicit Node(int num, JsonExplorer explorer) {
+		ShaderProgram shaderProgram;
+
+		GLint mvpLocation{};
+
+		explicit Shape(int num, JsonExplorer explorer) {
 			explorer.goToBaseNode();
 
 			explorer.goToArrayElement("nodes", num);
 
 			mesh.load(explorer.getInt("mesh"), explorer);
-
-			//load Shape shader
-			setVertexShaderProgram(R"(
-#version 410
-
-layout(location = 0) in vec3 vertex_position;
-uniform mat4 mvp;
-// use z position to shader darker to help perception of distance
-out float dist;
-
-void main() {
-	gl_Position = mvp * vec4 (vertex_position, 1.0);
-	dist = vertex_position.z;//1.0 - (-pos_eye.z / 10.0);
-}
-
-		)");
-
-			setFragmentShaderProgram(R"(
-#version 410
-
-in float dist;
-out vec4 frag_colour;
-
-void main() {
-	frag_colour = vec4 (1.0, 0.0, 0.0, 1.0);
-	// use z position to shader darker to help perception of distance
-	frag_colour.xyz *= dist;
-}
-		)");
-
-			linkShaders();
 		}
 	};
 
 	class Scene {
 	public:
 
-		vector<Node> nodes;
+		vector<Shape> nodes;
 
 		explicit Scene(JsonExplorer explorer) {
 
@@ -299,6 +239,10 @@ void main() {
 				nodes.emplace_back(explorer.getArrayInt("nodes", i), explorer);
 			}
 
+		}
+
+		Shape* getShape(unsigned int num) {
+			return &nodes[num];
 		}
 	};
 
@@ -334,6 +278,10 @@ void main() {
 				scenes.emplace_back(scenesObject.getArrayObject(i));
 			}
 		}
+
+		Scene* getScene(unsigned int num) {
+			return &scenes[num];
+		}
 	};
 }
 
@@ -348,6 +296,40 @@ int main(int argc, char *argv[]) {
 
 		BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
 
+		BlobEngine::glTF2::Scene *mainScene = sm.getScene(0);
+
+		BlobEngine::glTF2::Shape *triangle = mainScene->getShape(0);
+
+		triangle->shaderProgram.addVertexShader(R"(
+#version 410
+
+layout(location = 0) in vec3 vertex_position;
+uniform mat4 mvp;
+// use z position to shader darker to help perception of distance
+out float dist;
+
+void main() {
+	gl_Position = mvp * vec4 (vertex_position, 1.0);
+	dist = vertex_position.z;//1.0 - (-pos_eye.z / 10.0);
+}
+
+		)");
+
+		triangle->shaderProgram.addFragmentShader(R"(
+#version 410
+
+in float dist;
+out vec4 frag_colour;
+
+void main() {
+	frag_colour = vec4 (1.0, 0.0, 0.0, 1.0);
+	// use z position to shader darker to help perception of distance
+	frag_colour.xyz *= dist;
+}
+		)");
+
+		triangle->shaderProgram.linkShaders();
+
 		while (graphic.isOpen()) {
 			graphic.clear();
 
@@ -361,11 +343,11 @@ int main(int argc, char *argv[]) {
 			shape.setPosition(0, 1, 0);
 			graphic.draw(shape);
 */
-			shape.setPosition(1, 0, 0);
-			graphic.draw(shape);
+			//shape.setPosition(1, 0, 0);
+			graphic.draw(triangle->shaderProgram.getProgram(), triangle->mesh.getVAO(), 0, 9);
 
-			shape.setPosition(0, 0, 1);
-			graphic.draw(shape);
+			//shape.setPosition(0, 0, 1);
+			//graphic.draw(shape);
 
 			graphic.display();
 

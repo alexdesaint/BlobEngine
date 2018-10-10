@@ -1,0 +1,46 @@
+@startuml
+
+
+
+
+
+/' Objects '/
+
+namespace BlobEngine {
+	class Graphic {
+		+Graphic(unsigned int width, unsigned int height)
+		+~Graphic()
+		-sdlEvent : SDL_Event
+		-glContext : SDL_GLContext
+		-window : SDL_Window*
+		+isOpen() : bool {query}
+		-quit : bool
+		-projectionMatrix : glm::mat4
+		-viewMatrix : glm::mat4
+		-cameraLookAt : glm::vec3
+		-cameraPosition : glm::vec3
+		-cameraUp : glm::vec3
+		-height : unsigned int
+		-width : unsigned int
+		+clear() : void
+		+display() : void
+		+draw(unsigned int shaderProgram, unsigned int vao, int mvpLocation, int numOfPoints) : void
+		-enableDebugCallBack() : void
+		+resize(unsigned int w, unsigned int h) : void
+	}
+}
+
+
+
+
+
+/' Inheritance relationships '/
+
+
+
+
+/' Aggregation relationships '/
+
+
+
+@enduml

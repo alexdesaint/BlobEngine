@@ -1,14 +1,15 @@
-#include <BlobEngine/Graphic.hpp>
+#include <BlobEngine/BlobGL/Graphic.hpp>
 
 //blobEngine
 #include <BlobEngine/BlobException.hpp>
-#include <BlobEngine/Shape.hpp>
+//#include <BlobEngine/Shape.hpp>
 
 //std
 #include <iostream>
 #include <chrono>
 
 // opengl
+#include <glad/glad.h>
 
 //glm
 #include <glm/gtc/type_ptr.hpp>
@@ -51,7 +52,7 @@ static void APIENTRY openglCallbackFunction(
 
 namespace BlobEngine {
 
-	using namespace BlobGL;
+	//using namespace BlobGL;
 
 	void Graphic::enableDebugCallBack() {
 		// Enable the debug callback
@@ -97,50 +98,6 @@ namespace BlobEngine {
 				  glGetString(GL_VERSION) << std::endl <<
 				  glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
-
-		/*vboPoints = new VertexBufferObject<glm::vec3>(
-				{
-						glm::vec3(-1.f, 1.f, 1.f),     // Front-top-left
-						glm::vec3(1.f, 1.f, 1.f),      // Front-top-right
-						glm::vec3(-1.f, -1.f, 1.f),    // Front-bottom-left
-						glm::vec3(1.f, -1.f, 1.f),     // Front-bottom-right
-
-						glm::vec3(1.f, -1.f, -1.f),    // Back-bottom-right
-						glm::vec3(1.f, 1.f, 1.f),      // Front-top-right
-						glm::vec3(1.f, 1.f, -1.f),     // Back-top-right
-						glm::vec3(-1.f, 1.f, 1.f),     // Front-top-left
-						glm::vec3(-1.f, 1.f, -1.f),    // Back-top-left
-						glm::vec3(-1.f, -1.f, 1.f),    // Front-bottom-left
-						glm::vec3(-1.f, -1.f, -1.f),   // Back-bottom-left
-						glm::vec3(1.f, -1.f, -1.f),    // Back-bottom-right
-						glm::vec3(-1.f, 1.f, -1.f),    // Back-top-left
-						glm::vec3(1.f, 1.f, -1.f)      // Back-top-right
-				}
-				);
-
-		vboColor = new VertexBufferObject<Color>(
-				{
-						Color(255, 0, 0),
-						Color(0, 255, 0),
-						Color(0, 0, 255),
-						Color(0, 0, 0),
-
-						Color(255, 255, 255),
-						Color(0, 255, 0),
-						Color(0, 255, 255),
-						Color(255, 0, 0),
-
-						Color(255, 255, 0),
-						Color(0, 0, 255),
-						Color(255, 0, 255),
-						Color(255, 255, 255),
-
-						Color(255, 255, 0),
-						Color(0, 255, 255)
-				}
-				);
-		*/
-
 		glEnable(GL_CULL_FACE); // cull face
 		glCullFace(GL_BACK);// cull back face
 		glFrontFace(GL_CW);// GL_CCW for counter clock-wise
@@ -180,16 +137,16 @@ namespace BlobEngine {
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 	}
 
-	void Graphic::draw(Shape &shape) {
+	void Graphic::draw(GLuint shaderProgram, GLuint vao, GLint mvpLocation, GLsizei numOfPoints) {
 
-		glUseProgram(shape.shaderProgram.getProgram());
-		glBindVertexArray(shape.vao.getVertexArrayObject());
+		glUseProgram(shaderProgram);
+		glBindVertexArray(vao);
 
-		glm::mat4 mvp = projectionMatrix * viewMatrix * shape.getModelMatrix();
+		glm::mat4 mvp = projectionMatrix * viewMatrix;// * shape.getModelMatrix();
 
-		glUniformMatrix4fv(shape.mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
-		glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(shape.points.size()));
+		glDrawArrays(GL_TRIANGLES, 0, numOfPoints);//static_cast<GLsizei>(shape.points.size()));
 
 	}
 

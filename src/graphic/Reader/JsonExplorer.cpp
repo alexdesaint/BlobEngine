@@ -1,4 +1,4 @@
-#include <BlobEngine/glTF2/JsonExplorer.hpp>
+#include <BlobEngine/Reader/JsonExplorer.hpp>
 
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
@@ -13,7 +13,7 @@ using namespace std;
 using rapidjson::Document;
 using rapidjson::Value;
 
-namespace BlobEngine::glTF2 {
+namespace BlobEngine::Reader {
 
 	Document document;
 

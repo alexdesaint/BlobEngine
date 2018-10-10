@@ -27,7 +27,7 @@ namespace BlobEngine {
 		std::vector<glm::vec2> textCoords;
 		std::vector<glm::vec3> normals;
 
-		VertexArrayObject vao;
+		//VertexArrayObject vao;
 
 		glm::mat4 translateMatrix = glm::mat4(1.f);
 		glm::mat4 rotateMatrix = glm::mat4(1.f);

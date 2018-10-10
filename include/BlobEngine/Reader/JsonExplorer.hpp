@@ -29,7 +29,7 @@ namespace rapidjson {
 
 typedef rapidjson::Value *JsonNode;
 
-namespace BlobEngine::glTF2 {
+namespace BlobEngine::Reader {
 
 	class JsonExplorer {
 	private:
