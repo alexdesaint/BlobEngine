@@ -1,8 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### graphviz --> dot
 # IntelliJ project files
-.idea
-*.iml
+.idea/
 bin/
 cmake-build-debug/
 cmake-build-relise/
