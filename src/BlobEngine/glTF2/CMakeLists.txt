@@ -1,0 +1,1 @@
+add_library(glTF2Loader Loader.cpp)

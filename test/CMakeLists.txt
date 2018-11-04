@@ -29,3 +29,6 @@ target_link_libraries(TestFileReader Shape -static-libgcc -static-libstdc++ -sta
 
 add_executable(Box2DTest Box2DTest.cpp)
 target_link_libraries(Box2DTest Box2D Geometrie sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread)
+
+add_executable(CppParser CppParser.cpp)
+target_link_libraries(CppParser libclang)

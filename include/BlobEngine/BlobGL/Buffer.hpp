@@ -7,6 +7,22 @@
 #include <BlobEngine/BlobException.hpp>
 #include <BlobEngine/Reader/JsonExplorer.hpp>
 
+/*
+@startuml
+
+namespace BlobEngine {
+        class Buffer {
+                +byteLength : size_t
+                +uri : std::string
+                +data : std::vector<GLubyte>
+                +load(int num, Reader::JsonExplorer explorer) : void
+        }
+}
+
+
+@enduml
+*/
+
 namespace BlobEngine::BlobGL {
 	class Buffer {
 	public:

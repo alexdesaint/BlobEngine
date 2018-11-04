@@ -1,5 +1,3 @@
-#add_library(BlobException BlobException.cpp)
-
 add_subdirectory(Box2D)
 add_subdirectory(glad)
 add_subdirectory(FileReader)
