@@ -1,0 +1,10 @@
+@startuml
+
+class Rectangle {
+	-width : int
+	-height : int
+	+set_values(int, int) : void
+	+area() : int
+}
+
+@enduml

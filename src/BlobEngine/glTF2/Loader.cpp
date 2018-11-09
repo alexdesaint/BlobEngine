@@ -1,11 +1,11 @@
 #include <BlobEngine/glTF2/Loader.hpp>
 
 #include <BlobEngine/BlobException.hpp>
-#include <BlobEngine/FileReader.hpp>
+#include <BlobEngine/Reader/FileReader.hpp>
 #include <BlobEngine/BlobGL/VertexBufferObject.hpp>
 #include <BlobEngine/BlobGL/VertexArrayObject.hpp>
 
-#include <BlobEngine/glTF2/JsonExplorer.hpp>
+#include <BlobEngine/Reader/JsonExplorer.hpp>
 
 #include <array>
 #include <list>
@@ -14,6 +14,7 @@
 #include <glm/mat4x4.hpp>
 
 using namespace std;
+using namespace BlobEngine::Reader;
 
 namespace BlobEngine::glTF2 {
 

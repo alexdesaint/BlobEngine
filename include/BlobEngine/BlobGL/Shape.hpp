@@ -8,10 +8,10 @@
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 
-#include "Color.hpp"
-#include "BlobEngine/BlobGL/VertexArrayObject.hpp"
-#include "BlobEngine/BlobGL/VertexBufferObject.hpp"
-#include "BlobEngine/BlobGL/ShaderProgram.hpp"
+#include <BlobEngine/Color.hpp>
+#include <BlobEngine/BlobGL/VertexArrayObject.hpp>
+#include <BlobEngine/BlobGL/VertexBufferObject.hpp>
+#include <BlobEngine/BlobGL/ShaderProgram.hpp>
 
 namespace BlobEngine {
 

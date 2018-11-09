@@ -2,9 +2,9 @@
 // Created by Muta on 25/06/2018.
 //
 
-#include <BlobEngine/Shape.hpp>
+#include <BlobEngine/BlobGL/Shape.hpp>
 
-#include <BlobEngine/FileReader.hpp>
+#include <BlobEngine/Reader/FileReader.hpp>
 #include <BlobEngine/BlobException.hpp>
 #include <BlobEngine/glTF2/Loader.hpp>
 

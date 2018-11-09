@@ -1,0 +1,207 @@
+@startuml
+
+
+
+
+
+/' Objects '/
+
+namespace BlobEngine {
+	class Circle {
+		+Circle()
+		+Circle(BlobEngine::Point2f position, float rayon)
+		+position : BlobEngine::Point2f
+		+rayon : float
+	}
+}
+
+
+namespace BlobEngine {
+	class CircleDynamic {
+		+CircleDynamic(unsigned int objectType)
+		+~CircleDynamic()
+		#disableCollision() : void
+		#enableCollision() : void
+	}
+}
+
+
+namespace BlobEngine {
+	class CircleStatic {
+		+CircleStatic(unsigned int objectType)
+		+~CircleStatic()
+		#disableCollision() : void
+		#enableCollision() : void
+	}
+}
+
+
+namespace BlobEngine {
+	class CollisionDetector {
+		+CollisionDetector()
+		+getClosetObject(Circle& object, Vec2f frameMove, Hit& hit) : PhysicalObject*
+		-frameCountTimer : float
+		-getElapsedTime() : float
+		+getFPS() : float
+		-timeFlow : float
+		-{static} circleDynamicList : static std::deque<CircleDynamic*>
+		-{static} circleStaticList : static std::deque<CircleStatic*>
+		-{static} lineStaticList : static std::deque<LineStatic*>
+		-frameCount : unsigned int
+		+checkCollision(CircleDynamic& object) : void
+		+update() : void
+	}
+}
+
+
+namespace BlobEngine {
+	class Hit {
+		+Hit()
+		+Hit(Circle object, Point2f target, Vec2f frameMove)
+		+Hit(Circle object, Circle target, Vec2f frameMove)
+		+Hit(Circle object, Line target, Vec2f frameMove)
+		-A : Point2f
+		-B : Point2f
+		-C : Point2f
+		-D : Point2f
+		-E : Point2f
+		-F : Point2f
+		-G : Point2f
+		-H : Point2f
+		+getReactionVec(Reaction reaction, Vec2f& speed) : Vec2f
+		+getVecToTarget() : Vec2f
+		-hit : bool
+		+hitTarget() : bool
+		+isCloserObstacle(Hit second) : bool
+		+load2() : bool
+		-rayonA : float
+		-rayonB : float
+		-sng(float x) : float
+		+load(Circle object, Point2f target) : void
+		+load(Circle object, Circle target) : void
+		+load(Circle object, Line target) : void
+	}
+}
+
+
+namespace BlobEngine {
+	class Line {
+		+Line()
+		+Line(BlobEngine::Point2f a, BlobEngine::Point2f b)
+		+pointA : BlobEngine::Point2f
+		+pointB : BlobEngine::Point2f
+		+closestPointTo(BlobEngine::Point2f point) : Point2f
+		+getIntersectionPoint(Line B) : Point2f
+		+getVector() : Vec2f
+		+Length() : double
+		+Length2() : double
+		+getOrientation() : double
+		+getConstant() : float
+		+getGradient() : float
+	}
+}
+
+
+namespace BlobEngine {
+	class LineStatic {
+		+LineStatic(unsigned int objectType)
+		+~LineStatic()
+		#disableCollision() : void
+		#enableCollision() : void
+	}
+}
+
+
+namespace BlobEngine {
+	class Mat2 <template <typename T>> {
+		+Mat2()
+		+Mat2(T x, T y)
+		+Mat2(Mat2 point1, Mat2 point2)
+		+operator*(Mat2 mat2) : Mat2
+		+operator*(T a) : Mat2
+		+operator+(Mat2 mat2) : Mat2
+		+operator+(T a) : Mat2
+		+operator-(Mat2 mat2) : Mat2
+		+operator-(T a) : Mat2
+		+operator/(Mat2 mat2) : Mat2
+		+operator/(T a) : Mat2
+		+rotate() : Mat2
+		+setLength(double newLength) : Mat2
+		+getNormal() : Mat2<float>
+		+length2() : T
+		+scalaire(Mat2 B) : T
+		+x : T
+		+x : T
+		+x : T
+		+isNull() : bool
+		+getOrientationDeg() : double
+		+getOrientationRad() : double
+		+length() : double
+		+operator*=(float a) : void
+		+operator+=(const Mat2<T>& v) : void
+		+operator-=(const Mat2<T>& v) : void
+		+reset() : void
+	}
+}
+
+
+namespace BlobEngine {
+	class PhysicalObject {
+		#PhysicalObject(unsigned int objectType)
+		+hit(const PhysicalObject& from) : Reaction
+		+objectType : unsigned int
+	}
+}
+
+
+enum Reaction {
+	BOUNCE
+	IGNORE
+	ROLL
+	STOP
+}
+
+
+
+
+
+/' Inheritance relationships '/
+
+namespace BlobEngine {
+	PhysicalObject <|-- CircleDynamic
+}
+
+
+namespace BlobEngine {
+	PhysicalObject <|-- CircleStatic
+}
+
+
+namespace BlobEngine {
+	PhysicalObject <|-- LineStatic
+}
+
+
+
+
+
+/' Aggregation relationships '/
+
+namespace BlobEngine {
+	CollisionDetector o-- CircleDynamic
+}
+
+
+namespace BlobEngine {
+	CollisionDetector o-- CircleStatic
+}
+
+
+namespace BlobEngine {
+	CollisionDetector o-- LineStatic
+}
+
+
+
+
+@enduml
