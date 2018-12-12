@@ -17,19 +17,23 @@ namespace BlobEngine::BlobGL {
 	class VertexArrayObject {
 	private:
 
-		unsigned int size;
+		GLsizei numberOfElements;
+
+		GLsizei typeSize;
 
 		GLuint vertexArrayObject;
 
 	public:
 		GLuint getVertexArrayObject() const;
 
+		GLsizei getNumberOfElements() const;
+
 		VertexArrayObject();
 
 		~VertexArrayObject();
 
 		void addBuffer(const VertexBufferObject &vbo, GLint numValuePerVertex, GLuint indexPositoin,
-					   GLuint outPosition);
+					   GLuint outPosition, GLenum dataType = GL_FALSE);
 
 		//void addBuffer(const VertexBufferObject<GLubyte>&, GLuint indexPositoin, GLuint outPosition);
 

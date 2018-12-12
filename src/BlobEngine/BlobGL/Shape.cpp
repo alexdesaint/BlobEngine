@@ -61,6 +61,10 @@ namespace BlobEngine::BlobGL {
 
 		sizeF *= 3;
 
+		std::vector<glm::vec3> points;
+		std::vector<glm::vec2> textCoords;
+		std::vector<glm::vec3> normals;
+
 		points.resize(sizeF);
 		textCoords.resize(sizeF);
 		normals.resize(sizeF);
@@ -143,8 +147,6 @@ namespace BlobEngine::BlobGL {
 		if (countF != sizeF)
 			throw BlobException(".obj parser : Error on reading F");
 
-		cout << points.size() << " " << textCoords.size() << " " << normals.size() << endl;
-
 		vboPoints.setData(points);
 
 		vao.addBuffer(vboPoints, 3, 0, 0);
@@ -167,15 +169,9 @@ namespace BlobEngine::BlobGL {
 		}
 	}
 
-	void Shape::linkShaders() {
-		shaderProgram.linkShaders();
-
-		mvpLocation = glGetUniformLocation(shaderProgram.getProgram(), "mvp");
-	}
-
 	using namespace glm;
 
-	glm::mat4 Shape::getModelMatrix() {
+	glm::mat4 Shape::getModelMatrix() const {
 		return translateMatrix * rotateMatrix * scaleMatrix;
 	}
 

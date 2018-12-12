@@ -36,8 +36,6 @@ namespace BlobEngine::glTF2 {
 	public:
 		explicit Asset(JsonExplorer j) {
 
-			//j.goIn("asset");
-
 			version = j.getString("version");
 
 			if (version != "2.0")
@@ -131,7 +129,7 @@ namespace BlobEngine::glTF2 {
 			s << "BufferView {" << std::endl;
 
 			s << "byteOffset : " << a.byteOffset << endl;
-			s << "byteOffset : " << a.byteLength << endl;
+			s << "byteLength : " << a.byteLength << endl;
 			s << a.buffer;
 			s << "}" << endl;
 			return s;
@@ -204,7 +202,7 @@ namespace BlobEngine::glTF2 {
 
 		BufferView bufferView;            //!< The ID of the bufferView. (required)
 		unsigned int byteOffset;        //!< The offset relative to the start of the bufferView in bytes. (required)
-		ComponentType componentType;    //!< The datatype of components in the attribute. (required)
+		GLenum componentType;    //!< The datatype of components in the attribute. (required)
 		unsigned int count;                //!< The number of attributes referenced by this accessor. (required)
 		Type type;                        //!< Specifies if the attribute is a scalar, vector, or matrix. (required)
 		vector<float> max;                //!< Maximum value of each component in this attribute.
@@ -228,9 +226,7 @@ namespace BlobEngine::glTF2 {
 			count = static_cast<unsigned int>(explorer.getInt("count"));
 
 			//VAO
-			cout << bufferView;
-
-			addBuffer(bufferView, type, 0, 0);
+			addBuffer(bufferView, type, 0, 0, componentType);
 		}
 
 		friend std::ostream& operator<<(std::ostream &s, const Accessor &a) {
@@ -328,8 +324,8 @@ namespace BlobEngine::glTF2 {
 			}
 		}
 
-		GLuint getVAO() {
-			return primitives[0].attributes.accessor.getVertexArrayObject();
+		VertexArrayObject& getVAO() {
+			return primitives[0].attributes.accessor;
 		}
 
 		friend std::ostream& operator<<(std::ostream &s, const Mesh &a) {
@@ -353,8 +349,6 @@ namespace BlobEngine::glTF2 {
 		glm::vec3 translation{};
 		glm::vec4 rotation{};
 		glm::vec3 scale{};
-
-		ShaderProgram shaderProgram;
 
 		GLint mvpLocation{};
 
@@ -462,73 +456,27 @@ int main(int argc, char *argv[]) {
 
 	try {
 
-		BlobEngine::Graphic graphic(640, 480);
+		BlobEngine::BlobGL::Graphic graphic(640, 480);
 
 		//BlobEngine::Shape shape("../data/sphere.obj");
 		//BlobEngine::Shape shape("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
 
 		BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
 
-		//cout << sm;
-/*
 		BlobEngine::glTF2::Scene *mainScene = sm.getScene(0);
 
 		BlobEngine::glTF2::Shape *triangle = mainScene->getShape(0);
 
-		triangle->shaderProgram.addVertexShader(R"(
-#version 410
-
-layout(location = 0) in vec3 vertex_position;
-uniform mat4 mvp;
-// use z position to shader darker to help perception of distance
-out float dist;
-
-void main() {
-	gl_Position = mvp * vec4 (vertex_position, 1.0);
-	dist = vertex_position.z;//1.0 - (-pos_eye.z / 10.0);
-}
-
-		)");
-
-		triangle->shaderProgram.addFragmentShader(R"(
-#version 410
-
-in float dist;
-out vec4 frag_colour;
-
-void main() {
-	frag_colour = vec4 (1.0, 0.0, 0.0, 1.0);
-	// use z position to shader darker to help perception of distance
-	frag_colour.xyz *= dist;
-}
-		)");
-
-		triangle->shaderProgram.linkShaders();
+		BlobEngine::BlobGL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
 
 		while (graphic.isOpen()) {
 			graphic.clear();
-*/
-			/*float angle = BlobEngine::getTime();
 
-			float mod = std::cos(angle) / 2 + 1;
-
-			shape.setScale(mod, mod, mod);
-			shape.setRotation(angle * 40, 0.f, 1.f, 0.f);
-			shape.rotate(angle * 40, 1.f, 0.f, 0.f);
-			shape.setPosition(0, 1, 0);
-			graphic.draw(shape);
-*/
-			/*
-			//shape.setPosition(1, 0, 0);
-			graphic.draw(triangle->shaderProgram.getProgram(), triangle->mesh.getVAO(), 0, 9);
-
-			//shape.setPosition(0, 0, 1);
-			//graphic.draw(shape);
+			graphic.draw(shaderProgram, triangle->mesh.getVAO());
 
 			graphic.display();
-
 		}
-*/
+
 	} catch (BlobException &exception) {
 		std::cout << exception.what() << std::endl;
 	}

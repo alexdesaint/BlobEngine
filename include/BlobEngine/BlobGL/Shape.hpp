@@ -21,10 +21,6 @@ namespace BlobEngine::BlobGL {
 		friend Graphic;
 	private:
 
-		std::vector<glm::vec3> points;
-		std::vector<glm::vec2> textCoords;
-		std::vector<glm::vec3> normals;
-
 		VertexArrayObject vao;
 
 		glm::mat4 translateMatrix = glm::mat4(1.f);
@@ -34,10 +30,6 @@ namespace BlobEngine::BlobGL {
 		VertexBufferObject vboPoints;
 		//VertexBufferObject vboColor;
 
-		ShaderProgram shaderProgram;
-
-		GLint mvpLocation{};
-
 		void loadObjFile(const std::string &file);
 
 		void loadglTF(const std::string &file);
@@ -45,16 +37,6 @@ namespace BlobEngine::BlobGL {
 	public:
 
 		explicit Shape(const std::string &file);
-
-		void setVertexShaderProgram(const std::string &src) {
-			shaderProgram.addVertexShader(src);
-		}
-
-		void setFragmentShaderProgram(const std::string &src) {
-			shaderProgram.addFragmentShader(src);
-		}
-
-		void linkShaders();
 
 		void setPosition(float x, float y, float z);
 
@@ -68,7 +50,7 @@ namespace BlobEngine::BlobGL {
 
 		void rescale(float x, float y, float z);
 
-		glm::mat4 getModelMatrix();
+		glm::mat4 getModelMatrix() const;
 	};
 }
 

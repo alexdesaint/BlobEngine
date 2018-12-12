@@ -21,9 +21,11 @@ namespace BlobEngine::BlobGL {
 
 		GLenum dataType;
 
-		size_t typeSize;
+		GLsizei typeSize;
 
-		size_t dataSize;
+		GLsizei dataSize;
+
+		GLsizei numberOfElements;
 
 	public:
 		VertexBufferObject();

@@ -151,28 +151,31 @@ namespace BlobEngine::BlobGL {
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 	}
 
-	void Graphic::draw(GLuint shaderProgram, GLuint vao, GLint mvpLocation, GLsizei numOfPoints) {
+	void Graphic::draw(const ShaderProgram &program, const VertexArrayObject &vao) {
 
-		glUseProgram(shaderProgram);
-		glBindVertexArray(vao);
+		glUseProgram(program.getProgram());
+		glBindVertexArray(vao.getVertexArrayObject());
 
 		glm::mat4 mvp = projectionMatrix * viewMatrix;// * shape.getModelMatrix();
 
-		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+		GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
 
-		glDrawArrays(GL_TRIANGLES, 0, numOfPoints);//static_cast<GLsizei>(shape.points.size()));
+		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 
-	void Graphic::draw(Shape &shape, const ShaderProgram &program) {
+	void Graphic::draw(const Shape &shape, const ShaderProgram &program) {
 		glUseProgram(program.getProgram());
 		glBindVertexArray(shape.vao.getVertexArrayObject());
 
 		glm::mat4 mvp = projectionMatrix * viewMatrix * shape.getModelMatrix();
 
-		glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mvp));
+		GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
 
-		glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(shape.points.size()));
+		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+
+		glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
 	}
 
 	bool Graphic::isOpen() const {

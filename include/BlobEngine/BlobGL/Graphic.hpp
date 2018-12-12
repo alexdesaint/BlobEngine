@@ -2,6 +2,7 @@
 #define BLOBENGINE_GRAPHIC_HPP
 
 #include <BlobEngine/BlobGL/ShaderProgram.hpp>
+#include <BlobEngine/BlobGL/VertexArrayObject.hpp>
 
 #include <SDL2/SDL.h>
 
@@ -45,9 +46,9 @@ namespace BlobEngine::BlobGL {
 
 		void resize(unsigned int w, unsigned int h);
 
-		void draw(unsigned int shaderProgram, unsigned int vao, int mvpLocation, int numOfPoints);
+		void draw(const ShaderProgram &program, const VertexArrayObject &vao);
 
-		void draw(Shape &shape, const ShaderProgram &program);
+		void draw(const Shape &shape, const ShaderProgram &program);
 
 		bool isOpen() const;
 

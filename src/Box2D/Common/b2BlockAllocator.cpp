@@ -171,7 +171,7 @@ void b2BlockAllocator::Free(void* p, int32 size)
 	b2Assert(0 <= index && index < b2_blockSizes);
 
 #ifdef _DEBUG
-	// Verify the memory address and size is valid.
+	// Verify the memory address and numberOfElements is valid.
 	int32 blockSize = s_blockSizes[index];
 	bool found = false;
 	for (int32 i = 0; i < m_chunkCount; ++i)
