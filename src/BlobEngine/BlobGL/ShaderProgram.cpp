@@ -1,15 +1,26 @@
 #include <vector>
-#include <BlobEngine/BlobException.hpp>
 #include <iostream>
 
 #include <BlobEngine/BlobGL/ShaderProgram.hpp>
+#include <BlobEngine/Reader/FileReader.hpp>
+#include <BlobEngine/BlobException.hpp>
 
 BlobEngine::BlobGL::ShaderProgram::ShaderProgram() {
 	// Get a program object.
 	program = glCreateProgram();
 }
 
-void BlobEngine::BlobGL::ShaderProgram::addVertexShader(std::string src) {
+BlobEngine::BlobGL::ShaderProgram::ShaderProgram(const std::string &pathVertex, const std::string &pathFragment) {
+	program = glCreateProgram();
+
+	addVertexShaderFile(pathVertex);
+
+	addFragmentShaderFile(pathFragment);
+
+	linkShaders();
+}
+
+void BlobEngine::BlobGL::ShaderProgram::addVertexShader(const std::string &src) {
 
 	// Create an empty vertex shader handle
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -17,6 +28,7 @@ void BlobEngine::BlobGL::ShaderProgram::addVertexShader(std::string src) {
 	// Send the vertex shader source code to GL
 	// Note that std::string's .c_str is NULL character terminated.
 	const GLchar *source = src.c_str();
+
 	glShaderSource(vertexShader, 1, &source, nullptr);
 
 	// Compile the vertex shader
@@ -54,7 +66,7 @@ void BlobEngine::BlobGL::ShaderProgram::addVertexShader(std::string src) {
 	}
 }
 
-void BlobEngine::BlobGL::ShaderProgram::addFragmentShader(std::string src) {
+void BlobEngine::BlobGL::ShaderProgram::addFragmentShader(const std::string &src) {
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 	// Send the vertex shader source code to GL
@@ -98,17 +110,26 @@ void BlobEngine::BlobGL::ShaderProgram::addFragmentShader(std::string src) {
 }
 
 void BlobEngine::BlobGL::ShaderProgram::linkShaders() {
-// Vertex and fragment shaders are successfully compiled.
-// Now time to link them together into a program.
+	// Vertex and fragment shaders are successfully compiled.
+	// Now time to link them together into a program.
 
-// Attach our shaders to our program
+	// Attach our shaders to our program
 	glAttachShader(program, vertexShader);
 	glAttachShader(program, fragmentShader);
 
-// Link our program
+	GLint maxLength = 0;
+	glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
+	if (maxLength != 0) {
+		std::vector<GLchar> infoLog(maxLength);
+		glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &infoLog[0]);
+
+		std::cout << "Shader compilation warning for shader :" << std::endl << infoLog.data();
+	}
+
+	// Link our program
 	glLinkProgram(program);
 
-// Note the different functions here: glGetProgram* instead of glGetShader*.
+	// Note the different functions here: glGetProgram* instead of glGetShader*.
 	GLint isLinked = 0;
 	glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
 	if (isLinked == GL_FALSE) {
@@ -128,7 +149,7 @@ void BlobEngine::BlobGL::ShaderProgram::linkShaders() {
 		throw BlobException(infoLog.data());
 	}
 
-	GLint maxLength = 0;
+	maxLength = 0;
 
 	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
@@ -147,3 +168,14 @@ void BlobEngine::BlobGL::ShaderProgram::linkShaders() {
 GLuint BlobEngine::BlobGL::ShaderProgram::getProgram() const {
 	return program;
 }
+
+void BlobEngine::BlobGL::ShaderProgram::addFragmentShaderFile(const std::string &path) {
+	FileReader f(path);
+	addFragmentShader(f.toString());
+}
+
+void BlobEngine::BlobGL::ShaderProgram::addVertexShaderFile(const std::string &path) {
+	FileReader f(path);
+	addVertexShader(f.toString());
+}
+

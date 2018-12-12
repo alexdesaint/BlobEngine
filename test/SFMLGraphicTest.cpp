@@ -2,7 +2,7 @@
 
 #include <SFML/Window.hpp>
 
-#include <BlobEngine/Graphic.hpp>
+#include <BlobEngine/BlobGL/Graphic.hpp>
 
 int main() {
 
@@ -21,7 +21,6 @@ int main() {
 	std::cout << "stencil bits:" << settings.stencilBits << std::endl;
 	std::cout << "antialiasing level:" << settings.antialiasingLevel << std::endl;
 	std::cout << "version:" << settings.majorVersion << "." << settings.minorVersion << std::endl;
-
 
 	BlobEngine::Graphic graphic("glTest", 640, 480);
 

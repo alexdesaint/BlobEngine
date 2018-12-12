@@ -1,6 +1,6 @@
 #include <BlobEngine/BlobGL/Graphic.hpp>
-#include <BlobEngine/Shape.hpp>
-
+#include <BlobEngine/BlobGL/Shape.hpp>
+#include <BlobEngine/Reader/FileReader.hpp>
 #include <BlobEngine/Time.hpp>
 #include <BlobEngine/BlobException.hpp>
 #include <iostream>
@@ -17,9 +17,15 @@
 #include <list>
 #include <iostream>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat4x4.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 using namespace std;
+
+using namespace BlobEngine::Reader;
+using namespace BlobEngine::BlobGL;
+using namespace BlobEngine;
 
 namespace BlobEngine::glTF2 {
 
@@ -34,20 +40,146 @@ namespace BlobEngine::glTF2 {
 
 			version = j.getString("version");
 
-			cout << version << endl;
-
 			if (version != "2.0")
 				throw BlobException(string("glTF : can't load version ") + version);
 		}
+
+		friend std::ostream& operator<<(std::ostream &s, const Asset &a) {
+			s << "Asset : " << a.version << std::endl;
+			return s;
+		}
 	};
+
+	class Buffer {
+	public:
+
+		string uri; //!< The uri of the buffer. Can be a filepath, a data uri, etc. (required)
+		size_t byteLength = 0; //!< The length of the buffer in bytes. (default: 0)
+
+		vector<GLubyte> data;
+
+		void load(int num, JsonExplorer explorer) {
+			explorer.goToBaseNode();
+
+			explorer.goToArrayElement("buffers", num);
+
+			uri = BlobEngine::FileReader::getFilePath(JsonExplorer::path) + explorer.getString("uri");
+
+			if (explorer.hasMember("byteLength"))
+				byteLength = static_cast<size_t>(explorer.getInt("byteLength"));
+
+			FileReader fileReader(uri);
+
+			if (fileReader.getSize() != byteLength)
+				throw BlobException("File typeSize don't fit");
+
+			data.resize(byteLength);
+
+			for (int i = 0; i < byteLength; i++)
+				data[i] = fileReader.readNextByte();
+		}
+
+		friend std::ostream& operator<<(std::ostream &s, const Buffer &a) {
+			s << "Buffer {" << std::endl;
+
+			s << a.uri << endl << "byteLength : " << a.byteLength << endl << "data : ";
+			for(const GLubyte &i : a.data)
+				s << hex << uppercase << (unsigned int) i << ' ';
+
+			s << endl;
+			s << "}" << endl;
+			return s;
+		}
+	};
+
+	//! A view into a buffer generally representing a subset of the buffer.
+	class BufferView  : public BlobGL::VertexBufferObject  {
+	public:
+		Buffer buffer; //! The ID of the buffer. (required)
+		int byteOffset{}; //! The offset into the buffer in bytes. (required)
+		int byteLength = 0; //! The length of the bufferView in bytes. (default: 0)
+
+		enum Target {
+			BufferViewTarget_ARRAY_BUFFER = 34962,
+			BufferViewTarget_ELEMENT_ARRAY_BUFFER = 34963
+		};
+
+		Target target = BufferViewTarget_ARRAY_BUFFER; //! The target that the WebGL buffer should be bound to.
+
+		void load(int num, JsonExplorer explorer) {
+
+			//loading Json Data
+			explorer.goToBaseNode();
+
+			explorer.goToArrayElement("bufferViews", num);
+
+			byteOffset = explorer.getInt("byteOffset");
+
+			if (explorer.hasMember("byteLength"))
+				byteLength = explorer.getInt("byteLength");
+
+			target = static_cast<Target>(explorer.getInt("target"));
+
+			buffer.load(explorer.getInt("buffer"), explorer);
+
+			// Creating VBO
+
+			setData(buffer.data);
+		}
+
+		friend std::ostream& operator<<(std::ostream &s, const BufferView &a) {
+			s << "BufferView {" << std::endl;
+
+			s << "byteOffset : " << a.byteOffset << endl;
+			s << "byteOffset : " << a.byteLength << endl;
+			s << a.buffer;
+			s << "}" << endl;
+			return s;
+		}
+	};
+
+	enum ComponentType {
+		ComponentType_BYTE = 5120,
+		ComponentType_UNSIGNED_BYTE = 5121,
+		ComponentType_SHORT = 5122,
+		ComponentType_UNSIGNED_SHORT = 5123,
+		ComponentType_UNSIGNED_INT = 5125,
+		ComponentType_FLOAT = 5126
+	};
+
+	std::ostream& operator<<(std::ostream& out, ComponentType value) {
+		switch (value) {
+			case ComponentType_BYTE:
+				out << "ComponentType_BYTE";
+				break;
+			case ComponentType_UNSIGNED_BYTE:
+				out << "ComponentType_UNSIGNED_BYTE";
+				break;
+			case ComponentType_SHORT:
+				out << "ComponentType_SHORT";
+				break;
+			case ComponentType_UNSIGNED_SHORT:
+				out << "ComponentType_UNSIGNED_SHORT";
+				break;
+			case ComponentType_UNSIGNED_INT:
+				out << "ComponentType_UNSIGNED_INT";
+				break;
+			case ComponentType_FLOAT:
+				out << "ComponentType_FLOAT";
+				break;
+			default:
+				out << "ComponentType_NOT_REFERENCED";
+				break;
+		}
+
+		return out;
+	}
 
 	class Accessor : public BlobGL::VertexArrayObject {
 	public:
 		enum Type {
 			SCALAR = 1, VEC2 = 2, VEC3 = 3, VEC4 = 4, MAT2 = 4, MAT3 = 9, MAT4 = 16
 		};
-
-	private:
 
 		static const size_t NUM_TYPE = 7;
 
@@ -58,20 +190,11 @@ namespace BlobEngine::glTF2 {
 
 		static const TypeInfo typeInfos[NUM_TYPE];
 
-	public:
 
-		enum ComponentType {
-			ComponentType_BYTE = 5120,
-			ComponentType_UNSIGNED_BYTE = 5121,
-			ComponentType_SHORT = 5122,
-			ComponentType_UNSIGNED_SHORT = 5123,
-			ComponentType_UNSIGNED_INT = 5125,
-			ComponentType_FLOAT = 5126
-		};
 
 		static Type getType(const char *str) {
-			for (auto typeInfo : typeInfos) {
-				if (strcmp(typeInfo.name, str) == 0) {
+			for(auto typeInfo : typeInfos) {
+				if(strcmp(typeInfo.name, str) == 0) {
 					return typeInfo.type;
 				}
 			}
@@ -105,9 +228,34 @@ namespace BlobEngine::glTF2 {
 			count = static_cast<unsigned int>(explorer.getInt("count"));
 
 			//VAO
+			cout << bufferView;
+
 			addBuffer(bufferView, type, 0, 0);
+		}
 
+		friend std::ostream& operator<<(std::ostream &s, const Accessor &a) {
 
+			s << "Accessor {" << std::endl;
+
+			s << "byteOffset : " << a.byteOffset << endl;
+			s << "componentType : " << a.componentType << endl;
+			s << "count : " << a.count << endl;
+			s << "type : " << a.type << endl;
+
+			s << "max : " ;
+			for(auto &m : a.max)
+				s << m << " ";
+			s << endl;
+
+			s << "min : " ;
+			for(auto &m : a.min)
+				s << m << " ";
+			s << endl;
+
+			s << a.bufferView;
+
+			s << "}" << endl;
+			return s;
 		}
 	};
 
@@ -133,6 +281,16 @@ namespace BlobEngine::glTF2 {
 				explicit Attributes(JsonExplorer explorer) {
 					accessor.load(explorer.getInt("POSITION"), explorer);
 				}
+
+				friend std::ostream& operator<<(std::ostream &s, const Attributes &a) {
+
+					s << "Attributes {" << endl;
+
+					s << a.accessor;
+
+					s << "}" << endl;
+					return s;
+				}
 			};
 
 		public:
@@ -141,6 +299,16 @@ namespace BlobEngine::glTF2 {
 
 			explicit Primitive(JsonExplorer explorer) : attributes(explorer.getObject("attributes")) {
 
+			}
+
+			friend std::ostream& operator<<(std::ostream &s, const Primitive &a) {
+
+				s << "Primitive {" << endl;
+
+				s << a.attributes;
+
+				s << "}" << endl;
+				return s;
 			}
 		};
 
@@ -163,6 +331,16 @@ namespace BlobEngine::glTF2 {
 		GLuint getVAO() {
 			return primitives[0].attributes.accessor.getVertexArrayObject();
 		}
+
+		friend std::ostream& operator<<(std::ostream &s, const Mesh &a) {
+
+			s << "Mesh {" << endl;
+			for(auto p : a.primitives)
+				s << p;
+
+			s << "}" << endl;
+			return s;
+		}
 	};
 
 	class Shape {
@@ -171,7 +349,7 @@ namespace BlobEngine::glTF2 {
 		Mesh mesh;
 
 		// déjà dans Shape
-		glm::mat4 matrix{};
+		glm::mat4 matrix{1};
 		glm::vec3 translation{};
 		glm::vec4 rotation{};
 		glm::vec3 scale{};
@@ -186,6 +364,19 @@ namespace BlobEngine::glTF2 {
 			explorer.goToArrayElement("nodes", num);
 
 			mesh.load(explorer.getInt("mesh"), explorer);
+		}
+
+		friend std::ostream& operator<<(std::ostream &s, const Shape &a) {
+			s << "Shape {" << endl;
+
+			s << glm::to_string(a.matrix) << endl;
+			s << glm::to_string(a.translation) << endl;
+			s << glm::to_string(a.rotation) << endl;
+			s << glm::to_string(a.scale) << endl;
+			s << a.mesh;
+
+			s << "}" << endl;
+			return s;
 		}
 	};
 
@@ -207,6 +398,16 @@ namespace BlobEngine::glTF2 {
 		Shape* getShape(unsigned int num) {
 			return &nodes[num];
 		}
+
+		friend std::ostream& operator<<(std::ostream &s, const Scene &a) {
+			s << "Scene {" << endl;
+			for(const Shape &node : a.nodes)
+				s << node;
+
+			s << "}" << endl;
+			return s;
+
+		}
 	};
 
 	class SceneManager {
@@ -216,17 +417,14 @@ namespace BlobEngine::glTF2 {
 
 		int defaultScene = 0;
 
-		explicit SceneManager(const string &file) {
+		JsonExplorer baseNode;
+		Asset asset;
 
-			JsonExplorer baseNode(file);
+		explicit SceneManager(const string &file) :
+				baseNode(file),
+				asset(baseNode.getObject("asset"))
 
-			Asset a(baseNode.getObject("asset"));
-
-			if (baseNode.hasMember("asset"))
-				cout << "working" << endl;
-			else
-				cout << "not working" << endl;
-
+		{
 			if (baseNode.hasMember("scene"))
 				defaultScene = baseNode.getInt("scene");
 
@@ -245,6 +443,18 @@ namespace BlobEngine::glTF2 {
 		Scene* getScene(unsigned int num) {
 			return &scenes[num];
 		}
+
+		friend std::ostream& operator<<(std::ostream &s, const SceneManager &a) {
+			s << "SceneManager {" << endl;
+
+			s << a.asset;
+
+			for(const Scene &scene : a.scenes)
+				s << scene;
+
+			s << "}" << endl;
+			return s;
+		}
 	};
 }
 
@@ -259,6 +469,8 @@ int main(int argc, char *argv[]) {
 
 		BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
 
+		//cout << sm;
+/*
 		BlobEngine::glTF2::Scene *mainScene = sm.getScene(0);
 
 		BlobEngine::glTF2::Shape *triangle = mainScene->getShape(0);
@@ -295,7 +507,7 @@ void main() {
 
 		while (graphic.isOpen()) {
 			graphic.clear();
-
+*/
 			/*float angle = BlobEngine::getTime();
 
 			float mod = std::cos(angle) / 2 + 1;
@@ -306,6 +518,7 @@ void main() {
 			shape.setPosition(0, 1, 0);
 			graphic.draw(shape);
 */
+			/*
 			//shape.setPosition(1, 0, 0);
 			graphic.draw(triangle->shaderProgram.getProgram(), triangle->mesh.getVAO(), 0, 9);
 
@@ -315,7 +528,7 @@ void main() {
 			graphic.display();
 
 		}
-
+*/
 	} catch (BlobException &exception) {
 		std::cout << exception.what() << std::endl;
 	}

@@ -13,9 +13,7 @@
 #include <BlobEngine/BlobGL/VertexBufferObject.hpp>
 #include <BlobEngine/BlobGL/ShaderProgram.hpp>
 
-namespace BlobEngine {
-
-	using namespace BlobGL;
+namespace BlobEngine::BlobGL {
 
 	class Graphic;
 
@@ -27,26 +25,26 @@ namespace BlobEngine {
 		std::vector<glm::vec2> textCoords;
 		std::vector<glm::vec3> normals;
 
-		//VertexArrayObject vao;
+		VertexArrayObject vao;
 
 		glm::mat4 translateMatrix = glm::mat4(1.f);
 		glm::mat4 rotateMatrix = glm::mat4(1.f);
 		glm::mat4 scaleMatrix = glm::mat4(1.f);
 
-		//VertexBufferObject vboPoints;
+		VertexBufferObject vboPoints;
 		//VertexBufferObject vboColor;
 
 		ShaderProgram shaderProgram;
 
 		GLint mvpLocation{};
 
-		//void loadObjFile(std::string file);
+		void loadObjFile(const std::string &file);
 
-		//void loadglTF(const std::string &file);
+		void loadglTF(const std::string &file);
 
 	public:
 
-		//explicit Shape(std::string file);
+		explicit Shape(const std::string &file);
 
 		void setVertexShaderProgram(const std::string &src) {
 			shaderProgram.addVertexShader(src);

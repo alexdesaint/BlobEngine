@@ -1,7 +1,3 @@
-//
-// Created by Muta on 20/06/2018.
-//
-
 #ifndef BLOBENGINE_SHADERPROGRAM_HPP
 #define BLOBENGINE_SHADERPROGRAM_HPP
 
@@ -19,9 +15,15 @@ namespace BlobEngine::BlobGL {
 	public:
 		ShaderProgram();
 
-		void addVertexShader(std::string src);
+		ShaderProgram(const std::string &pathVertex, const std::string &pathFragment);
 
-		void addFragmentShader(std::string src);
+		void addVertexShader(const std::string &src);
+
+		void addVertexShaderFile(const std::string &path);
+
+		void addFragmentShader(const std::string &src);
+
+		void addFragmentShaderFile(const std::string &path);
 
 		void linkShaders();
 

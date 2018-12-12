@@ -1,7 +1,3 @@
-//
-// Created by Muta on 05/07/2018.
-//
-
 #ifndef BLOBENGINE_TIME_HPP
 #define BLOBENGINE_TIME_HPP
 

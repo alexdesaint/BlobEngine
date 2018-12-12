@@ -13,15 +13,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 include_directories(include)
 link_directories(lib)
 
-set(SFML_DIR "${PROJECT_SOURCE_DIR}/../SFML/lib/cmake/SFML")
-
-set(SFML_STATIC_LIBRARIES TRUE)
 find_package(SFML 2.5 COMPONENTS window graphics network audio system REQUIRED)
 if (NOT SFML_FOUND)
-	message(WARNING "SFML not found")
+	message(ERROR "SFML not found")
 endif()
 
-include_directories("${PROJECT_SOURCE_DIR}/../SFML/include")
+find_package(SDL2 REQUIRED)
+if (NOT SDL2_FOUND)
+	message(ERROR "SDL2 not found")
+endif()
+include_directories(${SDL2_INCLUDE_DIRS})
 
 subdirs(src)
 subdirs(test)

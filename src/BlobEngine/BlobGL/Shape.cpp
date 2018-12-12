@@ -17,9 +17,9 @@
 
 using namespace std;
 
-namespace BlobEngine {
+namespace BlobEngine::BlobGL {
 
-	/*void Shape::loadObjFile(std::string file) {
+	void Shape::loadObjFile(const std::string &file) {
 		FileReader fileReader(file);
 
 		regex regIdentifier(R"((\#|[a-z]+) (.*))");
@@ -151,10 +151,10 @@ namespace BlobEngine {
 	}
 
 	void Shape::loadglTF(const std::string &file) {
-		glTF2::Loader loader(file);
+		//glTF2::Loader loader(file);
 	}
 
-	Shape::Shape(const std::string file) {
+	Shape::Shape(const std::string &file) {
 
 		std::string extention = file.substr(file.find_last_of('.') + 1);
 
@@ -166,7 +166,7 @@ namespace BlobEngine {
 			throw BlobException(std::string("Cannot open the file extention : *.") + extention);
 		}
 	}
-*/
+
 	void Shape::linkShaders() {
 		shaderProgram.linkShaders();
 

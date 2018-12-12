@@ -1,11 +1,15 @@
 #ifndef BLOBENGINE_GRAPHIC_HPP
 #define BLOBENGINE_GRAPHIC_HPP
 
+#include <BlobEngine/BlobGL/ShaderProgram.hpp>
+
 #include <SDL2/SDL.h>
 
 #include <glm/mat4x4.hpp>
 
-namespace BlobEngine {
+#include <ostream>
+
+namespace BlobEngine::BlobGL {
 
 	class Shape;
 
@@ -13,6 +17,7 @@ namespace BlobEngine {
 	private:
 
 		bool quit = false;
+		unsigned int frameCount = 0;
 
 		SDL_Window *window;
 		SDL_GLContext glContext;
@@ -42,7 +47,11 @@ namespace BlobEngine {
 
 		void draw(unsigned int shaderProgram, unsigned int vao, int mvpLocation, int numOfPoints);
 
+		void draw(Shape &shape, const ShaderProgram &program);
+
 		bool isOpen() const;
+
+		friend std::ostream& operator<<(std::ostream &s, const Graphic &a);
 	};
 }
 

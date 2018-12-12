@@ -1,8 +1,9 @@
-#include <BlobEngine/BlobGL/Graphic.hpp>
+
 
 //blobEngine
 #include <BlobEngine/BlobException.hpp>
-//#include <BlobEngine/Shape.hpp>
+#include <BlobEngine/BlobGL/Shape.hpp>
+#include <BlobEngine/BlobGL/Graphic.hpp>
 
 //std
 #include <iostream>
@@ -15,7 +16,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-static void APIENTRY openglCallbackFunction(
+
+static void GLAPIENTRY openglCallbackFunction(
 		GLenum source,
 		GLenum type,
 		GLuint id,
@@ -27,7 +29,6 @@ static void APIENTRY openglCallbackFunction(
 	(void) source;
 	(void) type;
 	(void) id;
-	(void) severity;
 	(void) length;
 	(void) userParam;
 
@@ -48,9 +49,14 @@ static void APIENTRY openglCallbackFunction(
 			std::cout << "Unknow Error severity :" << std::endl << message;
 			break;
 	}
+
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+							 "Missing file",
+							 "File is missing. Please reinstall the program.",
+							 nullptr);
 }
 
-namespace BlobEngine {
+namespace BlobEngine::BlobGL {
 
 	//using namespace BlobGL;
 
@@ -92,11 +98,8 @@ namespace BlobEngine {
 
 		enableDebugCallBack();
 
-		//test hardware
-		std::cout << glGetString(GL_VENDOR) << std::endl <<
-				  glGetString(GL_RENDERER) << std::endl <<
-				  glGetString(GL_VERSION) << std::endl <<
-				  glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+		if(SDL_GL_SetSwapInterval(-1) == -1)
+			SDL_GL_SetSwapInterval(1);
 
 		glEnable(GL_CULL_FACE); // cull face
 		glCullFace(GL_BACK);// cull back face
@@ -121,6 +124,17 @@ namespace BlobEngine {
 
 	void Graphic::display() {
 		SDL_GL_SwapWindow(window);
+
+		if(!(++frameCount%60)) {
+			static std::chrono::high_resolution_clock::time_point lastFrameTime;
+			auto now = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<float> diff = now - lastFrameTime;
+			lastFrameTime = now;
+
+			std::string name = "Test : " + std::to_string(60/diff.count()) + " FPS";
+
+			SDL_SetWindowTitle(window, name.c_str());
+		}
 
 		while (SDL_PollEvent(&sdlEvent) != 0) {
 
@@ -150,7 +164,26 @@ namespace BlobEngine {
 
 	}
 
+	void Graphic::draw(Shape &shape, const ShaderProgram &program) {
+		glUseProgram(program.getProgram());
+		glBindVertexArray(shape.vao.getVertexArrayObject());
+
+		glm::mat4 mvp = projectionMatrix * viewMatrix * shape.getModelMatrix();
+
+		glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mvp));
+
+		glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(shape.points.size()));
+	}
+
 	bool Graphic::isOpen() const {
 		return !quit;
+	}
+
+	std::ostream &operator<<(std::ostream &s, const Graphic &a) {
+		s << glGetString(GL_VENDOR) << std::endl <<
+				  glGetString(GL_RENDERER) << std::endl <<
+				  glGetString(GL_VERSION) << std::endl <<
+				  glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+		return s;
 	}
 }
