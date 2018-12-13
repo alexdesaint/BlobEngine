@@ -27,6 +27,10 @@ namespace BlobEngine::BlobGL {
 		glm::mat4 rotateMatrix = glm::mat4(1.f);
 		glm::mat4 scaleMatrix = glm::mat4(1.f);
 
+		std::vector<GLushort> indices;
+
+		bool indexed = false;
+
 		VertexBufferObject vboPoints;
 		//VertexBufferObject vboColor;
 
@@ -37,6 +41,8 @@ namespace BlobEngine::BlobGL {
 	public:
 
 		explicit Shape(const std::string &file);
+
+		explicit Shape(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
 
 		void setPosition(float x, float y, float z);
 

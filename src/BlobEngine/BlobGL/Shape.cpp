@@ -1,12 +1,7 @@
-//
-// Created by Muta on 25/06/2018.
-//
-
 #include <BlobEngine/BlobGL/Shape.hpp>
 
 #include <BlobEngine/Reader/FileReader.hpp>
 #include <BlobEngine/BlobException.hpp>
-#include <BlobEngine/glTF2/Loader.hpp>
 
 #include <regex>
 #include <iostream>
@@ -20,7 +15,7 @@ using namespace std;
 namespace BlobEngine::BlobGL {
 
 	void Shape::loadObjFile(const std::string &file) {
-		FileReader fileReader(file);
+		Reader::FileReader fileReader(file);
 
 		regex regIdentifier(R"((\#|[a-z]+) (.*))");
 
@@ -156,6 +151,12 @@ namespace BlobEngine::BlobGL {
 		//glTF2::Loader loader(file);
 	}
 
+	Shape::Shape(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices) : indices(indices) {
+		vboPoints.setData(points);
+		vao.addBuffer(vboPoints, 3, 0, 0);
+		indexed = true;
+	}
+
 	Shape::Shape(const std::string &file) {
 
 		std::string extention = file.substr(file.find_last_of('.') + 1);
@@ -198,4 +199,6 @@ namespace BlobEngine::BlobGL {
 	void Shape::rescale(float x, float y, float z) {
 		scaleMatrix = scale(scaleMatrix, vec3(x, y, z));
 	}
+
+
 }

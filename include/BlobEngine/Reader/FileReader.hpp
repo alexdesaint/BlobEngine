@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 
-namespace BlobEngine {
+namespace BlobEngine::Reader {
 	class FileReader {
 	private:
 		std::ifstream inFile;

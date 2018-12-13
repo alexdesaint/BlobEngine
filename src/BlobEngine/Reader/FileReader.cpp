@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iostream>
 
-namespace BlobEngine {
+namespace BlobEngine::Reader {
 
 	FileReader::FileReader(const std::string &FilePath) {
 		inFile.open(FilePath, std::ios::in | std::ios::binary | std::ios::ate);

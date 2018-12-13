@@ -98,12 +98,13 @@ namespace BlobEngine::BlobGL {
 
 		enableDebugCallBack();
 
-		if(SDL_GL_SetSwapInterval(-1) == -1)
+		if (SDL_GL_SetSwapInterval(-1) == -1)
 			SDL_GL_SetSwapInterval(1);
 
 		glEnable(GL_CULL_FACE); // cull face
-		glCullFace(GL_BACK);// cull back face
+		glCullFace(GL_FRONT);// cull back face
 		glFrontFace(GL_CW);// GL_CCW for counter clock-wise
+		glEnable( GL_DEPTH_TEST );
 		glClearColor(0.2, 0.2, 0.2, 1.0);
 
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
@@ -125,13 +126,13 @@ namespace BlobEngine::BlobGL {
 	void Graphic::display() {
 		SDL_GL_SwapWindow(window);
 
-		if(!(++frameCount%60)) {
+		if (!(++frameCount % 60)) {
 			static std::chrono::high_resolution_clock::time_point lastFrameTime;
 			auto now = std::chrono::high_resolution_clock::now();
 			std::chrono::duration<float> diff = now - lastFrameTime;
 			lastFrameTime = now;
 
-			std::string name = "Test : " + std::to_string(60/diff.count()) + " FPS";
+			std::string name = "Test : " + std::to_string(60 / diff.count()) + " FPS";
 
 			SDL_SetWindowTitle(window, name.c_str());
 		}
@@ -175,7 +176,10 @@ namespace BlobEngine::BlobGL {
 
 		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
-		glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
+		if (shape.indexed)
+			glDrawElements(GL_TRIANGLES, (GLsizei) shape.indices.size(), GL_UNSIGNED_SHORT, shape.indices.data());
+		else
+			glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
 	}
 
 	bool Graphic::isOpen() const {
@@ -184,9 +188,9 @@ namespace BlobEngine::BlobGL {
 
 	std::ostream &operator<<(std::ostream &s, const Graphic &a) {
 		s << glGetString(GL_VENDOR) << std::endl <<
-				  glGetString(GL_RENDERER) << std::endl <<
-				  glGetString(GL_VERSION) << std::endl <<
-				  glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+		  glGetString(GL_RENDERER) << std::endl <<
+		  glGetString(GL_VERSION) << std::endl <<
+		  glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 		return s;
 	}
 }

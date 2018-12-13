@@ -170,12 +170,12 @@ GLuint BlobEngine::BlobGL::ShaderProgram::getProgram() const {
 }
 
 void BlobEngine::BlobGL::ShaderProgram::addFragmentShaderFile(const std::string &path) {
-	FileReader f(path);
+	Reader::FileReader f(path);
 	addFragmentShader(f.toString());
 }
 
 void BlobEngine::BlobGL::ShaderProgram::addVertexShaderFile(const std::string &path) {
-	FileReader f(path);
+	Reader::FileReader f(path);
 	addVertexShader(f.toString());
 }
 

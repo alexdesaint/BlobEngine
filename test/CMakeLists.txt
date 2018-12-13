@@ -8,7 +8,7 @@ add_executable(SFMLGraphicTest SFMLGraphicTest.cpp)
 target_link_libraries(SFMLGraphicTest Graphic glad sfml-system sfml-graphics sfml-window -lglu32 -lopengl32 -static-libgcc -static-libstdc++ -static -lpthread)
 
 add_executable(glTF2test glTF2test.cpp)
-target_link_libraries(glTF2test BlobGL glad FileReader JsonExplorer -lglu32 -lopengl32 ${SDL2_LIBRARIES})
+target_link_libraries(glTF2test glTF2 BlobGL glad FileReader JsonExplorer -lglu32 -lopengl32 ${SDL2_LIBRARIES})
 
 add_executable(BlobGLtest BlobGLtest.cpp)
 target_link_libraries(BlobGLtest BlobGL glad FileReader JsonExplorer -lglu32 -lopengl32 ${SDL2_LIBRARIES})

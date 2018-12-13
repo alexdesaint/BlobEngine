@@ -1,1 +1,1 @@
-add_library(glTF2Loader Loader.cpp)
+add_library(glTF2 SceneManager.cpp Asset.cpp Buffer.cpp BufferView.cpp Accessor.cpp Mesh.cpp Shape.cpp Scene.cpp)

@@ -21,6 +21,7 @@ namespace BlobEngine::BlobGL {
 		switch (dataType) {
 			case GL_BYTE:
 				typeSize = sizeof(GLbyte);
+
 				break;
 			case GL_UNSIGNED_BYTE:
 				typeSize = sizeof(GLubyte);
@@ -39,6 +40,8 @@ namespace BlobEngine::BlobGL {
 				break;
 			default:
 				typeSize = vbo.typeSize;
+				dataType = vbo.dataType;
+				break;
 		}
 
 		numberOfElements = vbo.dataSize / ((GLsizei)numValuePerVertex * typeSize);
