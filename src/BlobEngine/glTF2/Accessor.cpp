@@ -33,7 +33,7 @@ namespace BlobEngine::glTF2 {
 		return Accessor::SCALAR;
 	}
 
-	Accessor::Accessor(Reader::JsonExplorer explorer) {
+	Accessor::Accessor(Reader::JsonExplorer explorer, const SceneManager &sm) : sm(sm) {
 		explorer.goToBaseNode();
 
 		Reader::JsonExplorer buff;
@@ -79,6 +79,10 @@ namespace BlobEngine::glTF2 {
 
 		s << "}" << endl;
 		return s;
+	}
+
+	GLubyte *Accessor::getData(int Accessor) {
+		return sm.bufferView.getData(data[Accessor].bufferView, data[Accessor].byteOffset);
 	}
 }
 

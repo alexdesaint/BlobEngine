@@ -24,7 +24,7 @@ namespace BlobEngine::glTF2 {
 
 		friend std::ostream &operator<<(std::ostream &s, const Buffer &a);
 
-		GLubyte* getData(int buffer, GLsizei offset, GLsizei length);
+		GLubyte *getData(int buffer, GLsizei offset);
 	};
 }
 

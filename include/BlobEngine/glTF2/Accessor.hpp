@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <BlobEngine/Reader/JsonExplorer.hpp>
+#include <BlobEngine/glTF2/SceneManager.hpp>
 
 namespace BlobEngine::glTF2 {
 
@@ -26,9 +27,11 @@ namespace BlobEngine::glTF2 {
 
 		std::vector<Data> data;
 
-		void load(int num, Reader::JsonExplorer explorer);
+		const SceneManager &sm;
 
-		Accessor(Reader::JsonExplorer explorer);
+		explicit Accessor(Reader::JsonExplorer explorer, const SceneManager &sm);
+
+		GLubyte *getData(int Accessor);
 
 		friend std::ostream &operator<<(std::ostream &s, const Accessor &a);
 	};

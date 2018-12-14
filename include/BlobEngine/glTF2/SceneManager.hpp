@@ -10,6 +10,8 @@
 
 namespace BlobEngine::glTF2 {
 	class SceneManager {
+		friend BufferView;
+		friend Accessor;
 	public:
 
 		std::vector<Scene> scenes;

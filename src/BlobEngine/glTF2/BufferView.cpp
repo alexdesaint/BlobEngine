@@ -6,30 +6,30 @@ using namespace std;
 
 namespace BlobEngine::glTF2 {
 
-	BufferView::BufferView(Reader::JsonExplorer explorer) {
+	BufferView::BufferView(Reader::JsonExplorer explorer, const SceneManager &sm) : sm(sm) {
 		explorer.goToBaseNode();
 
 		Reader::JsonExplorer buff;
 
-		dataView.resize((size_t)explorer.getArraySize("bufferViews"));
+		data.resize((size_t) explorer.getArraySize("bufferViews"));
 
-		for(int i = 0; i < dataView.size(); i++) {
+		for (int i = 0; i < data.size(); i++) {
 			buff = explorer.getArrayObject("bufferViews", i);
 
-			dataView[i].byteOffset = buff.getInt("byteOffset");
+			data[i].byteOffset = buff.getInt("byteOffset");
 
 			if (buff.hasMember("byteLength"))
-				dataView[i].byteLength = buff.getInt("byteLength");
+				data[i].byteLength = buff.getInt("byteLength");
 
-			dataView[i].target = static_cast<Target>(buff.getInt("target"));
+			data[i].target = static_cast<Target>(buff.getInt("target"));
 
-			dataView[i].buffer = buff.getInt("buffer");
+			data[i].buffer = buff.getInt("buffer");
 		}
 	}
 
 	std::ostream &operator<<(std::ostream &s, const BufferView &a) {
 		s << "BufferView {" << std::endl;
-		for (auto i : a.dataView) {
+		for (auto i : a.data) {
 			s << "byteOffset : " << i.byteOffset << endl;
 			s << "byteLength : " << i.byteLength << endl;
 			s << "buffer : " << i.buffer << endl;
@@ -37,5 +37,9 @@ namespace BlobEngine::glTF2 {
 		}
 		s << "}" << endl;
 		return s;
+	}
+
+	GLubyte *BufferView::getData(int BufferView, GLsizei offset) {
+		return &sm.buffer.getData(data[BufferView].buffer, data[BufferView].byteOffset)[offset];
 	}
 }

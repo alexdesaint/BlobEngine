@@ -48,7 +48,7 @@ namespace BlobEngine::glTF2 {
 		return s;
 	}
 
-	GLubyte* Buffer::getData(int buffer, GLsizei offset, GLsizei length) {
+	GLubyte *Buffer::getData(int buffer, GLsizei offset) {
 		return &data[buffer].d[offset];
 	}
 }
