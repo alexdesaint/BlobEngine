@@ -2,11 +2,8 @@
 .idea/
 bin/
 lib/
-<<<<<<< HEAD
 cmake-build-debug/
 cmake-build-release/
-=======
->>>>>>> b97c045... gitignore uo
 cmake-build-debug-clang/
 cmake-build-debug-mingw/
 cmake-build-release-clang/
