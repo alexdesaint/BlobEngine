@@ -29,7 +29,7 @@ namespace BlobEngine::glTF2 {
 				return typeInfo.type;
 			}
 		}
-		//TODO throw exeption when gatType fail
+		//TODO throw exeption when getType fail
 		return Accessor::SCALAR;
 	}
 
@@ -38,14 +38,14 @@ namespace BlobEngine::glTF2 {
 
 		Reader::JsonExplorer buff;
 
-		data.resize((size_t)explorer.getArraySize("accessors"));
+		data.resize((size_t) explorer.getArraySize("accessors"));
 
-		for(int i = 0; i < data.size(); i++) {
+		for (int i = 0; i < data.size(); i++) {
 			buff = explorer.getArrayObject("accessors", i);
 
 			data[i].bufferView = buff.getInt("bufferView");
 
-			data[i].componentType = (GLenum)buff.getInt("componentType");
+			data[i].componentType = (GLenum) buff.getInt("componentType");
 
 			data[i].type = strToType(buff.getString("type").c_str());
 
@@ -55,9 +55,38 @@ namespace BlobEngine::glTF2 {
 		}
 	}
 
-	std::ostream &operator<<(std::ostream &s, const Accessor &a) {
+	std::ostream &Accessor::printData(std::ostream &s, int a) {
+		if (getType(a) == GL_FLOAT) {
+			GLfloat *point = (GLfloat *) (getData(a));
+
+			for (int k = 0; k < getSize(a) / sizeof(GLfloat); k++) {
+				s << point[k] << " ";
+				if ((k + 1) % 3 == 0)
+					s << "| ";
+			}
+			s << endl;
+		} else if (getType(a) == GL_UNSIGNED_SHORT) {
+
+			GLushort *points = (GLushort *) (getData(a));
+
+			for (int k = 0; k < getSize(a) / sizeof(GLushort); k++) {
+				s << points[k] << " ";
+				if ((k + 1) % 3 == 0)
+					s << "| ";
+			}
+			s << endl;
+
+		}
+
+		return s;
+	}
+
+	std::ostream &operator<<(std::ostream &s, Accessor &a) {
 
 		s << "Accessor {" << endl;
+
+		for (int i = 0; i < a.data.size(); i++)
+			a.printData(s, i);
 
 		for (const auto &i : a.data) {
 			s << "byteOffset : " << i.byteOffset << endl;
@@ -100,5 +129,6 @@ namespace BlobEngine::glTF2 {
 	GLsizei Accessor::getValuePerElements(int Accessor) {
 		return data[Accessor].type;
 	}
+
 }
 

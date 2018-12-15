@@ -17,51 +17,67 @@ namespace BlobEngine::glTF2 {
 		for(int i = 0; i < data.size(); i++) {
 			dat = explorer.getArrayObject("meshes", i);
 
-			data[i].primitives.resize((size_t)dat.getArraySize("primitives"));
+			int numOfP = dat.getArraySize("primitives");
 
 			Reader::JsonExplorer prim;
 
-			for(int j = 0; j < data[i].primitives.size(); j++) {
+			for(int j = 0; j < numOfP; j++) {
 				prim = dat.getArrayObject("primitives", i);
 
-				data[i].primitives[j].indices = prim.getInt("indices");
-
-				Reader::JsonExplorer attr;
-
-				attr = prim.getObject("attributes");
-
-				data[i].primitives[j].attributes.position = attr.getInt("POSITION");
+				data[i].primitives.emplace_back(prim, accessor);
 			}
 		}
 	}
 
-	std::ostream &operator<<(std::ostream &s, const Mesh &a) {
+	std::ostream &operator<<(std::ostream &s, Mesh &a) {
 
 		s << "Mesh {" << endl;
 
-		for(const auto &i : a.data) {
+		s << a.accessor;
 
-			for(const auto &j : i.primitives) {
+		for(auto &i : a.data) {
 
-				s << "indices : " << j.indices << endl;
-
-				s << "POSITION : " << j.attributes.position << endl;
+			for(auto &j : i.primitives) {
+				s << j;
 			}
 		}
-
-		s << a.accessor;
 
 		s << "}" << endl;
 		return s;
 	}
 
 	BlobGL::Shape Mesh::getShape(int mesh) {
-		int indexPosition = data[mesh].primitives[0].attributes.position;
-		int indexIndices = data[mesh].primitives[0].indices;
+		return data[mesh].primitives[0];
+	}
 
-		return BlobGL::Shape(
-				accessor.getData(indexPosition), accessor.getSize(indexPosition), accessor.getType(indexPosition),
-				accessor.getData(indexIndices), accessor.getNumOfElements(indexIndices), accessor.getType(indexIndices)
-				);
+	//Primitive
+
+	Mesh::Primitive::Primitive(Reader::JsonExplorer explorer, Accessor &a) {
+		if(explorer.hasMember("indices")) {
+			indices = explorer.getInt("indices");
+			indexed = true;
+			setIndices(a.getData(indices), a.getNumOfElements(indices), a.getType(indices));
+		}
+
+		Reader::JsonExplorer attr;
+
+		attr = explorer.getObject("attributes");
+
+		attributes.position = attr.getInt("POSITION");
+
+		setData(
+				a.getData(attributes.position),
+				a.getSize(attributes.position),
+				a.getType(attributes.position),
+				a.getValuePerElements(attributes.position)
+		);
+	}
+
+	std::ostream &operator<<(std::ostream &s, Mesh::Primitive &a) {
+		s << "POSITION : " << a.attributes.position << endl;
+
+		s << "indices : " << a.indices << endl;
+
+		return s;
 	}
 }

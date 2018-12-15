@@ -44,6 +44,6 @@ namespace BlobEngine::glTF2 {
 	}
 
 	GLsizei BufferView::getSize(int BufferView, GLsizei offset) {
-		return data[BufferView].byteLength - data[BufferView].byteOffset - offset;
+		return data[BufferView].byteLength - offset;
 	}
 }

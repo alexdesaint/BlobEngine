@@ -13,8 +13,8 @@ namespace BlobEngine::BlobGL {
 		glDeleteBuffers(1, &vertexBufferObject);
 	}
 
-	VertexBufferObject::VertexBufferObject(GLubyte *points, GLsizei dataSize) : dataSize(dataSize) {
-		glCreateBuffers(1, &vertexBufferObject);
+	void VertexBufferObject::setData(GLubyte *points, int ds) {
+		dataSize = ds;
 
 		glNamedBufferStorage(vertexBufferObject, dataSize, points, 0);
 	}

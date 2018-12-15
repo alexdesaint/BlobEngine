@@ -2,9 +2,9 @@
 #define BLOBENGINE_SCENE_HPP
 
 #include <BlobEngine/glTF2/Shape.hpp>
+#include <BlobEngine/glTF2/Mesh.hpp>
 
 #include <vector>
-class BlobEngine::glTF2::SceneManager;
 
 namespace BlobEngine::glTF2 {
 
@@ -13,7 +13,7 @@ namespace BlobEngine::glTF2 {
 
 		std::vector<Shape> nodes;
 
-		explicit Scene(Reader::JsonExplorer explorer, const SceneManager &sm);
+		explicit Scene(Reader::JsonExplorer explorer, Mesh &m);
 
 		Shape& getShape(unsigned int num);
 

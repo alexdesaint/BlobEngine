@@ -27,7 +27,7 @@ namespace BlobEngine::BlobGL {
 		unsigned int width, height;
 
 		glm::mat4 projectionMatrix;
-		glm::mat4 viewMatrix;
+		glm::mat4 viewMatrix{1};
 
 		glm::vec3 cameraPosition; // Camera position in World Space
 		glm::vec3 cameraLookAt; // and looks at the origin

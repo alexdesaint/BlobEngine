@@ -11,8 +11,8 @@ int main(int argc, char *argv[]) {
 		BlobEngine::BlobGL::Graphic graphic(640, 480);
 
 		//BlobEngine::Shape shape("../data/sphere.obj");
-		//BlobEngine::Shape shape("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
 
+		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
 		BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
 
 		std::cout << sm;
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 		while (graphic.isOpen()) {
 			graphic.clear();
 
-			graphic.draw(shaderProgram, triangle);
+			graphic.draw(triangle.getShape(), shaderProgram);
 
 			graphic.display();
 		}

@@ -46,7 +46,9 @@ namespace BlobEngine::BlobGL {
 
 		//Shape(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
 
-		Shape(GLubyte *points, int numOfPoints, GLenum type, GLubyte *indices, GLsizei numOfIndices, GLenum indicesType);
+		void setData(GLubyte *points, GLsizei numOfPoints, GLenum type, GLsizei valuePerPoint);
+
+		void setIndices(GLubyte *indices, GLsizei numOfIndices, GLenum indicesType);
 
 		void setPosition(float x, float y, float z);
 

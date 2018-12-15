@@ -40,7 +40,9 @@ namespace BlobEngine::glTF2 {
 
 		GLsizei getValuePerElements(int Accessor);
 
-		friend std::ostream &operator<<(std::ostream &s, const Accessor &a);
+		friend std::ostream &operator<<(std::ostream &s, Accessor &a);
+
+		std::ostream &printData(std::ostream &s, int accessor);
 	};
 }
 

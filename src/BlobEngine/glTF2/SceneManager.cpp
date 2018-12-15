@@ -18,7 +18,7 @@ namespace BlobEngine::glTF2 {
 		int size = scenesObject.getArraySize();
 
 		for (unsigned int i = 0; i < size; i++) {
-			scenes.emplace_back(scenesObject.getArrayObject(i));
+			scenes.emplace_back(scenesObject.getArrayObject(i), mesh);
 		}
 	}
 
@@ -26,11 +26,11 @@ namespace BlobEngine::glTF2 {
 		return scenes[num];
 	}
 
-	std::ostream &operator<<(std::ostream &s, const SceneManager &a) {
+	std::ostream &operator<<(std::ostream &s, SceneManager &a) {
 		s << "SceneManager {" << endl;
 
 		s << a.asset;
-		s << a.mesh;
+		//s << a.mesh;
 
 		for(const Scene &scene : a.scenes)
 			s << scene;

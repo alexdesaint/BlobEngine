@@ -13,18 +13,18 @@ namespace BlobEngine::glTF2 {
 		friend Accessor;
 	public:
 
-		std::vector<Scene> scenes;
-
 		Reader::JsonExplorer baseNode;
 
 		Asset asset;
 		Mesh mesh;
 
+		std::vector<Scene> scenes;
+
 		explicit SceneManager(const std::string &file);
 
 		Scene& getScene(unsigned int num);
 
-		friend std::ostream& operator<<(std::ostream &s, const SceneManager &a);
+		friend std::ostream& operator<<(std::ostream &s, SceneManager &a);
 	};
 }
 

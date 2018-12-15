@@ -13,11 +13,17 @@ namespace BlobEngine::glTF2{
 			int position;
 		};
 
-
-		struct Primitive {
+		class Primitive : public BlobGL::Shape {//TODO faire de primitive une gl Shape
+		private:
 			int indices;
+			bool indexed = false;
 
 			Attributes attributes;
+
+		public:
+			Primitive(Reader::JsonExplorer explorer, Accessor &a);
+
+			friend std::ostream &operator<<(std::ostream &s, Primitive &a);
 		};
 
 		struct Data {
@@ -31,7 +37,8 @@ namespace BlobEngine::glTF2{
 	public:
 		explicit Mesh(Reader::JsonExplorer explorer);
 
-		friend std::ostream &operator<<(std::ostream &s, const Mesh &a);
+		friend std::ostream &operator<<(std::ostream &s, Mesh &a);
+		friend std::ostream &operator<<(std::ostream &s, Primitive &a);
 
 		BlobGL::Shape getShape(int mesh);
 	};

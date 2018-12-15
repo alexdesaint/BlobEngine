@@ -72,7 +72,7 @@ namespace BlobEngine::BlobGL {
 	Graphic::Graphic(unsigned int width, unsigned int height) :
 			width(width),
 			height(height),
-			cameraPosition(10, 10, 10),
+			cameraPosition(0, 0, 2),
 			cameraLookAt(0, 0, 0),
 			cameraUp(0, 1, 0) {
 
@@ -152,6 +152,13 @@ namespace BlobEngine::BlobGL {
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 	}
 
+	std::ostream &operator<< (std::ostream &out, const glm::mat4 &vec) {
+
+		for(int i = 0; i < 4; i++)
+			out << vec[i].x << " " << vec[i].y << " "<< vec[i].z << " " << vec[i].w << std::endl;
+		return out;
+	}
+
 	void Graphic::draw(const ShaderProgram &program, const VertexArrayObject &vao) {
 
 		glUseProgram(program.getProgram());
@@ -161,7 +168,7 @@ namespace BlobEngine::BlobGL {
 
 		GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
 
-		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
@@ -170,16 +177,18 @@ namespace BlobEngine::BlobGL {
 		glUseProgram(program.getProgram());
 		glBindVertexArray(shape.vao.getVertexArrayObject());
 
-		glm::mat4 mvp = projectionMatrix * viewMatrix * shape.getModelMatrix();
+		//glm::mat4 mvp = projectionMatrix * viewMatrix * shape.getModelMatrix();
 
-		GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
+		//std::cout << "mat :" << std::endl << viewMatrix;
 
-		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+		//GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
 
-		if (shape.indexed)
-			glDrawElements(GL_TRIANGLES, shape.numOfIndices, shape.indicesType, shape.indices);
-		else
-			glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
+		//glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+
+		//if (shape.indexed)
+			//glDrawElements(GL_TRIANGLES, shape.numOfIndices, shape.indicesType, shape.indices);
+		//else
+		//	glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
 	}
 
 	bool Graphic::isOpen() const {

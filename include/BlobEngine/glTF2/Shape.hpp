@@ -3,19 +3,18 @@
 
 #include <BlobEngine/glTF2/Mesh.hpp>
 
-class BlobEngine::glTF2::SceneManager;
 
 namespace BlobEngine::glTF2 {
 
 	class Shape { //un objet à modéliser
-	public:
+	private:
 		std::vector<Shape> children;
 
 		int mesh;
 
-		const SceneManager &sm;
-
-		explicit Shape(int num, Reader::JsonExplorer explorer, const SceneManager &sm);
+		Mesh &meshClass;
+	public:
+		explicit Shape(int num, Reader::JsonExplorer explorer, Mesh &meshClass);
 
 		friend std::ostream &operator<<(std::ostream &s, const Shape &a);
 

@@ -5,6 +5,7 @@
 
 #include <regex>
 #include <iostream>
+#include <string>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -153,16 +154,6 @@ namespace BlobEngine::BlobGL {
 		indexed = true;
 	}*/
 
-	Shape::Shape(GLubyte *points, GLsizei dataSize, GLenum type, GLubyte *indices, GLsizei numOfIndices, GLenum indicesType) :
-		indices(indices),
-		indicesType(indicesType),
-		numOfIndices(numOfIndices),
-		vboPoints(points, dataSize) {
-
-		vao.addBuffer(vboPoints, 3, 0, 0, type);
-		indexed = true;
-	}
-
 	Shape::Shape(const std::string &file) {
 
 		std::string extention = file.substr(file.find_last_of('.') + 1);
@@ -174,6 +165,21 @@ namespace BlobEngine::BlobGL {
 		} else {
 			throw BlobException(std::string("Cannot open the file extention : *.") + extention);
 		}
+	}
+
+	void Shape::setData(GLubyte *p, GLsizei sd, GLenum t, GLsizei valuePP) {
+		vboPoints.setData(p, sd);
+
+		vao.addBuffer(vboPoints, valuePP, 0, 0, t);
+
+	}
+
+	void Shape::setIndices(GLubyte *i, GLsizei noi, GLenum it) {
+		indices = i;
+		indicesType = it;
+		numOfIndices = noi;
+
+		indexed = true;
 	}
 
 	using namespace glm;

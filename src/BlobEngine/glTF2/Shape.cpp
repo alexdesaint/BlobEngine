@@ -8,7 +8,7 @@ using namespace std;
 
 namespace BlobEngine::glTF2 {
 
-	Shape::Shape(int num, Reader::JsonExplorer explorer, const SceneManager &sm) : sm(sm) {
+	Shape::Shape(int num, Reader::JsonExplorer explorer, Mesh &meshClass) : meshClass(meshClass) {
 		explorer.goToBaseNode();
 
 		explorer.goToArrayElement("nodes", num);
@@ -20,11 +20,14 @@ namespace BlobEngine::glTF2 {
 		s << "Shape {" << endl;
 
 		s << "mesh : " << a.mesh << endl;
+
+		s << a.meshClass;
+
 		s << "}" << endl;
 		return s;
 	}
 
 	BlobGL::Shape Shape::getShape() {
-		return BlobGL::Shape();
+		return meshClass.getShape(mesh);
 	}
 }
