@@ -15,7 +15,7 @@ using namespace std;
 
 namespace BlobEngine::BlobGL {
 
-	void Shape::loadObjFile(const std::string &file) {
+	void Renderable::loadObjFile(const std::string &file) {
 		Reader::FileReader fileReader(file);
 
 		regex regIdentifier(R"((\#|[a-z]+) (.*))");
@@ -148,13 +148,13 @@ namespace BlobEngine::BlobGL {
 		vao.addBuffer(vboPoints, 3, 0, 0);
 	}
 
-	/*Shape::Shape(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices) : indices(indices.data()) {
+	/*Renderable::Renderable(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices) : indices(indices.data()) {
 		vboPoints.setData(points);
 		vao.addBuffer(vboPoints, 3, 0, 0);
 		indexed = true;
 	}*/
 
-	Shape::Shape(const std::string &file) {
+	Renderable::Renderable(const std::string &file) {
 
 		std::string extention = file.substr(file.find_last_of('.') + 1);
 
@@ -167,14 +167,14 @@ namespace BlobEngine::BlobGL {
 		}
 	}
 
-	void Shape::setData(GLubyte *p, GLsizei sd, GLenum t, GLsizei valuePP) {
+	void Renderable::setData(GLubyte *p, GLsizei sd, GLenum t, GLsizei valuePP) {
 		vboPoints.setData(p, sd);
 
 		vao.addBuffer(vboPoints, valuePP, 0, 0, t);
 
 	}
 
-	void Shape::setIndices(GLubyte *i, GLsizei noi, GLenum it) {
+	void Renderable::setIndices(GLubyte *i, GLsizei noi, GLenum it) {
 		indices = i;
 		indicesType = it;
 		numOfIndices = noi;
@@ -184,31 +184,31 @@ namespace BlobEngine::BlobGL {
 
 	using namespace glm;
 
-	glm::mat4 Shape::getModelMatrix() const {
+	glm::mat4 Renderable::getModelMatrix() const {
 		return translateMatrix * rotateMatrix * scaleMatrix;
 	}
 
-	void Shape::setPosition(float x, float y, float z) {
+	void Renderable::setPosition(float x, float y, float z) {
 		translateMatrix = translate(mat4(1.0f), vec3(x, y, z));
 	}
 
-	void Shape::move(float x, float y, float z) {
+	void Renderable::move(float x, float y, float z) {
 		translateMatrix = translate(translateMatrix, vec3(x, y, z));
 	}
 
-	void Shape::setRotation(float r, float x, float y, float z) {
+	void Renderable::setRotation(float r, float x, float y, float z) {
 		rotateMatrix = glm::rotate(mat4(1.0f), glm::radians(r), vec3(x, y, z));
 	}
 
-	void Shape::rotate(float r, float x, float y, float z) {
+	void Renderable::rotate(float r, float x, float y, float z) {
 		rotateMatrix = glm::rotate(rotateMatrix, glm::radians(r), vec3(x, y, z));
 	}
 
-	void Shape::setScale(float x, float y, float z) {
+	void Renderable::setScale(float x, float y, float z) {
 		scaleMatrix = scale(mat4(1.0f), vec3(x, y, z));
 	}
 
-	void Shape::rescale(float x, float y, float z) {
+	void Renderable::rescale(float x, float y, float z) {
 		scaleMatrix = scale(scaleMatrix, vec3(x, y, z));
 	}
 }

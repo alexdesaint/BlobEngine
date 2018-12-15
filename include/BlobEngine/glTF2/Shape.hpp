@@ -18,7 +18,7 @@ namespace BlobEngine::glTF2 {
 
 		friend std::ostream &operator<<(std::ostream &s, const Shape &a);
 
-		BlobGL::Shape getShape();
+		BlobGL::Renderable& getShape();
 	};
 }
 

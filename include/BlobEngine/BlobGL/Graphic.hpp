@@ -12,7 +12,7 @@
 
 namespace BlobEngine::BlobGL {
 
-	class Shape;
+	class Renderable;
 
 	class Graphic {
 	private:
@@ -48,7 +48,7 @@ namespace BlobEngine::BlobGL {
 
 		void draw(const ShaderProgram &program, const VertexArrayObject &vao);
 
-		void draw(const Shape &shape, const ShaderProgram &program);
+		void draw(const Renderable &shape, const ShaderProgram &program);
 
 		bool isOpen() const;
 

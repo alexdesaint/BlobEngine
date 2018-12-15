@@ -60,8 +60,8 @@ int main(int argc, char *argv[]) {
 				20, 21, 22, 20, 22, 23,   // left
 		};
 
-		Shape shape("../data/sphere.obj");
-		//Shape shape(cube_vertices, indices);
+		Renderable shape("../data/sphere.obj");
+		//Renderable shape(cube_vertices, indices);
 
 		BlobEngine::BlobGL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
 

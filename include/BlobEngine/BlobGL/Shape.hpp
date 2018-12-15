@@ -17,7 +17,7 @@ namespace BlobEngine::BlobGL {
 
 	class Graphic;
 
-	class Shape {
+	class Renderable {
 		friend Graphic;
 	protected:
 
@@ -25,9 +25,9 @@ namespace BlobEngine::BlobGL {
 		glm::mat4 rotateMatrix = glm::mat4(1.f);
 		glm::mat4 scaleMatrix = glm::mat4(1.f);
 
-		GLubyte *indices;
-		GLsizei numOfIndices;
-		GLenum indicesType;
+		GLubyte *indices{};
+		GLsizei numOfIndices{};
+		GLenum indicesType{};
 
 		bool indexed = false;
 
@@ -40,11 +40,11 @@ namespace BlobEngine::BlobGL {
 
 	public:
 
-		Shape() = default;
+		Renderable() = default;
 
-		Shape(const std::string &file);
+		explicit Renderable(const std::string &file);
 
-		//Shape(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
+		//Renderable(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
 
 		void setData(GLubyte *points, GLsizei numOfPoints, GLenum type, GLsizei valuePerPoint);
 

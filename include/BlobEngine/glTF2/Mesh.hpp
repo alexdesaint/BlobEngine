@@ -13,7 +13,7 @@ namespace BlobEngine::glTF2{
 			int position;
 		};
 
-		class Primitive : public BlobGL::Shape {//TODO faire de primitive une gl Shape
+		class Primitive : public BlobGL::Renderable {//TODO faire de primitive une gl Renderable
 		private:
 			int indices;
 			bool indexed = false;
@@ -40,7 +40,7 @@ namespace BlobEngine::glTF2{
 		friend std::ostream &operator<<(std::ostream &s, Mesh &a);
 		friend std::ostream &operator<<(std::ostream &s, Primitive &a);
 
-		BlobGL::Shape getShape(int mesh);
+		BlobGL::Renderable& getShape(int mesh);
 	};
 }
 

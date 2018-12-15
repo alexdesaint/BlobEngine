@@ -10,10 +10,10 @@ int main(int argc, char *argv[]) {
 
 		BlobEngine::BlobGL::Graphic graphic(640, 480);
 
-		//BlobEngine::Shape shape("../data/sphere.obj");
+		//BlobEngine::Renderable shape("../data/sphere.obj");
 
-		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
-		BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
+		BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
 
 		std::cout << sm;
 

@@ -173,22 +173,22 @@ namespace BlobEngine::BlobGL {
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 
-	void Graphic::draw(const Shape &shape, const ShaderProgram &program) {
+	void Graphic::draw(const Renderable &shape, const ShaderProgram &program) {
 		glUseProgram(program.getProgram());
 		glBindVertexArray(shape.vao.getVertexArrayObject());
 
-		//glm::mat4 mvp = projectionMatrix * viewMatrix * shape.getModelMatrix();
+		glm::mat4 mvp = projectionMatrix * viewMatrix * shape.getModelMatrix();
 
 		//std::cout << "mat :" << std::endl << viewMatrix;
 
-		//GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
+		GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
 
-		//glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
-		//if (shape.indexed)
-			//glDrawElements(GL_TRIANGLES, shape.numOfIndices, shape.indicesType, shape.indices);
-		//else
-		//	glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
+		if (shape.indexed)
+			glDrawElements(GL_TRIANGLES, shape.numOfIndices, shape.indicesType, shape.indices);
+		else
+			glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
 	}
 
 	bool Graphic::isOpen() const {

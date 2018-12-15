@@ -46,7 +46,7 @@ namespace BlobEngine::glTF2 {
 		return s;
 	}
 
-	BlobGL::Shape Mesh::getShape(int mesh) {
+	BlobGL::Renderable& Mesh::getShape(int mesh) {
 		return data[mesh].primitives[0];
 	}
 
