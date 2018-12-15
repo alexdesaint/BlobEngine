@@ -2,9 +2,8 @@
 #define BLOBENGINE_SCENEMANAGER_HPP
 
 #include <BlobEngine/glTF2/Asset.hpp>
-#include <BlobEngine/glTF2/Buffer.hpp>
-#include <BlobEngine/glTF2/BufferView.hpp>
 #include <BlobEngine/glTF2/Scene.hpp>
+#include <BlobEngine/glTF2/Mesh.hpp>
 
 #include <vector>
 
@@ -16,14 +15,10 @@ namespace BlobEngine::glTF2 {
 
 		std::vector<Scene> scenes;
 
-		int defaultScene = 0;
-
 		Reader::JsonExplorer baseNode;
 
 		Asset asset;
-		Buffer buffer;
-		BufferView bufferView;
-		Accessor accessor;
+		Mesh mesh;
 
 		explicit SceneManager(const std::string &file);
 

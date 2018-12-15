@@ -8,24 +8,23 @@ using namespace std;
 
 namespace BlobEngine::glTF2 {
 
-	Shape::Shape(int num, Reader::JsonExplorer explorer) {
+	Shape::Shape(int num, Reader::JsonExplorer explorer, const SceneManager &sm) : sm(sm) {
 		explorer.goToBaseNode();
 
 		explorer.goToArrayElement("nodes", num);
 
-		mesh.load(explorer.getInt("mesh"), explorer);
+		mesh = explorer.getInt("mesh");
 	}
 
 	std::ostream &operator<<(std::ostream &s, const Shape &a) {
 		s << "Shape {" << endl;
 
-		s << glm::to_string(a.matrix) << endl;
-		s << glm::to_string(a.translation) << endl;
-		s << glm::to_string(a.rotation) << endl;
-		s << glm::to_string(a.scale) << endl;
-		s << a.mesh;
-
+		s << "mesh : " << a.mesh << endl;
 		s << "}" << endl;
 		return s;
+	}
+
+	BlobGL::Shape Shape::getShape() {
+		return BlobGL::Shape();
 	}
 }

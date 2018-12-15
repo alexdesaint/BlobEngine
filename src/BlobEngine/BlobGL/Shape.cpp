@@ -147,13 +147,19 @@ namespace BlobEngine::BlobGL {
 		vao.addBuffer(vboPoints, 3, 0, 0);
 	}
 
-	void Shape::loadglTF(const std::string &file) {
-		//glTF2::Loader loader(file);
-	}
-
-	Shape::Shape(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices) : indices(indices) {
+	/*Shape::Shape(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices) : indices(indices.data()) {
 		vboPoints.setData(points);
 		vao.addBuffer(vboPoints, 3, 0, 0);
+		indexed = true;
+	}*/
+
+	Shape::Shape(GLubyte *points, GLsizei dataSize, GLenum type, GLubyte *indices, GLsizei numOfIndices, GLenum indicesType) :
+		indices(indices),
+		indicesType(indicesType),
+		numOfIndices(numOfIndices),
+		vboPoints(points, dataSize) {
+
+		vao.addBuffer(vboPoints, 3, 0, 0, type);
 		indexed = true;
 	}
 
@@ -164,7 +170,7 @@ namespace BlobEngine::BlobGL {
 		if (extention == "obj") {
 			loadObjFile(file);
 		} else if (extention == "gltf") {
-			loadglTF(file);
+			//loadglTF(file);
 		} else {
 			throw BlobException(std::string("Cannot open the file extention : *.") + extention);
 		}
@@ -199,6 +205,4 @@ namespace BlobEngine::BlobGL {
 	void Shape::rescale(float x, float y, float z) {
 		scaleMatrix = scale(scaleMatrix, vec3(x, y, z));
 	}
-
-
 }

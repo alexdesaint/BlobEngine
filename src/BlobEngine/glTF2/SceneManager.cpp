@@ -9,16 +9,10 @@ namespace BlobEngine::glTF2 {
 
 	SceneManager::SceneManager(const std::string &file) :
 			baseNode(file),
-			buffer(baseNode),
 			asset(baseNode),
-			bufferView(baseNode),
-			accessor(baseNode) {
-		if (baseNode.hasMember("scene"))
-			defaultScene = baseNode.getInt("scene");
+			mesh(baseNode) {
 
-		if (baseNode.hasMember("version"))
-			defaultScene = baseNode.getInt("scene");
-
+		baseNode.goToBaseNode();
 		Reader::JsonExplorer scenesObject = baseNode.getArray("scenes");
 
 		int size = scenesObject.getArraySize();
@@ -36,12 +30,10 @@ namespace BlobEngine::glTF2 {
 		s << "SceneManager {" << endl;
 
 		s << a.asset;
-		s << a.buffer;
-		s << a.bufferView;
-		s << a.accessor;
+		s << a.mesh;
 
-		//for(const Scene &scene : a.scenes)
-		//	s << scene;
+		for(const Scene &scene : a.scenes)
+			s << scene;
 
 		s << "}" << endl;
 		return s;

@@ -5,13 +5,14 @@
 using namespace std;
 
 namespace BlobEngine::glTF2 {
-	Scene::Scene(Reader::JsonExplorer explorer) {
+	Scene::Scene(Reader::JsonExplorer explorer, const SceneManager &sm) {
 		explorer.goToBaseNode();
 
 		int size = explorer.getArraySize("nodes");
 
 		for (unsigned int i = 0; i < size; i++) {
-			//nodes.emplace_back(explorer.getArrayInt("nodes", i), explorer);
+			Reader::JsonExplorer n = explorer.getArrayObject("nodes", i);
+			nodes.emplace_back(n.getInt("mesh"), explorer, sm);
 		}
 	}
 
@@ -21,9 +22,8 @@ namespace BlobEngine::glTF2 {
 
 	std::ostream &operator<<(std::ostream &s, const Scene &a) {
 		s << "Scene {" << endl;
-		//for(const Shape &node : a.nodes)
-		//	s << node;
-		//s << a.buffer;
+		for(const Shape &node : a.nodes)
+			s << node;
 		s << "}" << endl;
 		return s;
 	}

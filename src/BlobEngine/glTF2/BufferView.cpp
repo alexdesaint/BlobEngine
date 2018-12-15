@@ -6,7 +6,7 @@ using namespace std;
 
 namespace BlobEngine::glTF2 {
 
-	BufferView::BufferView(Reader::JsonExplorer explorer, const SceneManager &sm) : sm(sm) {
+	BufferView::BufferView(Reader::JsonExplorer explorer) : buffer(explorer) {
 		explorer.goToBaseNode();
 
 		Reader::JsonExplorer buff;
@@ -40,6 +40,10 @@ namespace BlobEngine::glTF2 {
 	}
 
 	GLubyte *BufferView::getData(int BufferView, GLsizei offset) {
-		return &sm.buffer.getData(data[BufferView].buffer, data[BufferView].byteOffset)[offset];
+		return &buffer.getData(data[BufferView].buffer, data[BufferView].byteOffset)[offset];
+	}
+
+	GLsizei BufferView::getSize(int BufferView, GLsizei offset) {
+		return data[BufferView].byteLength - data[BufferView].byteOffset - offset;
 	}
 }

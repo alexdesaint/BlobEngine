@@ -19,30 +19,34 @@ namespace BlobEngine::BlobGL {
 
 	class Shape {
 		friend Graphic;
-	private:
-
-		VertexArrayObject vao;
+	protected:
 
 		glm::mat4 translateMatrix = glm::mat4(1.f);
 		glm::mat4 rotateMatrix = glm::mat4(1.f);
 		glm::mat4 scaleMatrix = glm::mat4(1.f);
 
-		std::vector<GLushort> indices;
+		GLubyte *indices;
+		GLsizei numOfIndices;
+		GLenum indicesType;
 
 		bool indexed = false;
 
 		VertexBufferObject vboPoints;
+		VertexArrayObject vao;
+
 		//VertexBufferObject vboColor;
 
 		void loadObjFile(const std::string &file);
 
-		void loadglTF(const std::string &file);
-
 	public:
 
-		explicit Shape(const std::string &file);
+		Shape() = default;
 
-		explicit Shape(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
+		Shape(const std::string &file);
+
+		//Shape(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
+
+		Shape(GLubyte *points, int numOfPoints, GLenum type, GLubyte *indices, GLsizei numOfIndices, GLenum indicesType);
 
 		void setPosition(float x, float y, float z);
 

@@ -23,7 +23,7 @@ namespace BlobEngine::glTF2 {
 			{"MAT4",   Accessor::MAT4}
 	};
 
-	static Accessor::Type getType(const char *str) {
+	static Accessor::Type strToType(const char *str) {
 		for (auto typeInfo : typeInfos) {
 			if (strcmp(typeInfo.name, str) == 0) {
 				return typeInfo.type;
@@ -33,7 +33,7 @@ namespace BlobEngine::glTF2 {
 		return Accessor::SCALAR;
 	}
 
-	Accessor::Accessor(Reader::JsonExplorer explorer, const SceneManager &sm) : sm(sm) {
+	Accessor::Accessor(Reader::JsonExplorer explorer) : bufferView(explorer) {
 		explorer.goToBaseNode();
 
 		Reader::JsonExplorer buff;
@@ -47,7 +47,7 @@ namespace BlobEngine::glTF2 {
 
 			data[i].componentType = (GLenum)buff.getInt("componentType");
 
-			data[i].type = getType(buff.getString("type").c_str());
+			data[i].type = strToType(buff.getString("type").c_str());
 
 			data[i].byteOffset = static_cast<unsigned int>(buff.getInt("byteOffset"));
 
@@ -82,7 +82,23 @@ namespace BlobEngine::glTF2 {
 	}
 
 	GLubyte *Accessor::getData(int Accessor) {
-		return sm.bufferView.getData(data[Accessor].bufferView, data[Accessor].byteOffset);
+		return bufferView.getData(data[Accessor].bufferView, data[Accessor].byteOffset);
+	}
+
+	GLenum Accessor::getType(int Accessor) {
+		return data[Accessor].componentType;
+	}
+
+	GLsizei Accessor::getSize(int Accessor) {
+		return bufferView.getSize(data[Accessor].bufferView, data[Accessor].byteOffset);
+	}
+
+	GLsizei Accessor::getNumOfElements(int Accessor) {
+		return data[Accessor].count;
+	}
+
+	GLsizei Accessor::getValuePerElements(int Accessor) {
+		return data[Accessor].type;
 	}
 }
 

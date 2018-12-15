@@ -177,7 +177,7 @@ namespace BlobEngine::BlobGL {
 		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
 		if (shape.indexed)
-			glDrawElements(GL_TRIANGLES, (GLsizei) shape.indices.size(), GL_UNSIGNED_SHORT, shape.indices.data());
+			glDrawElements(GL_TRIANGLES, shape.numOfIndices, shape.indicesType, shape.indices);
 		else
 			glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
 	}

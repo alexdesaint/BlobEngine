@@ -4,6 +4,7 @@
 #include <BlobEngine/glTF2/Shape.hpp>
 
 #include <vector>
+class BlobEngine::glTF2::SceneManager;
 
 namespace BlobEngine::glTF2 {
 
@@ -12,7 +13,7 @@ namespace BlobEngine::glTF2 {
 
 		std::vector<Shape> nodes;
 
-		explicit Scene(Reader::JsonExplorer explorer);
+		explicit Scene(Reader::JsonExplorer explorer, const SceneManager &sm);
 
 		Shape& getShape(unsigned int num);
 

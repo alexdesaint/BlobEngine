@@ -13,12 +13,18 @@ namespace BlobEngine::BlobGL {
 		glDeleteBuffers(1, &vertexBufferObject);
 	}
 
+	VertexBufferObject::VertexBufferObject(GLubyte *points, GLsizei dataSize) : dataSize(dataSize) {
+		glCreateBuffers(1, &vertexBufferObject);
+
+		glNamedBufferStorage(vertexBufferObject, dataSize, points, 0);
+	}
+
 	void VertexBufferObject::setData(const std::vector<GLfloat> &data) {
 		typeSize = sizeof(GLfloat);
 		dataSize = (GLsizei)data.size() * typeSize;
 		dataType = GL_FLOAT;
 
-		glNamedBufferStorage(vertexBufferObject, typeSize * dataSize, data.data(), 0);
+		glNamedBufferStorage(vertexBufferObject, dataSize, data.data(), 0);
 	}
 
 	void VertexBufferObject::setData(const std::vector<GLuint> &data) {
@@ -26,7 +32,7 @@ namespace BlobEngine::BlobGL {
 		dataSize = (GLsizei)data.size() * typeSize;
 		dataType = GL_UNSIGNED_INT;
 
-		glNamedBufferStorage(vertexBufferObject, typeSize * dataSize, data.data(), 0);
+		glNamedBufferStorage(vertexBufferObject, dataSize, data.data(), 0);
 	}
 
 	void VertexBufferObject::setData(const std::vector<GLubyte> &data) {
@@ -34,7 +40,7 @@ namespace BlobEngine::BlobGL {
 		dataSize = (GLsizei)data.size() * typeSize;
 		dataType = GL_UNSIGNED_BYTE;
 
-		glNamedBufferStorage(vertexBufferObject, typeSize * dataSize, data.data(), 0);
+		glNamedBufferStorage(vertexBufferObject, dataSize, data.data(), 0);
 
 		//TODO ajouter l'offset
 	}

@@ -7,34 +7,61 @@ using namespace std;
 
 namespace BlobEngine::glTF2 {
 
-	void Mesh::load(int num, Reader::JsonExplorer explorer) {
-		//load Json
+	Mesh::Mesh(Reader::JsonExplorer explorer) : accessor(explorer) {
 		explorer.goToBaseNode();
 
-		explorer.goToArrayElement("meshes", num);
+		Reader::JsonExplorer dat;
 
-		int size = explorer.getArraySize("primitives");
+		data.resize((size_t)explorer.getArraySize("meshes"));
 
-		for (unsigned int i = 0; i < size; i++) {
-			primitives.emplace_back(explorer.getArrayObject("primitives", i));
+		for(int i = 0; i < data.size(); i++) {
+			dat = explorer.getArrayObject("meshes", i);
+
+			data[i].primitives.resize((size_t)dat.getArraySize("primitives"));
+
+			Reader::JsonExplorer prim;
+
+			for(int j = 0; j < data[i].primitives.size(); j++) {
+				prim = dat.getArrayObject("primitives", i);
+
+				data[i].primitives[j].indices = prim.getInt("indices");
+
+				Reader::JsonExplorer attr;
+
+				attr = prim.getObject("attributes");
+
+				data[i].primitives[j].attributes.position = attr.getInt("POSITION");
+			}
 		}
-	}
-
-	Mesh::Primitive::Attributes::Attributes(Reader::JsonExplorer explorer) {
-		//accessor.load(explorer.getInt("POSITION"), explorer);
-	}
-
-	Mesh::Primitive::Primitive(Reader::JsonExplorer explorer) : attributes(explorer.getObject("attributes")) {
-
 	}
 
 	std::ostream &operator<<(std::ostream &s, const Mesh &a) {
 
 		s << "Mesh {" << endl;
-		//for (auto p : a.primitives)
-		//	s << p;
+
+		for(const auto &i : a.data) {
+
+			for(const auto &j : i.primitives) {
+
+				s << "indices : " << j.indices << endl;
+
+				s << "POSITION : " << j.attributes.position << endl;
+			}
+		}
+
+		s << a.accessor;
 
 		s << "}" << endl;
 		return s;
+	}
+
+	BlobGL::Shape Mesh::getShape(int mesh) {
+		int indexPosition = data[mesh].primitives[0].attributes.position;
+		int indexIndices = data[mesh].primitives[0].indices;
+
+		return BlobGL::Shape(
+				accessor.getData(indexPosition), accessor.getSize(indexPosition), accessor.getType(indexPosition),
+				accessor.getData(indexIndices), accessor.getNumOfElements(indexIndices), accessor.getType(indexIndices)
+				);
 	}
 }
