@@ -15,8 +15,10 @@ namespace BlobEngine::BlobGL {
 		return vertexArrayObject;
 	}
 
-	void VertexArrayObject::addBuffer(const VertexBufferObject &vbo, GLint numValuePerVertex, GLuint typeSize,
+	void VertexArrayObject::addBuffer(const VertexBufferObject &vbo, GLuint numValuePerVertex, GLuint typeSize,
 									  GLuint outPosition, GLenum dataType) {
+
+		numberOfElements = numValuePerVertex;
 
 		//ajoute le buffer au VAO et donne la taille des vecteurs
 		glVertexArrayVertexBuffer(vertexArrayObject, 0, vbo.vertexBufferObject, 0,

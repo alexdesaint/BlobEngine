@@ -159,11 +159,11 @@ namespace BlobEngine::BlobGL {
 		return out;
 	}
 
-	void Graphic::draw(const Renderable &shape, const ShaderProgram &program) {
+	void Graphic::draw(const Renderable &shape, const ShaderProgram &program, glm::mat4 shapeModel) {
 		glUseProgram(program.getProgram());
 		glBindVertexArray(shape.vao.getVertexArrayObject());
 
-		glm::mat4 mvp = projectionMatrix * viewMatrix * shape.getModelMatrix();
+		glm::mat4 mvp = projectionMatrix * viewMatrix * shapeModel * shape.getModelMatrix();
 
 		//std::cout << "mat :" << std::endl << viewMatrix;
 
@@ -178,8 +178,10 @@ namespace BlobEngine::BlobGL {
 	}
 
 	void Graphic::draw(const Shape &shape, const ShaderProgram &program) {
+		glm::mat4 modelMatrix = shape.getModelMatrix();
+
 		for(auto r : shape.renderables)
-			draw(*r, program);
+			draw(*r, program, modelMatrix);
 	}
 
 	bool Graphic::isOpen() const {

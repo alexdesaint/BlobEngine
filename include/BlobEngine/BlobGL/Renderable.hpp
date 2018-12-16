@@ -46,7 +46,7 @@ namespace BlobEngine::BlobGL {
 
 		//Renderable(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
 
-		void setData(GLubyte *points, GLsizei numberOfVector, GLsizei valuePerVector, GLenum dataType);
+		void setData(GLubyte *points, GLsizei numberOfVector, GLuint valuePerVector, GLenum dataType);
 
 		void setIndices(GLubyte *indices, GLsizei numOfIndices, GLenum indicesType);
 

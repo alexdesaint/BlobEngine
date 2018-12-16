@@ -14,6 +14,14 @@ namespace BlobEngine::glTF2 {
 		explorer.goToArrayElement("nodes", num);
 
 		mesh = explorer.getInt("mesh");
+
+		if(explorer.hasMember("translation") && explorer.getArraySize("translation") == 3) {
+			float x = explorer.getArrayInt("translation", 0);
+			float y = explorer.getArrayInt("translation", 1);
+			float z = explorer.getArrayInt("translation", 2);
+
+			setPosition(x, y, z);
+		}
 		
 		auto v = meshClass.getShape(mesh);
 		

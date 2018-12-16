@@ -167,9 +167,9 @@ namespace BlobEngine::BlobGL {
 		}
 	}
 
-	void Renderable::setData(GLubyte *points, GLsizei numberOfVector, GLsizei valuePerVector, GLenum dataType) {
+	void Renderable::setData(GLubyte *points, GLsizei numberOfVector, GLuint valuePerVector, GLenum dataType) {
 
-		GLsizei typeSize;
+		GLuint typeSize;
 
 		switch (dataType) {
 			case GL_BYTE:

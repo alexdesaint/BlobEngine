@@ -12,6 +12,10 @@ namespace BlobEngine::BlobGL {
 	class Shape {
 		friend Graphic;
 	private:
+		glm::mat4 translateMatrix = glm::mat4(1.f);
+		glm::mat4 rotateMatrix = glm::mat4(1.f);
+		glm::mat4 scaleMatrix = glm::mat4(1.f);
+
 		std::list<Renderable*> renderables;
 
 	protected:
@@ -19,6 +23,19 @@ namespace BlobEngine::BlobGL {
 		void addRenderable(Renderable *r);
 
 	public:
+		glm::mat4 getModelMatrix() const;
+
+		void setPosition(float x, float y, float z);
+
+		void move(float x, float y, float z);
+
+		void setRotation(float r, float x, float y, float z);
+
+		void rotate(float r, float x, float y, float z);
+
+		void setScale(float x, float y, float z);
+
+		void rescale(float x, float y, float z);
 	};
 }
 
