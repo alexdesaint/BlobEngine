@@ -122,11 +122,11 @@ namespace BlobEngine::glTF2 {
 		return bufferView.getSize(data[Accessor].bufferView, data[Accessor].byteOffset);
 	}
 
-	GLsizei Accessor::getNumOfElements(int Accessor) {
+	GLsizei Accessor::getNumOfVector(int Accessor) {
 		return data[Accessor].count;
 	}
 
-	GLsizei Accessor::getValuePerElements(int Accessor) {
+	GLsizei Accessor::getValuePerVector(int Accessor) {
 		return data[Accessor].type;
 	}
 

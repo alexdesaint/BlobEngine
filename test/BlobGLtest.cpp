@@ -1,5 +1,5 @@
 #include <BlobEngine/BlobGL/Graphic.hpp>
-#include <BlobEngine/BlobGL/Shape.hpp>
+#include <BlobEngine/BlobGL/Renderable.hpp>
 #include <BlobEngine/Time.hpp>
 #include <BlobEngine/BlobException.hpp>
 #include <iostream>
@@ -60,10 +60,16 @@ int main(int argc, char *argv[]) {
 				20, 21, 22, 20, 22, 23,   // left
 		};
 
-		Renderable shape("../data/sphere.obj");
-		//Renderable shape(cube_vertices, indices);
+		//Renderable shape("../data/sphere.obj");
+		Renderable shape;
+
+		shape.setData((GLubyte*)cube_vertices.data(), (GLsizei)cube_vertices.size(), 3, GL_FLOAT);
+
+		shape.setIndices((GLubyte*)indices.data(), (GLsizei)indices.size(), GL_UNSIGNED_SHORT);
 
 		BlobEngine::BlobGL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
+
+		graphic.setCameraPosition(0, 0, 10);
 
 		while (graphic.isOpen()) {
 			graphic.clear();
@@ -75,13 +81,7 @@ int main(int argc, char *argv[]) {
 			float mod = std::cos(angle) / 2 + 1;
 			shape.setScale(mod, mod, mod);
 			shape.rotate(angle * 40, 1.f, 0.f, 0.f);
-			shape.setPosition(0, 1, 0);
-			graphic.draw(shape, shaderProgram);
-
-			shape.setPosition(1, 0, 0);
-			graphic.draw(shape, shaderProgram);
-
-			shape.setPosition(0, 0, 1);
+			shape.setPosition(0, 0, 0);
 			graphic.draw(shape, shaderProgram);
 
 			graphic.display();

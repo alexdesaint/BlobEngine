@@ -3,6 +3,7 @@
 
 #include <BlobEngine/BlobGL/ShaderProgram.hpp>
 #include <BlobEngine/BlobGL/VertexArrayObject.hpp>
+#include <BlobEngine/BlobGL/Shape.hpp>
 
 #include <SDL2/SDL.h>
 
@@ -11,8 +12,6 @@
 #include <ostream>
 
 namespace BlobEngine::BlobGL {
-
-	class Renderable;
 
 	class Graphic {
 	private:
@@ -46,13 +45,15 @@ namespace BlobEngine::BlobGL {
 
 		void resize(unsigned int w, unsigned int h);
 
-		void draw(const ShaderProgram &program, const VertexArrayObject &vao);
-
 		void draw(const Renderable &shape, const ShaderProgram &program);
+
+		void draw(const Shape &shape, const ShaderProgram &program);
 
 		bool isOpen() const;
 
 		friend std::ostream& operator<<(std::ostream &s, const Graphic &a);
+
+		void setCameraPosition(float x, float y, float z);
 	};
 }
 

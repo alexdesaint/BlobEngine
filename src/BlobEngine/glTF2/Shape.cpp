@@ -14,6 +14,11 @@ namespace BlobEngine::glTF2 {
 		explorer.goToArrayElement("nodes", num);
 
 		mesh = explorer.getInt("mesh");
+		
+		auto v = meshClass.getShape(mesh);
+		
+		for(auto s : v)
+			addRenderable(s);
 	}
 
 	std::ostream &operator<<(std::ostream &s, const Shape &a) {
@@ -25,9 +30,5 @@ namespace BlobEngine::glTF2 {
 
 		s << "}" << endl;
 		return s;
-	}
-
-	BlobGL::Shape Shape::getShape() {
-		return meshClass.getShape(mesh);
 	}
 }

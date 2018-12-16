@@ -3,10 +3,11 @@
 
 #include <BlobEngine/glTF2/Mesh.hpp>
 
+#include <BlobEngine/BlobGL/Shape.hpp>
 
 namespace BlobEngine::glTF2 {
 
-	class Shape { //un objet à modéliser
+	class Shape : public BlobGL::Shape{ //un objet à modéliser
 	private:
 		std::vector<Shape> children;
 
@@ -17,8 +18,6 @@ namespace BlobEngine::glTF2 {
 		explicit Shape(int num, Reader::JsonExplorer explorer, Mesh &meshClass);
 
 		friend std::ostream &operator<<(std::ostream &s, const Shape &a);
-
-		BlobGL::Renderable& getShape();
 	};
 }
 

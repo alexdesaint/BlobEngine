@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 		while (graphic.isOpen()) {
 			graphic.clear();
 
-			graphic.draw(triangle.getShape(), shaderProgram);
+			graphic.draw(triangle, shaderProgram);
 
 			graphic.display();
 		}

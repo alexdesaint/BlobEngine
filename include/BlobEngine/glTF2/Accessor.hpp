@@ -36,9 +36,9 @@ namespace BlobEngine::glTF2 {
 
 		GLsizei getSize(int Accessor);
 
-		GLsizei getNumOfElements(int Accessor);
+		GLsizei getNumOfVector(int Accessor);
 
-		GLsizei getValuePerElements(int Accessor);
+		GLsizei getValuePerVector(int Accessor);
 
 		friend std::ostream &operator<<(std::ostream &s, Accessor &a);
 

@@ -1,69 +1,25 @@
-#ifndef BLOBENGINE_SHAPE_HPP
-#define BLOBENGINE_SHAPE_HPP
+#ifndef BLOBENGINE_GLSHAPE_HPP
+#define BLOBENGINE_GLSHAPE_HPP
 
-#include <vector>
-#include <string>
+#include <BlobEngine/BlobGL/Renderable.hpp>
 
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
-
-#include <BlobEngine/Color.hpp>
-#include <BlobEngine/BlobGL/VertexArrayObject.hpp>
-#include <BlobEngine/BlobGL/VertexBufferObject.hpp>
-#include <BlobEngine/BlobGL/ShaderProgram.hpp>
+#include <list>
 
 namespace BlobEngine::BlobGL {
 
 	class Graphic;
 
-	class Renderable {
+	class Shape {
 		friend Graphic;
+	private:
+		std::list<Renderable*> renderables;
+
 	protected:
 
-		glm::mat4 translateMatrix = glm::mat4(1.f);
-		glm::mat4 rotateMatrix = glm::mat4(1.f);
-		glm::mat4 scaleMatrix = glm::mat4(1.f);
-
-		GLubyte *indices{};
-		GLsizei numOfIndices{};
-		GLenum indicesType{};
-
-		bool indexed = false;
-
-		VertexBufferObject vboPoints;
-		VertexArrayObject vao;
-
-		//VertexBufferObject vboColor;
-
-		void loadObjFile(const std::string &file);
+		void addRenderable(Renderable *r);
 
 	public:
-
-		Renderable() = default;
-
-		explicit Renderable(const std::string &file);
-
-		//Renderable(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
-
-		void setData(GLubyte *points, GLsizei numOfPoints, GLenum type, GLsizei valuePerPoint);
-
-		void setIndices(GLubyte *indices, GLsizei numOfIndices, GLenum indicesType);
-
-		void setPosition(float x, float y, float z);
-
-		void move(float x, float y, float z);
-
-		void setRotation(float r, float x, float y, float z);
-
-		void rotate(float r, float x, float y, float z);
-
-		void setScale(float x, float y, float z);
-
-		void rescale(float x, float y, float z);
-
-		glm::mat4 getModelMatrix() const;
 	};
 }
 
-#endif //BLOBENGINE_SHAPE_HPP
+#endif //BLOBENGINE_GLSHAPE_HPP

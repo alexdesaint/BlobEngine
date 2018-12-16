@@ -1,7 +1,7 @@
 #ifndef BLOBENGINE_MESH_HPP
 #define BLOBENGINE_MESH_HPP
 
-#include <BlobEngine/BlobGL/Shape.hpp>
+#include <BlobEngine/BlobGL/Renderable.hpp>
 #include <BlobEngine/glTF2/Accessor.hpp>
 
 namespace BlobEngine::glTF2{
@@ -9,16 +9,16 @@ namespace BlobEngine::glTF2{
 	class Mesh { //un sous-objet appartenant à un objet
 	private:
 
-		struct Attributes {
-			int position;
-		};
+		//struct Attributes {
+		//	int position;
+		//};
 
 		class Primitive : public BlobGL::Renderable {//TODO faire de primitive une gl Renderable
 		private:
-			int indices;
-			bool indexed = false;
+			//int indices;
+			//bool indexed = false;
 
-			Attributes attributes;
+			//Attributes attributes;
 
 		public:
 			Primitive(Reader::JsonExplorer explorer, Accessor &a);
@@ -40,7 +40,7 @@ namespace BlobEngine::glTF2{
 		friend std::ostream &operator<<(std::ostream &s, Mesh &a);
 		friend std::ostream &operator<<(std::ostream &s, Primitive &a);
 
-		BlobGL::Renderable& getShape(int mesh);
+		std::vector<BlobGL::Renderable*> getShape(int mesh);
 	};
 }
 

@@ -2,7 +2,7 @@
 
 //blobEngine
 #include <BlobEngine/BlobException.hpp>
-#include <BlobEngine/BlobGL/Shape.hpp>
+#include <BlobEngine/BlobGL/Renderable.hpp>
 #include <BlobEngine/BlobGL/Graphic.hpp>
 
 //std
@@ -159,20 +159,6 @@ namespace BlobEngine::BlobGL {
 		return out;
 	}
 
-	void Graphic::draw(const ShaderProgram &program, const VertexArrayObject &vao) {
-
-		glUseProgram(program.getProgram());
-		glBindVertexArray(vao.getVertexArrayObject());
-
-		glm::mat4 mvp = projectionMatrix * viewMatrix;// * shape.getModelMatrix();
-
-		GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
-
-		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
-
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-	}
-
 	void Graphic::draw(const Renderable &shape, const ShaderProgram &program) {
 		glUseProgram(program.getProgram());
 		glBindVertexArray(shape.vao.getVertexArrayObject());
@@ -191,6 +177,11 @@ namespace BlobEngine::BlobGL {
 			glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
 	}
 
+	void Graphic::draw(const Shape &shape, const ShaderProgram &program) {
+		for(auto r : shape.renderables)
+			draw(*r, program);
+	}
+
 	bool Graphic::isOpen() const {
 		return !quit;
 	}
@@ -201,5 +192,11 @@ namespace BlobEngine::BlobGL {
 		  glGetString(GL_VERSION) << std::endl <<
 		  glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 		return s;
+	}
+
+	void Graphic::setCameraPosition(float x, float y, float z) {
+		cameraPosition = glm::vec3(x, y, z);
+
+		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 	}
 }

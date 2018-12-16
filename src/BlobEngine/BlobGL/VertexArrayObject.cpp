@@ -15,42 +15,11 @@ namespace BlobEngine::BlobGL {
 		return vertexArrayObject;
 	}
 
-	void VertexArrayObject::addBuffer(const VertexBufferObject &vbo, GLint numValuePerVertex, GLuint indexPositoin,
+	void VertexArrayObject::addBuffer(const VertexBufferObject &vbo, GLint numValuePerVertex, GLuint typeSize,
 									  GLuint outPosition, GLenum dataType) {
 
-		switch (dataType) {
-			case GL_BYTE:
-				typeSize = sizeof(GLbyte);
-
-				break;
-			case GL_UNSIGNED_BYTE:
-				typeSize = sizeof(GLubyte);
-				break;
-			case GL_SHORT:
-				typeSize = sizeof(GLshort);
-				break;
-			case GL_UNSIGNED_SHORT:
-				typeSize = sizeof(GLushort);
-				break;
-			case GL_UNSIGNED_INT:
-				typeSize = sizeof(GLuint);
-				break;
-			case GL_FLOAT:
-				typeSize = sizeof(GLfloat);
-				break;
-			default:
-				typeSize = vbo.typeSize;
-				dataType = vbo.dataType;
-				break;
-		}
-
-		numberOfElements = vbo.dataSize / ((GLsizei)numValuePerVertex * typeSize);
-
-		if (vbo.dataSize % (numValuePerVertex * typeSize) != 0)
-			throw BlobException("incorrect number of value par vertex");
-
 		//ajoute le buffer au VAO et donne la taille des vecteurs
-		glVertexArrayVertexBuffer(vertexArrayObject, indexPositoin, vbo.vertexBufferObject, 0,
+		glVertexArrayVertexBuffer(vertexArrayObject, 0, vbo.vertexBufferObject, 0,
 								  numValuePerVertex * (GLuint) typeSize);
 
 		//autorique l'utilisation de cet atribut
@@ -60,7 +29,7 @@ namespace BlobEngine::BlobGL {
 		glVertexArrayAttribFormat(vertexArrayObject, outPosition, numValuePerVertex, dataType, GL_FALSE, 0);
 
 		//lie l'attribu avec le buffer
-		glVertexArrayAttribBinding(vertexArrayObject, outPosition, indexPositoin);
+		glVertexArrayAttribBinding(vertexArrayObject, outPosition, 0);
 	}
 
 	GLsizei VertexArrayObject::getNumberOfElements() const {

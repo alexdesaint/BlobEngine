@@ -46,37 +46,40 @@ namespace BlobEngine::glTF2 {
 		return s;
 	}
 
-	BlobGL::Renderable& Mesh::getShape(int mesh) {
-		return data[mesh].primitives[0];
+	std::vector<BlobGL::Renderable*> Mesh::getShape(int mesh) {
+		std::vector<BlobGL::Renderable*> ret(data[mesh].primitives.size());
+		for(int i = 0; i < ret.size(); i++)
+			ret[i] = &data[mesh].primitives[i];
+		return ret;
 	}
 
 	//Primitive
 
 	Mesh::Primitive::Primitive(Reader::JsonExplorer explorer, Accessor &a) {
 		if(explorer.hasMember("indices")) {
-			indices = explorer.getInt("indices");
+			int indices = explorer.getInt("indices");
 			indexed = true;
-			setIndices(a.getData(indices), a.getNumOfElements(indices), a.getType(indices));
+			setIndices(a.getData(indices), a.getNumOfVector(indices), a.getType(indices));
 		}
 
 		Reader::JsonExplorer attr;
 
 		attr = explorer.getObject("attributes");
 
-		attributes.position = attr.getInt("POSITION");
+		int position = attr.getInt("POSITION");
 
 		setData(
-				a.getData(attributes.position),
-				a.getSize(attributes.position),
-				a.getType(attributes.position),
-				a.getValuePerElements(attributes.position)
+				a.getData(position),
+				a.getNumOfVector(position),
+				a.getValuePerVector(position),
+				a.getType(position)
 		);
 	}
 
 	std::ostream &operator<<(std::ostream &s, Mesh::Primitive &a) {
-		s << "POSITION : " << a.attributes.position << endl;
+		//s << "POSITION : " << a.attributes.position << endl;
 
-		s << "indices : " << a.indices << endl;
+		//s << "indices : " << a.indices << endl;
 
 		return s;
 	}

@@ -1,16 +1,7 @@
 #ifndef BLOBENGINE_VERTEXARRAY_HPP
 #define BLOBENGINE_VERTEXARRAY_HPP
 
-#include <vector>
-
-#include <glad/glad.h>
-
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-
-#include <BlobEngine/Color.hpp>
-
-#include "VertexBufferObject.hpp"
+#include <BlobEngine/BlobGL/VertexBufferObject.hpp>
 
 namespace BlobEngine::BlobGL {
 
@@ -18,8 +9,6 @@ namespace BlobEngine::BlobGL {
 	private:
 
 		GLsizei numberOfElements;
-
-		GLsizei typeSize;
 
 		GLuint vertexArrayObject;
 
@@ -32,8 +21,8 @@ namespace BlobEngine::BlobGL {
 
 		~VertexArrayObject();
 
-		void addBuffer(const VertexBufferObject &vbo, GLint numValuePerVertex, GLuint indexPositoin,
-					   GLuint outPosition, GLenum dataType = GL_FALSE);
+		void addBuffer(const VertexBufferObject &vbo, GLint numValuePerVertex, GLuint typeSize,
+					   GLuint outPosition, GLenum dataType);
 
 		//void addBuffer(const VertexBufferObject<GLubyte>&, GLuint indexPositoin, GLuint outPosition);
 
