@@ -30,7 +30,7 @@ namespace BlobEngine::glTF2 {
 		s << "SceneManager {" << endl;
 
 		s << a.asset;
-		//s << a.mesh;
+		s << a.mesh;
 
 		for(const Scene &scene : a.scenes)
 			s << scene;

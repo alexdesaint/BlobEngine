@@ -15,10 +15,14 @@ namespace BlobEngine::glTF2 {
 
 		mesh = explorer.getInt("mesh");
 
+		bool tr = explorer.hasMember("translation");
+		if(tr)
+			int siz = explorer.getArraySize("translation");
+
 		if(explorer.hasMember("translation") && explorer.getArraySize("translation") == 3) {
-			float x = explorer.getArrayInt("translation", 0);
-			float y = explorer.getArrayInt("translation", 1);
-			float z = explorer.getArrayInt("translation", 2);
+			float x = explorer.getArrayFloat("translation", 0);
+			float y = explorer.getArrayFloat("translation", 1);
+			float z = explorer.getArrayFloat("translation", 2);
 
 			setPosition(x, y, z);
 		}
@@ -33,8 +37,6 @@ namespace BlobEngine::glTF2 {
 		s << "Shape {" << endl;
 
 		s << "mesh : " << a.mesh << endl;
-
-		s << a.meshClass;
 
 		s << "}" << endl;
 		return s;

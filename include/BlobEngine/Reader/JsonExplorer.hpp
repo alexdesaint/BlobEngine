@@ -63,6 +63,8 @@ namespace BlobEngine::Reader {
 
 		int getArrayInt(const char *name, int num);
 
+		float getArrayFloat(const char *name, int num);
+
 		std::string getArrayString(const char *name, int num);
 
 		int getInt(const char *name);

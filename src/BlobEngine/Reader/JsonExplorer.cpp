@@ -117,6 +117,18 @@ namespace BlobEngine::Reader {
 		return n[num].GetInt();
 	}
 
+	float JsonExplorer::getArrayFloat(const char *name, int num){
+		rapidjson::Value &n = *getRapidArray(name);
+
+		if (n.Size() < num + 1)
+			throw BlobException(string("Error : num out of bound"));
+
+		if (!n[num].IsFloat())
+			throw BlobException(string("Member ") + name + " is not an float");
+
+		return n[num].GetFloat();
+	}
+
 	string JsonExplorer::getArrayString(const char *name, int num) {
 		rapidjson::Value &n = *getRapidArray(name);
 
