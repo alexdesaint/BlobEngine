@@ -1,6 +1,7 @@
 #ifndef BLOBENGINE_SCENE_HPP
 #define BLOBENGINE_SCENE_HPP
 
+#include <BlobEngine/BlobGL/Scene.hpp>
 #include <BlobEngine/glTF2/Shape.hpp>
 #include <BlobEngine/glTF2/Mesh.hpp>
 
@@ -8,14 +9,14 @@
 
 namespace BlobEngine::glTF2 {
 
-	class Scene {
+	class Scene : public BlobGL::Scene {
 	public:
 
-		std::vector<Shape> nodes;
+		std::vector<glTF2::Shape> nodes;
 
 		explicit Scene(Reader::JsonExplorer explorer, Mesh &m);
 
-		Shape& getShape(unsigned int num);
+		glTF2::Shape& getShape(unsigned int num);
 
 		friend std::ostream& operator<<(std::ostream &s, const Scene &a);
 	};

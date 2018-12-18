@@ -177,10 +177,31 @@ namespace BlobEngine::BlobGL {
 			glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
 	}
 
-	void Graphic::draw(const Shape &shape, const ShaderProgram &program) {
-		glm::mat4 modelMatrix = shape.getModelMatrix();
+	void Graphic::draw(const Shape &shape, const ShaderProgram &program, glm::mat4 sceneModel) {
+		glm::mat4 modelMatrix = sceneModel * shape.getModelMatrix();
 
+		/*std::cout << "mat :" << std::endl << modelMatrix;
+
+		std::cout << "r :" << std::endl;
+		for(Renderable *r : shape.renderables)
+			std::cout << std::hex << r << " ";
+		std::cout << std::endl;
+*/
 		for(auto r : shape.renderables)
+			draw(*r, program, modelMatrix);
+	}
+
+	void Graphic::draw(const Scene &scene, const ShaderProgram &program) {
+		glm::mat4 modelMatrix = scene.getModelMatrix();
+/*
+		std::cout << "mat :" << std::endl << modelMatrix;
+
+		std::cout << "r :" << std::endl;
+		for(Shape *r : scene.shapes)
+			std::cout << std::hex << r << " ";
+		std::cout << std::endl;
+*/
+		for(auto r : scene.shapes)
 			draw(*r, program, modelMatrix);
 	}
 

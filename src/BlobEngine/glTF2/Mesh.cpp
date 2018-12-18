@@ -22,7 +22,7 @@ namespace BlobEngine::glTF2 {
 			Reader::JsonExplorer prim;
 
 			for(int j = 0; j < numOfP; j++) {
-				prim = dat.getArrayObject("primitives", i);
+				prim = dat.getArrayObject("primitives", j);
 
 				data[i].primitives.emplace_back(prim, accessor);
 			}

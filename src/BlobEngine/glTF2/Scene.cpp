@@ -12,9 +12,13 @@ namespace BlobEngine::glTF2 {
 		for (unsigned int i = 0; i < size; i++) {
 			nodes.emplace_back(explorer.getArrayInt("nodes", i), explorer, m);
 		}
+
+		for (unsigned int i = 0; i < size; i++) {
+			addRenderable(&nodes[i]);
+		}
 	}
 
-	Shape& Scene::getShape(unsigned int num) {
+	glTF2::Shape& Scene::getShape(unsigned int num) {
 		return nodes[num];
 	}
 

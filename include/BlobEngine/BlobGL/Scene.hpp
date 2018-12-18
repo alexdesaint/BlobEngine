@@ -1,26 +1,24 @@
-#ifndef BLOBENGINE_GLSHAPE_HPP
-#define BLOBENGINE_GLSHAPE_HPP
+#ifndef BLOBENGINE_GLSCENE_HPP
+#define BLOBENGINE_GLSCENE_HPP
 
-#include <BlobEngine/BlobGL/Renderable.hpp>
-
-#include <list>
+#include <BlobEngine/BlobGL/Shape.hpp>
 
 namespace BlobEngine::BlobGL {
 
 	class Graphic;
 
-	class Shape {
+	class Scene {
 		friend Graphic;
 	private:
 		glm::mat4 translateMatrix = glm::mat4(1.f);
 		glm::mat4 rotateMatrix = glm::mat4(1.f);
 		glm::mat4 scaleMatrix = glm::mat4(1.f);
 
-		std::list<Renderable*> renderables;
+		std::list<Shape*> shapes;
 
 	protected:
 
-		void addRenderable(Renderable *r);
+		void addRenderable(Shape *r);
 
 		size_t getRenderableSize() const;
 
@@ -41,4 +39,4 @@ namespace BlobEngine::BlobGL {
 	};
 }
 
-#endif //BLOBENGINE_GLSHAPE_HPP
+#endif //BLOBENGINE_SCENE_HPP

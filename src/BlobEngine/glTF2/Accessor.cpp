@@ -49,61 +49,60 @@ namespace BlobEngine::glTF2 {
 
 			data[i].type = strToType(buff.getString("type").c_str());
 
-			data[i].byteOffset = static_cast<unsigned int>(buff.getInt("byteOffset"));
+			if(buff.hasMember("byteOffset"))
+				data[i].byteOffset = static_cast<unsigned int>(buff.getInt("byteOffset"));
 
 			data[i].count = static_cast<unsigned int>(buff.getInt("count"));
 		}
 	}
 
-	std::ostream &Accessor::printData(std::ostream &s, int a) {
-		if (getType(a) == GL_FLOAT) {
-			GLfloat *point = (GLfloat *) (getData(a));
-
-			for (int k = 0; k < getSize(a) / sizeof(GLfloat); k++) {
-				s << point[k] << " ";
-				if ((k + 1) % 3 == 0)
-					s << "| ";
-			}
-			s << endl;
-		} else if (getType(a) == GL_UNSIGNED_SHORT) {
-
-			GLushort *points = (GLushort *) (getData(a));
-
-			for (int k = 0; k < getSize(a) / sizeof(GLushort); k++) {
-				s << points[k] << " ";
-				if ((k + 1) % 3 == 0)
-					s << "| ";
-			}
-			s << endl;
-
+	template <typename T>
+	std::ostream& printArray(std::ostream &s, GLubyte *b, int size, int nbOfElements) {
+		for (int k = 0; k < size / sizeof(T); k++) {
+			s << ((T *)b)[k] << " ";
+			if (nbOfElements > 1 && (k + 1) % nbOfElements == 0)
+				s << "* ";
 		}
-
-		return s;
+		return s << endl;
 	}
 
 	std::ostream &operator<<(std::ostream &s, Accessor &a) {
 
 		s << "Accessor {" << endl;
 
-		for (int i = 0; i < a.data.size(); i++)
-			a.printData(s, i);
-
-		for (const auto &i : a.data) {
-			s << "byteOffset : " << i.byteOffset << endl;
-			s << "componentType : " << i.componentType << endl;
-			s << "count : " << i.count << endl;
-			s << "type : " << i.type << endl;
-			s << "bufferView : " << i.bufferView << endl;
+		for(Accessor::Data &d : a.data) {
+			s << "{\nbyteOffset : " << d.byteOffset << endl;
+			s << "count : " << d.count << endl;
 
 			s << "max : ";
-			for (auto &m : i.max)
+			for (auto &m : d.max)
 				s << m << " ";
 			s << endl;
 
 			s << "min : ";
-			for (auto &m : i.min)
+			for (auto &m : d.min)
 				s << m << " ";
 			s << endl;
+
+			auto *points = a.bufferView.getData(d.bufferView, d.byteOffset);
+			auto size = a.bufferView.getSize(d.bufferView, d.byteOffset);
+
+			switch(d.componentType){
+				case GL_FLOAT :
+					s << "componentType : float" << endl;
+
+					printArray<float>(s, points, size, d.type);
+					break;
+				case GL_UNSIGNED_SHORT :
+					s << "componentType : unsigned short" << endl;
+
+					printArray<GLushort>(s, points, size, d.type);
+					break;
+				default:
+					s << "type " << d.componentType << " not implemented" << endl;
+					break;
+			}
+			s << "}" << endl;
 		}
 
 		s << "}" << endl;

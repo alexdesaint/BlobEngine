@@ -13,12 +13,13 @@ namespace BlobEngine::glTF2 {
 
 		explorer.goToArrayElement("nodes", num);
 
-		mesh = explorer.getInt("mesh");
+		if(explorer.hasMember("mesh")) {
+			mesh = explorer.getInt("mesh");
+			auto v = meshClass.getShape(mesh);
 
-		bool tr = explorer.hasMember("translation");
-		if(tr)
-			int siz = explorer.getArraySize("translation");
-
+			for(auto s : v)
+				addRenderable(s);
+		}
 		if(explorer.hasMember("translation") && explorer.getArraySize("translation") == 3) {
 			float x = explorer.getArrayFloat("translation", 0);
 			float y = explorer.getArrayFloat("translation", 1);
@@ -26,17 +27,13 @@ namespace BlobEngine::glTF2 {
 
 			setPosition(x, y, z);
 		}
-		
-		auto v = meshClass.getShape(mesh);
-		
-		for(auto s : v)
-			addRenderable(s);
 	}
 
 	std::ostream &operator<<(std::ostream &s, const Shape &a) {
 		s << "Shape {" << endl;
 
-		s << "mesh : " << a.mesh << endl;
+		if(a.getRenderableSize() > 0)
+			s << "mesh : " << a.mesh << endl;
 
 		s << "}" << endl;
 		return s;

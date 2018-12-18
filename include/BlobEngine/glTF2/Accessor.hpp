@@ -16,7 +16,7 @@ namespace BlobEngine::glTF2 {
 
 		struct Data {
 			int bufferView;            //!< The ID of the bufferView. (required)
-			unsigned int byteOffset;        //!< The offset relative to the start of the bufferView in bytes. (required)
+			unsigned int byteOffset = 0;        //!< The offset relative to the start of the bufferView in bytes.
 			GLenum componentType;    //!< The datatype of components in the attribute. (required)
 			GLsizei count;                //!< The number of attributes referenced by this accessor. (required)
 			Type type;                        //!< Specifies if the attribute is a scalar, vector, or matrix. (required)

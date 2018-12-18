@@ -3,7 +3,7 @@
 
 #include <BlobEngine/BlobGL/ShaderProgram.hpp>
 #include <BlobEngine/BlobGL/VertexArrayObject.hpp>
-#include <BlobEngine/BlobGL/Shape.hpp>
+#include <BlobEngine/BlobGL/Scene.hpp>
 
 #include <SDL2/SDL.h>
 
@@ -47,7 +47,9 @@ namespace BlobEngine::BlobGL {
 
 		void draw(const Renderable &shape, const ShaderProgram &program, glm::mat4 shapeModel = glm::mat4(1.0));
 
-		void draw(const Shape &shape, const ShaderProgram &program);
+		void draw(const Shape &shape, const ShaderProgram &program, glm::mat4 sceneModel = glm::mat4(1.0));
+
+		void draw(const Scene &scene, const ShaderProgram &program);
 
 		bool isOpen() const;
 
