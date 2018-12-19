@@ -5,8 +5,6 @@
 #include <BlobEngine/BlobGL/VertexArrayObject.hpp>
 #include <BlobEngine/BlobGL/Scene.hpp>
 
-#include <SDL2/SDL.h>
-
 #include <glm/mat4x4.hpp>
 
 #include <ostream>
@@ -19,9 +17,7 @@ namespace BlobEngine::BlobGL {
 		bool quit = false;
 		unsigned int frameCount = 0;
 
-		SDL_Window *window;
-		SDL_GLContext glContext;
-		SDL_Event sdlEvent;
+		void* window;
 
 		unsigned int width, height;
 

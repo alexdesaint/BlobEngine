@@ -7,7 +7,8 @@
 #include <iostream>
 #include <chrono>
 
-// opengl
+// SFML
+#include <SFML/Window.hpp>
 #include <glad/glad.h>
 
 //glm
@@ -47,11 +48,6 @@ static void GLAPIENTRY openglCallbackFunction(
 			std::cout << "Unknow Error severity :" << std::endl << message;
 			break;
 	}
-
-	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-							 "Missing file",
-							 "File is missing. Please reinstall the program.",
-							 nullptr);
 }
 
 namespace BlobEngine::BlobGL {
@@ -74,30 +70,22 @@ namespace BlobEngine::BlobGL {
 			cameraLookAt(0, 0, 0),
 			cameraUp(0, 1, 0) {
 
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		sf::ContextSettings settings;
+		settings.depthBits = 24;
+		settings.stencilBits = 8;
+		settings.antialiasingLevel = 4;
+		settings.majorVersion = 4;
+		settings.minorVersion = 5;
 
-		if (SDL_Init(SDL_INIT_VIDEO))
-			throw BlobException(std::string("SDL could not initialize! SDL_Error: ") + SDL_GetError());
+		window = new sf::Window(sf::VideoMode(800, 600), "OpenGL", sf::Style::Default, settings);
+		((sf::Window*)window)->setVerticalSyncEnabled(true);
 
-		window = SDL_CreateWindow("Hello World!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height,
-								  SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-
-		if (window == nullptr)
-			throw BlobException(std::string("Window could not be created! SDL_Error: ") + SDL_GetError());
-
-		glContext = SDL_GL_CreateContext(window);
-
-		if (glContext == nullptr)
-			throw BlobException(std::string("OpenGL context could not be created! SDL Error: ") + SDL_GetError());
+		((sf::Window*)window)->setActive(true);
 
 		if (!gladLoadGL()) throw BlobException("Can't load openGL");
 
-		enableDebugCallBack();
 
-		if (SDL_GL_SetSwapInterval(-1) == -1)
-			SDL_GL_SetSwapInterval(1);
+		enableDebugCallBack();
 
 		glEnable(GL_CULL_FACE); // cull face
 		glCullFace(GL_FRONT);// cull back face
@@ -110,11 +98,7 @@ namespace BlobEngine::BlobGL {
 	}
 
 	Graphic::~Graphic() {
-		//Destroy window
-		SDL_DestroyWindow(window);
-
-		//Quit SDL subsystems
-		SDL_Quit();
+		delete ((sf::Window*)window);
 	}
 
 	void Graphic::clear() {
@@ -122,7 +106,7 @@ namespace BlobEngine::BlobGL {
 	}
 
 	void Graphic::display() {
-		SDL_GL_SwapWindow(window);
+		((sf::Window*)window)->display();
 
 		if (!(++frameCount % 60)) {
 			static std::chrono::high_resolution_clock::time_point lastFrameTime;
@@ -132,13 +116,19 @@ namespace BlobEngine::BlobGL {
 
 			std::string name = "Test : " + std::to_string(60 / diff.count()) + " FPS";
 
-			SDL_SetWindowTitle(window, name.c_str());
+			((sf::Window*)window)->setTitle(name);
 		}
 
-		while (SDL_PollEvent(&sdlEvent) != 0) {
-
-			if (sdlEvent.type == SDL_QUIT) {
+		sf::Event event{};
+		while (((sf::Window*)window)->pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed) {
+				// end the program
 				quit = true;
+			}
+			else if (event.type == sf::Event::Resized) {
+				// adjust the viewport when the window is resized
+				glViewport(0, 0, event.size.width, event.size.height);
 			}
 		}
 	}

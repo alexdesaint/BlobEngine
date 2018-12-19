@@ -1,7 +1,3 @@
-//
-// Created by alexa on 16/03/2018.
-//
-
 #ifndef BLOBENGINE_BLOBEXCEPTION_HPP
 #define BLOBENGINE_BLOBEXCEPTION_HPP
 
