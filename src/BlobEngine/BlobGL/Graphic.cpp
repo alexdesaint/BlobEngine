@@ -77,7 +77,7 @@ namespace BlobEngine::BlobGL {
 			cameraUp(0, 1, 0) {
 
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 4);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 		if (SDL_Init(SDL_INIT_VIDEO))
@@ -159,22 +159,25 @@ namespace BlobEngine::BlobGL {
 		return out;
 	}
 
-	void Graphic::draw(const Renderable &shape, const ShaderProgram &program, glm::mat4 shapeModel) {
+	void Graphic::draw(const Renderable &renderable, const ShaderProgram &program, glm::mat4 shapeModel) {
 		glUseProgram(program.getProgram());
-		glBindVertexArray(shape.vao.getVertexArrayObject());
+		glBindVertexArray(renderable.vao.getVertexArrayObject());
 
-		glm::mat4 mvp = projectionMatrix * viewMatrix * shapeModel * shape.getModelMatrix();
+		//glm::mat4 mvp = projectionMatrix * viewMatrix * shapeModel * renderable.getModelMatrix();
 
 		//std::cout << "mat :" << std::endl << viewMatrix;
 
-		GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
+		//GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
 
-		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(program.projection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+		glUniformMatrix4fv(program.view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(program.model, 1, GL_FALSE, glm::value_ptr(shapeModel * renderable.getModelMatrix()));
 
-		if (shape.indexed)
-			glDrawElements(GL_TRIANGLES, shape.numOfIndices, shape.indicesType, shape.indices);
+
+		if (renderable.indexed)
+			glDrawElements(GL_TRIANGLES, renderable.numOfIndices, renderable.indicesType, renderable.indices);
 		else
-			glDrawArrays(GL_TRIANGLES, 0, shape.vao.getNumberOfElements());
+			glDrawArrays(GL_TRIANGLES, 0, renderable.vao.getNumberOfElements());
 	}
 
 	void Graphic::draw(const Shape &shape, const ShaderProgram &program, glm::mat4 sceneModel) {

@@ -31,7 +31,6 @@ namespace BlobEngine::BlobGL {
 
 		bool indexed = false;
 
-		VertexBufferObject vboPoints;
 		VertexArrayObject vao;
 
 		//VertexBufferObject vboColor;
@@ -46,7 +45,11 @@ namespace BlobEngine::BlobGL {
 
 		//Renderable(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
 
-		void setData(GLubyte *points, GLsizei numberOfVector, GLuint valuePerVector, GLenum dataType);
+		void setBuffer(VertexBufferObject &vbo, GLsizei stride);
+
+		void setPosition(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset);
+
+		void setNormal(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset);
 
 		void setIndices(GLubyte *indices, GLsizei numOfIndices, GLenum indicesType);
 

@@ -30,7 +30,7 @@ namespace BlobEngine::glTF2 {
 
 		explicit Accessor(Reader::JsonExplorer explorer);
 
-		GLubyte *getData(int Accessor);
+		GLsizei getOffset(int Accessor);
 
 		GLenum getType(int Accessor);
 
@@ -38,7 +38,7 @@ namespace BlobEngine::glTF2 {
 
 		GLsizei getNumOfVector(int Accessor);
 
-		GLsizei getValuePerVector(int Accessor);
+		GLuint getValuePerVector(int Accessor);
 
 		friend std::ostream &operator<<(std::ostream &s, Accessor &a);
 

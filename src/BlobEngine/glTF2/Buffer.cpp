@@ -34,7 +34,14 @@ namespace BlobEngine::glTF2 {
 			for (int j = 0; j < data[i].byteLength; j++)
 				data[i].d[j] = fileReader.readNextByte();
 		}
+
+		if(data.size() > 1)
+			throw BlobException("Multiple Buffer Not Supported");
+
+		setData(data[0].d.data(), data[0].byteLength);
 	}
+
+
 
 	std::ostream &operator<<(std::ostream &s, const Buffer &a) {
 		s << "Buffer {" << std::endl;
@@ -48,7 +55,7 @@ namespace BlobEngine::glTF2 {
 		return s;
 	}
 
-	GLubyte *Buffer::getData(int buffer, GLsizei offset) {
-		return &data[buffer].d[offset];
+	const vector<Buffer::Data> &Buffer::getData() const {
+		return data;
 	}
 }

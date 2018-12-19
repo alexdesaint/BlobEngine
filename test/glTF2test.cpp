@@ -49,11 +49,11 @@ int main(int argc, char *argv[]) {
 
 		BlobEngine::BlobGL::Graphic graphic(640, 480);
 
-		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+		BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
 		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
 		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
 		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
-		BlobEngine::glTF2::SceneManager sm("../data/poteau/poteau.gltf");
+		//BlobEngine::glTF2::SceneManager sm("../data/poteau/poteau.gltf");
 
 		std::cout << sm;
 

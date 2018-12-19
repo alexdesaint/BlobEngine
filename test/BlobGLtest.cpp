@@ -7,49 +7,88 @@
 using namespace std;
 using namespace BlobEngine::BlobGL;
 
+GLuint LoadGLTextures() {
+	GLuint texture;
+
+	/* Create storage space for the texture */
+	SDL_Surface *sdlSurf = SDL_LoadBMP( "nehe.bmp" );
+
+	/* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
+	if(sdlSurf != nullptr) {
+
+		GLuint samplerName;
+		glCreateSamplers(1, &samplerName);
+		glSamplerParameteri(samplerName, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glSamplerParameteri(samplerName, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glSamplerParameteri(samplerName, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glSamplerParameteri(samplerName, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindSampler(0, samplerName);
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
+		glTextureStorage2D(texture, 1, GL_RGB8, sdlSurf->w, sdlSurf->h);
+		glTextureSubImage2D(texture, 0, 0, 0, sdlSurf->w, sdlSurf->h, GL_RGB8, GL_UNSIGNED_BYTE, sdlSurf->pixels);
+		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glBindTextureUnit(0, texture);
+
+		SDL_FreeSurface(sdlSurf);
+	}
+
+	return texture;
+}
+
 int main(int argc, char *argv[]) {
 
 	try {
 
 		Graphic graphic(640, 480);
 
-		const std::vector<glm::vec3> cube_vertices = {
+		struct Data {
+			float coor[3];
+			float norm[3];
+			float texCoor[2];
+		};
+
+		std::vector<Data> data = {
 				// Front face
-				{-1.0, -1.0, 1.0},
-				{1.0,  -1.0, 1.0},
-				{1.0,  1.0,  1.0},
-				{-1.0, 1.0,  1.0},
+				{{-1.0, -1.0, 1.0}, {0.0, -1.0, 0.0}, {0.0, 0.0}},
+				{{1.0,  -1.0, 1.0}, {0.0, -1.0, 0.0}, {0.0, 0.0}},
+				{{1.0,  1.0,  1.0}, {0.0, -1.0, 0.0}, {0.0, 0.0}},
+				{{-1.0, 1.0,  1.0}, {0.0, -1.0, 0.0}, {0.0, 0.0}},
 
 				// Back face
-				{-1.0, -1.0, -1.0},
-				{-1.0, 1.0,  -1.0},
-				{1.0,  1.0,  -1.0},
-				{1.0,  -1.0, -1.0},
+				{{-1.0, -1.0, -1.0}, {0.0, 1.0, 0.0}, {0.0, 0.0}},
+				{{-1.0, 1.0,  -1.0}, {0.0, 1.0, 0.0}, {0.0, 0.0}},
+				{{1.0,  1.0,  -1.0}, {0.0, 1.0, 0.0}, {0.0, 0.0}},
+				{{1.0,  -1.0, -1.0}, {0.0, 1.0, 0.0}, {0.0, 0.0}},
 
 				// Top face
-				{-1.0, 1.0,  -1.0},
-				{-1.0, 1.0,  1.0},
-				{1.0,  1.0,  1.0},
-				{1.0,  1.0,  -1.0},
+				{{-1.0, 1.0,  -1.0}, {0.0, 0.0, 1.0}, {0.0, 0.0}},
+				{{-1.0, 1.0,  1.0},  {0.0, 0.0, 1.0}, {0.0, 0.0}},
+				{{1.0,  1.0,  1.0},  {0.0, 0.0, 1.0}, {0.0, 0.0}},
+				{{1.0,  1.0,  -1.0}, {0.0, 0.0, 1.0}, {0.0, 0.0}},
 
 				// Bottom face
-				{-1.0, -1.0, -1.0},
-				{1.0,  -1.0, -1.0},
-				{1.0,  -1.0, 1.0},
-				{-1.0, -1.0, 1.0},
+				{{-1.0, -1.0, -1.0}, {0.0, 0.0, -1.0}, {0.0, 0.0}},
+				{{1.0,  -1.0, -1.0}, {0.0, 0.0, -1.0}, {0.0, 0.0}},
+				{{1.0,  -1.0, 1.0},  {0.0, 0.0, -1.0}, {0.0, 0.0}},
+				{{-1.0, -1.0, 1.0},  {0.0, 0.0, -1.0}, {0.0, 0.0}},
 
 				// Right face
-				{1.0,  -1.0, -1.0},
-				{1.0,  1.0,  -1.0},
-				{1.0,  1.0,  1.0},
-				{1.0,  -1.0, 1.0},
+				{{1.0,  -1.0, -1.0}, {1.0, 0.0, 0.0}, {0.0, 0.0}},
+				{{1.0,  1.0,  -1.0}, {1.0, 0.0, 0.0}, {0.0, 0.0}},
+				{{1.0,  1.0,  1.0},  {1.0, 0.0, 0.0}, {0.0, 0.0}},
+				{{1.0,  -1.0, 1.0},  {1.0, 0.0, 0.0}, {0.0, 0.0}},
 
 				// Left face
-				{-1.0, -1.0, -1.0},
-				{-1.0, -1.0, 1.0},
-				{-1.0, 1.0,  1.0},
-				{-1.0, 1.0,  -1.0}
+				{{-1.0, -1.0, -1.0}, {-1.0, 0.0, 0.0}, {0.0, 0.0}},
+				{{-1.0, -1.0, 1.0},  {-1.0, 0.0, 0.0}, {0.0, 0.0}},
+				{{-1.0, 1.0,  1.0},  {-1.0, 0.0, 0.0}, {0.0, 0.0}},
+				{{-1.0, 1.0,  -1.0}, {-1.0, 0.0, 0.0}, {0.0, 0.0}}
 		};
+
+		VertexBufferObject vbo;
+
+		vbo.setData((GLubyte*)data.data(), sizeof(Data)* data.size());
 
 		const std::vector<GLushort> indices = {
 				0, 1, 2, 0, 2, 3,    // front
@@ -60,10 +99,13 @@ int main(int argc, char *argv[]) {
 				20, 21, 22, 20, 22, 23,   // left
 		};
 
-		//Renderable shape("../data/sphere.obj");
 		Renderable shape;
 
-		shape.setData((GLubyte*)cube_vertices.data(), (GLsizei)cube_vertices.size(), 3, GL_FLOAT);
+		shape.setBuffer(vbo, sizeof(Data));
+
+		shape.setPosition(3, GL_FLOAT, 0, 0);
+
+		shape.setNormal(3, GL_FLOAT, sizeof(Data::coor), 0);
 
 		shape.setIndices((GLubyte*)indices.data(), (GLsizei)indices.size(), GL_UNSIGNED_SHORT);
 
@@ -77,11 +119,11 @@ int main(int argc, char *argv[]) {
 			float angle = BlobEngine::getTime();
 
 			shape.setRotation(angle * 40, 0.f, 1.f, 0.f);
+			shape.rotate(20, 1.f, 0.f, 0.f);
 
-			float mod = std::cos(angle) / 2 + 1;
-			shape.setScale(mod, mod, mod);
-			shape.rotate(angle * 40, 1.f, 0.f, 0.f);
-			shape.setPosition(0, 0, 0);
+			//float mod = std::cos(angle) / 2 + 1;
+			//shape.setScale(mod, mod, mod);
+
 			graphic.draw(shape, shaderProgram);
 
 			graphic.display();

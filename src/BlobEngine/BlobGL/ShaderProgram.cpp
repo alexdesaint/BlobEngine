@@ -163,6 +163,10 @@ void BlobEngine::BlobGL::ShaderProgram::linkShaders() {
 	// Always detach shaders after a successful link.
 	glDetachShader(program, vertexShader);
 	glDetachShader(program, fragmentShader);
+
+	model = glGetUniformLocation(program, "model");
+	view = glGetUniformLocation(program, "view");
+	projection = glGetUniformLocation(program, "projection");
 }
 
 GLuint BlobEngine::BlobGL::ShaderProgram::getProgram() const {

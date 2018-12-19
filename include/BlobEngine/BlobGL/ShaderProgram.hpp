@@ -6,11 +6,16 @@
 
 namespace BlobEngine::BlobGL {
 
+	class Graphic;
+
 	class ShaderProgram {
+		friend Graphic;
 	private:
 		GLuint program;
 
 		GLuint vertexShader, fragmentShader;
+
+		GLint model, view, projection;
 
 	public:
 		ShaderProgram();

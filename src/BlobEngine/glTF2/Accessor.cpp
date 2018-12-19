@@ -109,8 +109,8 @@ namespace BlobEngine::glTF2 {
 		return s;
 	}
 
-	GLubyte *Accessor::getData(int Accessor) {
-		return bufferView.getData(data[Accessor].bufferView, data[Accessor].byteOffset);
+	GLsizei Accessor::getOffset(int Accessor) {
+		return bufferView.getOffset(data[Accessor].bufferView) + data[Accessor].byteOffset;
 	}
 
 	GLenum Accessor::getType(int Accessor) {
@@ -125,7 +125,7 @@ namespace BlobEngine::glTF2 {
 		return data[Accessor].count;
 	}
 
-	GLsizei Accessor::getValuePerVector(int Accessor) {
+	GLuint Accessor::getValuePerVector(int Accessor) {
 		return data[Accessor].type;
 	}
 

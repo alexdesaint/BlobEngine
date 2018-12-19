@@ -39,8 +39,8 @@ namespace BlobEngine::glTF2 {
 		return s;
 	}
 
-	GLubyte *BufferView::getData(int BufferView, GLsizei offset) {
-		return &buffer.getData(data[BufferView].buffer, data[BufferView].byteOffset)[offset];
+	GLsizei BufferView::getOffset(int BufferView) {
+		return data[BufferView].byteOffset;
 	}
 
 	GLsizei BufferView::getSize(int BufferView, GLsizei offset) {

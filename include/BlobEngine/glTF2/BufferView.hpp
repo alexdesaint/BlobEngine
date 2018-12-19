@@ -25,12 +25,10 @@ namespace BlobEngine::glTF2 {
 
 		std::vector<Data> data;
 
-		Buffer buffer;
-
 	public:
 		explicit BufferView(Reader::JsonExplorer explorer);
 
-		GLubyte *getData(int BufferView, GLsizei offset);
+		GLsizei getOffset(int BufferView);
 
 		GLsizei getSize(int BufferView, GLsizei offset);
 

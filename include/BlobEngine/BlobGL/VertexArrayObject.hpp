@@ -21,16 +21,10 @@ namespace BlobEngine::BlobGL {
 
 		~VertexArrayObject();
 
-		void addBuffer(const VertexBufferObject &vbo, GLuint numValuePerVertex, GLuint typeSize,
-					   GLuint outPosition, GLenum dataType);
+		void setBuffer(const VertexBufferObject &vbo, GLsizei stride);
 
-		//void addBuffer(const VertexBufferObject<GLubyte>&, GLuint indexPositoin, GLuint outPosition);
-
-		//void addBuffer(const VertexBufferObject<glm::vec3>&, GLuint indexPositoin, GLuint outPosition);
-
-		//void addBuffer(const VertexBufferObject<glm::vec2>&, GLuint indexPositoin, GLuint outPosition);
-
-		//void addBuffer(const VertexBufferObject<BlobEngine::Color>&, GLuint indexPositoin, GLuint outPosition);
+		void setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType,
+					  GLuint arrayOffset, GLuint dataOffset);
 
 	};
 }

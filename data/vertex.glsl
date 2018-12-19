@@ -1,11 +1,19 @@
 #version 450
 
-layout(location = 0) in vec3 vertex_position;
-layout(location = 1) in vec3 aNormal;
-uniform mat4 mvp;
-out float dist;
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
 
-void main() {
-	gl_Position = mvp * vec4 (vertex_position, 1.0);
-	dist = vertex_position.z;//1.0 - (-pos_eye.z / 10.0);
+out vec3 FragPos;
+out vec3 Normal;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main()
+{
+    FragPos = vec3(model * vec4(aPos, 1.0));
+    Normal = aNormal;
+
+    gl_Position = projection * view * vec4(FragPos, 1.0);
 }

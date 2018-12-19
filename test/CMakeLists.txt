@@ -10,6 +10,9 @@ target_link_libraries(SFMLGraphicTest Graphic glad sfml-system sfml-graphics sfm
 add_executable(glTF2test glTF2test.cpp)
 target_link_libraries(glTF2test glTF2 BlobGL glad FileReader JsonExplorer -lglu32 -lopengl32 ${SDL2_LIBRARIES})
 
+add_executable(OpenGLtest OpenGLtest.cpp)
+target_link_libraries(OpenGLtest BlobGL glad -lglu32 -lopengl32 ${SDL2_LIBRARIES})
+
 add_executable(BlobGLtest BlobGLtest.cpp)
 target_link_libraries(BlobGLtest BlobGL glad FileReader JsonExplorer -lglu32 -lopengl32 ${SDL2_LIBRARIES})
 

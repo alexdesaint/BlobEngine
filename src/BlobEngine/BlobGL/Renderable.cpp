@@ -143,13 +143,13 @@ namespace BlobEngine::BlobGL {
 		if (countF != sizeF)
 			throw BlobException(".obj parser : Error on reading F");
 
-		vboPoints.setData(points);
+		vboPoints.setPosition(points);
 
 		vao.addBuffer(vboPoints, 3, 0, 0);
 	}*/
 
 	/*Renderable::Renderable(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices) : indices(indices.data()) {
-		vboPoints.setData(points);
+		vboPoints.setPosition(points);
 		vao.addBuffer(vboPoints, 3, 0, 0);
 		indexed = true;
 	}*/
@@ -167,14 +167,16 @@ namespace BlobEngine::BlobGL {
 		}
 	}
 
-	void Renderable::setData(GLubyte *points, GLsizei numberOfVector, GLuint valuePerVector, GLenum dataType) {
+	void Renderable::setBuffer(VertexBufferObject &vbo, GLsizei stride) {
+		vao.setBuffer(vbo, stride);
+	}
 
+	GLuint getGlTypeSize(GLenum dataType) {
 		GLuint typeSize;
 
 		switch (dataType) {
 			case GL_BYTE:
 				typeSize = sizeof(GLbyte);
-
 				break;
 			case GL_UNSIGNED_BYTE:
 				typeSize = sizeof(GLubyte);
@@ -184,6 +186,9 @@ namespace BlobEngine::BlobGL {
 				break;
 			case GL_UNSIGNED_SHORT:
 				typeSize = sizeof(GLushort);
+				break;
+			case GL_INT:
+				typeSize = sizeof(GLint);
 				break;
 			case GL_UNSIGNED_INT:
 				typeSize = sizeof(GLuint);
@@ -195,12 +200,26 @@ namespace BlobEngine::BlobGL {
 				throw BlobException("incorrect Type of data");
 		}
 
-		GLsizei dataSize = (GLsizei)numberOfVector * valuePerVector * typeSize;
+		return typeSize;
+	}
 
-		vboPoints.setData(points, dataSize);
+	void Renderable::setPosition(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset) {
 
-		vao.addBuffer(vboPoints, valuePerVector, typeSize, 0, dataType);
+		GLuint typeSize = getGlTypeSize(dataType);
 
+		//GLsizei dataSize = (GLsizei)numberOfVector * valuePerVector * typeSize;
+
+		vao.setArray(valuePerVector, 0, dataType, arrayOffset, dataOffset);
+
+	}
+
+	void Renderable::setNormal(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset) {
+
+		GLuint typeSize = getGlTypeSize(dataType);
+
+		//GLsizei dataSize = (GLsizei)numberOfVector * valuePerVector * typeSize;
+
+		vao.setArray(valuePerVector, 1, dataType, arrayOffset, dataOffset);
 	}
 
 	void Renderable::setIndices(GLubyte *i, GLsizei noi, GLenum it) {

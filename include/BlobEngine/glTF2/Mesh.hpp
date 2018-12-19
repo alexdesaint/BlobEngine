@@ -6,39 +6,28 @@
 
 namespace BlobEngine::glTF2{
 
-	class Mesh { //un sous-objet appartenant à un objet
+	class Mesh {
 	private:
 
-		//struct Attributes {
-		//	int position;
-		//};
-
-		class Primitive : public BlobGL::Renderable {//TODO faire de primitive une gl Renderable
-		private:
-			//int indices;
-			//bool indexed = false;
-
-			//Attributes attributes;
-
-		public:
-			Primitive(Reader::JsonExplorer explorer, Accessor &a);
-
-			friend std::ostream &operator<<(std::ostream &s, Primitive &a);
-		};
-
 		struct Data {
-			std::vector<Primitive> primitives;
+			GLfloat coor[3];
+			GLfloat normal[3];
+			GLfloat texCoor[2];
+			GLubyte color[4];
 		};
 
-		std::vector<Data> data;
+		std::vector<Data> dataBuffer;
+
+		Buffer buffer;
 
 		Accessor accessor;
 
+		std::vector<std::vector<BlobGL::Renderable>> primitives;
+
 	public:
-		explicit Mesh(Reader::JsonExplorer explorer);
+		explicit Mesh(Reader::JsonExplorer explorer, BlobGL::VertexBufferObject &vbo);
 
 		friend std::ostream &operator<<(std::ostream &s, Mesh &a);
-		friend std::ostream &operator<<(std::ostream &s, Primitive &a);
 
 		std::vector<BlobGL::Renderable*> getShape(int mesh);
 	};

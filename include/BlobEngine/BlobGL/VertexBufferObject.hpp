@@ -15,30 +15,14 @@ namespace BlobEngine::BlobGL {
 	private:
 		GLuint vertexBufferObject;
 
-		GLenum dataType;
-
-		GLsizei typeSize;
-
-		GLsizei dataSize;
-
-		GLsizei numberOfElements;
+		GLsizeiptr dataSize;
 
 	public:
 		VertexBufferObject();
 
-		void setData(GLubyte *points, int dataSize);
+		void setData(GLubyte *data, GLsizeiptr dataSize);
 
 		~VertexBufferObject();
-
-		void setData(const std::vector<GLfloat> &data);
-
-		void setData(const std::vector<GLuint> &data);
-
-		void setData(const std::vector<GLubyte> &data);
-
-		void setData(const std::vector<glm::vec3> &data);
-
-		void setData(const std::vector<glm::vec2> &data);
 	};
 }
 

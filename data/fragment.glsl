@@ -1,8 +1,25 @@
 #version 450
 
-in float dist;
-out vec4 frag_colour;
+out vec4 FragColor;
 
-void main() {
-	frag_colour = vec4 (1.0, 0.0, 0.0, 1.0);
+in vec3 Normal;
+in vec3 FragPos;
+
+void main()
+{
+    vec3 lightPos = vec3(0.0, 4.0, 4.0);
+    vec3 lightColor = vec3(1.0, 1.0, 1.0);
+    vec3 objectColor = vec3(1.0, 0.0, 0.0);
+    // ambient
+    float ambientStrength = 0.1;
+    vec3 ambient = ambientStrength * lightColor;
+
+    // diffuse
+    vec3 norm = normalize(Normal);
+    vec3 lightDir = normalize(lightPos - FragPos);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor;
+
+    vec3 result = (ambient + diffuse) * objectColor;
+    FragColor = vec4(result, 1.0);
 }
