@@ -14,7 +14,7 @@ add_executable(OpenGLtest OpenGLtest.cpp)
 target_link_libraries(OpenGLtest BlobGL glad -lglu32 -lopengl32 ${SDL2_LIBRARIES})
 
 add_executable(BlobGLtest BlobGLtest.cpp)
-target_link_libraries(BlobGLtest BlobGL glad FileReader JsonExplorer -lglu32 -lopengl32 ${SDL2_LIBRARIES})
+target_link_libraries(BlobGLtest BlobGL)
 
 #STATIC -lmingw32 SDL2main SDL2-static
 #STATIC -mwindows -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid

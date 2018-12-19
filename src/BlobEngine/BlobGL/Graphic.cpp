@@ -1,5 +1,3 @@
-
-
 //blobEngine
 #include <BlobEngine/BlobException.hpp>
 #include <BlobEngine/BlobGL/Renderable.hpp>
@@ -163,16 +161,12 @@ namespace BlobEngine::BlobGL {
 		glUseProgram(program.getProgram());
 		glBindVertexArray(renderable.vao.getVertexArrayObject());
 
-		//glm::mat4 mvp = projectionMatrix * viewMatrix * shapeModel * renderable.getModelMatrix();
-
-		//std::cout << "mat :" << std::endl << viewMatrix;
-
-		//GLint mvpLocation = glGetUniformLocation(program.getProgram(), "mvp");//TODO : ajouter au shaderProgram
-
 		glUniformMatrix4fv(program.projection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		glUniformMatrix4fv(program.view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(program.model, 1, GL_FALSE, glm::value_ptr(shapeModel * renderable.getModelMatrix()));
-
+		if(renderable.texture != nullptr)
+			glBindTexture(GL_TEXTURE_2D, renderable.texture->texture);
+			//glBindImageTexture(0, renderable.texture->texture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGB8);
 
 		if (renderable.indexed)
 			glDrawElements(GL_TRIANGLES, renderable.numOfIndices, renderable.indicesType, renderable.indices);
