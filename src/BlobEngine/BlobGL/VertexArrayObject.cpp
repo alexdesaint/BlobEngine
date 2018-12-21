@@ -15,10 +15,10 @@ namespace BlobEngine::BlobGL {
 		return vertexArrayObject;
 	}
 
-	void VertexArrayObject::setBuffer(const VertexBufferObject &vbo, GLsizei stride) {
+	void VertexArrayObject::setBuffer(const VertexBufferObject &vbo, GLsizei stride, GLuint dataOffset) {
 
 		//ajoute le buffer au VAO et donne la taille des vecteurs
-		glVertexArrayVertexBuffer(vertexArrayObject, 0, vbo.vertexBufferObject, 0, stride);
+		glVertexArrayVertexBuffer(vertexArrayObject, 0, vbo.vertexBufferObject, dataOffset, stride);
 	}
 
 	GLsizei VertexArrayObject::getNumberOfElements() const {
@@ -26,7 +26,7 @@ namespace BlobEngine::BlobGL {
 	}
 
 	void VertexArrayObject::setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType,
-									 GLuint arrayOffset, GLuint dataOffset) {
+									 GLuint arrayOffset) {
 		numberOfElements = 3;
 
 		//autorique l'utilisation de cet atribut
@@ -36,6 +36,6 @@ namespace BlobEngine::BlobGL {
 		glVertexArrayAttribFormat(vertexArrayObject, outPosition, numValuePerArray, dataType, GL_FALSE, arrayOffset);
 
 		//lie l'attribu avec le buffer
-		glVertexArrayAttribBinding(vertexArrayObject, outPosition, dataOffset);
+		glVertexArrayAttribBinding(vertexArrayObject, outPosition, 0);
 	}
 }

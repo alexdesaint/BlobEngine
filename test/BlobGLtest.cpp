@@ -58,14 +58,17 @@ int main(int argc, char *argv[]) {
 				{{-1.0, -1.0, -1.0}, {-1.0, 0.0, 0.0}, {1.0, 0.5}},		//bd
 				{{-1.0, -1.0, 1.0},  {-1.0, 0.0, 0.0}, {1.0, 0.25}},	//hd
 				{{-1.0, 1.0,  1.0},  {-1.0, 0.0, 0.0}, {0.75, 0.25}},	//hg
-				{{-1.0, 1.0,  -1.0}, {-1.0, 0.0, 0.0}, {0.75, 0.5}}		//bg
+				{{-1.0, 1.0,  -1.0}, {-1.0, 0.0, 0.0}, {0.75, 0.5}},	//bg
+
+				// ground
+				{{-4.0, -4.0, -1.0}, {0.0, 0.0, 1.0}, {-1.0, -1.0}},	//hg
+				{{4.0,  -4.0, -1.0}, {0.0, 0.0, 1.0}, {-1.0, -1.0}},	//bg
+				{{4.0,  4.0,  -1.0}, {0.0, 0.0, 1.0}, {-1.0, -1.0}},	//bd
+				{{-4.0, 4.0,  -1.0}, {0.0, 0.0, 1.0}, {-1.0, -1.0}},	//hd
+
 		};
 
-		VertexBufferObject vbo;
-
-		vbo.setData((GLubyte*)data.data(), sizeof(Data)* data.size());
-
-		const std::vector<GLushort> indices = {
+		const std::vector<GLushort> cudeIndices = {
 				0, 1, 2, 0, 2, 3,    // front
 				4, 5, 6, 4, 6, 7,    // back
 				8, 9, 10, 8, 10, 11,   // top
@@ -74,20 +77,44 @@ int main(int argc, char *argv[]) {
 				20, 21, 22, 20, 22, 23,   // left
 		};
 
-		Renderable shape;
+		const std::vector<GLushort> groundIndices = {
+				0, 1, 2, 0, 2, 3
+				//20, 21, 22, 20, 22, 23
+				//24, 25, 26, 24, 26, 27
+		};
 
-		shape.setBuffer(vbo, sizeof(Data));
+		//Buffer :
+		VertexBufferObject vbo;
 
-		shape.setPosition(3, GL_FLOAT, 0, 0);
-		shape.setNormal(3, GL_FLOAT, sizeof(Data::coor), 0);
-		shape.setTexture(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::norm), 0);
+		vbo.setData((GLubyte*)data.data(), sizeof(Data) * data.size());
 
-		shape.setIndices((GLubyte*)indices.data(), (GLsizei)indices.size(), GL_UNSIGNED_SHORT);
+		//Cube
+		Renderable cube;
+
+		cube.setBuffer(vbo, sizeof(Data));
+
+		cube.setPosition(3, GL_FLOAT, 0);
+		cube.setNormal(3, GL_FLOAT, sizeof(Data::coor));
+		cube.setTexture(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::norm));
+
+		cube.setIndices((GLubyte*)cudeIndices.data(), (GLsizei)cudeIndices.size(), GL_UNSIGNED_SHORT);
 
 		BlobEngine::BlobGL::Texture t;
 		t.load("../data/cube.png");
 
-		shape.setTexture(t);
+		cube.setTexture(t);
+
+		//Ground
+		Renderable ground;
+
+		ground.setBuffer(vbo, sizeof(Data), 4 * 6 * sizeof(Data));
+
+		ground.setPosition(3, GL_FLOAT, 0);
+		ground.setNormal(3, GL_FLOAT, sizeof(Data::coor));
+		ground.setTexture(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::norm));
+
+		ground.setIndices((GLubyte*)groundIndices.data(), (GLsizei)groundIndices.size(), GL_UNSIGNED_SHORT);
+		//shader program
 
 		BlobEngine::BlobGL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
 
@@ -98,14 +125,15 @@ int main(int argc, char *argv[]) {
 
 			float angle = BlobEngine::getTime();
 
-			shape.setRotation(angle * 40, 0.f, 0.f, 1.f);
-			//shape.rotate(20, 1.f, 0.f, 0.f);
-			//shape.setRotation(45, 0.f, 1.f, 0.f);
+			cube.setRotation(angle * 40, 0.f, 0.f, 1.f);
+			//cube.rotate(20, 1.f, 0.f, 0.f);
+			//cube.setRotation(45, 0.f, 1.f, 0.f);
 
 			//float mod = std::cos(angle) / 2 + 1;
-			//shape.setScale(mod, mod, mod);
+			//cube.setScale(mod, mod, mod);
 
-			graphic.draw(shape, shaderProgram);
+			graphic.draw(cube, shaderProgram);
+			graphic.draw(ground, shaderProgram);
 
 			graphic.display();
 

@@ -21,11 +21,9 @@ namespace BlobEngine::BlobGL {
 
 		~VertexArrayObject();
 
-		void setBuffer(const VertexBufferObject &vbo, GLsizei stride);
+		void setBuffer(const VertexBufferObject &vbo, GLsizei stride, GLuint dataOffset = 0);
 
-		void setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType,
-					  GLuint arrayOffset, GLuint dataOffset);
-
+		void setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType, GLuint arrayOffset);
 	};
 }
 

@@ -169,8 +169,8 @@ namespace BlobEngine::BlobGL {
 
 	*/
 
-	void Renderable::setBuffer(VertexBufferObject &vbo, GLsizei stride) {
-		vao.setBuffer(vbo, stride);
+	void Renderable::setBuffer(VertexBufferObject &vbo, GLsizei stride, GLuint dataOffset) {
+		vao.setBuffer(vbo, stride, dataOffset);
 	}
 
 	void Renderable::setTexture(Texture &t) {
@@ -209,16 +209,16 @@ namespace BlobEngine::BlobGL {
 		return typeSize;
 	}
 
-	void Renderable::setPosition(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset) {
-		vao.setArray(valuePerVector, 0, dataType, arrayOffset, dataOffset);
+	void Renderable::setPosition(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
+		vao.setArray(valuePerVector, 0, dataType, arrayOffset);
 	}
 
-	void Renderable::setNormal(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset) {
-		vao.setArray(valuePerVector, 1, dataType, arrayOffset, dataOffset);
+	void Renderable::setNormal(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
+		vao.setArray(valuePerVector, 1, dataType, arrayOffset);
 	}
 
-	void Renderable::setTexture(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset) {
-		vao.setArray(valuePerVector, 2, dataType, arrayOffset, dataOffset);
+	void Renderable::setTexture(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
+		vao.setArray(valuePerVector, 2, dataType, arrayOffset);
 	}
 
 	void Renderable::setIndices(GLubyte *i, GLsizei noi, GLenum it) {

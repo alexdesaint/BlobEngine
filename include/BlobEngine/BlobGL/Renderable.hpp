@@ -33,15 +33,15 @@ namespace BlobEngine::BlobGL {
 
 		//Renderable(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
 
-		void setBuffer(VertexBufferObject &vbo, GLsizei stride);
+		void setBuffer(VertexBufferObject &vbo, GLsizei stride, GLuint dataOffset = 0);
 
 		void setTexture(Texture &t);
 
-		void setTexture(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset);
+		void setTexture(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset);
 
-		void setPosition(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset);
+		void setPosition(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset);
 
-		void setNormal(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset, GLuint dataOffset);
+		void setNormal(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset);
 
 		void setIndices(GLubyte *indices, GLsizei numOfIndices, GLenum indicesType);
 
