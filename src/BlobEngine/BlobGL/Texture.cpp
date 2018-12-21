@@ -34,4 +34,17 @@ namespace BlobEngine::BlobGL {
 		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
+
+	void Texture::setDepth(unsigned int x, unsigned int y) {
+		depth = true;
+
+		glTextureStorage2D(texture, 1,  GL_DEPTH_COMPONENT16, x, y);
+		glTextureSubImage2D(texture, 0, 0, 0, x, y, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+
+	unsigned int Texture::getTexture() const {
+		return texture;
+	}
 }

@@ -13,10 +13,17 @@ namespace BlobEngine::BlobGL {
 
 		unsigned int texture, sampler;
 
+		bool depth = false;
+
 	public:
+		Texture();
+
+		unsigned int getTexture() const;
+
 		void load(std::string path);
 
-		Texture();
+		void setDepth(unsigned int x, unsigned int y);
+
 		~Texture();
 
 	};
