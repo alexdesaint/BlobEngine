@@ -25,16 +25,6 @@ namespace BlobEngine::BlobGL {
 		glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glBindSampler(0, sampler);*/
 
-
-
-		/*std::vector<GLubyte> image = {
-				255, 0, 0, 255, 		0, 255, 0, 255, 		0, 0, 255, 255,
-				255, 0, 0, 255, 		0, 255, 0, 255, 		0, 0, 255, 255,
-				255, 0, 0, 255, 		0, 255, 0, 255, 		0, 0, 255, 255,
-		};
-
-		unsigned int width = 3, height = 3;*/
-
 		sf::Image img_data;
 		if (!img_data.loadFromFile(path))
 			throw BlobException("Texture not loaded");

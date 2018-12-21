@@ -68,9 +68,10 @@ namespace BlobEngine::BlobGL {
 			height(height),
 			cameraPosition(0, 0, 2),
 			cameraLookAt(0, 0, 0),
-			cameraUp(0, 1, 0) {
+			cameraUp(0, 0, 1) {
 
 		sf::ContextSettings settings;
+		settings.attributeFlags = sf::ContextSettings::Core;
 		settings.depthBits = 24;
 		settings.stencilBits = 8;
 		settings.antialiasingLevel = 4;
@@ -102,7 +103,7 @@ namespace BlobEngine::BlobGL {
 	}
 
 	void Graphic::clear() {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
 	void Graphic::display() {
