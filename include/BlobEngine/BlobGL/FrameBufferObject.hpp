@@ -16,7 +16,7 @@ namespace BlobEngine::BlobGL {
 		}
 
 		~FrameBufferObject() {
-			glDeleteFramebuffers(&frameBufferObject);
+			glDeleteFramebuffers(1, &frameBufferObject);
 		}
 
 		void addTexture(Texture t) {
@@ -24,6 +24,10 @@ namespace BlobEngine::BlobGL {
 
 			glNamedFramebufferDrawBuffer(frameBufferObject, GL_NONE);
 			glNamedFramebufferReadBuffer(frameBufferObject, GL_NONE);
+		}
+
+		GLuint getFrameBufferObject() const {
+			return frameBufferObject;
 		}
 	};
 }

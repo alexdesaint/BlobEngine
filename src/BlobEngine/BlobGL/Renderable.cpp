@@ -143,13 +143,13 @@ namespace BlobEngine::BlobGL {
 		if (countF != sizeF)
 			throw BlobException(".obj parser : Error on reading F");
 
-		vboPoints.setPosition(points);
+		vboPoints.setPositionVAO(points);
 
 		vao.addBuffer(vboPoints, 3, 0, 0);
 	}*/
 
 	/*Renderable::Renderable(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices) : indices(indices.data()) {
-		vboPoints.setPosition(points);
+		vboPoints.setPositionVAO(points);
 		vao.addBuffer(vboPoints, 3, 0, 0);
 		indexed = true;
 	}
@@ -209,15 +209,15 @@ namespace BlobEngine::BlobGL {
 		return typeSize;
 	}
 
-	void Renderable::setPosition(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
+	void Renderable::setPositionVAO(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
 		vao.setArray(valuePerVector, 0, dataType, arrayOffset);
 	}
 
-	void Renderable::setNormal(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
+	void Renderable::setNormalVAO(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
 		vao.setArray(valuePerVector, 1, dataType, arrayOffset);
 	}
 
-	void Renderable::setTexture(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
+	void Renderable::setTexturePositionVAO(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
 		vao.setArray(valuePerVector, 2, dataType, arrayOffset);
 	}
 
@@ -227,6 +227,10 @@ namespace BlobEngine::BlobGL {
 		numOfIndices = noi;
 
 		indexed = true;
+	}
+
+	const VertexArrayObject &Renderable::getVao() const {
+		return vao;
 	}
 
 

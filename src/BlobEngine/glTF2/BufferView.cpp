@@ -6,7 +6,7 @@ using namespace std;
 
 namespace BlobEngine::glTF2 {
 
-	BufferView::BufferView(Reader::JsonExplorer explorer) : buffer(explorer) {
+	BufferView::BufferView(Reader::JsonExplorer explorer) {
 		explorer.goToBaseNode();
 
 		Reader::JsonExplorer buff;

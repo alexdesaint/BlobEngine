@@ -13,10 +13,11 @@ void main()
     vec3 lightPos = vec3(4.0, 4.0, 0.0);
     vec4 lightColor = vec4(1.0, 1.0, 1.0, 1.0);
     vec4 objectColor;
-    if(TexCoord.x == -1.0 && TexCoord.y == -1.0)
-        objectColor = vec4(0.0, 0.4, 0.4, 0.0);
-    else
-        objectColor = texture(ourTexture, TexCoord);
+    //if(TexCoord.x == -1.0 && TexCoord.y == -1.0)
+    objectColor = vec4(0.0, 0.4, 0.4, 0.5);
+    //else
+    //    objectColor = texture(ourTexture, TexCoord);
+
 
     //
     float ambientStrength = 0.2;
@@ -29,4 +30,5 @@ void main()
     vec4 diffuse = diff * lightColor;
 
     FragColor = (ambient + diffuse) * objectColor;
+
 }

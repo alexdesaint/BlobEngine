@@ -16,7 +16,6 @@ namespace BlobEngine::glTF2 {
 		Reader::JsonExplorer baseNode;
 
 		Asset asset;
-		Buffer buffer;
 		Mesh mesh;
 
 		std::vector<Scene> scenes;

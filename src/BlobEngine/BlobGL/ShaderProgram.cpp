@@ -183,3 +183,7 @@ void BlobEngine::BlobGL::ShaderProgram::addVertexShaderFile(const std::string &p
 	addVertexShader(f.toString());
 }
 
+GLint BlobEngine::BlobGL::ShaderProgram::getPosition(std::string name) {
+	return glGetUniformLocation(program, name.c_str());
+}
+

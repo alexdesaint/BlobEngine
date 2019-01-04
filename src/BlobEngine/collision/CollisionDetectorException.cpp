@@ -1,10 +1,10 @@
 //
 // Created by alexa on 30/03/2018.
 //
-#include <BlobEngine/CollisionDetectorException.hpp>
+#include <BlobEngine/Collision/CollisionDetectorException.hpp>
 #include <SFML/Graphics.hpp>
-#include <BlobEngine/Hit.hpp>
-#include <BlobEngine/CollisionDetector.hpp>
+#include <BlobEngine/Collision/Hit.hpp>
+#include <BlobEngine/Collision/CollisionDetector.hpp>
 #include <utility>
 #include <iostream>
 

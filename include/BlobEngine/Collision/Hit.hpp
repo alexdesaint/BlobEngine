@@ -6,7 +6,7 @@
 #define BLOBENGINE_HIT_HPP
 
 #include <BlobEngine/Geometrie.hpp>
-#include <BlobEngine/Reaction.hpp>
+#include <BlobEngine/Collision/Reaction.hpp>
 
 namespace BlobEngine {
 

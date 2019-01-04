@@ -2,6 +2,7 @@
 #include <BlobEngine/BlobException.hpp>
 #include <BlobEngine/BlobGL/Renderable.hpp>
 #include <BlobEngine/BlobGL/Graphic.hpp>
+#include <BlobEngine/BlobGL/Form.hpp>
 
 //std
 #include <iostream>
@@ -79,9 +80,9 @@ namespace BlobEngine::BlobGL {
 		settings.minorVersion = 5;
 
 		window = new sf::Window(sf::VideoMode(800, 600), "OpenGL", sf::Style::Default, settings);
-		((sf::Window*)window)->setVerticalSyncEnabled(true);
+		((sf::Window *) window)->setVerticalSyncEnabled(true);
 
-		((sf::Window*)window)->setActive(true);
+		((sf::Window *) window)->setActive(true);
 
 		if (!gladLoadGL()) throw BlobException("Can't load openGL");
 
@@ -91,47 +92,73 @@ namespace BlobEngine::BlobGL {
 		glEnable(GL_CULL_FACE); // cull face
 		glCullFace(GL_FRONT);// cull back face
 		glFrontFace(GL_CW);// GL_CCW for counter clock-wise
-		glEnable( GL_DEPTH_TEST );
+		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2, 0.2, 0.2, 1.0);
 
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
+
+		createVBO();
+
+		lastFrameTime = std::chrono::high_resolution_clock::now();
 	}
 
 	Graphic::~Graphic() {
-		delete ((sf::Window*)window);
+		deleteVBO();
+
+		delete ((sf::Window *) window);
 	}
 
 	void Graphic::clear() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
-	void Graphic::display() {
-		((sf::Window*)window)->display();
+	float Graphic::display() {
+		((sf::Window *) window)->display();
+
+
+		auto now = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<float> diff = now - lastFrameTime;
+		fpsCouner = fpsCouner + diff;
+		lastFrameTime = now;
 
 		if (!(++frameCount % 60)) {
-			static std::chrono::high_resolution_clock::time_point lastFrameTime;
-			auto now = std::chrono::high_resolution_clock::now();
-			std::chrono::duration<float> diff = now - lastFrameTime;
-			lastFrameTime = now;
-
-			std::string name = "Test : " + std::to_string(60 / diff.count()) + " FPS";
-
-			((sf::Window*)window)->setTitle(name);
+			std::string name = "Test : " + std::to_string(60 / fpsCouner.count()) + " FPS";
+			fpsCouner = std::chrono::duration<float>::zero();
+			((sf::Window *) window)->setTitle(name);
 		}
 
 		sf::Event event{};
-		while (((sf::Window*)window)->pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed) {
-				// end the program
-				quit = true;
-			}
-			else if (event.type == sf::Event::Resized) {
-				// adjust the viewport when the window is resized
-				glViewport(0, 0, event.size.width, event.size.height);
+		sf::Mouse::Button mouseButton;
+		sf::Keyboard::Key Key;
+
+		while (((sf::Window *) window)->pollEvent(event)) {
+			switch (event.type) {
+				case sf::Event::Closed :
+					quit = true;
+					break;
+				case sf::Event::Resized :
+					// adjust the viewport when the window is resized
+					glViewport(0, 0, event.size.width, event.size.height);
+					break;
+				case sf::Event::MouseButtonPressed :
+					mouseButton = event.mouseButton.button;
+					break;
+				case sf::Event::MouseButtonReleased :
+					mouseButton = event.mouseButton.button;
+					break;
+				case sf::Event::KeyPressed :
+					keys[event.key.code] = true;
+					break;
+				case sf::Event::KeyReleased :
+					keys[event.key.code] = false;
+					break;
+				default:
+					break;
 			}
 		}
+
+		return diff.count();
 	}
 
 	void Graphic::resize(unsigned int w, unsigned int h) {
@@ -141,10 +168,10 @@ namespace BlobEngine::BlobGL {
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 	}
 
-	std::ostream &operator<< (std::ostream &out, const glm::mat4 &vec) {
+	std::ostream &operator<<(std::ostream &out, const glm::mat4 &vec) {
 
-		for(int i = 0; i < 4; i++)
-			out << vec[i].x << " " << vec[i].y << " "<< vec[i].z << " " << vec[i].w << std::endl;
+		for (int i = 0; i < 4; i++)
+			out << vec[i].x << " " << vec[i].y << " " << vec[i].z << " " << vec[i].w << std::endl;
 		return out;
 	}
 
@@ -155,9 +182,9 @@ namespace BlobEngine::BlobGL {
 		glUniformMatrix4fv(program.projection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		glUniformMatrix4fv(program.view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(program.model, 1, GL_FALSE, glm::value_ptr(shapeModel * renderable.getModelMatrix()));
-		if(renderable.texture != nullptr)
+		if (renderable.texture != nullptr)
 			glBindTexture(GL_TEXTURE_2D, renderable.texture->texture);
-			//glBindImageTexture(0, renderable.texture->texture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGB8);
+		//glBindImageTexture(0, renderable.texture->texture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGB8);
 
 		if (renderable.indexed)
 			glDrawElements(GL_TRIANGLES, renderable.numOfIndices, renderable.indicesType, renderable.indices);
@@ -175,7 +202,7 @@ namespace BlobEngine::BlobGL {
 			std::cout << std::hex << r << " ";
 		std::cout << std::endl;
 */
-		for(auto r : shape.renderables)
+		for (auto r : shape.renderables)
 			draw(*r, program, modelMatrix);
 	}
 
@@ -189,7 +216,7 @@ namespace BlobEngine::BlobGL {
 			std::cout << std::hex << r << " ";
 		std::cout << std::endl;
 */
-		for(auto r : scene.shapes)
+		for (auto r : scene.shapes)
 			draw(*r, program, modelMatrix);
 	}
 
@@ -209,5 +236,9 @@ namespace BlobEngine::BlobGL {
 		cameraPosition = glm::vec3(x, y, z);
 
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
+	}
+
+	const std::array<bool, Key::KeyCount> &Graphic::getKeys() const {
+		return keys;
 	}
 }

@@ -13,7 +13,6 @@ namespace BlobEngine::glTF2{
 			GLfloat coor[3];
 			GLfloat normal[3];
 			GLfloat texCoor[2];
-			GLubyte color[4];
 		};
 
 		std::vector<Data> dataBuffer;
@@ -22,10 +21,22 @@ namespace BlobEngine::glTF2{
 
 		Accessor accessor;
 
-		std::vector<std::vector<BlobGL::Renderable>> primitives;
+		class Primitive : public BlobGL::Renderable {
+			friend Mesh;
+		private:
+			unsigned int dataBufferOffset = 0;
+
+			int position = -1;
+			int normal = -1;
+			int indices = -1;
+		};
+
+		std::vector<std::vector<Primitive>> primitives;
+
+		BlobGL::VertexBufferObject vbo;
 
 	public:
-		explicit Mesh(Reader::JsonExplorer explorer, BlobGL::VertexBufferObject &vbo);
+		explicit Mesh(Reader::JsonExplorer explorer);
 
 		friend std::ostream &operator<<(std::ostream &s, Mesh &a);
 

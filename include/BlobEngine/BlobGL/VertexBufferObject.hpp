@@ -20,6 +20,8 @@ namespace BlobEngine::BlobGL {
 	public:
 		VertexBufferObject();
 
+		VertexBufferObject(GLubyte *data, GLsizeiptr dataSize);
+
 		void setData(GLubyte *data, GLsizeiptr dataSize);
 
 		~VertexBufferObject();

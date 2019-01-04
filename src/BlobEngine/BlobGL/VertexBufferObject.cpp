@@ -9,6 +9,12 @@ namespace BlobEngine::BlobGL {
 		glCreateBuffers(1, &vertexBufferObject);
 	}
 
+	VertexBufferObject::VertexBufferObject(GLubyte *data, GLsizeiptr dataSize) {
+		glCreateBuffers(1, &vertexBufferObject);
+
+		setData(data, dataSize);
+	}
+
 	VertexBufferObject::~VertexBufferObject() {
 		glDeleteBuffers(1, &vertexBufferObject);
 	}
@@ -18,4 +24,5 @@ namespace BlobEngine::BlobGL {
 
 		glNamedBufferStorage(vertexBufferObject, dataSize, data, 0);
 	}
+
 }

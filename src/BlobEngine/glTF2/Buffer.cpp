@@ -37,11 +37,7 @@ namespace BlobEngine::glTF2 {
 
 		if(data.size() > 1)
 			throw BlobException("Multiple Buffer Not Supported");
-
-		setData(data[0].d.data(), data[0].byteLength);
 	}
-
-
 
 	std::ostream &operator<<(std::ostream &s, const Buffer &a) {
 		s << "Buffer {" << std::endl;
@@ -55,7 +51,7 @@ namespace BlobEngine::glTF2 {
 		return s;
 	}
 
-	const vector<Buffer::Data> &Buffer::getData() const {
-		return data;
+	const vector<GLubyte> &Buffer::getData() const {
+		return data[0].d;
 	}
 }

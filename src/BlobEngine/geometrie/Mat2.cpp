@@ -29,21 +29,11 @@ namespace BlobEngine {
 		
 		if (oldLength != 0) {
 			Rapport = std::sqrt(newLength / oldLength);
-			
-			if (x > 0)
-				x = (x * Rapport) + 1;
-			else
-				x = (x * Rapport) - 1;
-			
-			if (y > 0)
-				y = (y * Rapport) + 1;
-			else
-				y = (y * Rapport) - 1;
+
+			x *= Rapport;
+			y *= Rapport;
 		}
-		
-		if (length2() < newLength)
-			std::cout << "Error on setLength" << std::endl;
-		
+
 		return *this;
 	}
 

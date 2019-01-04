@@ -7,16 +7,16 @@ using namespace std;
 
 namespace BlobEngine::glTF2 {
 
-	Mesh::Mesh(Reader::JsonExplorer explorer, BlobGL::VertexBufferObject &vbo) : accessor(explorer), buffer(explorer) {
+	Mesh::Mesh(Reader::JsonExplorer explorer) : accessor(explorer), buffer(explorer) {
 		explorer.goToBaseNode();
-
+/*
 		Reader::JsonExplorer dat;
 
 		primitives.resize((size_t)explorer.getArraySize("meshes"));
 
 		auto b = buffer.getData();
 
-		unsigned int totalPoints = 0;
+		size_t totalPoints = 0;
 
 		for(int i = 0; i < primitives.size(); i++) {
 			dat = explorer.getArrayObject("meshes", i);
@@ -28,56 +28,162 @@ namespace BlobEngine::glTF2 {
 			for (int j = 0; j < primitives[i].size(); j++) {
 				prim = dat.getArrayObject("primitives", j);
 
-				primitives[i][j].setBuffer(vbo, sizeof(Data));
+				if(prim.hasMember("indices")) {
+					primitives[i][j].indices = prim.getInt("indices");
+				}
 
-				Reader::JsonExplorer attr = explorer.getObject("attributes");
+				Reader::JsonExplorer attr = prim.getObject("attributes");
 
-				totalPoints += attr.getInt("POSITION");
+				primitives[i][j].position = attr.getInt("POSITION");
+
+				totalPoints +=  accessor.getNumOfVector(primitives[i][j].position);;
+
+				if(attr.hasMember("NORMAL")) {
+					primitives[i][j].normal = attr.getInt("NORMAL");
+				}
 			}
 		}
 
 		dataBuffer.resize(totalPoints);
 
-		for(int i = 0; i < primitives.size(); i++) {
-			dat = explorer.getArrayObject("meshes", i);
+		unsigned int dataBufferOffset = 0;
 
-			Reader::JsonExplorer prim;
+		for(auto &i : primitives) {
+			for (auto &j : i) {
+				if(j.indices != -1) {
+					auto indices = (GLubyte *)&b[accessor.getOffset(j.indices)];
 
-			for (int j = 0; j < primitives[i].size(); j++) {
-				prim = dat.getArrayObject("primitives", j);
+					j.setIndices(indices, accessor.getNumOfVector(j.indices), accessor.getType(j.indices));
+				}
 
-				//if(prim.hasMember("indices")) {
-				//	int indices = explorer.getInt("indices");
-				//	primitives[i][j].setIndices(a.getData(indices), a.getNumOfVector(indices), a.getType(indices));
-				//}
+				int numOfVector = accessor.getNumOfVector(j.position);
+				int positionOffset = accessor.getOffset(j.position);
 
-				Reader::JsonExplorer attr;
+				auto positions = (GLfloat*)&b[positionOffset];
 
-				attr = explorer.getObject("attributes");
+				for(int k = 0; k < numOfVector; k++) {
+					dataBuffer[k + dataBufferOffset].coor[0] = positions[k*3];
+					dataBuffer[k + dataBufferOffset].coor[1] = positions[k*3 + 1];
+					dataBuffer[k + dataBufferOffset].coor[2] = positions[k*3 + 2];
+				}
 
-				int position = attr.getInt("POSITION");
-
-				GLsizei positionOffset = accessor.getOffset(position);
-
-				GLfloat *positions = (GLfloat *)b[positionOffset];
-
-				//primitives[i][j].setPosition(
+				//primitives[i][j].setPositionVAO(
 				//		a.getData(position),
 				//		a.getNumOfVector(position),
 				//		a.getValuePerVector(position),
 				//		a.getType(position)
 				//);
 
-				if(attr.hasMember("NORMAL")) {
-					int normal = attr.getInt("NORMAL");
+				for(int k = 0; k < numOfVector; k++) {
+					dataBuffer[k + dataBufferOffset].texCoor[0] = -1;
+					dataBuffer[k + dataBufferOffset].texCoor[1] = -1;
+				}
 
-					//primitives[i][j].setNormal(
+				if(j.normal != -1) {
+					int normalOffset = accessor.getOffset(j.normal);
+
+					auto normals = (GLfloat*)&b[normalOffset];
+
+					for(int k = 0; k < numOfVector; k++) {
+						dataBuffer[k + dataBufferOffset].normal[0] = normals[k*3];
+						dataBuffer[k + dataBufferOffset].normal[1] = normals[k*3 + 1];
+						dataBuffer[k + dataBufferOffset].normal[2] = normals[k*3 + 2];
+					}
+
+
+					//primitives[i][j].setNormalVAO(
 					//		a.getData(normal),
 					//		a.getNumOfVector(normal),
 					//		a.getValuePerVector(normal),
 					//		a.getType(normal)
 					//);
 				}
+
+				j.dataBufferOffset = dataBufferOffset;
+
+				dataBufferOffset += numOfVector;
+			}
+		}
+*/
+		std::vector<Data> data = {
+				// x = devant
+				// y = droite
+				// z = haut
+
+				// Top face
+				{{-1.0, -1.0, 1.0}, {0.0, 0.0, 0}, {-1.0, -1.0}},		//hg
+				{{1.0,  -1.0, 1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//bg
+				{{1.0,  1.0,  1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//bd
+				{{-1.0, 1.0,  1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//hd
+
+				// Bottom face
+				{{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//bg
+				{{-1.0, 1.0,  -1.0}, {0.0, 0.0, 0}, {-1.0, -1.0}},	//bd
+				{{1.0,  1.0,  -1.0}, {0.0, 0.0, 0}, {-1.0, -1.0}},		//hd
+				{{1.0,  -1.0, -1.0}, {0.0, 0.0, 0}, {-1.0, -1.0}},	//hg
+
+				// Right face
+				{{-1.0, 1.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//bd
+				{{-1.0, 1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//hd
+				{{1.0,  1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//hg
+				{{1.0,  1.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//bg
+
+				// Left face
+				{{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//bg
+				{{1.0,  -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//bd
+				{{1.0,  -1.0, 1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//hd
+				{{-1.0, -1.0, 1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//hg
+
+				// Front face
+				{{1.0,  -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//bg
+				{{1.0,  1.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//bd
+				{{1.0,  1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//hd
+				{{1.0,  -1.0, 1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//hg
+
+				// Back face
+				{{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},		//bd
+				{{-1.0, -1.0, 1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//hd
+				{{-1.0, 1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//hg
+				{{-1.0, 1.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//bg
+
+				// ground
+				{{0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//hg
+				{{1.0,  0.0, 0.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//bg
+				{{0.0,  1.0,  0.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//bd
+				{{-4.0, 4.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},	//hd
+
+		};
+
+		/*const std::vector<GLushort> cudeIndices = {
+				24, 25, 26
+		};*/
+
+		const std::vector<GLushort> cudeIndices = {
+				0, 1, 2, 0, 2, 3,    // front
+				4, 5, 6, 4, 6, 7,    // back
+				8, 9, 10, 8, 10, 11,   // top
+				12, 13, 14, 12, 14, 15,   // bottom
+				16, 17, 18, 16, 18, 19,   // right
+				20, 21, 22, 20, 22, 23,   // left
+		};
+
+		vbo.setData((GLubyte*)data.data(), sizeof(Data) * data.size());
+
+		//vbo.setData((GLubyte*)dataBuffer.data(), dataBuffer.size() * sizeof(Data));
+
+		primitives.resize(1);
+
+		primitives[0].resize(1);
+
+		for(auto &i : primitives) {
+			for(auto &j : i) {
+				j.setBuffer(vbo, sizeof(Data), j.dataBufferOffset * sizeof(Data));
+
+				j.setPositionVAO(3, GL_FLOAT, 0);
+				j.setNormalVAO(3, GL_FLOAT, sizeof(Data::coor));
+				j.setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::normal));
+
+				j.setIndices((GLubyte*)cudeIndices.data(), (GLsizei)cudeIndices.size(), GL_UNSIGNED_SHORT);
 			}
 		}
 	}

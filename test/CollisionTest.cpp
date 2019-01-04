@@ -1,328 +1,112 @@
 #include <iostream>
 #include <list>
-#include <SFML/Graphics.hpp>
-#include <BlobEngine/CollisionDetector.hpp>
-#include <BlobEngine/CollisionDetectorException.hpp>
+#include <deque>
+
+#include <BlobEngine/Collision/CollisionDetector.hpp>
+
+#include <BlobEngine/BlobGL/Graphic.hpp>
+#include <BlobEngine/BlobGL/Form.hpp>
 
 using namespace BlobEngine;
+using namespace BlobEngine::BlobGL;
 
-enum directions{
-	UP = 0,
-	DOWN = 1,
-	LEFT = 2,
-	RIGHT = 3
-};
-
-class Box : public LineStatic {
+class MainRect : public RectDynamic, public Cube {
 private:
-	sf::RectangleShape shape;
+	const std::array<bool, Key::KeyCount> &keys;
 
-	int colorState = 0;
-
-	Reaction hit(const BlobEngine::PhysicalObject& from) {
-
-		sf::Color c = shape.getFillColor();
-
-		switch (colorState){
-			case 0 :
-				c.r-=15;
-				c.g+=15;
-
-				if(c.g == 255)
-					colorState = 1;
-				break;
-			case 1 :
-				c.g-=15;
-				c.b+=15;
-
-				if(c.b == 255)
-					colorState = 2;
-				break;
-			case 2 :
-				c.b-=15;
-				c.r+=15;
-
-				if(c.r == 255)
-					colorState = 0;
-				break;
-		}
-
-		shape.setFillColor(c);
-
-		return IGNORE;
-	}
-
-public:
-	explicit Box(Point2f position, Point2f size = Point2f(20, 20)) : LineStatic(0) {
-
-		shape.setSize(sf::Vector2f(size.x, size.y));
-		shape.setOrigin(size.x / 2, size.y / 2);
-		shape.setPosition(sf::Vector2f(position.x, position.y));
-		shape.setFillColor(sf::Color(255, 0, 0));
-
-		int x = static_cast<int>(size.x / 2);
-		int y = static_cast<int>(size.y / 2);
-
-		Point2f a = position + Point2f(x, y);
-		Point2f b = position + Point2f(x, -y);
-		Point2f c = position + Point2f(-x, -y);
-		Point2f d = position + Point2f(-x, y);
-
-		lines.emplace_back(a);
-		lines.emplace_back(b);
-		lines.emplace_back(c);
-		lines.emplace_back(d);
-	}
-
-	void draw(sf::RenderWindow *window) {
-		window->draw(shape);
-	}
-};
-
-class Box2 : public CircleStatic{
-private:
-	sf::CircleShape shape;
-
-public:
-	explicit Box2(Point2f position) : CircleStatic(0) {
-
-		mainCircle.position = position;
-		mainCircle.rayon = 20;
-
-		shape.setOrigin(mainCircle.rayon, mainCircle.rayon);
-		shape.setPosition(sf::Vector2f(position.x, position.y));
-		shape.setFillColor(sf::Color(255, 150, 0));
-		shape.setRadius(mainCircle.rayon);
-	}
-
-	void draw(sf::RenderWindow *window) {
-		window->draw(shape);
-	}
-};
-
-class BounceBall : public CircleDynamic{
-private:
-	float maxSpeed, orientation;
-	sf::CircleShape shape;
-
-	Reaction hit(const BlobEngine::PhysicalObject& from) override {
-		return BOUNCE;
-	}
-public:
-
-	explicit BounceBall(int x, int y, int r) : CircleDynamic(0) {
-
-		speed.x = 400;
-		speed.y = 400;
-
-		mainCircle.position.x = x;
-		mainCircle.position.y = y;
-		mainCircle.rayon = r;
-		orientation = 0;
-
-		shape.setRadius(mainCircle.rayon);
-		shape.setOrigin(10, 10);
-		shape.setPosition(sf::Vector2f(mainCircle.position.x, mainCircle.position.y));
-		maxSpeed = 200;
-	}
-
-	void draw(sf::RenderWindow *window) {
-		shape.setPosition(sf::Vector2f(mainCircle.position.x, mainCircle.position.y));
-		window->draw(shape);
-	}
-};
-
-class Player : public CircleDynamic{
-private:
-	float maxSpeed;
-	sf::CircleShape shape;
-
-	std::array<bool, 4> command = {false, false, false, false};
-
-	Reaction hit(const BlobEngine::PhysicalObject& from) override {
-		return ROLL;
-	}
-
-	void update() {
+	void preCollisionUpdate() final {
 		Vec2f Acceleration;
 
-		if (command[directions::LEFT]) {
-			Acceleration.x -= 1;
-		}
-		if (command[directions::RIGHT]) {
-			Acceleration.x += 1;
-		}
-		if (command[directions::UP]) {
+		if (keys[Key::Left]) {
 			Acceleration.y -= 1;
 		}
-		if (command[directions::DOWN]) {
+		if (keys[Key::Right]) {
 			Acceleration.y += 1;
 		}
+		if (keys[Key::Up]) {
+			Acceleration.x -= 1;
+		}
+		if (keys[Key::Down]) {
+			Acceleration.x += 1;
+		}
 
-		if (Acceleration.x != 0 || Acceleration.y != 0) {
-			speed = Acceleration.setLength(maxSpeed);
-		}
-		else {
-			speed = Vec2f();
-		}
+		if (!Acceleration.isNull()) {
+			speed = Acceleration.setLength(1);
+		} else
+			speed.reset();
 	}
+
+	void postCollisionUpdate() final {
+		setPosition(position.x, position.y, 0.5f);
+	}
+
 public:
 
-	explicit Player(int x, int y, int r) : CircleDynamic(0) {
-		mainCircle.position.x = x;
-		mainCircle.position.y = y;
-		mainCircle.rayon = r;
+	explicit MainRect(int x, int y, int r, const std::array<bool, Key::KeyCount> &keys) : RectDynamic(1), keys(keys) {
+		position = {(float)x, (float)y};
+		size = {(float)r, (float)r};
 
-		shape.setRadius(mainCircle.rayon);
-		shape.setOrigin(10, 10);
-		shape.setPosition(sf::Vector2f(mainCircle.position.x, mainCircle.position.y));
-		maxSpeed = 200;
+		setScale(r, r, r);
+		setPosition(x, y, 0.5f);
 	}
+};
 
-	void draw(sf::RenderWindow *window) {
-		update();
+class Box : public RectStatic, public Cube {
+private:
 
-		shape.setPosition(sf::Vector2f(mainCircle.position.x, mainCircle.position.y));
-		window->draw(shape);
-	}
+public:
+	explicit Box(int x, int y, int r = 1) : RectStatic(0) {
+		position = {(float)x, (float)y};
+		size = {(float)r, (float)r};
 
-	void keyPress(directions d) {
-		command[d] = true;
-	}
-
-	void keyReleased(directions d) {
-		command[d] = false;
+		setScale(r, r, r);
+		setPosition(x, y, 0.5f);
 	}
 };
 
 int main() {
 
 	try {
-		sf::ContextSettings settings;
-		settings.antialiasingLevel = 8;
-
-		unsigned int width = 620, height = 220;
-
-		sf::RenderWindow window(sf::VideoMode(width, height), "BlobEngine test", sf::Style::Close, settings);
-		window.setFramerateLimit(60);
+		Graphic graphic(640, 480);
+		ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
 
 		CollisionDetector collisionDetector;
 
-		std::list<Box> boxs;
+		Plane p;
 
-		Player player(width/2, height/4, 10);
+		p.move(0, 2, 0);
 
-		//BounceBall bounceBall(width/2, 3*height/4, 10);
+		p.setScale(2,2,2);
 
-		Box2 box1(Point2f(width/4, height/2));
+		OctagonalPrism op;
 
-		Box2 box2(Point2f(width/2, height/2));
+		MainRect mainRect(4, 4, 1, graphic.getKeys());
 
-		Box2 box3(Point2f(3*width/4, height/2));
+		std::list<Box> rectanges;
 
-		for (int i = 0; i < width; i += 20) {
-			boxs.emplace_back(Point2f(10 + i, 10));
-			boxs.emplace_back(Point2f(10 + i, height - 10));
-		}
+		rectanges.emplace_back(1, 0);
+		rectanges.emplace_back(0, 1);
+		rectanges.emplace_back(-1, 0);
+		rectanges.emplace_back(0, -1);
 
-		for (int i = 20; i < height - 20; i += 20) {
-			boxs.emplace_back(Point2f(10, 10 + i));
-			boxs.emplace_back(Point2f(width - 10, 10 + i));
-		}
+		graphic.setCameraPosition(10, 0, 10);
 
-		for (int i = 40; i < height - 40; i += 40) {
-			boxs.emplace_back(Point2f(80, 10 + i), Point2f(80, 20));
-			boxs.emplace_back(Point2f(width - 50, 10 + i));
-		}
+		while (graphic.isOpen()) {
+			graphic.clear();
 
-
-
-		int count = 0;
-
-		while (window.isOpen()) {
-			window.clear();
-
-			sf::Keyboard::Key Key;
-			sf::Event event{};
-			sf::Mouse::Button mouseButton;
-
-			while (window.pollEvent(event)) {
-				switch (event.type) {
-					case sf::Event::Closed :
-						window.close();
-						break;
-					case sf::Event::KeyPressed :
-						Key = event.key.code;
-
-						switch (Key) {
-							case sf::Keyboard::Left :
-								player.keyPress(directions::LEFT);
-								break;
-							case sf::Keyboard::Right :
-								player.keyPress(directions::RIGHT);
-								break;
-							case sf::Keyboard::Up :
-								player.keyPress(directions::UP);
-								break;
-							case sf::Keyboard::Down :
-								player.keyPress(directions::DOWN);
-								break;
-							default:
-								break;
-						}
-						break;
-					case sf::Event::KeyReleased :
-						Key = event.key.code;
-
-						switch (Key) {
-							case sf::Keyboard::Left :
-								player.keyReleased(directions::LEFT);
-								break;
-							case sf::Keyboard::Right :
-								player.keyReleased(directions::RIGHT);
-								break;
-							case sf::Keyboard::Up :
-								player.keyReleased(directions::UP);
-								break;
-							case sf::Keyboard::Down :
-								player.keyReleased(directions::DOWN);
-								break;
-							default:
-								break;
-						}
-						break;
-					default:
-						break;
-				}
+			for(auto &rect : rectanges) {
+				graphic.draw(rect, shaderProgram);
 			}
 
 			collisionDetector.update();
-			
-			if(count == 60){
-				window.setTitle(sf::String(std::to_string(collisionDetector.getFPS())));
-				count = 0;
-			}
-			count++;
 
-			for (auto &box : boxs) {
-				box.draw(&window);
-			}
+			graphic.draw(p, shaderProgram);
+			graphic.draw(mainRect, shaderProgram);
 
-			player.draw(&window);
+			graphic.display();
 
-			//bounceBall.clear(&window);
-
-			box1.draw(&window);
-			box2.draw(&window);
-			box3.draw(&window);
-
-			window.display();
 		}
-	}
-	catch (CollisionDetectorException &e){
-		e.showDebugWindow();
-	}
-	catch (std::exception &e) {
+	} catch (std::exception &e) {
 		std::cout << e.what() << std::endl;
 	}
 	return 0;

@@ -33,6 +33,8 @@ namespace BlobEngine::BlobGL {
 		void linkShaders();
 
 		GLuint getProgram() const;
+
+		GLint getPosition(std::string name);
 	};
 
 }

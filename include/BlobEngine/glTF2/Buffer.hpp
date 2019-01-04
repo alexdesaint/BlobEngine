@@ -10,7 +10,7 @@
 
 namespace BlobEngine::glTF2 {
 
-	class Buffer : public BlobGL::VertexBufferObject {
+	class Buffer {
 	private:
 		struct Data {
 			std::string uri; //!< The uri of the buffer. Can be a filepath, a data uri, etc. (required)
@@ -26,7 +26,7 @@ namespace BlobEngine::glTF2 {
 
 		friend std::ostream &operator<<(std::ostream &s, const Buffer &a);
 
-		const std::vector<Data> &getData() const;
+		const std::vector<GLubyte> &getData() const;
 	};
 }
 

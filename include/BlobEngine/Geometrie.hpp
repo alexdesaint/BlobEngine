@@ -173,4 +173,17 @@ namespace  BlobEngine {
 			return pointA.y - getGradient() * pointA.x;
 		}
 	};
+
+	class Rectangle {
+	public:
+		Point2f position;
+		Vec2f size;
+
+
+		Rectangle() : position(), size() {}
+
+		Rectangle(Point2f position, Vec2f size) : position(position), size(size) {}
+
+		bool overlap(const Rectangle &r);
+	};
 };

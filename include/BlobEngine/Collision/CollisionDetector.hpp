@@ -2,38 +2,37 @@
 
 #include <deque>
 #include <BlobEngine/Geometrie.hpp>
-#include <BlobEngine/Hit.hpp>
+#include <BlobEngine/Collision/Hit.hpp>
 #include <BlobEngine/BlobException.hpp>
-#include <BlobEngine/Reaction.hpp>
+#include <BlobEngine/Collision/Reaction.hpp>
 
 namespace BlobEngine {
 
 	class CollisionDetector;
-	class CollisionDetectorException;
 
 	class PhysicalObject{
 		friend CollisionDetector;
-	public:
+	private:
 		unsigned int objectType;
 		
 	protected:
 		explicit PhysicalObject(unsigned int objectType) : objectType(objectType) { }
 
-	public:
-
 		virtual Reaction hit(const PhysicalObject& from) {
 			return IGNORE;
 		}
+
+		virtual void preCollisionUpdate() {}
+
+		virtual void postCollisionUpdate() {}
 	};
 
-	class CircleStatic : PhysicalObject {
+	class CircleStatic : public PhysicalObject {
 		friend CollisionDetector;
-		friend CollisionDetectorException;
 	private:
 		std::deque<CircleStatic*>::iterator elementIt{};
 	protected:
 		Circle mainCircle{};
-		//std::list<Circle> circles{};
 
 		void enableCollision();
 
@@ -51,7 +50,6 @@ namespace BlobEngine {
 
 	class CircleDynamic : public PhysicalObject {
 		friend CollisionDetector;
-		friend CollisionDetectorException;
 	private:
 		std::deque<CircleDynamic*>::iterator elementIt{};
 	protected:
@@ -72,9 +70,49 @@ namespace BlobEngine {
 		}
 	};
 
-	class LineStatic  : PhysicalObject {
+	class RectStatic : public PhysicalObject, public Rectangle {
 		friend CollisionDetector;
-		friend CollisionDetectorException;
+	private:
+		std::deque<RectStatic*>::iterator elementIt{};
+	protected:
+
+		void enableCollision();
+
+		void disableCollision();
+
+	public:
+		explicit RectStatic(unsigned int objectType) : PhysicalObject(objectType) {
+			enableCollision();
+		}
+
+		~RectStatic() {
+			disableCollision();
+		}
+	};
+
+	class RectDynamic : public PhysicalObject, public Rectangle {
+		friend CollisionDetector;
+	private:
+		std::deque<RectDynamic*>::iterator elementIt{};
+	protected:
+		Vec2f speed{};
+
+		void enableCollision();
+
+		void disableCollision();
+
+	public:
+		explicit RectDynamic(unsigned int objectType) : PhysicalObject(objectType) {
+			enableCollision();
+		}
+
+		~RectDynamic() {
+			disableCollision();
+		}
+	};
+
+	class LineStatic : public PhysicalObject {
+		friend CollisionDetector;
 	private:
 		std::deque<LineStatic*>::iterator elementIt{};
 	protected:
@@ -97,46 +135,27 @@ namespace BlobEngine {
 	class CollisionDetector {
 		friend CircleStatic;
 		friend CircleDynamic;
+		friend RectStatic;
+		friend RectDynamic;
 		friend LineStatic;
 	private:
-		float timeFlow;
-		unsigned int frameCount = 0;
-		float frameCountTimer = 0;
 
 		static std::deque<CircleStatic *> circleStaticList;
 		static std::deque<CircleDynamic *> circleDynamicList;
+		static std::deque<RectStatic *> rectStaticList;
+		static std::deque<RectDynamic *> rectDynamicList;
 		static std::deque<LineStatic *> lineStaticList;
 
-		float getElapsedTime();
+		float timeFlow;
 
 	public:
 		
-		PhysicalObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
+		//PhysicalObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
 
-		void checkCollision(CircleDynamic &object);
+		//void checkCollision(CircleDynamic &object);
 
-		CollisionDetector() : timeFlow(getElapsedTime()) {}
+		void checkCollision(RectDynamic &object);
 
-		void update() {
-			timeFlow = getElapsedTime();
-
-			if(timeFlow > 0.2f)
-				timeFlow = 0.2f;
-
-			for (auto &object : circleDynamicList) {
-				if(!object->speed.isNull())
-					checkCollision(*object);
-			}
-
-			frameCountTimer += timeFlow;
-			frameCount++;
-		}
-
-		float getFPS() {
-			float fps =  frameCount / frameCountTimer;
-			frameCountTimer = 0;
-			frameCount = 0;
-			return fps;
-		}
+		void update();
 	};
 }

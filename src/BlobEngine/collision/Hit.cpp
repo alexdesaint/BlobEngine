@@ -1,4 +1,4 @@
-#include <BlobEngine/Hit.hpp>
+#include <BlobEngine/Collision/Hit.hpp>
 
 #include <cmath>
 

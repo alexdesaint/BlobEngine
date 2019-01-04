@@ -1,8 +1,8 @@
 #include <iostream>
 #include <list>
 #include <SFML/Graphics.hpp>
-#include <BlobEngine/Hit.hpp>
-#include <BlobEngine/CollisionDetector.hpp>
+#include <BlobEngine/Collision/Hit.hpp>
+#include <BlobEngine/Collision/CollisionDetector.hpp>
 
 using namespace BlobEngine;
 
@@ -60,7 +60,7 @@ public:
 	}
 };
 
-class MainCircle : public CircleDynamic {
+class MainRect : public CircleDynamic {
 private:
 	sf::CircleShape circleShape;
 	std::array<bool, 4> command = {false, false, false, false};
@@ -96,7 +96,7 @@ public:
 		return ROLL;
 	}
 
-	explicit MainCircle(int x, int y, int r, int mx, int my) : CircleDynamic(0) {
+	explicit MainRect(int x, int y, int r, int mx, int my) : CircleDynamic(0) {
 
 		disableCollision();
 		
@@ -248,7 +248,7 @@ int main() {
 
 		CollisionDetector collisionDetector;
 		
-		MainCircle object(500, 380, 20, 300, 300);
+		MainRect object(500, 380, 20, 300, 300);
 
 		std::list<StaticCircle> circleList;
 		std::list<StaticRect> rectList;

@@ -83,7 +83,7 @@ namespace BlobEngine::glTF2 {
 			for (auto &m : d.min)
 				s << m << " ";
 			s << endl;
-
+/*
 			auto *points = a.bufferView.getData(d.bufferView, d.byteOffset);
 			auto size = a.bufferView.getSize(d.bufferView, d.byteOffset);
 
@@ -101,7 +101,7 @@ namespace BlobEngine::glTF2 {
 				default:
 					s << "type " << d.componentType << " not implemented" << endl;
 					break;
-			}
+			}*/
 			s << "}" << endl;
 		}
 

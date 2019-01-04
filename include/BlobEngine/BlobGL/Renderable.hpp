@@ -16,7 +16,7 @@ namespace BlobEngine::BlobGL {
 
 	class Renderable : public Movable {
 		friend Graphic;
-	protected:
+	private:
 
 		GLubyte *indices{};
 		GLsizei numOfIndices{};
@@ -37,14 +37,15 @@ namespace BlobEngine::BlobGL {
 
 		void setTexture(Texture &t);
 
-		void setTexture(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset);
+		void setTexturePositionVAO(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset);
 
-		void setPosition(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset);
+		void setPositionVAO(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset);
 
-		void setNormal(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset);
+		void setNormalVAO(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset);
 
 		void setIndices(GLubyte *indices, GLsizei numOfIndices, GLenum indicesType);
 
+		const VertexArrayObject &getVao() const;
 	};
 }
 

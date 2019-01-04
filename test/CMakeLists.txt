@@ -2,7 +2,7 @@ add_executable(HitTest HitTest.cpp)
 target_link_libraries(HitTest Collision Geometrie sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread)
 
 add_executable(CollisionTest CollisionTest.cpp)
-target_link_libraries(CollisionTest Collision Geometrie sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread)
+target_link_libraries(CollisionTest Collision BlobGL)
 
 add_executable(SFMLGraphicTest SFMLGraphicTest.cpp)
 target_link_libraries(SFMLGraphicTest Graphic glad sfml-system sfml-graphics sfml-window -lglu32 -lopengl32 -static-libgcc -static-libstdc++ -static -lpthread)
@@ -15,6 +15,9 @@ target_link_libraries(OpenGLtest BlobGL glad -lglu32 -lopengl32 ${SDL2_LIBRARIES
 
 add_executable(BlobGLtest BlobGLtest.cpp)
 target_link_libraries(BlobGLtest BlobGL)
+
+add_executable(TilemapCollisionTest TilemapCollisionTest.cpp)
+target_link_libraries(TilemapCollisionTest BlobGL Collision)
 
 #STATIC -lmingw32 SDL2main SDL2-static
 #STATIC -mwindows -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
