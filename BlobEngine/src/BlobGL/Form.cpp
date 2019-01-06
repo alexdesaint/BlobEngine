@@ -141,7 +141,7 @@ namespace BlobEngine::BlobGL {
 		delete vbo;
 	}
 
-	Cube::Cube() {
+	Cube::Cube() : Texture(0, 100, 100) {
 		setBuffer(*vbo, sizeof(Data));
 
 		setPositionVAO(3, GL_FLOAT, 0);
@@ -150,9 +150,7 @@ namespace BlobEngine::BlobGL {
 
 		setIndices((GLubyte *) cubeIndices, (GLsizei) sizeof(cubeIndices), GL_UNSIGNED_SHORT);
 
-		//t.load("../data/cube.png");
-
-		setTexture(t);
+		setTexture(*this);
 	}
 
 	Plane::Plane() {
@@ -164,7 +162,7 @@ namespace BlobEngine::BlobGL {
 
 		setIndices((GLubyte *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
 
-		//t.load("../data/cube.png");
+		//t.loadBMPtexture("../data/cube.png");
 
 		setTexture(t);
 	}
@@ -178,7 +176,7 @@ namespace BlobEngine::BlobGL {
 
 		setIndices((GLubyte *) octagonalPrismIndices, (GLsizei) sizeof(octagonalPrismIndices), GL_UNSIGNED_SHORT);
 
-		//t.load("../data/cube.png");
+		//t.loadBMPtexture("../data/cube.png");
 
 		setTexture(t);
 	}

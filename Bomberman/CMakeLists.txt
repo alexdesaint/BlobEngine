@@ -1,4 +1,4 @@
-project(BomberMan)
+project(BomberMan CXX)
 
 include_directories(include)
 

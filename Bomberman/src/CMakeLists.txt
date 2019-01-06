@@ -1,6 +1,6 @@
 add_subdirectory(BomberBlob)
 
-add_executable(game
+add_executable(BomberMan
         main.cpp
 #		GameMenu.cpp GameMenu.hpp
 #		BomberBlob/BomberBlob.cpp
@@ -17,7 +17,7 @@ add_executable(game
 #		BomberBlob/InfoBar.cpp
 		)
 
-target_link_libraries(game -lBlobGL -lCollision -lGeometrie -lFileReader sfml-system sfml-graphics sfml-window) #-static-libgcc -static-libstdc++ -static -lpthread )#-lfreetype)
+target_link_libraries(BomberMan BlobGL Collision -static -static-libgcc -static-libstdc++ -lpthread)
 
 add_executable(Server Server.cpp)
 target_link_libraries(Server sfml-network)

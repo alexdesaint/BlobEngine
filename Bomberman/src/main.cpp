@@ -17,16 +17,16 @@ private:
 	void preCollisionUpdate() final {
 		Vec2f Acceleration;
 
-		if (keys[Key::Left]) {
+		if (keys[Key::LEFT]) {
 			Acceleration.y -= 1;
 		}
-		if (keys[Key::Right]) {
+		if (keys[Key::RIGHT]) {
 			Acceleration.y += 1;
 		}
-		if (keys[Key::Up]) {
+		if (keys[Key::UP]) {
 			Acceleration.x -= 1;
 		}
-		if (keys[Key::Down]) {
+		if (keys[Key::DOWN]) {
 			Acceleration.x += 1;
 		}
 
@@ -68,7 +68,7 @@ int main() {
 
 	try {
 		Graphic graphic(640, 480);
-		ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
+		ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
 
 		CollisionDetector collisionDetector;
 

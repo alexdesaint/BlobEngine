@@ -9,10 +9,7 @@ namespace BlobEngine::BlobGL {
 
 	void deleteVBO();
 
-	class Cube : public Renderable {
-	private:
-
-		BlobEngine::BlobGL::Texture t;
+	class Cube : public Renderable, public Texture {
 	public:
 		Cube();
 	};

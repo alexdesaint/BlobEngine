@@ -56,6 +56,14 @@ namespace BlobEngine::BlobGL {
 
 	//using namespace BlobGL;
 
+	std::array<bool, Key::KeyCount> Graphic::keys;
+
+	void key_callback(void *window, int key, int scancode, int action, int mods) {
+		if(action != 2) {
+			Graphic::keys[key] = (bool)action;
+		}
+	}
+
 	void Graphic::enableDebugCallBack() {
 		// Enable the debug callback
 
@@ -93,7 +101,7 @@ namespace BlobEngine::BlobGL {
 		gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 		glfwSwapInterval(1);
 
-		if (!gladLoadGL()) throw BlobException("Can't load openGL");
+		if (!gladLoadGL()) throw BlobException("Can't loadBMPtexture openGL");
 
 
 		enableDebugCallBack();
@@ -103,6 +111,8 @@ namespace BlobEngine::BlobGL {
 		glFrontFace(GL_CW);// GL_CCW for counter clock-wise
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2, 0.2, 0.2, 1.0);
+
+		glfwSetKeyCallback((GLFWwindow *)window, (GLFWkeyfun)key_callback);
 
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
@@ -140,37 +150,6 @@ namespace BlobEngine::BlobGL {
 
 		glfwPollEvents();
 
-		/*
-		sf::Event event{};
-		sf::Mouse::Button mouseButton;
-		sf::Keyboard::Key Key;
-
-		while (((sf::Window *) window)->pollEvent(event)) {
-			switch (event.type) {
-				case sf::Event::Closed :
-					quit = true;
-					break;
-				case sf::Event::Resized :
-					// adjust the viewport when the window is resized
-					glViewport(0, 0, event.size.width, event.size.height);
-					break;
-				case sf::Event::MouseButtonPressed :
-					mouseButton = event.mouseButton.button;
-					break;
-				case sf::Event::MouseButtonReleased :
-					mouseButton = event.mouseButton.button;
-					break;
-				case sf::Event::KeyPressed :
-					keys[event.key.code] = true;
-					break;
-				case sf::Event::KeyReleased :
-					keys[event.key.code] = false;
-					break;
-				default:
-					break;
-			}
-		}*/
-
 		return diff.count();
 	}
 
@@ -179,6 +158,8 @@ namespace BlobEngine::BlobGL {
 		width = w;
 
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
+
+		glfwSetWindowSize((GLFWwindow *)window, w, h);
 	}
 
 	std::ostream &operator<<(std::ostream &out, const glm::mat4 &vec) {
@@ -251,7 +232,8 @@ namespace BlobEngine::BlobGL {
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 	}
 
-	const std::array<bool, Key::KeyCount> &Graphic::getKeys() const {
+	const std::array<bool, KeyCount> &Graphic::getKeys() {
 		return keys;
 	}
+
 }

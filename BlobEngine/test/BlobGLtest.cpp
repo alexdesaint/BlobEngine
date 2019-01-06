@@ -11,15 +11,17 @@ using namespace BlobEngine::BlobGL;
 int main(int argc, char *argv[]) {
 
 	try {
-
 		Graphic graphic(640, 480);
-		BlobEngine::BlobGL::ShaderProgram shaderProgram("../BlobEngine/data/vertex.glsl", "../BlobEngine/data/fragment.glsl");
+		BlobEngine::BlobGL::ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
 
 		Cube c1, c2;
 
 		c1.setPosition(-5.f, 0.f, 0.f);
+
+		c1.loadBMPtexture("data/cube.bmp");
 		c2.setPosition(0.f, -2.f, 0.f);
 		c2.setScale(4, 1, 1);
+		c2.setColor(100, 0, 0);
 
 		list<Cube> cubeList;
 

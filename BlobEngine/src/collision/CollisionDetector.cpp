@@ -216,7 +216,7 @@ namespace BlobEngine {
 
 		Vec2f frameMove = object.speed * timeFlow;
 
-		double numOfStep = ceil(frameMove.length());
+		double numOfStep = ceil(frameMove.length() * 10);
 
 		Vec2f stepMove = frameMove / numOfStep;
 
