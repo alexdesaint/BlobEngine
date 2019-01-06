@@ -153,7 +153,7 @@ namespace BlobEngine::BlobGL {
 		setTexture(*this);
 	}
 
-	Plane::Plane() {
+	Plane::Plane() : Texture(0, 100, 100) {
 		setBuffer(*vbo, sizeof(Data), 4 * 6 * sizeof(Data));
 
 		setPositionVAO(3, GL_FLOAT, 0);
@@ -162,12 +162,10 @@ namespace BlobEngine::BlobGL {
 
 		setIndices((GLubyte *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
 
-		//t.loadBMPtexture("../data/cube.png");
-
-		setTexture(t);
+		setTexture(*this);
 	}
 
-	OctagonalPrism::OctagonalPrism() {
+	OctagonalPrism::OctagonalPrism() : Texture(0, 100, 100) {
 		setBuffer(*vbo, sizeof(Data), (4 * 6 + 4) * sizeof(Data));
 
 		setPositionVAO(3, GL_FLOAT, 0);
@@ -176,8 +174,6 @@ namespace BlobEngine::BlobGL {
 
 		setIndices((GLubyte *) octagonalPrismIndices, (GLsizei) sizeof(octagonalPrismIndices), GL_UNSIGNED_SHORT);
 
-		//t.loadBMPtexture("../data/cube.png");
-
-		setTexture(t);
+		setTexture(*this);
 	}
 }

@@ -18,7 +18,7 @@ namespace BlobEngine::BlobGL {
 		loadBMPtexture(path);
 	}
 
-	Texture::Texture(int8_t r, int8_t g, int8_t b) {
+	Texture::Texture(uint8_t r, uint8_t g, uint8_t b) {
 		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
 
 		setColor(r, g, b);
@@ -36,9 +36,15 @@ namespace BlobEngine::BlobGL {
 		glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glBindSampler(0, sampler);*/
 
+		if(textureLoaded)
+			reset();
+		else
+			textureLoaded = true;
+
+
 		bmpread_t bitmap;
 
-		if(!bmpread(path.c_str(), 0, &bitmap)) {
+		if(!bmpread(path.c_str(), BMPREAD_TOP_DOWN, &bitmap)) {
 			throw BlobException("Texture not loaded : " + path);
 		}
 
@@ -50,25 +56,36 @@ namespace BlobEngine::BlobGL {
 		bmpread_free(&bitmap);
 	}
 
-	void Texture::setDepth(unsigned int x, unsigned int y) {
-		depth = true;
+	void Texture::setColor(uint8_t r, uint8_t g, uint8_t b) {
 
-		glTextureStorage2D(texture, 1,  GL_DEPTH_COMPONENT16, x, y);
-		glTextureSubImage2D(texture, 0, 0, 0, x, y, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
+		if(textureLoaded)
+			reset();
+		else
+			textureLoaded = true;
 
-	unsigned int Texture::getTexture() const {
-		return texture;
-	}
-
-	void Texture::setColor(int8_t r, int8_t g, int8_t b) {
-		int8_t color[3] = {r, g, b};
+		uint8_t color[3] = {r, g, b};
 
 		glTextureStorage2D(texture, 1, GL_RGB8, 1, 1);
 		glTextureSubImage2D(texture, 0, 0, 0, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, color);
 		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
+
+	void Texture::reset() {
+		glDeleteTextures(1, &texture);
+		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
+	}
+
+	unsigned int Texture::getTexture() const {
+		return texture;
+	}
+
+	/*void Texture::setDepth(unsigned int x, unsigned int y) {
+		depth = true;
+
+		glTextureStorage2D(texture, 1,  GL_DEPTH_COMPONENT16, x, y);
+		glTextureSubImage2D(texture, 0, 0, 0, x, y, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}*/
 }

@@ -3,10 +3,10 @@ add_subdirectory(BomberBlob)
 add_executable(BomberMan
         main.cpp
 #		GameMenu.cpp GameMenu.hpp
-#		BomberBlob/BomberBlob.cpp
+		BomberBlob/BomberBlob.cpp
 #		BomberBlob/Bomb.cpp
- #       BomberBlob/BombManager.cpp
-  #      BomberBlob/Box.cpp
+#       BomberBlob/BombManager.cpp
+#      BomberBlob/Box.cpp
 #        BomberBlob/ContactListener.cpp
 #		BomberBlob/DynamicCircle.cpp
 #		BomberBlob/Explosion.cpp

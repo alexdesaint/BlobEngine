@@ -11,27 +11,28 @@ namespace BlobEngine::BlobGL {
 		friend Graphic;
 	private:
 
-		unsigned int texture, sampler;
+		unsigned int texture;//, sampler;
 
-		bool depth = false;
+		bool depth = false, textureLoaded = false;
 
 	public:
 		Texture();
 
 		explicit Texture(const std::string &path);
 
-		Texture(int8_t r, int8_t g, int8_t b);
+		Texture(uint8_t r, uint8_t g, uint8_t b);
 
 		unsigned int getTexture() const;
 
 		void loadBMPtexture(const std::string &path);
 
-		void setColor(int8_t r, int8_t g, int8_t b);
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
-		void setDepth(unsigned int x, unsigned int y);
+		//void setDepth(unsigned int x, unsigned int y);
+
+		void reset();
 
 		~Texture();
-
 	};
 }
 

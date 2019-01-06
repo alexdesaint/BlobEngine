@@ -14,18 +14,12 @@ namespace BlobEngine::BlobGL {
 		Cube();
 	};
 
-	class Plane : public Renderable {
-	private:
-
-		BlobEngine::BlobGL::Texture t;
+	class Plane : public Renderable, public Texture {
 	public:
 		Plane();
 	};
 
-	class OctagonalPrism : public Renderable {
-	private:
-
-		BlobEngine::BlobGL::Texture t;
+	class OctagonalPrism : public Renderable, public Texture {
 	public:
 		OctagonalPrism();
 	};
