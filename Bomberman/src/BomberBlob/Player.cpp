@@ -6,8 +6,8 @@ Player::Player(float x, float y, std::list<Bomb> &bombs) : RectDynamic(0), bombs
 	position = {x, y};
 	size = {0.8f, 0.8f};
 
-	setPosition(x, y, 0.7f);
-	setScale(0.8f, 0.8f, 1.4f);
+	setPosition(x, y, 0.4f);
+	setScale(0.8f, 0.8f, 0.8f);
 
 	setColor(255, 255, 255);
 
@@ -41,7 +41,7 @@ void Player::preCollisionUpdate() {
 }
 
 void Player::postCollisionUpdate() {
-	setPosition(position.x, position.y, 0.7f);
+	setPosition(position.x, position.y, 0.4f);
 }
 
 Reaction Player::hit(const PhysicalObject &from) {
