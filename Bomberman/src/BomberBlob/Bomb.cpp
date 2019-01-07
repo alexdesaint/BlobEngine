@@ -1,34 +1,30 @@
 #include <BomberBlob/Bomb.hpp>
 
-using namespace sf;
+#include <BomberBlob/Player.hpp>
 
-bool Bomb::update() {
-	return (clock.getElapsedTime().asSeconds() > timeDelay) || destroyed;
+//bool Bomb::update() {
+//	return (clock.getElapsedTime().asSeconds() > timeDelay) || destroyed;
+//}
+
+Bomb::Bomb(float x, float y, Player &player) : RectStatic(0), player(player) {
+	position = {x, y};
+	size = {0.4f, 0.4f};
+
+	setPosition(x, y, 0.2f);
+	setScale(0.4f, 0.4f, 0.4f);
+
+	loadBMPtexture("data/Bomb.bmp");
+
+	disableCollision();
+
+	elementIt = player.bombs.begin();
 }
 
-Bomb::Bomb(b2Vec2 p, b2World *world) : StaticCircle( p.x, p.y, 9, &userData, world){
-	position = p;
-
-	shape.setRadius(9);
-	shape.setOrigin(9, 9);
-	shape.setPosition(sf::Vector2f(position.x, position.y));
-
-	clock.restart();
-
-	Image image;
-	image.loadFromFile("../data/Bomb.bmp");
-	image.createMaskFromColor(sf::Color(0, 255, 0), 0);
-
-	texture.loadFromImage(image);
-
-	shape.setTexture(&texture);
-}
-
-bool Bomb::draw(RenderWindow *window) {
-	if(!bombAlone && !playerOnBomb)
-		bombAlone = true;
-	playerOnBomb = false;
-	bool r = update();
-	window->draw(shape);
-	return r;
-}
+//bool Bomb::draw(RenderWindow *window) {
+//	if(!bombAlone && !playerOnBomb)
+//		bombAlone = true;
+//	playerOnBomb = false;
+//	bool r = update();
+//	window->draw(shape);
+//	return r;
+//}

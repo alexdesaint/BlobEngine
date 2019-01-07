@@ -13,6 +13,8 @@ namespace BlobEngine::BlobGL {
 
 		unsigned int texture;//, sampler;
 
+		float textureScale = 1;
+
 		bool depth = false, textureLoaded = false;
 
 	public:
@@ -31,6 +33,8 @@ namespace BlobEngine::BlobGL {
 		//void setDepth(unsigned int x, unsigned int y);
 
 		void reset();
+
+		void setTextureScale(float textureScale);
 
 		~Texture();
 	};

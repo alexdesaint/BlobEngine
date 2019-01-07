@@ -1,4 +1,4 @@
-#include "GameMenu.hpp"
+#include "BomberBlob/GameMenu.hpp"
 
 #include <BomberBlob/BomberBlob.hpp>
 
@@ -18,7 +18,7 @@ sf::Text GameMenu::createText(const sf::String &str, unsigned int size, int x , 
 
 GameMenu::GameMenu(sf::RenderWindow &window) : window(window) {
 
-	font.loadFromFile("../Data/FFFFORWA.TTF");
+	font.loadFromFile("../data/FFFFORWA.TTF");
 
 	Text title = createText("BomberBlob", 50, window.getSize().x/2, 100);
 

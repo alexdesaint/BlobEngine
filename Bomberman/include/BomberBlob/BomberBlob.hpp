@@ -1,15 +1,11 @@
 #ifndef BOMBERMAN_BOMBERMAN_HPP
 #define BOMBERMAN_BOMBERMAN_HPP
 
-#include <SFML/Graphics.hpp>
+#include <BlobEngine/BlobGL/Graphic.hpp>
 
 class BomberBlob {
-private:
-	sf::Clock clock;
-	int64_t frameTime, imputTime, drawTime, box2dTime, count = 0;
-
 public:
-	explicit BomberBlob(sf::RenderWindow &window);
+	explicit BomberBlob(BlobEngine::BlobGL::Graphic &window);
 };
 
 #endif //BOMBERMAN_BOMBERMAN_HPP

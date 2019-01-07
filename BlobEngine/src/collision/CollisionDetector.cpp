@@ -216,7 +216,7 @@ namespace BlobEngine {
 
 		Vec2f frameMove = object.speed * timeFlow;
 
-		double numOfStep = ceil(frameMove.length() * 10);
+		double numOfStep = ceil(frameMove.length() * 100);
 
 		Vec2f stepMove = frameMove / numOfStep;
 
@@ -226,15 +226,35 @@ namespace BlobEngine {
 			object.position.x = object.position.x + stepMove.x;
 
 			for (RectStatic *rect : rectStaticList) {
-				if (rect->overlap(object) || object.overlap(*rect))
+				if (rect->overlap(object) || object.overlap(*rect)) {
 					object.position = old;
+
+					object.hit(*rect);
+					rect->hit(object);
+
+					i = numOfStep;
+
+					break;
+				}
 			}
-			old = object.position;
+		}
+
+		for (unsigned int i = 0; i < numOfStep; i++) {
+			Point2f old(object.position);
 
 			object.position.y = object.position.y + stepMove.y;
+
 			for (RectStatic *rect : rectStaticList) {
-				if (rect->overlap(object) || object.overlap(*rect))
+				if (rect->overlap(object) || object.overlap(*rect)) {
 					object.position = old;
+
+					object.hit(*rect);
+					rect->hit(object);
+
+					i = numOfStep;
+
+					break;
+				}
 			}
 		}
 

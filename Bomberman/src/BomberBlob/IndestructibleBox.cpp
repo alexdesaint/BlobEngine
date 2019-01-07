@@ -1,10 +1,11 @@
 #include <BomberBlob/IndestructibleBox.hpp>
 
-IndestructibleBox::IndestructibleBox(int x, int y, b2World &world) : StaticRect(x, y, 20, 20, &userData, world) {
-	shape.setSize(sf::Vector2f(20, 20));
-	shape.setOrigin(10, 10);
-	shape.setPosition(sf::Vector2f(x, y));
-	//shape.setFillColor(sf::Color::Blue);
-	texture.loadFromFile("../data/IndestructibleBox.bmp");
-	shape.setTexture(&texture);
+IndestructibleBox::IndestructibleBox(float x, float y) : RectStatic(0) {
+	position = {x, y};
+	size = {1, 1};
+
+	setPosition(x, y, 0.5f);
+
+	loadBMPtexture("data/IndestructibleBox2.bmp");
+	setTextureScale(4);
 }

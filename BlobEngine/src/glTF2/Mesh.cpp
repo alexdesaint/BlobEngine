@@ -169,7 +169,7 @@ namespace BlobEngine::glTF2 {
 
 		vbo.setData((GLubyte*)data.data(), sizeof(Data) * data.size());
 
-		//vbo.setData((GLubyte*)dataBuffer.data(), dataBuffer.size() * sizeof(Data));
+		//vbo.setData((GLubyte*)dataBuffer.data(), dataBuffer.size() * sizeof(data));
 
 		primitives.resize(1);
 

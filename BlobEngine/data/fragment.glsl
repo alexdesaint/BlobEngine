@@ -25,5 +25,4 @@ void main()
     vec4 diffuse = diff * lightColor;
 
     FragColor = (ambient + diffuse) * objectColor;
-
 }

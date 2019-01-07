@@ -14,7 +14,7 @@ namespace BlobEngine::BlobGL {
 
 		unsigned int vertexShader, fragmentShader;
 
-		int model, view, projection;
+		int model, view, projection, textureScale;
 
 	public:
 		ShaderProgram();

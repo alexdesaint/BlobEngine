@@ -1,195 +1,133 @@
-#include <SFML/Graphics.hpp>
-#include <Box2D/Box2D.h>
 #include <cmath>
 #include <list>
 #include <iostream>
 
 #include <BomberBlob/BomberBlob.hpp>
 
-#include <BomberBlob/ContactListener.hpp>
-#include <BomberBlob/BombManager.hpp>
+//#include <BomberBlob/BombManager.hpp>
 #include <BomberBlob/Player.hpp>
 #include <BomberBlob/IndestructibleBox.hpp>
 #include <BomberBlob/Box.hpp>
-#include <BomberBlob/InfoBar.hpp>
+//#include <BomberBlob/InfoBar.hpp>
+#include <BomberBlob/Bomb.hpp>
 
-using  namespace sf;
+using namespace BlobEngine;
 
-BomberBlob::BomberBlob(sf::RenderWindow &window) {
-	int width = window.getSize().x - 100, height = window.getSize().y;
+BomberBlob::BomberBlob(BlobGL::Graphic &window) {
+	int width = 11, height = 11;
 
-	////////////
+	BlobGL::Plane ground;
 
-	sf::Image img;
-	img.loadFromFile("../data/grass.bmp");
+	ground.loadBMPtexture("data/Grass.bmp");
+	ground.setPosition(height/2.f, height/2.f, 0);
+	ground.setScale(9, 9, 1);
+	ground.setTextureScale(9);
 
-	sf::Texture texture;
-	texture.loadFromImage(img);
-	texture.setRepeated(true);
+	//BombManager bombManager(&world);
 
-	sf::Sprite sprite;
-	sprite.setTexture(texture);
-	sprite.setTextureRect({ 0, 0, width, height });
+	const std::array<bool, BlobGL::Key::KeyCount> &keys = BlobGL::Graphic::getKeys();
 
-	////////////
+	std::list<Bomb> bombs;
 
-	b2Vec2 gravity(0.0f, 0.0f);
-	b2World world(gravity);
+	Player player(1.5f, 1.5f, bombs);
+	player.setAction(Player::right, &keys[BlobGL::Key::RIGHT]);
+	player.setAction(Player::left, &keys[BlobGL::Key::LEFT]);
+	player.setAction(Player::up, &keys[BlobGL::Key::UP]);
+	player.setAction(Player::down, &keys[BlobGL::Key::DOWN]);
+	player.setAction(Player::putBomb, &keys[BlobGL::Key::SPACE]);
 
-	ContactListener contactListener;
-	world.SetContactListener(&contactListener);
-
-	BombManager bombManager(&world);
-
-	Player player(&bombManager, world);
-
-	InfoBar infoBar;
+	//InfoBar infoBar;
 
 	std::list<IndestructibleBox> indestructibleBoxs;
 	std::list<Box> boxs;
 
-	for(int i = 80; i < width - 80; i+=40) {
-		boxs.emplace_back(10 + i, 10 + 20, world);
-		boxs.emplace_back(10 + i, height - 10 - 20, world);
+	for(int i = 4; i < width - 4; i+=2) {
+		boxs.emplace_back(0.5f + i, 0.5f + 1);
+		boxs.emplace_back(0.5f + i, height - 0.5f - 1);
 	}
 
-	for(int i = 80; i < height - 80; i+=40){
-		boxs.emplace_back(10 + 20, 10 + i, world);
-		boxs.emplace_back(width - 10 - 20, 10 + i, world);
+	for(int i = 4; i < height - 4; i+=2){
+		boxs.emplace_back(0.5f + 1, 0.5f + i);
+		boxs.emplace_back(width - 0.5f - 1, 0.5f + i);
 	}
 
-	for(int i = 60; i < width - 60; i+=40){
-		for(int j = 40; j < height - 40; j+=40) {
-			boxs.emplace_back(10 + i, 10 + j, world);
+	for(int i = 3; i < width - 3; i+=2){
+		for(int j = 2; j < height - 2; j+=2) {
+			boxs.emplace_back(0.5 + i, 0.5 + j);
 		}
 	}
 
-	for(int i = 40; i < width - 40; i+=40){
-		for(int j = 60; j < height - 60; j+=40) {
-			boxs.emplace_back(10 + i, 10 + j, world);
+	for(int i = 2; i < width - 2; i+=2){
+		for(int j = 3; j < height - 3; j+=2) {
+			boxs.emplace_back(0.5f + i, 0.5 + j);
 		}
 	}
 
-	for(int i = 0; i < width; i+=20){
-		indestructibleBoxs.emplace_back(10 + i, 10, world);
+	for(int i = 0; i < width; i+=1){
+		indestructibleBoxs.emplace_back(0.5f + i, 0.5f);
 	}
 
-	for(int i = 0; i < width; i+=20){
-		indestructibleBoxs.emplace_back(10 + i, height - 10, world);
+	for(int i = 0; i < width; i+=1){
+		indestructibleBoxs.emplace_back(0.5f + i, height - 0.5f);
 	}
 
-	for(int i = 20; i < height - 20; i+=20){
-		indestructibleBoxs.emplace_back(10, 10 + i, world);
+	for(int i = 1; i < height - 1; i+=1){
+		indestructibleBoxs.emplace_back(0.5f, 0.5f + i);
 	}
 
-	for(int i = 20; i < height - 20; i+=20){
-		indestructibleBoxs.emplace_back(width - 10, 10 + i, world);
+	for(int i = 1; i < height - 1; i+=1){
+		indestructibleBoxs.emplace_back(width - 0.5f, 0.5f + i);
 	}
 
-	for(int i = 40; i < width - 40; i+=40){
-		for(int j = 40; j < height - 40; j+=40) {
-			indestructibleBoxs.emplace_back(10 + i, 10 + j, world);
+	for(int i = 2; i < width - 2; i+=2){
+		for(int j = 2; j < height - 2; j+=2) {
+			indestructibleBoxs.emplace_back(0.5f + i, 0.5f + j);
 		}
 	}
 
-	bool gameIsRunning = true;
+//	Bomb bomb(7.5f, 1.5f);
 
-	clock.restart();
+	CollisionDetector collisionDetector{};
 
-	while (window.isOpen() && gameIsRunning) {
-		Keyboard::Key Key;
-		Event event{};
-		while (window.pollEvent(event)) {
-			switch(event.type){
-				case Event::Closed :
-					window.close();
-				case Event::KeyPressed :
-					Key = event.key.code;
+	BlobGL::ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
 
-					switch(Key) {
-						case Keyboard::Left :
-							player.keyPress(directions::LEFT);
-							break;
-						case Keyboard::Right :
-							player.keyPress(directions::RIGHT);
-							break;
-						case Keyboard::Up :
-							player.keyPress(directions::UP);
-							break;
-						case Keyboard::Down :
-							player.keyPress(directions::DOWN);
-							break;
-						case Keyboard::Space :
-							player.putBomb();
-							break;
-						default:
-							break;
-					}
-					break;
-				case Event::KeyReleased :
-					Key = event.key.code;
+	window.setCameraPosition(width, height/2.f, 15);
 
-					switch(Key) {
-						case Keyboard::Left :
-							player.keyReleased(directions::LEFT);
-							break;
-						case Keyboard::Right :
-							player.keyReleased(directions::RIGHT);
-							break;
-						case Keyboard::Up :
-							player.keyReleased(directions::UP);
-							break;
-						case Keyboard::Down :
-							player.keyReleased(directions::DOWN);
-							break;
-						default:
-							break;
-					}
-					break;
-				default:
-					break;
-			}
-		}
+	window.setCameraLookAt(width/2.f, height/2.f, 0);
+
+	//window.setOrthoProjection(-width/2.f, width/2.f, -height/2.f, height/2.f, 1,20);
+
+	while (window.isOpen()) {
 
 		window.clear();
-		window.draw(sprite);
 
-		bombManager.draw(&window);
+		window.draw(ground, shaderProgram);
 
-		player.draw(&window);
+		//bombManager.draw(&window);
 
-		auto indestructibleBoxsIt = indestructibleBoxs.begin();
-		while(indestructibleBoxsIt != indestructibleBoxs.end()) {
-			indestructibleBoxsIt->draw(&window);
-			indestructibleBoxsIt++;
-		}
+		for(auto &ib : indestructibleBoxs)
+			window.draw(ib, shaderProgram);
 
-		auto BoxsIt = boxs.begin();
-		while(BoxsIt != boxs.end()) {
-			if(BoxsIt->draw(&window)) {
-				BoxsIt = boxs.erase(BoxsIt);
-			} else
-				BoxsIt++;
-		}
+		collisionDetector.update();
 
-		infoBar.draw(&window);
+		//non const objects :
 
-		Time time = clock.restart();
+		for(auto &b : boxs)
+			window.draw(b, shaderProgram);
 
-		frameTime += time.asMicroseconds();
+		for(auto &b : bombs)
+			window.draw(b, shaderProgram);
 
-		world.Step(time.asSeconds(), 8, 3);
+		window.draw(player, shaderProgram);
 
-		if(count > 9) {
-			frameTime
-
-		}
-
-		box2dTime = clock.getElapsedTime().asMicroseconds();
+		//infoBar.draw(&window);
 
 		window.display();
 
-		if(!player.isAlive())
-			gameIsRunning = false;
+		//if(!player.isAlive())
+		//	gameIsRunning = false;
+
+		if(keys[BlobGL::ESCAPE])
+			window.close();
 	}
 }

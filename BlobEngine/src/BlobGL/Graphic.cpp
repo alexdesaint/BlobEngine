@@ -59,9 +59,13 @@ namespace BlobEngine::BlobGL {
 	std::array<bool, Key::KeyCount> Graphic::keys;
 
 	void key_callback(void *window, int key, int scancode, int action, int mods) {
-		if(action != 2) {
-			Graphic::keys[key] = (bool)action;
+		if (action != 2) {
+			Graphic::keys[key] = (bool) action;
 		}
+	}
+
+	void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+		glViewport(0, 0, width, height);
 	}
 
 	void Graphic::enableDebugCallBack() {
@@ -73,9 +77,7 @@ namespace BlobEngine::BlobGL {
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 	}
 
-	Graphic::Graphic(unsigned int width, unsigned int height) :
-			width(width),
-			height(height),
+	Graphic::Graphic() :
 			cameraPosition(0, 0, 2),
 			cameraLookAt(0, 0, 0),
 			cameraUp(0, 0, 1) {
@@ -87,17 +89,28 @@ namespace BlobEngine::BlobGL {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
+		glfwWindowHint(GLFW_SAMPLES, 4);
+
 		if (!glfwInit())
 			throw BlobException("Can't init glfw");
 
-		window = glfwCreateWindow(width, height, "Simple example", nullptr, nullptr);
+		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+		glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+		glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+		glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+		width = mode->width;
+		height = mode->height;
+
+		window = glfwCreateWindow(mode->width, mode->height, "My Title", glfwGetPrimaryMonitor(), nullptr);
 
 		if (!window) {
 			glfwTerminate();
 			throw BlobException("Can't open window");
 		}
 
-		glfwMakeContextCurrent((GLFWwindow *)window);
+		glfwMakeContextCurrent((GLFWwindow *) window);
 		gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 		glfwSwapInterval(1);
 
@@ -112,7 +125,8 @@ namespace BlobEngine::BlobGL {
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2, 0.2, 0.2, 1.0);
 
-		glfwSetKeyCallback((GLFWwindow *)window, (GLFWkeyfun)key_callback);
+		glfwSetFramebufferSizeCallback((GLFWwindow *) window, framebuffer_size_callback);
+		glfwSetKeyCallback((GLFWwindow *) window, (GLFWkeyfun) key_callback);
 
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
@@ -125,7 +139,7 @@ namespace BlobEngine::BlobGL {
 	Graphic::~Graphic() {
 		deleteVBO();
 
-		glfwDestroyWindow((GLFWwindow *)window);
+		glfwDestroyWindow((GLFWwindow *) window);
 		glfwTerminate();
 	}
 
@@ -134,7 +148,7 @@ namespace BlobEngine::BlobGL {
 	}
 
 	float Graphic::display() {
-		glfwSwapBuffers((GLFWwindow *)window);
+		glfwSwapBuffers((GLFWwindow *) window);
 
 
 		auto now = std::chrono::high_resolution_clock::now();
@@ -145,7 +159,7 @@ namespace BlobEngine::BlobGL {
 		if (!(++frameCount % 60)) {
 			std::string name = "Test : " + std::to_string(60 / fpsCouner.count()) + " FPS";
 			fpsCouner = std::chrono::duration<float>::zero();
-			glfwSetWindowTitle((GLFWwindow *)window, name.c_str());
+			glfwSetWindowTitle((GLFWwindow *) window, name.c_str());
 		}
 
 		glfwPollEvents();
@@ -157,9 +171,9 @@ namespace BlobEngine::BlobGL {
 		height = h;
 		width = w;
 
-		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
+		projectionMatrix = glm::perspective(glm::radians(10.0f), width / (GLfloat) height, 0.1f, 100.0f);
 
-		glfwSetWindowSize((GLFWwindow *)window, w, h);
+		glfwSetWindowSize((GLFWwindow *) window, w, h);
 	}
 
 	std::ostream &operator<<(std::ostream &out, const glm::mat4 &vec) {
@@ -176,9 +190,11 @@ namespace BlobEngine::BlobGL {
 		glUniformMatrix4fv(program.projection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		glUniformMatrix4fv(program.view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(program.model, 1, GL_FALSE, glm::value_ptr(shapeModel * renderable.getModelMatrix()));
-		if (renderable.texture != nullptr)
+
+		if (renderable.texture != nullptr) {
 			glBindTexture(GL_TEXTURE_2D, renderable.texture->texture);
-		//glBindImageTexture(0, renderable.texture->texture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGB8);
+			glUniform1f(program.textureScale, renderable.texture->textureScale);
+		}
 
 		if (renderable.indexed)
 			glDrawElements(GL_TRIANGLES, renderable.numOfIndices, renderable.indicesType, renderable.indices);
@@ -215,7 +231,7 @@ namespace BlobEngine::BlobGL {
 	}
 
 	bool Graphic::isOpen() const {
-		return !glfwWindowShouldClose((GLFWwindow *)window);
+		return !(glfwWindowShouldClose((GLFWwindow *) window) || quit);
 	}
 
 	std::ostream &operator<<(std::ostream &s, const Graphic &a) {
@@ -232,8 +248,22 @@ namespace BlobEngine::BlobGL {
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 	}
 
+	void Graphic::setCameraLookAt(float x, float y, float z) {
+		cameraLookAt = glm::vec3(x, y, z);
+
+		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
+	}
+
+	void Graphic::setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
+		projectionMatrix = glm::ortho(left, right, bottom, top, zNear, zFar);
+	}
+
 	const std::array<bool, KeyCount> &Graphic::getKeys() {
 		return keys;
+	}
+
+	void Graphic::close() {
+		quit = true;
 	}
 
 }

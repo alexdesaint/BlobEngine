@@ -15,7 +15,7 @@ sf::Text InfoBar::createText(const sf::String &str, unsigned int size, int x, in
 }
 
 InfoBar::InfoBar() {
-	font.loadFromFile("../Data/FFFFORWA.TTF");
+	font.loadFromFile("../data/FFFFORWA.TTF");
 
 	shape.setSize(sf::Vector2f(100, 620));
 	shape.setPosition(sf::Vector2f(620, 0));

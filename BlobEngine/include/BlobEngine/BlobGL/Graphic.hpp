@@ -147,7 +147,7 @@ namespace BlobEngine::BlobGL {
 
 		void *window;
 
-		unsigned int width, height;
+		int width, height;
 
 		glm::mat4 projectionMatrix;
 		glm::mat4 viewMatrix{1};
@@ -164,7 +164,7 @@ namespace BlobEngine::BlobGL {
 		void enableDebugCallBack();
 
 	public:
-		Graphic(unsigned int width, unsigned int height);
+		Graphic();
 
 		~Graphic();
 
@@ -186,7 +186,13 @@ namespace BlobEngine::BlobGL {
 
 		void setCameraPosition(float x, float y, float z);
 
+		void setCameraLookAt(float x, float y, float z);
+
+		void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar);
+
 		static const std::array<bool, KeyCount> &getKeys();
+
+		void close();
 	};
 }
 

@@ -169,6 +169,7 @@ void BlobEngine::BlobGL::ShaderProgram::linkShaders() {
 	model = glGetUniformLocation(program, "model");
 	view = glGetUniformLocation(program, "view");
 	projection = glGetUniformLocation(program, "projection");
+	textureScale = glGetUniformLocation(program, "texScale");
 }
 
 GLuint BlobEngine::BlobGL::ShaderProgram::getProgram() const {

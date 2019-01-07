@@ -45,7 +45,7 @@ namespace BlobEngine::BlobGL {
 		bmpread_t bitmap;
 
 		if(!bmpread(path.c_str(), BMPREAD_TOP_DOWN, &bitmap)) {
-			throw BlobException("Texture not loaded : " + path);
+			throw BlobException("Fail to load Texture : " + path);
 		}
 
 		glTextureStorage2D(texture, 1, GL_RGB8, bitmap.width, bitmap.height);
@@ -78,6 +78,10 @@ namespace BlobEngine::BlobGL {
 
 	unsigned int Texture::getTexture() const {
 		return texture;
+	}
+
+	void Texture::setTextureScale(float textureScale) {
+		Texture::textureScale = textureScale;
 	}
 
 	/*void Texture::setDepth(unsigned int x, unsigned int y) {

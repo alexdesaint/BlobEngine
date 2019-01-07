@@ -1,48 +1,49 @@
-//
-// Created by Patapouf on 23/09/2018.
-//
-
 #include <BomberBlob/Player.hpp>
 
-void Player::update() {
-	float TimeFlow = clock.restart().asSeconds();
-	b2Vec2 speed;
+using namespace BlobEngine;
 
-	if (command[directions::LEFT]) {
-		speed.x -= 1;
-	}
-	if (command[directions::RIGHT]) {
-		speed.x += 1;
-	}
-	if (command[directions::UP]) {
-		speed.y -= 1;
-	}
-	if (command[directions::DOWN]) {
-		speed.y += 1;
-	}
+Player::Player(float x, float y, std::list<Bomb> &bombs) : RectDynamic(0), bombs(bombs) {
+	position = {x, y};
+	size = {0.8f, 0.8f};
 
-	if (speed.x != 0 || speed.y != 0) {
-		speed.Normalize();
-		speed *= maxSpeed;
-	}
+	setPosition(x, y, 0.7f);
+	setScale(0.8f, 0.8f, 1.4f);
 
-	setSpeed(speed);
+	setColor(255, 255, 255);
+
+	maxSpeed = 2.5;
 }
 
-Player::Player(BombManager *bm, b2World &world) : DynamicCircle(30, 30, 10, &userData, world) {
-	bombManager = bm;
+void Player::preCollisionUpdate() {
+	Vec2f Acceleration;
 
-	shape.setRadius(rayon);
-	shape.setOrigin(10, 10);
-	shape.setPosition(getPosition());
-	maxSpeed = 200;
+	if (*keys[Actions::up]) {
+		Acceleration.x -= 1;
+	}
+	if (*keys[Actions::down]) {
+		Acceleration.x += 1;
+	}
+	if (*keys[Actions::left]) {
+		Acceleration.y -= 1;
+	}
+	if (*keys[Actions::right]) {
+		Acceleration.y += 1;
+	}
+
+	if (!Acceleration.isNull()) {
+		speed = Acceleration.setLength(maxSpeed);
+	} else
+		speed.reset();
+
+	if(*keys[Actions::putBomb]) {
+		bombs.emplace_front(position.x, position.y, *this);
+	}
 }
 
-void Player::draw(sf::RenderWindow *window) {
-	update();
+void Player::postCollisionUpdate() {
+	setPosition(position.x, position.y, 0.7f);
+}
 
-	shape.setPosition(getPosition());
-	shape.setRotation(getRotation());
-
-	window->draw(shape);
+Reaction Player::hit(const PhysicalObject &from) {
+	return Reaction::BOUNCE;
 }

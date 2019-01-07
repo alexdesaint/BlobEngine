@@ -1,19 +1,11 @@
 #include <BomberBlob/Box.hpp>
 
-using namespace sf;
+Box::Box(float x, float y) : RectStatic(0) {
+	position = {x, y};
+	size = {1, 1};
 
-Box::Box(int x, int y, b2World &world) : StaticRect(x, y, 20, 20, &userData, world){
+	setPosition(x, y, 0.5f);
 
-	shape.setSize(Vector2f(20, 20));
-	shape.setOrigin(10, 10);
-	shape.setPosition(Vector2f(x, y));
-	//shape.setFillColor(Color(255, 150, 0));
-	texture.loadFromFile("../data/Box.bmp");
-	shape.setTexture(&texture);
-}
-
-bool Box::draw(sf::RenderWindow *window) {
-	if(!destroyed)
-		window->draw(shape);
-	return destroyed;
+	loadBMPtexture("data/box.bmp");
+	setTextureScale(4);
 }

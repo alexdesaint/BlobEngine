@@ -1,45 +1,52 @@
 #ifndef BOMBERMAN_PLAYER_HPP
 #define BOMBERMAN_PLAYER_HPP
 
-#include <SFML/Graphics.hpp>
+#include <BlobEngine/Collision/CollisionDetector.hpp>
+#include <BlobEngine/BlobGL/Form.hpp>
 
-#include <BomberBlob/DynamicCircle.hpp>
 #include <BomberBlob/UserData.hpp>
-#include <BomberBlob/directions.hpp>
-#include <BomberBlob/BombManager.hpp>
 
-class Player : DynamicCircle {
+#include <array>
+
+#include <BomberBlob/Bomb.hpp>
+
+class Player : public BlobEngine::RectDynamic, public BlobEngine::BlobGL::Cube {
+	friend Bomb;
+public:
+	enum Actions {
+		up = 0,
+		down,
+		right,
+		left,
+		putBomb,
+		numOfActions
+	};
 private:
 	float maxSpeed;
-	sf::CircleShape shape;
-	sf::Clock clock;
 	bool alive = true;
 
-	float rayon = 10;
-
 	UserData userData = {PLAYER, this};
-	std::array<bool, 4> command = {false, false, false, false};
 
-	BombManager *bombManager;
+	std::array<const bool*, Actions::numOfActions> keys;
 
-	void update();
+	std::list<Bomb> &bombs;
 public:
 
-	explicit Player(BombManager *bm, b2World &world);
+	Player(float x, float y, std::list<Bomb> &bombs);
 
-	void draw(sf::RenderWindow *window);
+	void preCollisionUpdate() final;
 
-	void keyPress(directions d) {
-		command[d] = true;
+	void postCollisionUpdate() final;
+
+	Reaction hit(const PhysicalObject &from) final;
+
+	void setAction(Actions a, const bool *key) {
+		keys[a] = key;
 	}
 
-	void keyReleased(directions d) {
-		command[d] = false;
-	}
-
-	void putBomb() {
-		bombManager->addBomb(getPositionb2());
-	}
+	//void putBomb() {
+	//	bombManager->addBomb(getPositionb2());
+	//}
 
 	void hit() {
 		alive = false;
