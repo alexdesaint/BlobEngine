@@ -3,14 +3,21 @@
 
 #include <chrono>
 
-namespace BlobEngine {
+namespace BlobEngine::Time {
 
+	typedef std::chrono::high_resolution_clock::time_point TimePoint;
+	typedef std::chrono::duration<float> Duration;
+
+	typedef std::chrono::high_resolution_clock::time_point (*FunctionNow) ();
+	extern FunctionNow now;
+
+	/*
 	float getElapsedTime() {
-		static std::chrono::high_resolution_clock::time_point lastFrameTime;
+		static TimePoint lastFrameTime;
 
-		auto now = std::chrono::high_resolution_clock::now();
+		TimePoint now = std::chrono::high_resolution_clock::now();
 
-		std::chrono::duration<float> diff = now - lastFrameTime;
+		Duration diff = now - lastFrameTime;
 
 		lastFrameTime = now;
 
@@ -22,9 +29,10 @@ namespace BlobEngine {
 
 		auto now = std::chrono::high_resolution_clock::now();
 
-		std::chrono::duration<float> diff = now - start_time;
+		Duration diff = now - start_time;
 
 		return diff.count();
 	}
+	 */
 }
 #endif //BLOBENGINE_TIME_HPP

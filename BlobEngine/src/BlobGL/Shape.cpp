@@ -11,6 +11,10 @@ namespace BlobEngine::BlobGL {
 		renderables.emplace_back(r);
 	}
 
+	void Shape::removeRenderable(Renderable *r) {
+		renderables.remove(r);
+	}
+
 	size_t Shape::getRenderableSize() const {
 		return renderables.size();
 	}

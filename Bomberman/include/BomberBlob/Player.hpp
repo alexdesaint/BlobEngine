@@ -7,11 +7,12 @@
 #include <BomberBlob/UserData.hpp>
 
 #include <array>
+#include <list>
 
-#include <BomberBlob/Bomb.hpp>
+#include <BomberBlob/BombManager.hpp>
 
-class Player : public BlobEngine::RectDynamic, public BlobEngine::BlobGL::Cube {
-	friend Bomb;
+class Player : public BlobEngine::Collision::RectDynamic, public BlobEngine::BlobGL::Cube {
+	friend BombManager;
 public:
 	enum Actions {
 		up = 0,
@@ -22,34 +23,28 @@ public:
 		numOfActions
 	};
 private:
-	float maxSpeed;
-	bool alive = true;
+	float maxSpeed = 2.5f, bombPower = 2.f;
+	bool alive = true, onBomb = false;
 
-	UserData userData = {PLAYER, this};
+	unsigned int maxBomb = 1, bombPosed = 0;
 
 	std::array<const bool*, Actions::numOfActions> keys;
 
-	std::list<Bomb> &bombs;
+	std::list<BombManager> &bombs;
+
+	BombManager *lastBomb;
 public:
 
-	Player(float x, float y, std::list<Bomb> &bombs);
+	Player(float x, float y, std::list<BombManager> &bombs);
 
 	void preCollisionUpdate() final;
 
 	void postCollisionUpdate() final;
 
-	Reaction hit(const PhysicalObject &from) final;
+	Reaction hit(int objectType, const void *objectData) final;
 
 	void setAction(Actions a, const bool *key) {
 		keys[a] = key;
-	}
-
-	//void putBomb() {
-	//	bombManager->addBomb(getPositionb2());
-	//}
-
-	void hit() {
-		alive = false;
 	}
 
 	bool isAlive() const {

@@ -1,36 +1,68 @@
 #pragma once
 
-#include <deque>
 #include <BlobEngine/Geometrie.hpp>
-#include <BlobEngine/Collision/Hit.hpp>
 #include <BlobEngine/BlobException.hpp>
 #include <BlobEngine/Collision/Reaction.hpp>
 
-namespace BlobEngine {
+#include <deque>
+#include <list>
+
+namespace BlobEngine::Collision {
 
 	class CollisionDetector;
 
-	class PhysicalObject{
+	class StaticObject {
 		friend CollisionDetector;
 	private:
-		unsigned int objectType;
-		
-	protected:
-		explicit PhysicalObject(unsigned int objectType) : objectType(objectType) { }
+		const void *objectData;
+		int objectType;
 
-		virtual Reaction hit(const PhysicalObject& from) {
-			return IGNORE;
+	protected:
+		explicit StaticObject(int objectType, const void *objectData) :
+				objectData(objectData),
+				objectType(objectType) {}
+
+		void setObjectType(int objectType) {
+			StaticObject::objectType = objectType;
+		}
+
+		virtual void hit(int objectType, const void *objectData) {}
+	};
+
+	class DynamicObject {
+		friend CollisionDetector;
+	private:
+		const void *objectData;
+		int objectType;
+
+	protected:
+		Vec2f speed{};
+
+		explicit DynamicObject(int objectType, const void *objectData) :
+				objectData(objectData),
+				objectType(objectType) {}
+
+		virtual Reaction hit(int objectType, const void *objectData) {
+			return STOP;
 		}
 
 		virtual void preCollisionUpdate() {}
 
 		virtual void postCollisionUpdate() {}
+
+		void setObjectType(int objectType) {
+			DynamicObject::objectType = objectType;
+		}
+
+		virtual bool moove() {
+			return true;
+		};
 	};
 
-	class CircleStatic : public PhysicalObject {
+	class CircleStatic : public StaticObject {
 		friend CollisionDetector;
 	private:
-		std::deque<CircleStatic*>::iterator elementIt{};
+		std::list<CircleStatic *>::iterator elementIt{};
 	protected:
 		Circle mainCircle{};
 
@@ -39,7 +71,7 @@ namespace BlobEngine {
 		void disableCollision();
 
 	public:
-		explicit CircleStatic(unsigned int objectType) : PhysicalObject(objectType) {
+		explicit CircleStatic(const int objectType, const void *objectData) : StaticObject(objectType, objectData) {
 			enableCollision();
 		}
 
@@ -48,12 +80,11 @@ namespace BlobEngine {
 		}
 	};
 
-	class CircleDynamic : public PhysicalObject {
+	class CircleDynamic : public DynamicObject {
 		friend CollisionDetector;
 	private:
-		std::deque<CircleDynamic*>::iterator elementIt{};
+		std::list<CircleDynamic *>::iterator elementIt{};
 	protected:
-		Vec2f speed{};
 		Circle mainCircle{};
 
 		void enableCollision();
@@ -61,7 +92,7 @@ namespace BlobEngine {
 		void disableCollision();
 
 	public:
-		explicit CircleDynamic(unsigned int objectType) : PhysicalObject(objectType) {
+		explicit CircleDynamic(const int objectType, const void *objectData) : DynamicObject(objectType, objectData) {
 			enableCollision();
 		}
 
@@ -70,10 +101,10 @@ namespace BlobEngine {
 		}
 	};
 
-	class RectStatic : public PhysicalObject, public Rectangle {
+	class RectStatic : public StaticObject, public Rectangle {
 		friend CollisionDetector;
 	private:
-		std::deque<RectStatic*>::iterator elementIt{};
+		std::list<RectStatic *>::iterator elementIt{};
 	protected:
 
 		void enableCollision();
@@ -81,7 +112,7 @@ namespace BlobEngine {
 		void disableCollision();
 
 	public:
-		explicit RectStatic(unsigned int objectType) : PhysicalObject(objectType) {
+		explicit RectStatic(const int objectType, const void *objectData) : StaticObject(objectType, objectData) {
 			enableCollision();
 		}
 
@@ -90,19 +121,18 @@ namespace BlobEngine {
 		}
 	};
 
-	class RectDynamic : public PhysicalObject, public Rectangle {
+	class RectDynamic : public DynamicObject, public Rectangle {
 		friend CollisionDetector;
 	private:
-		std::deque<RectDynamic*>::iterator elementIt{};
+		std::list<RectDynamic *>::iterator elementIt{};
 	protected:
-		Vec2f speed{};
 
 		void enableCollision();
 
 		void disableCollision();
 
 	public:
-		explicit RectDynamic(unsigned int objectType) : PhysicalObject(objectType) {
+		explicit RectDynamic(const int objectType, const void *objectData) : DynamicObject(objectType, objectData) {
 			enableCollision();
 		}
 
@@ -111,10 +141,10 @@ namespace BlobEngine {
 		}
 	};
 
-	class LineStatic : public PhysicalObject {
+	class LineStatic : public StaticObject {
 		friend CollisionDetector;
 	private:
-		std::deque<LineStatic*>::iterator elementIt{};
+		std::list<LineStatic *>::iterator elementIt{};
 	protected:
 		std::deque<Point2f> lines{};
 
@@ -123,7 +153,7 @@ namespace BlobEngine {
 		void disableCollision();
 
 	public:
-		explicit LineStatic(unsigned int objectType) : PhysicalObject(objectType) {
+		explicit LineStatic(const int objectType, const void *objectData) : StaticObject(objectType, objectData) {
 			enableCollision();
 		}
 
@@ -140,17 +170,17 @@ namespace BlobEngine {
 		friend LineStatic;
 	private:
 
-		static std::deque<CircleStatic *> circleStaticList;
-		static std::deque<CircleDynamic *> circleDynamicList;
-		static std::deque<RectStatic *> rectStaticList;
-		static std::deque<RectDynamic *> rectDynamicList;
-		static std::deque<LineStatic *> lineStaticList;
+		static std::list<CircleStatic *> circleStaticList;
+		static std::list<CircleDynamic *> circleDynamicList;
+		static std::list<RectStatic *> rectStaticList;
+		static std::list<RectDynamic *> rectDynamicList;
+		static std::list<LineStatic *> lineStaticList;
 
 		float timeFlow;
 
 	public:
-		
-		//PhysicalObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
+
+		//StaticObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
 
 		//void checkCollision(CircleDynamic &object);
 

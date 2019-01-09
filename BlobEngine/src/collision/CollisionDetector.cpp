@@ -4,7 +4,7 @@
 
 #include <BlobEngine/Collision/CollisionDetector.hpp>
 
-namespace BlobEngine {
+namespace BlobEngine::Collision {
 
 //CircleStatic
 
@@ -64,11 +64,11 @@ namespace BlobEngine {
 
 //CollisionDetector
 
-	std::deque<CircleStatic *> CollisionDetector::circleStaticList{};
-	std::deque<CircleDynamic *> CollisionDetector::circleDynamicList{};
-	std::deque<RectStatic *> CollisionDetector::rectStaticList{};
-	std::deque<RectDynamic *> CollisionDetector::rectDynamicList{};
-	std::deque<LineStatic *> CollisionDetector::lineStaticList{};
+	std::list<CircleStatic *> CollisionDetector::circleStaticList{};
+	std::list<CircleDynamic *> CollisionDetector::circleDynamicList{};
+	std::list<RectStatic *> CollisionDetector::rectStaticList{};
+	std::list<RectDynamic *> CollisionDetector::rectDynamicList{};
+	std::list<LineStatic *> CollisionDetector::lineStaticList{};
 
 	float getElapsedTime() {
 		static std::chrono::high_resolution_clock::time_point lastFrameTime;
@@ -81,9 +81,9 @@ namespace BlobEngine {
 		return diff.count();
 	}
 /*
-	PhysicalObject *CollisionDetector::getClosetObject(Circle &object, Vec2f frameMove, Hit &hit) {
+	StaticObject *CollisionDetector::getClosetObject(Circle &object, Vec2f frameMove, Hit &hit) {
 
-		PhysicalObject *lastHitTarget;
+		StaticObject *lastHitTarget;
 
 		lastHitTarget = nullptr;
 
@@ -164,7 +164,7 @@ namespace BlobEngine {
 		Vec2f frameMove = object.speed * timeFlow;
 		Circle nextCircle = object.mainCircle;
 		Hit hit;
-		PhysicalObject *target;
+		StaticObject *target;
 
 		//Error managment :
 		unsigned int count = 0;
@@ -209,14 +209,23 @@ namespace BlobEngine {
 	void CollisionDetector::checkCollision(RectDynamic &object) {
 		object.preCollisionUpdate();
 
-		if (object.speed.isNull())
-			return;
+		if (object.speed.isNull()){
+			for (RectStatic *rect : rectStaticList) {
+				if (rect->overlap(object) || object.overlap(*rect)) {
+					rect->hit(object.objectType, object.objectData);
+					object.hit(rect->objectType, rect->objectData);
+				}
+			}
 
-		object.disableCollision();
+			object.postCollisionUpdate();
+			return;
+		}
 
 		Vec2f frameMove = object.speed * timeFlow;
 
-		double numOfStep = ceil(frameMove.length() * 100);
+		object.disableCollision();
+
+		auto numOfStep = static_cast<unsigned int>(ceil(frameMove.length() * 100));
 
 		Vec2f stepMove = frameMove / numOfStep;
 
@@ -226,15 +235,14 @@ namespace BlobEngine {
 			object.position.x = object.position.x + stepMove.x;
 
 			for (RectStatic *rect : rectStaticList) {
-				if (rect->overlap(object) || object.overlap(*rect)) {
-					object.position = old;
+				if (rect->overlap(object) || object.overlap(*rect) || !object.moove()) {
+					rect->hit(object.objectType, object.objectData);
 
-					object.hit(*rect);
-					rect->hit(object);
-
-					i = numOfStep;
-
-					break;
+					if(object.hit(rect->objectType, rect->objectData) != IGNORE) {
+						i = numOfStep;
+						object.position = old;
+						break;
+					}
 				}
 			}
 		}
@@ -246,13 +254,18 @@ namespace BlobEngine {
 
 			for (RectStatic *rect : rectStaticList) {
 				if (rect->overlap(object) || object.overlap(*rect)) {
-					object.position = old;
+					rect->hit(object.objectType, object.objectData);
 
-					object.hit(*rect);
-					rect->hit(object);
+					if(object.hit(rect->objectType, rect->objectData) != IGNORE) {
+						i = numOfStep;
+						object.position = old;
+						break;
+					}
+				}
 
+				if(!object.moove()){
 					i = numOfStep;
-
+					object.position = old;
 					break;
 				}
 			}

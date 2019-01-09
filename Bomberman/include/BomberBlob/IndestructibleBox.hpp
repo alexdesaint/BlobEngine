@@ -6,11 +6,9 @@
 
 #include <BomberBlob/UserData.hpp>
 
-class IndestructibleBox : public BlobEngine::RectStatic, public BlobEngine::BlobGL::Cube {
+class IndestructibleBox : public BlobEngine::Collision::RectStatic, public BlobEngine::BlobGL::Cube {
 private:
 	bool destroyed = false;
-
-	UserData userData = {INDESTRUCTIBLE_BOX, this};
 
 public:
 	IndestructibleBox(float x, float y);

@@ -6,17 +6,17 @@
 
 #include <BomberBlob/UserData.hpp>
 
-class Box : public BlobEngine::RectStatic, public BlobEngine::BlobGL::Cube {
+class Box : public BlobEngine::Collision::RectStatic, public BlobEngine::BlobGL::Cube {
 private:
 	bool destroyed = false;
-
-	UserData userData = {BOX, this};
 
 public:
 	explicit Box(float x, float y);
 
-	void hit() {
-		destroyed = true;
+	void hit(int objectType, const void *objectData) final;
+
+	bool isDestroy() const {
+		return destroyed;
 	}
 };
 

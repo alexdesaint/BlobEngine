@@ -1,33 +1,32 @@
 #ifndef BOMBERMAN_BOMBMANAGER_HPP
 #define BOMBERMAN_BOMBMANAGER_HPP
 
-#include <list>
-
-#include <SFML/Graphics.hpp>
-
-#include <Box2D/Box2D.h>
 #include <BomberBlob/Bomb.hpp>
 #include <BomberBlob/Explosion.hpp>
 
-class BombManager{
+#include <BlobEngine/BlobGL/Shape.hpp>
+
+#include <BlobEngine/Time.hpp>
+
+class Player;
+
+class BombManager : public BlobEngine::BlobGL::Shape {
 private:
+	Bomb *bomb;
+	float bombDelay = 3;
 
-	b2World *world;
-	std::list<Bomb>	bombs;
-	std::list<Explosion> explosions;
+	Explosion *exUP, *exDO, *exRI, *exLE;
 
-	float explosionLenght = 100;
+	BlobEngine::Time::TimePoint start;
+
+	Player &player;
 
 public:
+	explicit BombManager(BlobEngine::Vec2f pos, Player &player);
 
-	explicit BombManager(b2World *w) : world(w) {}
+	Bomb *getBomb() const;
 
-	void addBomb(b2Vec2 pos){
-		bombs.emplace_front(pos, world);
-	}
-
-	void draw(sf::RenderWindow *window);
+	bool update();
 };
-
 
 #endif //BOMBERMAN_BOMBMANAGER_HPP

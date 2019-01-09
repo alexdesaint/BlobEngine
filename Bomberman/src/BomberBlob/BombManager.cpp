@@ -1,28 +1,67 @@
 #include <BomberBlob/BombManager.hpp>
 
-void BombManager::draw(sf::RenderWindow *window) {
+#include <BomberBlob/Player.hpp>
 
-	unsigned int bombsToDestroy = 0, explosionsToDestroy = 0;
+using namespace BlobEngine;
+using namespace BlobEngine::Time;
 
-	auto bombIt = bombs.begin();
-	while(bombIt != bombs.end()){
-		if(bombIt->draw(window)){
-			explosions.emplace_back(bombs.back().getPosition(), b2Vec2(0, 1), 100, world);
-			explosions.emplace_back(bombs.back().getPosition(), b2Vec2(1, 0), 100, world);
-			explosions.emplace_back(bombs.back().getPosition(), b2Vec2(0, -1), 100, world);
-			explosions.emplace_back(bombs.back().getPosition(), b2Vec2(-1, 0), 100, world);
+BombManager::BombManager(BlobEngine::Vec2f pos, Player &player) : player(player){
+	bomb = new Bomb(pos);
 
+	addRenderable(bomb);
 
-			bombIt = bombs.erase(bombIt);
-		}else
-			bombIt++;
+	start = now();
+}
+
+bool BombManager::update() {
+	Duration flow = now() - start;
+	if(bomb == nullptr) {
+		if(exUP != nullptr && !exUP->isActive()) {
+			removeRenderable(exUP);
+			delete exUP;
+			exUP = nullptr;
+		}
+
+		if(exDO != nullptr && !exDO->isActive()) {
+			removeRenderable(exDO);
+			delete exDO;
+			exDO = nullptr;
+		}
+
+		if(exLE != nullptr && !exLE->isActive()) {
+			removeRenderable(exLE);
+			delete exLE;
+			exLE = nullptr;
+		}
+
+		if(exRI != nullptr && !exRI->isActive()) {
+			removeRenderable(exRI);
+			delete exRI;
+			exRI = nullptr;
+		}
+
+		return exUP == nullptr && exDO == nullptr && exRI == nullptr && exLE == nullptr;
+	} else if(flow.count() > bombDelay || bomb->isDestroyed()) {
+		player.bombPosed--;
+
+		exRI = new Explosion(bomb->position, Vec2f(0, 1), player.bombPower);
+		exLE = new Explosion(bomb->position, Vec2f(0, -1), player.bombPower);
+		exDO = new Explosion(bomb->position, Vec2f(1, 0), player.bombPower);
+		exUP = new Explosion(bomb->position, Vec2f(-1, 0), player.bombPower);
+
+		addRenderable(exRI);
+		addRenderable(exLE);
+		addRenderable(exDO);
+		addRenderable(exUP);
+
+		removeRenderable(bomb);
+		delete bomb;
+		bomb = nullptr;
 	}
 
-	auto explosionIt = explosions.begin();
-	while(explosionIt != explosions.end()){
-		if(explosionIt->draw(window)){
-			explosionIt = explosions.erase(explosionIt);
-		}else
-			explosionIt++;
-	}
+	return false;
+}
+
+Bomb *BombManager::getBomb() const {
+	return bomb;
 }

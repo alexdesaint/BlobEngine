@@ -1,6 +1,6 @@
 #include <BomberBlob/Box.hpp>
 
-Box::Box(float x, float y) : RectStatic(0) {
+Box::Box(float x, float y) : RectStatic(BOX, this) {
 	position = {x, y};
 	size = {0.8f, 0.8f};
 
@@ -9,4 +9,9 @@ Box::Box(float x, float y) : RectStatic(0) {
 
 	loadBMPtexture("data/box.bmp");
 	setTextureScale(4);
+}
+
+void Box::hit(int objectType, const void *objectData) {
+	if(objectType == EXPLOSION)
+		destroyed = true;
 }

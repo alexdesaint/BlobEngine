@@ -50,8 +50,8 @@ namespace BlobEngine::BlobGL {
 
 		glTextureStorage2D(texture, 1, GL_RGB8, bitmap.width, bitmap.height);
 		glTextureSubImage2D(texture, 0, 0, 0, bitmap.width, bitmap.height, GL_RGB, GL_UNSIGNED_BYTE, bitmap.data);
-		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		bmpread_free(&bitmap);
 	}

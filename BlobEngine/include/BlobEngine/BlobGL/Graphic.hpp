@@ -164,7 +164,7 @@ namespace BlobEngine::BlobGL {
 		void enableDebugCallBack();
 
 	public:
-		Graphic();
+		Graphic(bool fullScreen = true, unsigned int w = 640, unsigned int h = 480);
 
 		~Graphic();
 

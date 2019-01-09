@@ -22,6 +22,8 @@ namespace BlobEngine::BlobGL {
 
 		void addRenderable(Renderable *r);
 
+		void removeRenderable(Renderable *r);
+
 		size_t getRenderableSize() const;
 
 	public:

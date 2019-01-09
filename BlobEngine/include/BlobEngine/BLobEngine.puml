@@ -39,7 +39,7 @@ namespace BlobEngine {
 namespace BlobEngine {
 	class CollisionDetector {
 		+CollisionDetector()
-		+getClosetObject(Circle& object, Vec2f frameMove, Hit& hit) : PhysicalObject*
+		+getClosetObject(Circle& object, Vec2f frameMove, Hit& hit) : StaticObject*
 		-frameCountTimer : float
 		-getElapsedTime() : float
 		+getFPS() : float
@@ -49,7 +49,7 @@ namespace BlobEngine {
 		-{static} lineStaticList : static std::deque<LineStatic*>
 		-frameCount : unsigned int
 		+checkCollision(CircleDynamic& object) : void
-		+update() : void
+		+isDestroyed() : void
 	}
 }
 
@@ -146,9 +146,9 @@ namespace BlobEngine {
 
 
 namespace BlobEngine {
-	class PhysicalObject {
-		#PhysicalObject(unsigned int objectType)
-		+hit(const PhysicalObject& from) : Reaction
+	class StaticObject {
+		#StaticObject(unsigned int objectType)
+		+hit(const StaticObject& from) : Reaction
 		+objectType : unsigned int
 	}
 }
@@ -168,17 +168,17 @@ enum Reaction {
 /' Inheritance relationships '/
 
 namespace BlobEngine {
-	PhysicalObject <|-- CircleDynamic
+	StaticObject <|-- CircleDynamic
 }
 
 
 namespace BlobEngine {
-	PhysicalObject <|-- CircleStatic
+	StaticObject <|-- CircleStatic
 }
 
 
 namespace BlobEngine {
-	PhysicalObject <|-- LineStatic
+	StaticObject <|-- LineStatic
 }
 
 

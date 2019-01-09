@@ -6,12 +6,10 @@ enum objectTypeEnum{
 	BOMB = 1,
 	PLAYER = 2,
 	INDESTRUCTIBLE_BOX = 3,
-	BOX = 4
-};
-
-struct UserData {
-	objectTypeEnum materialIndex;
-	void* object;
+	BOX = 4,
+	EXTRABOMB,
+	EXTRASPEED,
+	EXTRAPOWER
 };
 
 #endif //BOMBERMAN_USERDATA_HPP

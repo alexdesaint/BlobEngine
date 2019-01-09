@@ -2,7 +2,7 @@
 
 using namespace BlobEngine;
 
-Player::Player(float x, float y, std::list<Bomb> &bombs) : RectDynamic(0), bombs(bombs) {
+Player::Player(float x, float y, std::list<BombManager> &bombs) : RectDynamic(PLAYER, this), bombs(bombs) {
 	position = {x, y};
 	size = {0.8f, 0.8f};
 
@@ -10,8 +10,6 @@ Player::Player(float x, float y, std::list<Bomb> &bombs) : RectDynamic(0), bombs
 	setScale(0.8f, 0.8f, 0.8f);
 
 	setColor(255, 255, 255);
-
-	maxSpeed = 2.5;
 }
 
 void Player::preCollisionUpdate() {
@@ -35,15 +33,36 @@ void Player::preCollisionUpdate() {
 	} else
 		speed.reset();
 
-	if(*keys[Actions::putBomb]) {
-		bombs.emplace_front(position.x, position.y, *this);
+	if (*keys[Actions::putBomb] && !onBomb && bombPosed < maxBomb) {
+		bombs.emplace_front(position, *this);
+		lastBomb = &bombs.front();
+		onBomb = true;
+		bombPosed++;
 	}
 }
 
 void Player::postCollisionUpdate() {
 	setPosition(position.x, position.y, 0.4f);
+
+	if (onBomb) {
+		Bomb *bomb = lastBomb->getBomb();
+		if (bomb == nullptr || !bomb->overlap(*this)) {
+			onBomb = false;
+		}
+	}
 }
 
-Reaction Player::hit(const PhysicalObject &from) {
-	return Reaction::BOUNCE;
+Reaction Player::hit(const int objectType, const void *objectData) {
+	if (onBomb && objectType == BOMB && objectData == lastBomb->getBomb()) {
+		return Reaction::IGNORE;
+	}
+	if (objectType == EXTRABOMB) {
+		maxBomb++;
+	} else if (objectType == EXTRASPEED) {
+		maxSpeed += 1;
+	} else if (objectType == EXTRAPOWER) {
+		bombPower++;
+	}
+
+	return Reaction::STOP;
 }

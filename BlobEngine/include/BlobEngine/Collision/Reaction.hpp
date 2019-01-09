@@ -2,9 +2,7 @@
 #define BLOBENGINE_REACTION_HPP
 
 enum Reaction {
-	BOUNCE,
 	STOP,
-	ROLL,
 	IGNORE
 };
 

@@ -1,27 +1,31 @@
 #ifndef BOMBERMAN_EXPLOSION_HPP
 #define BOMBERMAN_EXPLOSION_HPP
 
-#include <SFML/Graphics.hpp>
+#include <BlobEngine/Collision/CollisionDetector.hpp>
+#include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/Time.hpp>
 
-#include <BomberBlob/DynamicCircle.hpp>
+#include <BomberBlob/UserData.hpp>
 
-class Explosion : DynamicCircle{
+class Explosion : public BlobEngine::Collision::RectDynamic, public BlobEngine::BlobGL::Cube {
 private:
-	sf::CircleShape shape;
-	sf::RectangleShape rectShape;
-	sf::Texture texture;
-	sf::Clock clock;
-	b2Vec2 positionInitial;
-	float maxSpeed = 2000000, distanceMax = 200, rayon;
-	bool arrived = false;
-	UserData userData = {EXPLOSION, this};
-
-	bool update();
+	BlobEngine::Vec2f positionInitial, dirrection;
+	float maxSpeed = 8, distanceMax = 2;
+	bool active = true;
 
 public:
-	explicit Explosion(b2Vec2 positionInitial, b2Vec2 dirrection, float distanceMax, b2World *world);
+	Explosion(BlobEngine::Vec2f positionInitial, BlobEngine::Vec2f dirrection, float distanceMax);
 
-	bool draw(sf::RenderWindow *window);
+	bool moove() final;
+
+	void postCollisionUpdate() final;
+
+	Reaction hit(int objectType, const void *objectData) final;
+
+	bool isActive() const {
+		return active;
+	}
+
 };
 
 

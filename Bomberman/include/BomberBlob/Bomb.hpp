@@ -6,34 +6,19 @@
 
 #include <BomberBlob/UserData.hpp>
 
-#include <list>
-
 class Player;
 
-class Bomb : public BlobEngine::RectStatic, public BlobEngine::BlobGL::Cube {
+class Bomb : public BlobEngine::Collision::RectStatic, public BlobEngine::BlobGL::Cube {
 private:
-	float timeDelay = 2;
-	bool destroyed = false, playerOnBomb = true, bombAlone = false;
 
-	UserData userData = {BOMB, this};
-
-	std::list<Bomb>::iterator elementIt{};
-
-	Player &player;
+	bool destroyed = false;
 
 public:
-	explicit Bomb(float x, float y, Player &player);
+	explicit Bomb(BlobEngine::Vec2f pos);
 
-	void hit() {
-		destroyed = true;
-	}
+	void hit(int objectType, const void *objectData) final;
 
-	bool bombNotFree() {
-		if(bombAlone)
-			return false;
-		playerOnBomb = true;
-		return playerOnBomb;
-	}
+	bool isDestroyed();
 };
 
 #endif //BOMBERMAN_BOMB_HPP

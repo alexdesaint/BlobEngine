@@ -77,7 +77,9 @@ namespace BlobEngine::BlobGL {
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 	}
 
-	Graphic::Graphic() :
+	Graphic::Graphic(bool fullScreen, unsigned int w, unsigned int h) :
+			width(w),
+			height(h),
 			cameraPosition(0, 0, 2),
 			cameraLookAt(0, 0, 0),
 			cameraUp(0, 0, 1) {
@@ -94,16 +96,20 @@ namespace BlobEngine::BlobGL {
 		if (!glfwInit())
 			throw BlobException("Can't init glfw");
 
-		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-		glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-		glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-		glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+		if(fullScreen) {
+			const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+			glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+			glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+			glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-		width = mode->width;
-		height = mode->height;
+			width = mode->width;
+			height = mode->height;
 
-		window = glfwCreateWindow(mode->width, mode->height, "My Title", glfwGetPrimaryMonitor(), nullptr);
+			window = glfwCreateWindow(width, height, "My Title", glfwGetPrimaryMonitor(), nullptr);
+		} else {
+			window = glfwCreateWindow(width, height, "My Title", nullptr, nullptr);
+		}
 
 		if (!window) {
 			glfwTerminate();
