@@ -1,18 +1,22 @@
 #include <BlobEngine/BlobGL/Graphic.hpp>
 #include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/BlobGL/Text.hpp>
+
 #include <BlobEngine/Time.hpp>
 #include <BlobEngine/BlobException.hpp>
 #include <iostream>
 #include <list>
 
 using namespace std;
+using namespace BlobEngine;
 using namespace BlobEngine::BlobGL;
 
 int main(int argc, char *argv[]) {
 
 	try {
-		Graphic graphic(640, 480);
+		Graphic graphic(false);
 		BlobEngine::BlobGL::ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
+		BlobEngine::BlobGL::ShaderProgram shaderProgram2D("data/vertex2D.glsl", "data/fragment2D.glsl");
 
 		Cube c1, c2;
 
@@ -37,10 +41,15 @@ int main(int argc, char *argv[]) {
 
 		graphic.setCameraPosition(5, 0, 5);
 
+		Time::TimePoint start = Time::now();
+
+		Text::Letter letter('a');
+
 		while (graphic.isOpen()) {
 			graphic.clear();
 
-			float angle = BlobEngine::getTime();
+			Time::Duration flow = start - Time::now();
+			float angle = flow.count();
 
 			c1.setRotation(angle * 40, 0.f, 0.f, 1.f);
 
@@ -48,6 +57,8 @@ int main(int argc, char *argv[]) {
 			graphic.draw(c2, shaderProgram);
 
 			graphic.draw(p, shaderProgram);
+
+			graphic.draw(letter, shaderProgram2D);
 
 			op.setRotation(angle * 40, 0.f, 0.f, 1.f);
 			graphic.draw(op, shaderProgram);

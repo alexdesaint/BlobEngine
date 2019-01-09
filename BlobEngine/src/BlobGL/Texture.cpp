@@ -13,9 +13,9 @@ namespace BlobEngine::BlobGL {
 		//glCreateSamplers(1, &sampler);
 	}
 
-	Texture::Texture(const std::string &path) {
+	Texture::Texture(const std::string &path, bool nearest) {
 		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-		loadBMPtexture(path);
+		loadBMPtexture(path, nearest);
 	}
 
 	Texture::Texture(uint8_t r, uint8_t g, uint8_t b) {
@@ -29,7 +29,7 @@ namespace BlobEngine::BlobGL {
 		//glDeleteSamplers(1, &sampler);
 	}
 
-	void Texture::loadBMPtexture(const std::string &path) {
+	void Texture::loadBMPtexture(const std::string &path, bool nearest) {
 		/*glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -50,8 +50,13 @@ namespace BlobEngine::BlobGL {
 
 		glTextureStorage2D(texture, 1, GL_RGB8, bitmap.width, bitmap.height);
 		glTextureSubImage2D(texture, 0, 0, 0, bitmap.width, bitmap.height, GL_RGB, GL_UNSIGNED_BYTE, bitmap.data);
-		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		if(nearest) {
+			glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		} else {
+			glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
 
 		bmpread_free(&bitmap);
 	}

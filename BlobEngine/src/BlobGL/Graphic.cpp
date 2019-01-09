@@ -3,6 +3,7 @@
 #include <BlobEngine/BlobGL/Renderable.hpp>
 #include <BlobEngine/BlobGL/Graphic.hpp>
 #include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/BlobGL/Text.hpp>
 
 //std
 #include <iostream>
@@ -96,7 +97,7 @@ namespace BlobEngine::BlobGL {
 		if (!glfwInit())
 			throw BlobException("Can't init glfw");
 
-		if(fullScreen) {
+		if (fullScreen) {
 			const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwWindowHint(GLFW_RED_BITS, mode->redBits);
 			glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
@@ -138,12 +139,14 @@ namespace BlobEngine::BlobGL {
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 
 		createVBO();
+		Text::createVBO();
 
 		lastFrameTime = std::chrono::high_resolution_clock::now();
 	}
 
 	Graphic::~Graphic() {
 		deleteVBO();
+		Text::deleteVBO();
 
 		glfwDestroyWindow((GLFWwindow *) window);
 		glfwTerminate();

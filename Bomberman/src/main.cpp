@@ -9,7 +9,7 @@ using namespace BlobEngine::BlobGL;
 int main() {
 
 	try {
-		Graphic graphic;
+		Graphic graphic(false);
 
 		(BomberBlob(graphic));
 

@@ -20,13 +20,13 @@ namespace BlobEngine::BlobGL {
 	public:
 		Texture();
 
-		explicit Texture(const std::string &path);
+		explicit Texture(const std::string &path, bool nearest = false);
 
 		Texture(uint8_t r, uint8_t g, uint8_t b);
 
 		unsigned int getTexture() const;
 
-		void loadBMPtexture(const std::string &path);
+		void loadBMPtexture(const std::string &path, bool nearest = false);
 
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
