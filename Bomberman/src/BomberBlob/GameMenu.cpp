@@ -1,64 +1,56 @@
-#include "BomberBlob/GameMenu.hpp"
+#include <BomberBlob/GameMenu.hpp>
 
+#include <BlobEngine/BlobGL/Text.hpp>
+#include <BlobEngine/Time.hpp>
 #include <BomberBlob/BomberBlob.hpp>
 
-using namespace sf;
 
-sf::Text GameMenu::createText(const sf::String &str, unsigned int size, int x , int y) {
-	sf::Text text(str, font);
-	text.setCharacterSize(size);
-	text.setStyle(sf::Text::Bold);
-	text.setFillColor(sf::Color::White);
-	sf::FloatRect textRect = text.getLocalBounds();
-	text.setOrigin(textRect.left + textRect.width/2.0f, textRect.top  + textRect.height/2.0f);
-	text.setPosition(x, y);
+using namespace BlobEngine::Time;
+using namespace BlobEngine::BlobGL;
 
-	return text;
-}
+GameMenu::GameMenu(Graphic &window) : window(window) {
 
-GameMenu::GameMenu(sf::RenderWindow &window) : window(window) {
+	Text::Text title("BOMBERBLOB");
+	title.setScale(0.3, 0.3, 1);
 
-	font.loadFromFile("../data/FFFFORWA.TTF");
+	Text::Text start("-- PRESS SPACE BAR --");
+	start.setScale(0.1, 0.1, 1);
+	start.setPosition(0, -0.5f, 0);
 
-	Text title = createText("BomberBlob", 50, window.getSize().x/2, 100);
+	ShaderProgram shaderProgram("data/vertex2D.glsl", "data/fragment2D.glsl");
 
-	Text start = createText("-- Press Any Button --", 15, window.getSize().x/2, window.getSize().y/2);
+	const std::array<bool, Key::KeyCount> &keys = Graphic::getKeys();
 
-	sf::Clock timer;
-	timer.restart();
+	TimePoint flow = now();
+
+	bool space = false, escape = false;
 
 	while (window.isOpen()) {
-		Keyboard::Key Key;
-		Event event{};
-		while (window.pollEvent(event)) {
-			switch (event.type) {
-				case Event::Closed :
-					window.close();
-				case Event::KeyPressed :
-					Key = event.key.code;
+		window.clear();
 
-					switch (Key) {
-						case Keyboard::Left :
-						case Keyboard::Right :
-						case Keyboard::Up :
-						case Keyboard::Down :
-						case Keyboard::Enter :
-						default:
-							BomberBlob bomberBlob(window);
-							break;
-					}
-					break;
-				default:
-					break;
-			}
-		}
-		window.clear(sf::Color::Red);
+		window.draw(title, shaderProgram);
 
-		window.draw(title);
+		Duration d = now() - flow;
 
-		if(timer.getElapsedTime().asMilliseconds()%2000>1000)
-			window.draw(start);
+		if(d.count() < 1)
+			window.draw(start, shaderProgram);
+		else if(d.count() > 2)
+			flow = now();
 
 		window.display();
+
+		if(keys[SPACE] && !space) {
+			space = true;
+		} else if(!keys[SPACE] && space) {
+			(BomberBlob(window));
+			space = false;
+		}
+
+		if(keys[ESCAPE] && !escape) {
+			escape = true;
+		} else if(!keys[ESCAPE] && escape) {
+			window.close();
+			escape = false;
+		}
 	}
 }

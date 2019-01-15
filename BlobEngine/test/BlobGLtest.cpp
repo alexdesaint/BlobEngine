@@ -43,7 +43,9 @@ int main(int argc, char *argv[]) {
 
 		Time::TimePoint start = Time::now();
 
-		Text::Letter letter('a');
+		Text::Text text("BLOBENGINE, alexandredlsb@gmail.com");
+		text.setScale(0.1, 0.1, 1);
+		text.setPosition(-1, 0.9, 0);
 
 		while (graphic.isOpen()) {
 			graphic.clear();
@@ -58,7 +60,7 @@ int main(int argc, char *argv[]) {
 
 			graphic.draw(p, shaderProgram);
 
-			graphic.draw(letter, shaderProgram2D);
+			graphic.draw(text, shaderProgram2D);
 
 			op.setRotation(angle * 40, 0.f, 0.f, 1.f);
 			graphic.draw(op, shaderProgram);

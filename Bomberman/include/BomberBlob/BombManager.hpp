@@ -27,6 +27,8 @@ public:
 	Bomb *getBomb() const;
 
 	bool update();
+
+	~BombManager();
 };
 
 #endif //BOMBERMAN_BOMBMANAGER_HPP

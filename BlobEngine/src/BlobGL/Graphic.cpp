@@ -221,6 +221,9 @@ namespace BlobEngine::BlobGL {
 			std::cout << std::hex << r << " ";
 		std::cout << std::endl;
 */
+		for (auto r : shape.shapes)
+			draw(*r, program, modelMatrix);
+
 		for (auto r : shape.renderables)
 			draw(*r, program, modelMatrix);
 	}

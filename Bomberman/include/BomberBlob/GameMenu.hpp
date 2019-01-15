@@ -1,16 +1,14 @@
 #ifndef BOMBERMAN_GAMEMENU_HPP
 #define BOMBERMAN_GAMEMENU_HPP
 
-#include <SFML/Graphics.hpp>
+#include <BlobEngine/BlobGL/Graphic.hpp>
 
 class GameMenu {
 private:
-	sf::Font font;
-	sf::RenderWindow &window;
+	BlobEngine::BlobGL::Graphic &window;
 
-	sf::Text createText(const sf::String &str, unsigned int size, int x, int y);
 public:
-	explicit GameMenu(sf::RenderWindow &window);
+	explicit GameMenu(BlobEngine::BlobGL::Graphic &window);
 };
 
 

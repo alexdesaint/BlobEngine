@@ -65,3 +65,30 @@ bool BombManager::update() {
 Bomb *BombManager::getBomb() const {
 	return bomb;
 }
+
+BombManager::~BombManager() {
+	if(exUP != nullptr) {
+		removeRenderable(exUP);
+		delete exUP;
+	}
+
+	if(exDO != nullptr) {
+		removeRenderable(exDO);
+		delete exDO;
+	}
+
+	if(exLE != nullptr) {
+		removeRenderable(exLE);
+		delete exLE;
+	}
+
+	if(exRI != nullptr) {
+		removeRenderable(exRI);
+		delete exRI;
+	}
+
+	if(bomb != nullptr) {
+		removeRenderable(bomb);
+		delete bomb;
+	}
+}

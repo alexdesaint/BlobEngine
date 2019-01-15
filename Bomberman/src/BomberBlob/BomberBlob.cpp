@@ -8,21 +8,21 @@
 #include <BomberBlob/Player.hpp>
 #include <BomberBlob/IndestructibleBox.hpp>
 #include <BomberBlob/Box.hpp>
-//#include <BomberBlob/InfoBar.hpp>
+#include <BomberBlob/InfoBar.hpp>
 #include <BomberBlob/BombManager.hpp>
 #include <BomberBlob/Bonus.hpp>
 
 using namespace BlobEngine;
 
 BomberBlob::BomberBlob(BlobGL::Graphic &window) {
-	int width = 11, height = 11;
+	int width = 11 + 6, height = 11 + 6;
 
 	BlobGL::Plane ground;
 
 	ground.loadBMPtexture("data/Grass.bmp");
 	ground.setPosition(height / 2.f, height / 2.f, 0);
-	ground.setScale(9, 9, 1);
-	ground.setTextureScale(9);
+	ground.setScale(width - 2, height - 2, 1);
+	ground.setTextureScale(width - 2);
 
 	//BombManager bombManager(&world);
 
@@ -89,17 +89,22 @@ BomberBlob::BomberBlob(BlobGL::Graphic &window) {
 
 //	Bomb bomb(7.5f, 1.5f);
 
+	InfoBar infoBar;
+
 	Collision::CollisionDetector collisionDetector{};
 
 	BlobGL::ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
+	BlobGL::ShaderProgram shaderProgram2D("data/vertex2D.glsl", "data/fragment2D.glsl");
 
-	window.setCameraPosition(width, height / 2.f, 15);
+	window.setCameraPosition(width, height / 2.f, (width+height)/2.f + 4);
 
 	window.setCameraLookAt(width / 2.f, height / 2.f, 0);
 
 	//window.setOrthoProjection(-width/2.f, width/2.f, -height/2.f, height/2.f, 1,20);
 
-	while (window.isOpen()) {
+	bool endGmae = false, escape = false;
+
+	while(window.isOpen() && !endGmae) {
 
 		window.clear();
 
@@ -145,14 +150,17 @@ BomberBlob::BomberBlob(BlobGL::Graphic &window) {
 
 		window.draw(player, shaderProgram);
 
-		//infoBar.draw(&window);
+		//window.draw(infoBar, shaderProgram2D);
 
 		window.display();
 
 		//if(!player.isAlive())
-		//	gameIsRunning = false;
+		//	endGmae = true;
 
-		if (keys[BlobGL::ESCAPE])
-			window.close();
+		if(keys[BlobGL::ESCAPE] && !escape) {
+			escape = true;
+		} else if(!keys[BlobGL::ESCAPE] && escape) {
+			endGmae = true;
+		}
 	}
 }

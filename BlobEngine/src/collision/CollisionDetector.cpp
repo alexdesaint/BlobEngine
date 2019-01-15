@@ -223,8 +223,6 @@ namespace BlobEngine::Collision {
 
 		Vec2f frameMove = object.speed * timeFlow;
 
-		object.disableCollision();
-
 		auto numOfStep = static_cast<unsigned int>(ceil(frameMove.length() * 100));
 
 		Vec2f stepMove = frameMove / numOfStep;
@@ -235,10 +233,36 @@ namespace BlobEngine::Collision {
 			object.position.x = object.position.x + stepMove.x;
 
 			for (RectStatic *rect : rectStaticList) {
-				if (rect->overlap(object) || object.overlap(*rect) || !object.moove()) {
+				if (rect->overlap(object) || object.overlap(*rect)) {
 					rect->hit(object.objectType, object.objectData);
 
 					if(object.hit(rect->objectType, rect->objectData) != IGNORE) {
+						i = numOfStep;
+						object.position = old;
+						break;
+					}
+				}
+
+				if(!object.moove()){
+					i = numOfStep;
+					object.position = old;
+					break;
+				}
+			}
+
+			for (RectDynamic *rect : rectDynamicList) {
+				if(rect != &object) {
+					if (rect->overlap(object) || object.overlap(*rect)) {
+						rect->hit(object.objectType, object.objectData);
+
+						if (object.hit(rect->objectType, rect->objectData) != IGNORE) {
+							i = numOfStep;
+							object.position = old;
+							break;
+						}
+					}
+
+					if (!object.moove()) {
 						i = numOfStep;
 						object.position = old;
 						break;
@@ -269,9 +293,27 @@ namespace BlobEngine::Collision {
 					break;
 				}
 			}
-		}
 
-		object.enableCollision();
+			for (RectDynamic *rect : rectDynamicList) {
+				if(rect != &object) {
+					if (rect->overlap(object) || object.overlap(*rect)) {
+						rect->hit(object.objectType, object.objectData);
+
+						if (object.hit(rect->objectType, rect->objectData) != IGNORE) {
+							i = numOfStep;
+							object.position = old;
+							break;
+						}
+					}
+
+					if (!object.moove()) {
+						i = numOfStep;
+						object.position = old;
+						break;
+					}
+				}
+			}
+		}
 
 		object.postCollisionUpdate();
 	}

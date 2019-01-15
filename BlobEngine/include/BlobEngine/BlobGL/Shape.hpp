@@ -9,37 +9,22 @@ namespace BlobEngine::BlobGL {
 
 	class Graphic;
 
-	class Shape {
+	class Shape : public Movable {
 		friend Graphic;
 	private:
-		glm::mat4 translateMatrix = glm::mat4(1.f);
-		glm::mat4 rotateMatrix = glm::mat4(1.f);
-		glm::mat4 scaleMatrix = glm::mat4(1.f);
 
 		std::list<Renderable*> renderables;
+		std::list<Shape*> shapes;
 
 	protected:
 
 		void addRenderable(Renderable *r);
+		void addRenderable(Shape *r);
 
 		void removeRenderable(Renderable *r);
+		void removeRenderable(Shape *r);
 
-		size_t getRenderableSize() const;
-
-	public:
-		glm::mat4 getModelMatrix() const;
-
-		void setPosition(float x, float y, float z);
-
-		void move(float x, float y, float z);
-
-		void setRotation(float r, float x, float y, float z);
-
-		void rotate(float r, float x, float y, float z);
-
-		void setScale(float x, float y, float z);
-
-		void rescale(float x, float y, float z);
+		//size_t getRenderableSize() const;
 	};
 }
 

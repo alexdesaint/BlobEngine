@@ -1,7 +1,6 @@
 #include <iostream>
 
-#include <BomberBlob/Box.hpp>
-#include <BomberBlob/BomberBlob.hpp>
+#include <BomberBlob/GameMenu.hpp>
 
 using namespace BlobEngine;
 using namespace BlobEngine::BlobGL;
@@ -9,9 +8,9 @@ using namespace BlobEngine::BlobGL;
 int main() {
 
 	try {
-		Graphic graphic(false);
+		Graphic graphic;//(false);
 
-		(BomberBlob(graphic));
+		(GameMenu(graphic));
 
 	} catch (std::exception &e) {
 		std::cout << e.what() << std::endl;

@@ -62,6 +62,9 @@ Reaction Player::hit(const int objectType, const void *objectData) {
 		maxSpeed += 1;
 	} else if (objectType == EXTRAPOWER) {
 		bombPower++;
+	} else if (objectType == EXPLOSION) {
+		alive = false;
+		return Reaction::IGNORE;
 	}
 
 	return Reaction::STOP;
