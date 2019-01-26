@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.9)
 
 set(CMAKE_CXX_STANDARD 17)
+
+project(BlobEngine LANGUAGES CXX C)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
@@ -11,12 +13,6 @@ if (NOT SFML_FOUND)
 	message(ERROR "SFML not found")
 endif()
 
-find_package(SDL2 REQUIRED)
-if (NOT SDL2_FOUND)
-	message(ERROR "SDL2 not found")
-endif()
-include_directories(${SDL2_INCLUDE_DIRS})
-
 find_package(OpenGL REQUIRED)
 if (NOT OPENGL_FOUND )
 	message(ERROR "OpenGL not found")
@@ -24,5 +20,5 @@ endif()
 include_directories(${OPENGL_INCLUDE_DIR})
 
 add_subdirectory(libs)
-add_subdirectory(BlobEngine)
-add_subdirectory(Bomberman)
+add_subdirectory(src)
+add_subdirectory(test)
