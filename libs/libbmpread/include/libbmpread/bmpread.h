@@ -119,7 +119,7 @@ typedef struct bmpread_t
  *    line like you might otherwise expect, pass BMPREAD_TOP_DOWN in flags.
  *  - Lines are padded to span a multiple of four bytes.  To return data with
  *    no padding, pass BMPREAD_BYTE_ALIGN in flags.
- *  - Images with a width or height that isn't a power of 2 will fail to loadBMPtexture.
+ *  - Images with a width or height that isn't a power of 2 will fail to loadBMP.
  *    To allow loading images of any size, pass BMPREAD_ANY_SIZE in flags.
  * Note that passing any of these flags may cause the output to be unusable as
  * an OpenGL texture, which may or may not matter to you.

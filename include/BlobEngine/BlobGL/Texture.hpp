@@ -20,17 +20,17 @@ namespace BlobEngine::BlobGL {
 	public:
 		Texture();
 
-		explicit Texture(const std::string &path, bool nearest = false);
+		Texture(const std::string &path, bool nearest = false);
 
 		Texture(uint8_t r, uint8_t g, uint8_t b);
 
-		unsigned int getTexture() const;
-
-		void loadBMPtexture(const std::string &path, bool nearest = false);
+		void loadBMP(const std::string &path, bool nearest = false);
 
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
-		//void setDepth(unsigned int x, unsigned int y);
+		void setRGBA32data(uint8_t *pixels, int width, int height, bool nearest = false);
+
+		unsigned int getTextureID() const;
 
 		void reset();
 

@@ -30,7 +30,6 @@
 #include <libbmpread/bmpread.h>
 
 #include <limits.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -422,7 +421,7 @@ typedef struct read_context
 
 /* A sub-function to Validate() that handles the bitfields.  Returns 0 on
  * invalid bitfields or nonzero on success.  Note that we don't treat odd
- * bitmasks such as R8G8 or A1G1B1 as invalid, even though they may not loadBMPtexture in
+ * bitmasks such as R8G8 or A1G1B1 as invalid, even though they may not loadBMP in
  * most other loaders.
  */
 static int ValidateBitfields(read_context * p_ctx)

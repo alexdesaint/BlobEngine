@@ -119,7 +119,7 @@ namespace BlobEngine::BlobGL {
 		gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 		glfwSwapInterval(1);
 
-		if (!gladLoadGL()) throw BlobException("Can't loadBMPtexture openGL");
+		if (!gladLoadGL()) throw BlobException("Can't loadBMP openGL");
 
 
 		enableDebugCallBack();

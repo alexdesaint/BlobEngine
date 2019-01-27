@@ -13,7 +13,7 @@ namespace BlobEngine::BlobGL {
 	}
 
 	void FrameBufferObject::addTexture(Texture t) {
-		glNamedFramebufferTexture(frameBufferObject, GL_DEPTH_ATTACHMENT, t.getTexture(), 0);
+		glNamedFramebufferTexture(frameBufferObject, GL_DEPTH_ATTACHMENT, t.getTextureID(), 0);
 
 		glNamedFramebufferDrawBuffer(frameBufferObject, GL_NONE);
 		glNamedFramebufferReadBuffer(frameBufferObject, GL_NONE);

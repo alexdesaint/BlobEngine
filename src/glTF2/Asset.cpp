@@ -14,7 +14,7 @@ namespace BlobEngine::glTF2 {
 		version = j.getString("version");
 
 		if (version != "2.0")
-			throw BlobException(string("glTF : can't loadBMPtexture version ") + version);
+			throw BlobException(string("glTF : can't loadBMP version ") + version);
 	}
 
 	ostream &operator<<(ostream &s, const Asset &a) {

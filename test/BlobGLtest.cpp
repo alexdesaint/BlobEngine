@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 
 		c1.setPosition(-5.f, 0.f, 0.f);
 
-		c1.loadBMPtexture("data/cube.bmp");
+		c1.loadBMP("data/cube.bmp");
 		c2.setPosition(0.f, -2.f, 0.f);
 		c2.setScale(4, 1, 1);
 		//c2.setColor(100, 0, 0);

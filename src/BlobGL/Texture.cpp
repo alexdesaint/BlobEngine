@@ -10,12 +10,11 @@ namespace BlobEngine::BlobGL {
 
 	Texture::Texture() {
 		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-		//glCreateSamplers(1, &sampler);
 	}
 
 	Texture::Texture(const std::string &path, bool nearest) {
 		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-		loadBMPtexture(path, nearest);
+		loadBMP(path, nearest);
 	}
 
 	Texture::Texture(uint8_t r, uint8_t g, uint8_t b) {
@@ -26,21 +25,14 @@ namespace BlobEngine::BlobGL {
 
 	Texture::~Texture() {
 		glDeleteTextures(1, &texture);
-		//glDeleteSamplers(1, &sampler);
 	}
 
-	void Texture::loadBMPtexture(const std::string &path, bool nearest) {
-		/*glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glBindSampler(0, sampler);*/
+	void Texture::loadBMP(const std::string &path, bool nearest) {
 
 		if (textureLoaded)
 			reset();
 		else
 			textureLoaded = true;
-
 
 		bmpread_t bitmap;
 
@@ -76,25 +68,35 @@ namespace BlobEngine::BlobGL {
 		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 
+	void Texture::setRGBA32data(uint8_t *pixels, int width, int height, bool nearest) {
+		if (textureLoaded) {
+			reset();
+			textureLoaded = false;
+		}
+
+		glTextureStorage2D(texture, 1, GL_RGB8, width, height);
+		glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+		if (nearest) {
+			glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		} else {
+			glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+
+		textureLoaded = true;
+	}
+
 	void Texture::reset() {
 		glDeleteTextures(1, &texture);
 		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
 	}
 
-	unsigned int Texture::getTexture() const {
+	unsigned int Texture::getTextureID() const {
 		return texture;
 	}
 
 	void Texture::setTextureScale(float textureScale) {
 		Texture::textureScale = textureScale;
 	}
-
-	/*void Texture::setDepth(unsigned int x, unsigned int y) {
-		depth = true;
-
-		glTextureStorage2D(texture, 1,  GL_DEPTH_COMPONENT16, x, y);
-		glTextureSubImage2D(texture, 0, 0, 0, x, y, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}*/
 }

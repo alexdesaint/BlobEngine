@@ -79,7 +79,7 @@ namespace BlobEngine {
 		-sng(float x) : float
 		+load(Circle object, Point2f target) : void
 		+load(Circle object, Circle target) : void
-		+loadBMPtexture(Circle object, Line target) : void
+		+loadBMP(Circle object, Line target) : void
 	}
 }
 
