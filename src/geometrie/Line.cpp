@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace BlobEngine {
+namespace Blob {
 
 	Point2f Line::closestPointTo(Point2f point) {
 

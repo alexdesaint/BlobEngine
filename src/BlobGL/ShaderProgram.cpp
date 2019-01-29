@@ -7,12 +7,12 @@
 
 #include <glad/glad.h>
 
-BlobEngine::BlobGL::ShaderProgram::ShaderProgram() {
+Blob::GL::ShaderProgram::ShaderProgram() {
 	// Get a program object.
 	program = glCreateProgram();
 }
 
-BlobEngine::BlobGL::ShaderProgram::ShaderProgram(const std::string &pathVertex, const std::string &pathFragment) {
+Blob::GL::ShaderProgram::ShaderProgram(const std::string &pathVertex, const std::string &pathFragment) {
 	program = glCreateProgram();
 
 	addVertexShaderFile(pathVertex);
@@ -22,7 +22,7 @@ BlobEngine::BlobGL::ShaderProgram::ShaderProgram(const std::string &pathVertex, 
 	linkShaders();
 }
 
-void BlobEngine::BlobGL::ShaderProgram::addVertexShader(const std::string &src) {
+void Blob::GL::ShaderProgram::addVertexShader(const std::string &src) {
 
 	// Create an empty vertex shader handle
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -68,7 +68,7 @@ void BlobEngine::BlobGL::ShaderProgram::addVertexShader(const std::string &src) 
 	}
 }
 
-void BlobEngine::BlobGL::ShaderProgram::addFragmentShader(const std::string &src) {
+void Blob::GL::ShaderProgram::addFragmentShader(const std::string &src) {
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 	// Send the vertex shader source code to GL
@@ -111,7 +111,7 @@ void BlobEngine::BlobGL::ShaderProgram::addFragmentShader(const std::string &src
 	}
 }
 
-void BlobEngine::BlobGL::ShaderProgram::linkShaders() {
+void Blob::GL::ShaderProgram::linkShaders() {
 	// Vertex and fragment shaders are successfully compiled.
 	// Now time to link them together into a program.
 
@@ -172,21 +172,21 @@ void BlobEngine::BlobGL::ShaderProgram::linkShaders() {
 	textureScale = glGetUniformLocation(program, "texScale");
 }
 
-GLuint BlobEngine::BlobGL::ShaderProgram::getProgram() const {
+GLuint Blob::GL::ShaderProgram::getProgram() const {
 	return program;
 }
 
-void BlobEngine::BlobGL::ShaderProgram::addFragmentShaderFile(const std::string &path) {
+void Blob::GL::ShaderProgram::addFragmentShaderFile(const std::string &path) {
 	Reader::FileReader f(path);
 	addFragmentShader(f.toString());
 }
 
-void BlobEngine::BlobGL::ShaderProgram::addVertexShaderFile(const std::string &path) {
+void Blob::GL::ShaderProgram::addVertexShaderFile(const std::string &path) {
 	Reader::FileReader f(path);
 	addVertexShader(f.toString());
 }
 
-GLint BlobEngine::BlobGL::ShaderProgram::getPosition(std::string name) {
+GLint Blob::GL::ShaderProgram::getPosition(std::string name) {
 	return glGetUniformLocation(program, name.c_str());
 }
 

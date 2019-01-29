@@ -3,7 +3,7 @@
 
 #include <glm/mat4x4.hpp>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	class Graphic;
 

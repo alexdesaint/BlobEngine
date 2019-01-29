@@ -6,7 +6,7 @@
 #include <BlobEngine/glTF2/BufferView.hpp>
 #include <BlobEngine/Reader/JsonExplorer.hpp>
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
 	class Accessor {
 	public:

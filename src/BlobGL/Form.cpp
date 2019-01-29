@@ -1,7 +1,7 @@
 #include <BlobEngine/BlobGL/Form.hpp>
 #include <glad/glad.h>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	struct Data {
 		float coor[3];

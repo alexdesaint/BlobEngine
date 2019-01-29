@@ -4,7 +4,7 @@
 
 using namespace std;
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
 	BufferView::BufferView(Reader::JsonExplorer explorer) {
 		explorer.goToBaseNode();

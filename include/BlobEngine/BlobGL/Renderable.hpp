@@ -10,7 +10,7 @@
 #include <BlobEngine/BlobGL/Texture.hpp>
 #include <BlobEngine/BlobGL/Movable.hpp>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	class Graphic;
 

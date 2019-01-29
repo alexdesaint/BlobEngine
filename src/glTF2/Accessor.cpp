@@ -4,7 +4,7 @@
 
 using namespace std;
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
 	static const size_t NUM_TYPE = 7;
 

@@ -8,7 +8,7 @@
 #include <glad/glad.h>
 #include <vector>
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
 	class Buffer {
 	private:

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
 	Mesh::Mesh(Reader::JsonExplorer explorer) : accessor(explorer), buffer(explorer) {
 		explorer.goToBaseNode();
@@ -204,8 +204,8 @@ namespace BlobEngine::glTF2 {
 		return s;
 	}
 
-	std::vector<BlobGL::Renderable *> Mesh::getShape(int mesh) {
-		std::vector<BlobGL::Renderable *> ret(primitives[mesh].size());
+	std::vector<GL::Renderable *> Mesh::getShape(int mesh) {
+		std::vector<GL::Renderable *> ret(primitives[mesh].size());
 		for (int i = 0; i < ret.size(); i++)
 			ret[i] = &primitives[mesh][i];
 		return ret;

@@ -51,9 +51,9 @@ static void GLAPIENTRY openglCallbackFunction(
 	}
 }
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
-	//using namespace BlobGL;
+	//using namespace GL;
 
 	std::array<bool, Key::KeyCount> Graphic::keys;
 
@@ -274,6 +274,12 @@ namespace BlobEngine::BlobGL {
 
 	void Graphic::close() {
 		quit = true;
+	}
+
+	Blob::Vec2f Graphic::getFrameBufferSize() {
+		int display_w, display_h;
+		glfwGetFramebufferSize((GLFWwindow *) window, &display_w, &display_h);
+		return {(float)display_w, (float)display_h};
 	}
 
 }

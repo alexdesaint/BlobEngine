@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	class Graphic;
 

@@ -3,7 +3,7 @@
 
 #include <BlobEngine/BlobGL/Renderable.hpp>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	void createVBO();
 

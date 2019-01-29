@@ -5,9 +5,9 @@
 
 #include <BlobEngine/BlobGL/Shape.hpp>
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
-	class Shape : public BlobGL::Shape { //un objet à modéliser
+	class Shape : public GL::Shape { //un objet à modéliser
 	private:
 		std::vector<Shape> children;
 

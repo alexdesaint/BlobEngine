@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 	Asset::Asset(Reader::JsonExplorer j) {
 		j.goToBaseNode();
 

@@ -2,7 +2,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	void Scene::addRenderable(Shape *r) {
 		shapes.emplace_back(r);

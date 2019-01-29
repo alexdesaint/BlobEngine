@@ -3,7 +3,7 @@
 #include <glm/ext/matrix_transform.inl>
 #include <glm/detail/func_trigonometric.inl>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 	using namespace glm;
 
 	mat4 Movable::getModelMatrix() const {

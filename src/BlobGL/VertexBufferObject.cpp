@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	VertexBufferObject::VertexBufferObject() {
 		glCreateBuffers(1, &vertexBufferObject);

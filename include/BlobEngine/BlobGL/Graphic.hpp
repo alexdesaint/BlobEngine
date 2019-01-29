@@ -4,6 +4,7 @@
 #include <BlobEngine/BlobGL/ShaderProgram.hpp>
 #include <BlobEngine/BlobGL/VertexArrayObject.hpp>
 #include <BlobEngine/BlobGL/Scene.hpp>
+#include <BlobEngine/Geometrie.hpp>
 
 #include <glm/mat4x4.hpp>
 
@@ -11,7 +12,7 @@
 #include <chrono>
 #include <array>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	enum Key {
 		UNKNOWN = -1,
@@ -175,6 +176,8 @@ namespace BlobEngine::BlobGL {
 
 		void resize(unsigned int w, unsigned int h);
 
+		Blob::Vec2f getSize() { return {(float)width, (float)height}; }
+
 		void draw(const Renderable &renderable, const ShaderProgram &program, glm::mat4 shapeModel = glm::mat4(1.0));
 
 		void draw(const Shape &shape, const ShaderProgram &program, glm::mat4 sceneModel = glm::mat4(1.0));
@@ -190,6 +193,8 @@ namespace BlobEngine::BlobGL {
 		void setCameraLookAt(float x, float y, float z);
 
 		void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar);
+
+		Blob::Vec2f getFrameBufferSize();
 
 		static const std::array<bool, KeyCount> &getKeys();
 

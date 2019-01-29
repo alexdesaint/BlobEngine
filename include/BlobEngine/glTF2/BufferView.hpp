@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 #include <vector>
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
 	//! A view into a buffer generally representing a subset of the buffer.
 	class BufferView {

@@ -12,24 +12,24 @@ int main(int argc, char *argv[]) {
 #ifdef TEXT1
 	try {
 
-		BlobEngine::BlobGL::Graphic graphic(640, 480);
+		Blob::GL::Graphic graphic(640, 480);
 
-		//BlobEngine::Renderable shape("../data/sphere.obj");
+		//Blob::Renderable shape("../data/sphere.obj");
 
-		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
-		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
-		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
-		BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
-		//BlobEngine::glTF2::SceneManager sm("../data/poteau/poteau.gltf");
+		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
+		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
+		Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
+		//Blob::glTF2::SceneManager sm("../data/poteau/poteau.gltf");
 
 		std::cout << sm;
 
-		BlobEngine::glTF2::Scene &mainScene = sm.getScene(0);
+		Blob::glTF2::Scene &mainScene = sm.getScene(0);
 
-		BlobEngine::glTF2::Shape &s1 = mainScene.getShape(0);
+		Blob::glTF2::Shape &s1 = mainScene.getShape(0);
 
 
-		BlobEngine::BlobGL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
+		Blob::GL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
 
 		graphic.setCameraPosition(10, 10, 10);
 
@@ -48,26 +48,26 @@ int main(int argc, char *argv[]) {
 #ifdef TEST2
 	try {
 
-		BlobEngine::BlobGL::Graphic graphic(640, 480);
+		Blob::GL::Graphic graphic(640, 480);
 
-		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
-		BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
-		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
-		//BlobEngine::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
-		//BlobEngine::glTF2::SceneManager sm("../data/poteau/poteau.gltf");
+		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+		Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
+		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
+		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
+		//Blob::glTF2::SceneManager sm("../data/poteau/poteau.gltf");
 
 		std::cout << sm;
 
-		BlobEngine::glTF2::Scene &mainScene = sm.getScene(0);
+		Blob::glTF2::Scene &mainScene = sm.getScene(0);
 
-		BlobEngine::BlobGL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
+		Blob::GL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
 
 		graphic.setCameraPosition(10, 10, 0);
 
 		while (graphic.isOpen()) {
 			graphic.clear();
 
-			float angle = BlobEngine::getTime();
+			float angle = Blob::getTime();
 
 			mainScene.setRotation(angle * 40, 0.f, 0.f, 1.f);
 

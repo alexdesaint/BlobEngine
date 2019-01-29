@@ -7,7 +7,7 @@
 #include <deque>
 #include <list>
 
-namespace BlobEngine::Collision {
+namespace Blob::Collision {
 
 	class CollisionDetector;
 

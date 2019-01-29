@@ -1,6 +1,6 @@
 #include <BlobEngine/BlobGL/Shape.hpp>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	void Shape::addRenderable(Renderable *r) {
 		renderables.emplace_back(r);

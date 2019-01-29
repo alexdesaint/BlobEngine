@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	FrameBufferObject::FrameBufferObject() {
 		glGenFramebuffers(1, &frameBufferObject);

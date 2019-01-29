@@ -11,12 +11,12 @@ const GLushort planeIndices[] = {
 		0, 1, 2, 0, 2, 3
 };
 
-using namespace BlobEngine::BlobGL;
+using namespace Blob::GL;
 
 VertexBufferObject *vbo;
 Texture *alphabet;
 
-namespace BlobEngine::BlobGL::Text {
+namespace Blob::GL::Text {
 
 	const size_t numberOfLetter = 32 * 4 - 1;
 

@@ -4,7 +4,7 @@
 
 #include <BlobEngine/Collision/CollisionDetector.hpp>
 
-namespace BlobEngine::Collision {
+namespace Blob::Collision {
 
 //CircleStatic
 

@@ -7,9 +7,9 @@
 
 #include <vector>
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
-	class Scene : public BlobGL::Scene {
+	class Scene : public GL::Scene {
 	public:
 
 		std::vector<glTF2::Shape> nodes;

@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	Texture::Texture() {
 		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
@@ -74,8 +74,8 @@ namespace BlobEngine::BlobGL {
 			textureLoaded = false;
 		}
 
-		glTextureStorage2D(texture, 1, GL_RGB8, width, height);
-		glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+		glTextureStorage2D(texture, 1, GL_RGBA8, width, height);
+		glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 		if (nearest) {
 			glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

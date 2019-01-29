@@ -7,15 +7,15 @@
 #include <iostream>
 
 using namespace std;
-using namespace BlobEngine;
-using namespace BlobEngine::BlobGL;
+using namespace Blob;
+using namespace Blob::GL;
 
 int main(int argc, char *argv[]) {
 
 	try {
 		Graphic graphic(false);
-		BlobEngine::BlobGL::ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
-		BlobEngine::BlobGL::ShaderProgram shaderProgram2D("data/vertex2D.glsl", "data/fragment2D.glsl");
+		Blob::GL::ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
+		Blob::GL::ShaderProgram shaderProgram2D("data/vertex2D.glsl", "data/fragment2D.glsl");
 
 		Cube c1, c2;
 

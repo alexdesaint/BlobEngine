@@ -4,7 +4,7 @@
 
 #define PI 3.14159265f
 
-namespace BlobEngine {
+namespace Blob {
 
 	template<typename T>
 	class Mat2 {

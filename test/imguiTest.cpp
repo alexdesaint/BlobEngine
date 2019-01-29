@@ -9,8 +9,8 @@
 #include <imgui.h>
 
 using namespace std;
-using namespace BlobEngine;
-using namespace BlobEngine::BlobGL;
+using namespace Blob;
+using namespace Blob::GL;
 
 int main(int argc, char *argv[]) {
 
@@ -22,15 +22,21 @@ int main(int argc, char *argv[]) {
 		ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
 		ShaderProgram shaderProgram2D("data/vertex2D.glsl", "data/fragment2D.glsl");
 
-		VertexArrayObject imguiVAO;
-		VertexBufferObject imguiVBO;
-
 		Texture fontTexture;
 		ImGuiIO& io = ImGui::GetIO();
+
+		if(!io.Fonts->IsBuilt())
+			cout << "Font not Build" << endl;
+
 		unsigned char* pixels;
 		int width, height;
 		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 		fontTexture.setRGBA32data(pixels, width, height);
+
+		io.Fonts->TexID = (ImTextureID)(intptr_t)fontTexture.getTextureID();
+
+		io.DisplaySize = ImVec2(graphic.getSize().x, graphic.getSize().y);
+		io.DisplayFramebufferScale = ImVec2(graphic.getFrameBufferSize().x, graphic.getFrameBufferSize().y);
 
 		Cube c1, c2;
 
@@ -63,6 +69,10 @@ int main(int argc, char *argv[]) {
 
 		bool show_demo_window = true;
 
+		VertexBufferObject imguiVBO;
+
+		Renderable imguiRenderable;
+
 		while (graphic.isOpen()) {
 			graphic.clear();
 
@@ -81,18 +91,32 @@ int main(int argc, char *argv[]) {
 			op.setRotation(angle * 40, 0.f, 0.f, 1.f);
 			graphic.draw(op, shaderProgram);
 
-			//ImGui::NewFrame();
-			//ImGui::ShowDemoWindow(&show_demo_window);
-			//ImGui::Render();
-			//ImDrawData *imDrawData = ImGui::GetDrawData();
+			ImGui::NewFrame();
+			ImGui::ShowDemoWindow(&show_demo_window);
+			ImGui::Render();
+			ImDrawData *drawData = ImGui::GetDrawData();
+
+			for (int n = 0; n < drawData->CmdListsCount; n++) {
+				ImDrawList* cmd_list = drawData->CmdLists[n];
+
+				imguiVBO.setData((uint8_t*) cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+
+				imguiRenderable.setBuffer(imguiVBO, sizeof(ImDrawVert));
+
+				for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
+					const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
+					imguiRenderable.setTexture()
+				}
+			}
 
 			graphic.display();
-
 		}
 
 	} catch (BlobException &exception) {
 		cout << exception.what() << std::endl;
 	}
+
+	ImGui::DestroyContext();
 
 	return 0;
 }

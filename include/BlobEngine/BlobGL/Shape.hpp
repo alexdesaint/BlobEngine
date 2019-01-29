@@ -5,7 +5,7 @@
 
 #include <list>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	class Graphic;
 

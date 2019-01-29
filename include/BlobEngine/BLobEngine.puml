@@ -6,17 +6,17 @@
 
 /' Objects '/
 
-namespace BlobEngine {
+namespace Blob {
 	class Circle {
 		+Circle()
-		+Circle(BlobEngine::Point2f position, float rayon)
-		+position : BlobEngine::Point2f
+		+Circle(Blob::Point2f position, float rayon)
+		+position : Blob::Point2f
 		+rayon : float
 	}
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	class CircleDynamic {
 		+CircleDynamic(unsigned int objectType)
 		+~CircleDynamic()
@@ -26,7 +26,7 @@ namespace BlobEngine {
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	class CircleStatic {
 		+CircleStatic(unsigned int objectType)
 		+~CircleStatic()
@@ -36,7 +36,7 @@ namespace BlobEngine {
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	class CollisionDetector {
 		+CollisionDetector()
 		+getClosetObject(Circle& object, Vec2f frameMove, Hit& hit) : StaticObject*
@@ -54,7 +54,7 @@ namespace BlobEngine {
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	class Hit {
 		+Hit()
 		+Hit(Circle object, Point2f target, Vec2f frameMove)
@@ -84,13 +84,13 @@ namespace BlobEngine {
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	class Line {
 		+Line()
-		+Line(BlobEngine::Point2f a, BlobEngine::Point2f b)
-		+pointA : BlobEngine::Point2f
-		+pointB : BlobEngine::Point2f
-		+closestPointTo(BlobEngine::Point2f point) : Point2f
+		+Line(Blob::Point2f a, Blob::Point2f b)
+		+pointA : Blob::Point2f
+		+pointB : Blob::Point2f
+		+closestPointTo(Blob::Point2f point) : Point2f
 		+getIntersectionPoint(Line B) : Point2f
 		+getVector() : Vec2f
 		+Length() : double
@@ -102,7 +102,7 @@ namespace BlobEngine {
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	class LineStatic {
 		+LineStatic(unsigned int objectType)
 		+~LineStatic()
@@ -112,7 +112,7 @@ namespace BlobEngine {
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	class Mat2 <template <typename T>> {
 		+Mat2()
 		+Mat2(T x, T y)
@@ -145,7 +145,7 @@ namespace BlobEngine {
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	class StaticObject {
 		#StaticObject(unsigned int objectType)
 		+hit(const StaticObject& from) : Reaction
@@ -167,17 +167,17 @@ enum Reaction {
 
 /' Inheritance relationships '/
 
-namespace BlobEngine {
+namespace Blob {
 	StaticObject <|-- CircleDynamic
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	StaticObject <|-- CircleStatic
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	StaticObject <|-- LineStatic
 }
 
@@ -187,17 +187,17 @@ namespace BlobEngine {
 
 /' Aggregation relationships '/
 
-namespace BlobEngine {
+namespace Blob {
 	CollisionDetector o-- CircleDynamic
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	CollisionDetector o-- CircleStatic
 }
 
 
-namespace BlobEngine {
+namespace Blob {
 	CollisionDetector o-- LineStatic
 }
 

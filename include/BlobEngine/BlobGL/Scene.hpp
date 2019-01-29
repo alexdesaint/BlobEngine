@@ -3,7 +3,7 @@
 
 #include <BlobEngine/BlobGL/Shape.hpp>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	class Graphic;
 

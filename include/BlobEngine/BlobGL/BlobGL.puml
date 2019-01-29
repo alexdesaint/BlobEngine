@@ -6,7 +6,7 @@
 
 /' Objects '/
 
-namespace BlobEngine {
+namespace Blob {
 	class Graphic {
 		+Graphic(unsigned int width, unsigned int height)
 		+~Graphic()

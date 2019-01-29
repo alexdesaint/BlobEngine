@@ -7,8 +7,8 @@
 #include <BlobEngine/BlobGL/Graphic.hpp>
 #include <BlobEngine/BlobGL/Form.hpp>
 
-using namespace BlobEngine;
-using namespace BlobEngine::BlobGL;
+using namespace Blob;
+using namespace Blob::GL;
 
 class MainRect : public RectDynamic, public Cube {
 private:
@@ -68,7 +68,7 @@ int main() {
 
 	try {
 		Graphic graphic(640, 480);
-		ShaderProgram shaderProgram("../BlobEngine/data/vertex.glsl", "../BlobEngine/data/fragment.glsl");
+		ShaderProgram shaderProgram("../Blob/data/vertex.glsl", "../Blob/data/fragment.glsl");
 
 		CollisionDetector collisionDetector;
 

@@ -3,7 +3,7 @@
 
 #include <BlobEngine/Reader/JsonExplorer.hpp>
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
 	class Asset {
 	private:

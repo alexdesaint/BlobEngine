@@ -3,7 +3,7 @@
 
 #include <chrono>
 
-namespace BlobEngine::Time {
+namespace Blob::Time {
 
 	typedef std::chrono::high_resolution_clock::time_point TimePoint;
 	typedef std::chrono::duration<float> Duration;

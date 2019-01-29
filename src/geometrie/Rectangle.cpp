@@ -1,6 +1,6 @@
 #include <BlobEngine/Geometrie.hpp>
 
-namespace BlobEngine {
+namespace Blob {
 	bool Rectangle::overlap(const Rectangle &r) {
 
 		float xdiff = size.x / 2;

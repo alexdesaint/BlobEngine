@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	VertexArrayObject::VertexArrayObject() {
 		glCreateVertexArrays(1, &vertexArrayObject);

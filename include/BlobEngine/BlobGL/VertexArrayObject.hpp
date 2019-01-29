@@ -4,7 +4,7 @@
 #include <BlobEngine/BlobGL/VertexBufferObject.hpp>
 
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	class VertexArrayObject {
 	private:

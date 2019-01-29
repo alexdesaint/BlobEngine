@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace BlobEngine::BlobGL::Text {
+namespace Blob::GL::Text {
 
 	void createVBO();
 

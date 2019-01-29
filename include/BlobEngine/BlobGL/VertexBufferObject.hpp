@@ -5,7 +5,7 @@
 #include <glm/vec2.hpp>
 #include <vector>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	class VertexArrayObject;
 

@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	/*void Renderable::loadObjFile(const std::string &file) {
 		Reader::FileReader fileReader(file);

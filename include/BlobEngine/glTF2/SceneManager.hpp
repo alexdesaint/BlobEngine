@@ -7,7 +7,7 @@
 
 #include <vector>
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 	class SceneManager {
 		friend BufferView;
 		friend Accessor;

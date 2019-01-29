@@ -13,7 +13,7 @@ using namespace std;
 using rapidjson::Document;
 using rapidjson::Value;
 
-namespace BlobEngine::Reader {
+namespace Blob::Reader {
 
 	Document document;
 

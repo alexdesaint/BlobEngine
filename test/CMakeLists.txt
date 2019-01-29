@@ -4,7 +4,7 @@ target_link_libraries(CollisionTest Collision BlobGL)
 add_executable(glTF2test glTF2test.cpp)
 target_link_libraries(glTF2test glTF2 BlobGL glad FileReader JsonExplorer -lglu32 -lopengl32 ${SDL2_LIBRARIES})
 
-add_executable(BlobGLtest BlobGLtest.cpp)
+add_executable(BlobGLtest BlobGLtest.cpp test.cpp)
 target_link_libraries(BlobGLtest BlobGL -static -static-libgcc -static-libstdc++ -lpthread)
 
 add_executable(imguiTest imguiTest.cpp)

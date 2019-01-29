@@ -4,7 +4,7 @@
 #include <BlobEngine/BlobGL/Renderable.hpp>
 #include <BlobEngine/glTF2/Accessor.hpp>
 
-namespace BlobEngine::glTF2 {
+namespace Blob::glTF2 {
 
 	class Mesh {
 	private:
@@ -21,7 +21,7 @@ namespace BlobEngine::glTF2 {
 
 		Accessor accessor;
 
-		class Primitive : public BlobGL::Renderable {
+		class Primitive : public GL::Renderable {
 			friend Mesh;
 		private:
 			unsigned int dataBufferOffset = 0;
@@ -33,14 +33,14 @@ namespace BlobEngine::glTF2 {
 
 		std::vector<std::vector<Primitive>> primitives;
 
-		BlobGL::VertexBufferObject vbo;
+		GL::VertexBufferObject vbo;
 
 	public:
 		explicit Mesh(Reader::JsonExplorer explorer);
 
 		friend std::ostream &operator<<(std::ostream &s, Mesh &a);
 
-		std::vector<BlobGL::Renderable *> getShape(int mesh);
+		std::vector<GL::Renderable *> getShape(int mesh);
 	};
 }
 

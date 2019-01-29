@@ -3,7 +3,7 @@
 
 #include <BlobEngine/BlobGL/Texture.hpp>
 
-namespace BlobEngine::BlobGL {
+namespace Blob::GL {
 
 	class FrameBufferObject {
 	private:

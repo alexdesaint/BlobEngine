@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace BlobEngine {
+namespace Blob {
 
 	template<typename T>
 	double Mat2<T>::length() {
