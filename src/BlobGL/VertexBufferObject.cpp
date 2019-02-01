@@ -20,9 +20,16 @@ namespace Blob::GL {
 	}
 
 	void VertexBufferObject::setData(GLubyte *data, GLsizeiptr ds) {
+		if(targetSet) {
+			glDeleteBuffers(1, &vertexBufferObject);
+			glCreateBuffers(1, &vertexBufferObject);
+		}
+
 		dataSize = ds;
 
 		glNamedBufferStorage(vertexBufferObject, dataSize, data, 0);
+
+		targetSet = true;
 	}
 
 }

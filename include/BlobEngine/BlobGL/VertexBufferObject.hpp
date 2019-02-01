@@ -16,6 +16,8 @@ namespace Blob::GL {
 
 		int64_t dataSize;
 
+		bool targetSet = false;
+
 	public:
 		VertexBufferObject();
 

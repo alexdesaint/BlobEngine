@@ -39,4 +39,8 @@ namespace Blob::GL {
 		//lie l'attribu avec le buffer
 		glVertexArrayAttribBinding(vertexArrayObject, outPosition, 0);
 	}
+
+	int32_t VertexArrayObject::getOutName(const char *name) {
+		return glGetAttribLocation(vertexArrayObject, name);
+	}
 }

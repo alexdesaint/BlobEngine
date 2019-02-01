@@ -24,7 +24,7 @@ namespace Blob::GL {
 
 		bool indexed = false;
 
-		VertexArrayObject vao;
+		VertexArra(yObject vao;
 
 		Texture *texture = nullptr;
 	public:
@@ -42,6 +42,8 @@ namespace Blob::GL {
 		void setPositionVAO(uint32_t valuePerVector, uint32_t dataType, uint32_t arrayOffset);
 
 		void setNormalVAO(uint32_t valuePerVector, uint32_t dataType, uint32_t arrayOffset);
+
+		void setColorVAO(uint32_t valuePerVector, uint32_t dataType, uint32_t arrayOffset);
 
 		void setIndices(uint8_t *indices, int32_t numOfIndices, uint32_t indicesType);
 

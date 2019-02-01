@@ -218,6 +218,10 @@ namespace Blob::GL {
 		vao.setArray(valuePerVector, 2, dataType, arrayOffset);
 	}
 
+	void Renderable::setColorVAO(uint32_t valuePerVector, uint32_t dataType, uint32_t arrayOffset) {
+		vao.setArray(valuePerVector, 2, dataType, arrayOffset);
+	}
+
 	void Renderable::setIndices(GLubyte *i, GLsizei noi, GLenum it) {
 		indices = i;
 		indicesType = it;
