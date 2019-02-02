@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
 		//
 
-		Cube c1, c2;
+		Cube c1(&shaderProgram), c2(&shaderProgram);
 
 		c1.setPosition(-5.f, 0.f, 0.f);
 
@@ -53,15 +53,15 @@ int main(int argc, char *argv[]) {
 
 		list<Cube> cubeList;
 
-		cubeList.emplace_back();
+		cubeList.emplace_back(&shaderProgram);
 
-		Plane p;
+		Plane p(&shaderProgram);
 
 		p.move(0, 2, 0);
 		p.setScale(2, 2, 2);
 		p.setColor(255, 255, 255);
 
-		OctagonalPrism op;
+		OctagonalPrism op(&shaderProgram);
 
 		graphic.setCameraPosition(5, 0, 5);
 
@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
 		VertexBufferObject imguiVBO;
 
 		Renderable imguiRenderable;
+		imguiRenderable.setShaderProgram(&shaderProgram2D);
 
 		while (graphic.isOpen()) {
 			graphic.clear();
@@ -85,15 +86,15 @@ int main(int argc, char *argv[]) {
 
 			c1.setRotation(angle * 40, 0.f, 0.f, 1.f);
 
-			graphic.draw(c1, shaderProgram);
-			graphic.draw(c2, shaderProgram);
+			graphic.draw(c1);
+			graphic.draw(c2);
 
-			graphic.draw(p, shaderProgram);
+			graphic.draw(p);
 
-			graphic.draw(text, shaderProgram2D);
+			graphic.draw(text);
 
 			op.setRotation(angle * 40, 0.f, 0.f, 1.f);
-			graphic.draw(op, shaderProgram);
+			graphic.draw(op);
 
 			//imgui draw call
 
@@ -104,9 +105,9 @@ int main(int argc, char *argv[]) {
 
 			ImVec2 pos = drawData->DisplayPos;
 
-			imguiRenderable.setColorVAO();
-			imguiRenderable.setPositionVAO();
-			imguiRenderable.setTexturePositionVAO();
+			imguiRenderable.setArrayVAO(2, "Position", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, pos));
+			imguiRenderable.setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, uv));
+			imguiRenderable.setArrayVAO(4, "Color", GL_UNSIGNED_BYTE, (uint32_t)offsetof(ImDrawVert, col), true);
 
 			for (int n = 0; n < drawData->CmdListsCount; n++) {
 				ImDrawList* cmd_list = drawData->CmdLists[n];
@@ -126,7 +127,7 @@ int main(int argc, char *argv[]) {
 
 					glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
 					//glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, GL_UNSIGNED_SHORT, idx_buffer_offset);
-					graphic.draw(imguiRenderable, shaderProgram2D);
+					graphic.draw(imguiRenderable);
 
 					idx_buffer_offset += pcmd->ElemCount;
 				}

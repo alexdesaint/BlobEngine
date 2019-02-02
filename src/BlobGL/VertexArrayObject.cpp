@@ -1,5 +1,6 @@
 #include <BlobEngine/BlobGL/VertexArrayObject.hpp>
 #include <glad/glad.h>
+#include <BlobEngine/BlobException.hpp>
 
 
 namespace Blob::GL {
@@ -27,20 +28,17 @@ namespace Blob::GL {
 	}
 
 	void VertexArrayObject::setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType,
-									 GLuint arrayOffset) {
+									 GLuint arrayOffset, bool normalized) {
 		numberOfElements = 3;
 
 		//autorique l'utilisation de cet atribut
 		glEnableVertexArrayAttrib(vertexArrayObject, outPosition);
 
 		//définit le format de l'atribut
-		glVertexArrayAttribFormat(vertexArrayObject, outPosition, numValuePerArray, dataType, GL_FALSE, arrayOffset);
+		glVertexArrayAttribFormat(vertexArrayObject, outPosition, numValuePerArray, dataType,
+								  static_cast<GLboolean>(normalized), arrayOffset);
 
 		//lie l'attribu avec le buffer
 		glVertexArrayAttribBinding(vertexArrayObject, outPosition, 0);
-	}
-
-	int32_t VertexArrayObject::getOutName(const char *name) {
-		return glGetAttribLocation(vertexArrayObject, name);
 	}
 }

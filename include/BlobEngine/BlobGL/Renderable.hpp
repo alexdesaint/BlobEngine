@@ -24,26 +24,20 @@ namespace Blob::GL {
 
 		bool indexed = false;
 
-		VertexArra(yObject vao;
+		VertexArrayObject vao;
+
+		ShaderProgram *shaderProgram = nullptr;
 
 		Texture *texture = nullptr;
 	public:
 
-		//explicit Renderable(const std::string &file);
-
-		//Renderable(const std::vector<glm::vec3> &points, const std::vector<GLushort> &indices);
+		void setShaderProgram(ShaderProgram *shaderProgram);
 
 		void setBuffer(VertexBufferObject &vbo, int32_t stride, uint32_t dataOffset = 0);
 
 		void setTexture(Texture &t);
 
-		void setTexturePositionVAO(uint32_t valuePerVector, uint32_t dataType, uint32_t arrayOffset);
-
-		void setPositionVAO(uint32_t valuePerVector, uint32_t dataType, uint32_t arrayOffset);
-
-		void setNormalVAO(uint32_t valuePerVector, uint32_t dataType, uint32_t arrayOffset);
-
-		void setColorVAO(uint32_t valuePerVector, uint32_t dataType, uint32_t arrayOffset);
+		void setArrayVAO(uint32_t valuePerVector, const char *name, uint32_t dataType, uint32_t arrayOffset, bool normalized = false);
 
 		void setIndices(uint8_t *indices, int32_t numOfIndices, uint32_t indicesType);
 

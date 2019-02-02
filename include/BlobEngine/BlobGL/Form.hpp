@@ -11,17 +11,17 @@ namespace Blob::GL {
 
 	class Cube : public Renderable, public Texture {
 	public:
-		Cube();
+		explicit Cube(ShaderProgram *shaderProgram);
 	};
 
 	class Plane : public Renderable, public Texture {
 	public:
-		Plane();
+		explicit Plane(ShaderProgram *shaderProgram);
 	};
 
 	class OctagonalPrism : public Renderable, public Texture {
 	public:
-		OctagonalPrism();
+		explicit OctagonalPrism(ShaderProgram *shaderProgram);
 	};
 
 }

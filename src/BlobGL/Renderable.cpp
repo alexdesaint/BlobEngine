@@ -206,20 +206,11 @@ namespace Blob::GL {
 		return typeSize;
 	}
 
-	void Renderable::setPositionVAO(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
-		vao.setArray(valuePerVector, 0, dataType, arrayOffset);
-	}
+	void Renderable::setArrayVAO(uint32_t valuePerVector, const char *name, uint32_t dataType, uint32_t arrayOffset, bool normalized) {
+		if(shaderProgram == nullptr)
+			throw BlobException("Error in Renderable : Can't set Array in VAO if no Shader is set");
 
-	void Renderable::setNormalVAO(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
-		vao.setArray(valuePerVector, 1, dataType, arrayOffset);
-	}
-
-	void Renderable::setTexturePositionVAO(GLuint valuePerVector, GLenum dataType, GLuint arrayOffset) {
-		vao.setArray(valuePerVector, 2, dataType, arrayOffset);
-	}
-
-	void Renderable::setColorVAO(uint32_t valuePerVector, uint32_t dataType, uint32_t arrayOffset) {
-		vao.setArray(valuePerVector, 2, dataType, arrayOffset);
+		vao.setArray(valuePerVector, shaderProgram->getAttribLocation(name), dataType, arrayOffset, normalized);
 	}
 
 	void Renderable::setIndices(GLubyte *i, GLsizei noi, GLenum it) {
@@ -234,5 +225,8 @@ namespace Blob::GL {
 		return vao;
 	}
 
+	void Renderable::setShaderProgram(ShaderProgram *shaderProgram) {
+		Renderable::shaderProgram = shaderProgram;
+	}
 
 }

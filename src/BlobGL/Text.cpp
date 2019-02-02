@@ -149,8 +149,8 @@ namespace Blob::GL::Text {
 
 		setBuffer(*vbo, sizeof(Data), c * 4 * sizeof(Data));
 
-		setPositionVAO(2, GL_FLOAT, 0);
-		setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor));
+		//setPositionVAO(2, GL_FLOAT, 0);
+		//setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor));
 
 		setIndices((GLubyte *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
 
@@ -177,8 +177,8 @@ namespace Blob::GL::Text {
 	Plane2D::Plane2D() {
 		setBuffer(*vbo, sizeof(Data), numberOfLetter * 4 * sizeof(Data));
 
-		setPositionVAO(2, GL_FLOAT, 0);
-		setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor));
+		//setPositionVAO(2, GL_FLOAT, 0);
+		//setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor));
 
 		setIndices((GLubyte *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
 

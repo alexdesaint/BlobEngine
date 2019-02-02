@@ -33,7 +33,9 @@ namespace Blob::GL {
 
 		unsigned int getProgram() const;
 
-		int getPosition(std::string name);
+		uint32_t getUniformLocation(const char *name);
+
+		uint32_t  getAttribLocation(const char *name);
 	};
 
 }

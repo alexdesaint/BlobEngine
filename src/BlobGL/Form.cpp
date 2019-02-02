@@ -141,36 +141,42 @@ namespace Blob::GL {
 		delete vbo;
 	}
 
-	Cube::Cube() : Texture(0, 100, 100) {
+	Cube::Cube(ShaderProgram *shaderProgram) : Texture(0, 100, 100) {
 		setBuffer(*vbo, sizeof(Data));
 
-		setPositionVAO(3, GL_FLOAT, 0);
-		setNormalVAO(3, GL_FLOAT, sizeof(Data::coor));
-		setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::norm));
+		setShaderProgram(shaderProgram);
+
+		setArrayVAO(3, "Position", GL_FLOAT, (uint32_t)offsetof(Data, coor));
+		setArrayVAO(3, "Normal", GL_FLOAT, (uint32_t)offsetof(Data, norm));
+		setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(Data, texCoor));
 
 		setIndices((GLubyte *) cubeIndices, (GLsizei) sizeof(cubeIndices), GL_UNSIGNED_SHORT);
 
 		setTexture(*this);
 	}
 
-	Plane::Plane() : Texture(0, 100, 100) {
+	Plane::Plane(ShaderProgram *shaderProgram) : Texture(0, 100, 100) {
 		setBuffer(*vbo, sizeof(Data), 4 * 6 * sizeof(Data));
 
-		setPositionVAO(3, GL_FLOAT, 0);
-		setNormalVAO(3, GL_FLOAT, sizeof(Data::coor));
-		setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::norm));
+		setShaderProgram(shaderProgram);
+
+		setArrayVAO(3, "Position", GL_FLOAT, (uint32_t)offsetof(Data, coor));
+		setArrayVAO(3, "Normal", GL_FLOAT, (uint32_t)offsetof(Data, norm));
+		setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(Data, texCoor));
 
 		setIndices((GLubyte *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
 
 		setTexture(*this);
 	}
 
-	OctagonalPrism::OctagonalPrism() : Texture(0, 100, 100) {
+	OctagonalPrism::OctagonalPrism(ShaderProgram *shaderProgram) : Texture(0, 100, 100) {
 		setBuffer(*vbo, sizeof(Data), (4 * 6 + 4) * sizeof(Data));
 
-		setPositionVAO(3, GL_FLOAT, 0);
-		setNormalVAO(3, GL_FLOAT, sizeof(Data::coor));
-		setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::norm));
+		setShaderProgram(shaderProgram);
+
+		setArrayVAO(3, "Position", GL_FLOAT, (uint32_t)offsetof(Data, coor));
+		setArrayVAO(3, "Normal", GL_FLOAT, (uint32_t)offsetof(Data, norm));
+		setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(Data, texCoor));
 
 		setIndices((GLubyte *) octagonalPrismIndices, (GLsizei) sizeof(octagonalPrismIndices), GL_UNSIGNED_SHORT);
 

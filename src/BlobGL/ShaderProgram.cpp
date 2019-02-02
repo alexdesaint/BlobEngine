@@ -186,7 +186,17 @@ void Blob::GL::ShaderProgram::addVertexShaderFile(const std::string &path) {
 	addVertexShader(f.toString());
 }
 
-GLint Blob::GL::ShaderProgram::getPosition(std::string name) {
-	return glGetUniformLocation(program, name.c_str());
+uint32_t Blob::GL::ShaderProgram::getUniformLocation(const char *name) {
+	int r = glGetUniformLocation(program, name);
+	if(r < 0)
+		throw BlobException(std::string("ShaderProgram error : Unknown UniformLocation name ") + name);
+	return static_cast<uint32_t>(r);
+}
+
+uint32_t  Blob::GL::ShaderProgram::getAttribLocation(const char *name) {
+	int r = glGetAttribLocation(program, name);
+	if(r < 0)
+		throw BlobException(std::string("ShaderProgram error : Unknown Attrib Location name ") + name);
+	return static_cast<uint32_t>(r);
 }
 

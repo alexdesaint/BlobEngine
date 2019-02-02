@@ -178,11 +178,11 @@ namespace Blob::GL {
 
 		Blob::Vec2f getSize() { return {(float)width, (float)height}; }
 
-		void draw(const Renderable &renderable, const ShaderProgram &program, glm::mat4 shapeModel = glm::mat4(1.0));
+		void draw(const Renderable &renderable, glm::mat4 shapeModel = glm::mat4(1.0));
 
-		void draw(const Shape &shape, const ShaderProgram &program, glm::mat4 sceneModel = glm::mat4(1.0));
+		void draw(const Shape &shape, glm::mat4 sceneModel = glm::mat4(1.0));
 
-		void draw(const Scene &scene, const ShaderProgram &program);
+		void draw(const Scene &scene);
 
 		bool isOpen() const;
 
