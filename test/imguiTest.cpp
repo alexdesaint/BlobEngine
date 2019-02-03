@@ -77,6 +77,9 @@ int main(int argc, char *argv[]) {
 
 		Renderable imguiRenderable;
 		imguiRenderable.setShaderProgram(&shaderProgram2D);
+		imguiRenderable.setArrayVAO(2, "Position", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, pos));
+		imguiRenderable.setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, uv));
+		imguiRenderable.setArrayVAO(4, "Color", GL_UNSIGNED_BYTE, (uint32_t)offsetof(ImDrawVert, col), true);
 
 		while (graphic.isOpen()) {
 			graphic.clear();
@@ -91,7 +94,7 @@ int main(int argc, char *argv[]) {
 
 			graphic.draw(p);
 
-			graphic.draw(text);
+			//graphic.draw(text);
 
 			op.setRotation(angle * 40, 0.f, 0.f, 1.f);
 			graphic.draw(op);
@@ -99,15 +102,32 @@ int main(int argc, char *argv[]) {
 			//imgui draw call
 
 			ImGui::NewFrame();
-			ImGui::ShowDemoWindow(&show_demo_window);
+			{
+				static float f = 0.0f;
+				static int counter = 0;
+
+				ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+				ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+				ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+				ImGui::Checkbox("Another Window", &show_demo_window);
+
+				ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+				ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+				if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+					counter++;
+				ImGui::SameLine();
+				ImGui::Text("counter = %d", counter);
+
+				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+				ImGui::End();
+			}
+
 			ImGui::Render();
 			ImDrawData *drawData = ImGui::GetDrawData();
 
 			ImVec2 pos = drawData->DisplayPos;
-
-			imguiRenderable.setArrayVAO(2, "Position", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, pos));
-			imguiRenderable.setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, uv));
-			imguiRenderable.setArrayVAO(4, "Color", GL_UNSIGNED_BYTE, (uint32_t)offsetof(ImDrawVert, col), true);
 
 			for (int n = 0; n < drawData->CmdListsCount; n++) {
 				ImDrawList* cmd_list = drawData->CmdLists[n];
@@ -121,9 +141,7 @@ int main(int argc, char *argv[]) {
 					const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
 					ImVec4 clip_rect = ImVec4(pcmd->ClipRect.x - pos.x, pcmd->ClipRect.y - pos.y, pcmd->ClipRect.z - pos.x, pcmd->ClipRect.w - pos.y);
 
-					int fb_height = (int)(drawData->DisplaySize.y * io.DisplayFramebufferScale.y);
-
-					glScissor((int)clip_rect.x, (int)(fb_height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
+					//glScissor((int)clip_rect.x, (int)(fb_height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
 
 					glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
 					//glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, GL_UNSIGNED_SHORT, idx_buffer_offset);

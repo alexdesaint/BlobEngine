@@ -2,7 +2,7 @@
 
 out vec4 FragColor;
 
-in vec3 Normal;
+in vec3 FragNormal;
 in vec3 FragPos;
 in vec2 TexCoord;
 
@@ -19,7 +19,7 @@ void main()
     vec4 ambient = ambientStrength * lightColor;
 
     // diffuse
-    vec3 norm = normalize(Normal);
+    vec3 norm = normalize(FragNormal);
     vec3 lightDir = normalize(vec3(1.0, -1.0, 2.0));
     float diff = max(dot(norm, lightDir), 0.0);
     vec4 diffuse = diff * lightColor;
