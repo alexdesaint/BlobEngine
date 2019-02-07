@@ -130,11 +130,28 @@ namespace Blob::GL {
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2, 0.2, 0.2, 1.0);
 
+		//imgui
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_SCISSOR_TEST);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 		glfwSetFramebufferSizeCallback((GLFWwindow *) window, framebuffer_size_callback);
 		glfwSetKeyCallback((GLFWwindow *) window, (GLFWkeyfun) key_callback);
 
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
+
+		projectionMatrix2D =
+		{
+				2.0f/(width), 0.0f,         	0.0f,   0.0f,
+				0.0f,         2.0f/(-height), 0.0f,   0.0f,
+				0.0f,         0.0f,        	-1.0f,  0.0f,
+				-1.f,			1.f,  			0.0f,	1.0f,
+		};
 
 		createVBO();
 		Text::createVBO();
@@ -208,8 +225,25 @@ namespace Blob::GL {
 
 		if (renderable.indexed)
 			glDrawElements(GL_TRIANGLES, renderable.numOfIndices, renderable.indicesType, renderable.indices);
-		else
-			glDrawArrays(GL_TRIANGLES, 0, renderable.vao.getNumberOfElements());
+	}
+
+	void Graphic::draw(const Renderable &renderable, int numOfElements, int offset, glm::mat4 shapeModel) {
+		if(renderable.shaderProgram == nullptr)
+			throw BlobException("Error on Graphic::draw : No shader program set");
+
+		glUseProgram(renderable.shaderProgram->getProgram());
+		glBindVertexArray(renderable.vao.getVertexArrayObject());
+
+		glUniformMatrix4fv(renderable.shaderProgram->projection, 1, GL_FALSE, glm::value_ptr(projectionMatrix2D));
+		glUniformMatrix4fv(renderable.shaderProgram->view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(renderable.shaderProgram->model, 1, GL_FALSE, glm::value_ptr(shapeModel * renderable.getModelMatrix()));
+
+		if (renderable.texture != nullptr) {
+			glBindTexture(GL_TEXTURE_2D, renderable.texture->texture);
+			glUniform1f(renderable.shaderProgram->textureScale, renderable.texture->textureScale);
+		}
+
+		glDrawArrays(GL_TRIANGLES, offset, numOfElements);
 	}
 
 	void Graphic::draw(const Shape &shape, glm::mat4 sceneModel) {

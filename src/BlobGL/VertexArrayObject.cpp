@@ -23,13 +23,8 @@ namespace Blob::GL {
 		glVertexArrayVertexBuffer(vertexArrayObject, 0, vbo.vertexBufferObject, dataOffset, stride);
 	}
 
-	GLsizei VertexArrayObject::getNumberOfElements() const {
-		return numberOfElements;
-	}
-
 	void VertexArrayObject::setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType,
 									 GLuint arrayOffset, bool normalized) {
-		numberOfElements = 3;
 
 		//autorique l'utilisation de cet atribut
 		glEnableVertexArrayAttrib(vertexArrayObject, outPosition);

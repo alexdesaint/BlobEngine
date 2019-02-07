@@ -152,6 +152,7 @@ namespace Blob::GL {
 		int width, height;
 
 		glm::mat4 projectionMatrix;
+		glm::mat4 projectionMatrix2D;
 		glm::mat4 viewMatrix{1};
 
 		glm::vec3 cameraPosition; // Camera position in World Space
@@ -179,6 +180,8 @@ namespace Blob::GL {
 		Blob::Vec2f getSize() { return {(float)width, (float)height}; }
 
 		void draw(const Renderable &renderable, glm::mat4 shapeModel = glm::mat4(1.0));
+
+		void draw(const Renderable &renderable, int numOfElements, int offset, glm::mat4 shapeModel = glm::mat4(1.0));
 
 		void draw(const Shape &shape, glm::mat4 sceneModel = glm::mat4(1.0));
 

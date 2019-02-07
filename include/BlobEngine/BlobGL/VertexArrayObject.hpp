@@ -9,14 +9,10 @@ namespace Blob::GL {
 	class VertexArrayObject {
 	private:
 
-		int32_t numberOfElements;
-
 		uint32_t vertexArrayObject;
 
 	public:
 		uint32_t getVertexArrayObject() const;
-
-		int32_t getNumberOfElements() const;
 
 		VertexArrayObject();
 

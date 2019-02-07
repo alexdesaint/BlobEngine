@@ -18,7 +18,7 @@ layout (location = 0) in vec2 Position;
 layout (location = 1) in vec2 TexturePosition;
 layout (location = 2) in vec4 Color;
 
-uniform mat4 ProjMtx;
+uniform mat4 projection;
 out vec2 Frag_UV;
 out vec4 Frag_Color;
 
@@ -26,5 +26,5 @@ void main()
 {
     Frag_UV = TexturePosition;
     Frag_Color = Color;
-    gl_Position = ProjMtx * vec4(Position.xy, 0, 1);
+    gl_Position = projection * vec4(Position.xy, 0, 1);
 }
