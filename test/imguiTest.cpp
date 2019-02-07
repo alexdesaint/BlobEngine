@@ -68,9 +68,6 @@ int main(int argc, char *argv[]) {
 		if(!io.Fonts->IsBuilt())
 			cout << "Font not Build" << endl;
 
-		//display size
-		io.DisplaySize = ImVec2(graphic.getSize().x, graphic.getSize().y);
-		io.DisplayFramebufferScale = ImVec2(graphic.getFrameBufferSize().x, graphic.getFrameBufferSize().y);
 
 		//Demo window init
 		bool show_demo_window = false;
@@ -81,9 +78,12 @@ int main(int argc, char *argv[]) {
 
 		Renderable imguiRenderable;
 		imguiRenderable.setShaderProgram(&shaderProgram2D);
+
+		imguiRenderable.setBuffer(imguiVBO, sizeof(ImDrawVert));
 		imguiRenderable.setArrayVAO(2, "Position", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, pos));
 		imguiRenderable.setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, uv));
 		imguiRenderable.setArrayVAO(4, "Color", GL_UNSIGNED_BYTE, (uint32_t)offsetof(ImDrawVert, col), true);
+
 
 		//
 
@@ -105,7 +105,11 @@ int main(int argc, char *argv[]) {
 			op.setRotation(angle * 40, 0.f, 0.f, 1.f);
 			graphic.draw(op);
 
-			//window draw call
+			//imgui /////////////////////////////////////
+
+			//display size
+			io.DisplayFramebufferScale = ImVec2(graphic.getFrameBufferSize().x/graphic.getSize().x, graphic.getFrameBufferSize().y/graphic.getSize().y);
+			io.DisplaySize = ImVec2(graphic.getSize().x, graphic.getSize().y);
 
 			ImGui::NewFrame();
 
@@ -146,11 +150,21 @@ int main(int argc, char *argv[]) {
 			}
 
 			//Render
-
 			ImGui::Render();
 			ImDrawData *drawData = ImGui::GetDrawData();
 
 			ImVec2 pos = drawData->DisplayPos;
+
+			//clip ??
+			GLint last_scissor_box[4]; glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
+			bool clip_origin_lower_left = true;
+
+			GLenum last_clip_origin = 0; glGetIntegerv(GL_CLIP_ORIGIN, (GLint*)&last_clip_origin); // Support for GL 4.5's glClipControl(GL_UPPER_LEFT)
+			if (last_clip_origin == GL_UPPER_LEFT)
+				clip_origin_lower_left = false;
+
+			int fb_height = (int)(drawData->DisplaySize.y * io.DisplayFramebufferScale.y);
+			//
 
 			for (int n = 0; n < drawData->CmdListsCount; n++) {
 				ImDrawList* cmd_list = drawData->CmdLists[n];
@@ -158,23 +172,25 @@ int main(int argc, char *argv[]) {
 
 				imguiVBO.setData((uint8_t*) cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
 
-				imguiRenderable.setBuffer(imguiVBO, sizeof(ImDrawVert));
+				imguiRenderable.setIndices((uint8_t*)cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size, GL_UNSIGNED_SHORT);
 
 				for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
 					const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
 					ImVec4 clip_rect = ImVec4(pcmd->ClipRect.x - pos.x, pcmd->ClipRect.y - pos.y, pcmd->ClipRect.z - pos.x, pcmd->ClipRect.w - pos.y);
 
-					//glScissor((int)clip_rect.x, (int)(graphic.getSize().x - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
-					//glScissor((int)clip_rect.x, (int)clip_rect.y, (int)clip_rect.z, (int)clip_rect.w);
+					if (clip_origin_lower_left)
+						glScissor((int)clip_rect.x, (int)(fb_height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
+					else
+						glScissor((int)clip_rect.x, (int)clip_rect.y, (int)clip_rect.z, (int)clip_rect.w); // Support for GL 4.5's glClipControl(GL_UPPER_LEFT)
 
 					imguiRenderable.setTexture(*(Texture*)pcmd->TextureId);
-					//glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, GL_UNSIGNED_SHORT, idx_buffer_offset);
 					graphic.draw(imguiRenderable, pcmd->ElemCount, idx_buffer_offset);
 
 					idx_buffer_offset += pcmd->ElemCount;
 				}
 			}
-			//
+
+			glScissor(0, 0, graphic.getSize().x, graphic.getSize().y);
 
 			graphic.display();
 		}

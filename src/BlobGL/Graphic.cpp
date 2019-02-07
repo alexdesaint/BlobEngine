@@ -63,8 +63,9 @@ namespace Blob::GL {
 		}
 	}
 
-	void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-		glViewport(0, 0, width, height);
+	void framebuffer_size_callback(GLFWwindow *window, int w, int h) {
+		auto g = (Graphic*) glfwGetWindowUserPointer(window);
+		g->resize(w, h);
 	}
 
 	void Graphic::enableDebugCallBack() {
@@ -129,6 +130,7 @@ namespace Blob::GL {
 		glFrontFace(GL_CW);// GL_CCW for counter clock-wise
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2, 0.2, 0.2, 1.0);
+		glViewport(0, 0, w, h);
 
 		//imgui
 		glEnable(GL_BLEND);
@@ -139,6 +141,7 @@ namespace Blob::GL {
 		glEnable(GL_SCISSOR_TEST);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+		glfwSetWindowUserPointer((GLFWwindow *) window, this);
 		glfwSetFramebufferSizeCallback((GLFWwindow *) window, framebuffer_size_callback);
 		glfwSetKeyCallback((GLFWwindow *) window, (GLFWkeyfun) key_callback);
 
@@ -195,9 +198,15 @@ namespace Blob::GL {
 		height = h;
 		width = w;
 
-		projectionMatrix = glm::perspective(glm::radians(10.0f), width / (GLfloat) height, 0.1f, 100.0f);
+		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 
-		glfwSetWindowSize((GLFWwindow *) window, w, h);
+		glViewport(0, 0, w, h);
+
+		int ww, hh;
+		glfwGetWindowSize((GLFWwindow *) window, &ww, &hh);
+
+		if(ww != w || hh != h)
+			glfwSetWindowSize((GLFWwindow *) window, w, h);
 	}
 
 	std::ostream &operator<<(std::ostream &out, const glm::mat4 &vec) {
@@ -228,6 +237,7 @@ namespace Blob::GL {
 	}
 
 	void Graphic::draw(const Renderable &renderable, int numOfElements, int offset, glm::mat4 shapeModel) {
+
 		if(renderable.shaderProgram == nullptr)
 			throw BlobException("Error on Graphic::draw : No shader program set");
 
@@ -243,7 +253,10 @@ namespace Blob::GL {
 			glUniform1f(renderable.shaderProgram->textureScale, renderable.texture->textureScale);
 		}
 
-		glDrawArrays(GL_TRIANGLES, offset, numOfElements);
+		if (renderable.indexed)
+			glDrawElements(GL_TRIANGLES, numOfElements, renderable.indicesType, &renderable.indices[offset]);
+		else
+			glDrawArrays(GL_TRIANGLES, offset, numOfElements);
 	}
 
 	void Graphic::draw(const Shape &shape, glm::mat4 sceneModel) {
