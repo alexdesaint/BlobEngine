@@ -125,10 +125,10 @@ namespace Blob::GL {
 
 		enableDebugCallBack();
 
-		glEnable(GL_CULL_FACE); // cull face
+		/*glEnable(GL_CULL_FACE); // cull face
 		glCullFace(GL_FRONT);// cull back face
 		glFrontFace(GL_CW);// GL_CCW for counter clock-wise
-		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);*/
 		glClearColor(0.2, 0.2, 0.2, 1.0);
 		glViewport(0, 0, w, h);
 
@@ -199,6 +199,14 @@ namespace Blob::GL {
 		width = w;
 
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
+
+		projectionMatrix2D =
+				{
+						2.0f/(width), 0.0f,         	0.0f,   0.0f,
+						0.0f,         2.0f/(-height), 0.0f,   0.0f,
+						0.0f,         0.0f,        	-1.0f,  0.0f,
+						-1.f,			1.f,  			0.0f,	1.0f,
+				};
 
 		glViewport(0, 0, w, h);
 

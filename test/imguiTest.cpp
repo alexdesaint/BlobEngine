@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
 
 
 		//Demo window init
-		bool show_demo_window = false;
+		bool show_demo_window = true;
 		bool show_another_window = false;
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -79,11 +79,9 @@ int main(int argc, char *argv[]) {
 		Renderable imguiRenderable;
 		imguiRenderable.setShaderProgram(&shaderProgram2D);
 
-		imguiRenderable.setBuffer(imguiVBO, sizeof(ImDrawVert));
 		imguiRenderable.setArrayVAO(2, "Position", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, pos));
 		imguiRenderable.setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, uv));
 		imguiRenderable.setArrayVAO(4, "Color", GL_UNSIGNED_BYTE, (uint32_t)offsetof(ImDrawVert, col), true);
-
 
 		//
 
@@ -153,7 +151,7 @@ int main(int argc, char *argv[]) {
 			ImGui::Render();
 			ImDrawData *drawData = ImGui::GetDrawData();
 
-			ImVec2 pos = drawData->DisplayPos;
+			drawData->ScaleClipRects(io.DisplayFramebufferScale);
 
 			//clip ??
 			GLint last_scissor_box[4]; glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
@@ -166,22 +164,32 @@ int main(int argc, char *argv[]) {
 			int fb_height = (int)(drawData->DisplaySize.y * io.DisplayFramebufferScale.y);
 			//
 
+			unsigned int sizeTot = 0;
+			for (int n = 0; n < drawData->CmdListsCount; n++) {
+				const ImDrawList *cmd_list = drawData->CmdLists[n];
+
+				sizeTot += cmd_list->VtxBuffer.Size;
+			}
+
+			if(sizeTot > 0)
+				imguiVBO.setData(nullptr, sizeTot * sizeof(ImDrawVert), true);
+
+			unsigned int offset = 0;
+
 			for (int n = 0; n < drawData->CmdListsCount; n++) {
 				ImDrawList* cmd_list = drawData->CmdLists[n];
 				unsigned int idx_buffer_offset = 0;
 
-				imguiVBO.setData((uint8_t*) cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+				imguiVBO.setSubData((uint8_t*) cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
+
+				imguiRenderable.setBuffer(imguiVBO, sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
 
 				imguiRenderable.setIndices((uint8_t*)cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size, GL_UNSIGNED_SHORT);
 
 				for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
 					const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
-					ImVec4 clip_rect = ImVec4(pcmd->ClipRect.x - pos.x, pcmd->ClipRect.y - pos.y, pcmd->ClipRect.z - pos.x, pcmd->ClipRect.w - pos.y);
 
-					if (clip_origin_lower_left)
-						glScissor((int)clip_rect.x, (int)(fb_height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
-					else
-						glScissor((int)clip_rect.x, (int)clip_rect.y, (int)clip_rect.z, (int)clip_rect.w); // Support for GL 4.5's glClipControl(GL_UPPER_LEFT)
+					glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
 
 					imguiRenderable.setTexture(*(Texture*)pcmd->TextureId);
 					graphic.draw(imguiRenderable, pcmd->ElemCount, idx_buffer_offset);
