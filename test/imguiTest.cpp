@@ -178,7 +178,7 @@ int main(int argc, char *argv[]) {
 
 			for (int n = 0; n < drawData->CmdListsCount; n++) {
 				ImDrawList* cmd_list = drawData->CmdLists[n];
-				unsigned int idx_buffer_offset = 0;
+				size_t idx_buffer_offset = 0;
 
 				imguiVBO.setSubData((uint8_t*) cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
 
@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
 					imguiRenderable.setTexture(*(Texture*)pcmd->TextureId);
 					graphic.draw(imguiRenderable, pcmd->ElemCount, idx_buffer_offset);
 
-					idx_buffer_offset += pcmd->ElemCount;
+					idx_buffer_offset += pcmd->ElemCount * (sizeof(unsigned short)/8);
 				}
 			}
 

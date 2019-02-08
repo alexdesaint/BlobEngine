@@ -181,7 +181,7 @@ namespace Blob::GL {
 
 		void draw(const Renderable &renderable, glm::mat4 shapeModel = glm::mat4(1.0));
 
-		void draw(const Renderable &renderable, int numOfElements, int offset, glm::mat4 shapeModel = glm::mat4(1.0));
+		void draw(const Renderable &renderable, int numOfElements, uint64_t offset, glm::mat4 shapeModel = glm::mat4(1.0));
 
 		void draw(const Shape &shape, glm::mat4 sceneModel = glm::mat4(1.0));
 
@@ -200,6 +200,8 @@ namespace Blob::GL {
 		Blob::Vec2f getFrameBufferSize();
 
 		static const std::array<bool, KeyCount> &getKeys();
+
+		void *getWindow() const;
 
 		void close();
 	};

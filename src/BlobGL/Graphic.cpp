@@ -244,7 +244,7 @@ namespace Blob::GL {
 			glDrawElements(GL_TRIANGLES, renderable.numOfIndices, renderable.indicesType, renderable.indices);
 	}
 
-	void Graphic::draw(const Renderable &renderable, int numOfElements, int offset, glm::mat4 shapeModel) {
+	void Graphic::draw(const Renderable &renderable, int numOfElements, uint64_t offset, glm::mat4 shapeModel) {
 
 		if(renderable.shaderProgram == nullptr)
 			throw BlobException("Error on Graphic::draw : No shader program set");
@@ -338,6 +338,10 @@ namespace Blob::GL {
 		int display_w, display_h;
 		glfwGetFramebufferSize((GLFWwindow *) window, &display_w, &display_h);
 		return {(float)display_w, (float)display_h};
+	}
+
+	void *Graphic::getWindow() const {
+		return window;
 	}
 
 }
