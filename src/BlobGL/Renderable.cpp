@@ -213,7 +213,7 @@ namespace Blob::GL {
 		vao.setArray(valuePerVector, shaderProgram->getAttribLocation(name), dataType, arrayOffset, normalized);
 	}
 
-	void Renderable::setIndices(unsigned short *i, GLsizei noi, GLenum it) {
+	void Renderable::setIndices(unsigned short *i, int32_t noi, uint32_t it) {
 		indices = i;
 		indicesType = it;
 		numOfIndices = noi;

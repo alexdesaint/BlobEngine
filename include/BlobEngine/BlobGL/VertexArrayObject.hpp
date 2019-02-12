@@ -20,6 +20,8 @@ namespace Blob::GL {
 
 		void setBuffer(const VertexBufferObject &vbo, int32_t stride, uint32_t dataOffset = 0);
 
+		void setIndicesBuffer(const VertexBufferObject &vbo);
+
 		void setArray(uint32_t numValuePerArray, uint32_t outPosition, uint32_t dataType, uint32_t arrayOffset, bool normalized = false);
 	};
 }

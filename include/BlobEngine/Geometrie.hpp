@@ -125,7 +125,8 @@ namespace Blob {
 	//typedef Mat2<int> Point2i;
 	typedef Mat2<float> Point2f;
 	//typedef Mat2<double> Point2d;
-	//typedef Mat2<int> Vec2i;
+	typedef Mat2<int> Vec2i;
+	typedef Mat2<unsigned int> Vec2ui;
 	typedef Mat2<float> Vec2f;
 	//typedef Mat2<double> Vec2d;
 

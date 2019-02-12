@@ -23,6 +23,10 @@ namespace Blob::GL {
 		glVertexArrayVertexBuffer(vertexArrayObject, 0, vbo.vertexBufferObject, dataOffset, stride);
 	}
 
+	void VertexArrayObject::setIndicesBuffer(const VertexBufferObject &vbo) {
+		glVertexArrayElementBuffer(vertexArrayObject, vbo.vertexBufferObject);
+	}
+
 	void VertexArrayObject::setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType,
 									 GLuint arrayOffset, bool normalized) {
 

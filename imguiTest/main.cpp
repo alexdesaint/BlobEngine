@@ -32,7 +32,8 @@ int main(int, char**)
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = nullptr;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
 
@@ -264,24 +265,6 @@ int main(int, char**)
 		glEnable(GL_SCISSOR_TEST);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		float L = draw_data->DisplayPos.x;
-		float R = draw_data->DisplayPos.x + draw_data->DisplaySize.x;
-		float T = draw_data->DisplayPos.y;
-		float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
-		const float ortho_projection[4][4] =
-				{
-						{ 2.0f/(R-L),   0.0f,         0.0f,   0.0f },
-						{ 0.0f,         2.0f/(T-B),   0.0f,   0.0f },
-						{ 0.0f,         0.0f,        -1.0f,   0.0f },
-						{ (R+L)/(L-R),  (T+B)/(B-T),  0.0f,   1.0f },
-				};
-		//glUseProgram(shaderProgram.getProgram());
-		//glUniform1i(shaderProgram.getUniformLocation("Texture"), 0);
-		//glUniformMatrix4fv(shaderProgram.getUniformLocation("projection"), 1, GL_FALSE, &ortho_projection[0][0]);
-		//glBindSampler(0, 0); // We use combined texture/sampler state. Applications using GL 3.3 may set that otherwise.
-
-		//glBindVertexArray(imguiRenderable.getVao().getVertexArrayObject());
-
 		// Draw
 
 		unsigned int sizeTot = 0;
@@ -313,14 +296,10 @@ int main(int, char**)
 
 				glScissor((int)pcmd->ClipRect.x, (int)(graphic.getSize().y - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
 
-				// Bind texture, Draw
-				//glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
-				//glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, GL_UNSIGNED_SHORT, &cmd_list->IdxBuffer.Data[idx_buffer_offset]);
-
 				imguiRenderable.setTexture(*(Blob::GL::Texture*)pcmd->TextureId);
 				graphic.draw(imguiRenderable, pcmd->ElemCount, idx_buffer_offset);
 
-				idx_buffer_offset += pcmd->ElemCount * (sizeof(unsigned short)/8);
+				idx_buffer_offset += pcmd->ElemCount;
 			}
 
 			offset += cmd_list->VtxBuffer.Size;

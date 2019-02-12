@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
 
 		Texture fontTexture;
 		ImGuiIO& io = ImGui::GetIO();
+		io.IniFilename = nullptr;
 
 		//Font
 		unsigned char* pixels;
@@ -184,7 +185,7 @@ int main(int argc, char *argv[]) {
 
 				imguiRenderable.setBuffer(imguiVBO, sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
 
-				imguiRenderable.setIndices((uint8_t*)cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size, GL_UNSIGNED_SHORT);
+				imguiRenderable.setIndices(cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size, GL_UNSIGNED_SHORT);
 
 				for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
 					const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
@@ -194,7 +195,7 @@ int main(int argc, char *argv[]) {
 					imguiRenderable.setTexture(*(Texture*)pcmd->TextureId);
 					graphic.draw(imguiRenderable, pcmd->ElemCount, idx_buffer_offset);
 
-					idx_buffer_offset += pcmd->ElemCount * (sizeof(unsigned short)/8);
+					idx_buffer_offset += pcmd->ElemCount;
 				}
 			}
 

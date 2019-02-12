@@ -177,7 +177,7 @@ namespace Blob::GL {
 
 		void resize(unsigned int w, unsigned int h);
 
-		Blob::Vec2f getSize() { return {(float)width, (float)height}; }
+		Blob::Vec2i getSize() { return {width, height}; }
 
 		void draw(const Renderable &renderable, glm::mat4 shapeModel = glm::mat4(1.0));
 

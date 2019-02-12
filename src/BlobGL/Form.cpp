@@ -109,7 +109,7 @@ namespace Blob::GL {
 
 	};
 
-	const GLushort cubeIndices[] = {
+	GLushort cubeIndices[] = {
 			0, 1, 2, 0, 2, 3,    // front
 			4, 5, 6, 4, 6, 7,    // back
 			8, 9, 10, 8, 10, 11,   // top
@@ -118,11 +118,11 @@ namespace Blob::GL {
 			20, 21, 22, 20, 22, 23   // left
 	};
 
-	const GLushort planeIndices[] = {
+	GLushort planeIndices[] = {
 			0, 1, 2, 0, 2, 3
 	};
 
-	const GLushort octagonalPrismIndices[] = {
+	GLushort octagonalPrismIndices[] = {
 			0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 1, // top
 			9, 10, 11, 9, 11, 12, 9, 12, 13, 9, 13, 14, 9, 14, 15, 9, 15, 16, 9, 16, 17, 9, 17, 10, // bottom
 			18, 19, 20, 18, 20, 21, // front
@@ -150,7 +150,7 @@ namespace Blob::GL {
 		setArrayVAO(3, "Normal", GL_FLOAT, (uint32_t)offsetof(Data, norm));
 		setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(Data, texCoor));
 
-		setIndices((unsigned short *) cubeIndices, (GLsizei) sizeof(cubeIndices), GL_UNSIGNED_SHORT);
+		setIndices(cubeIndices, sizeof(cubeIndices)/sizeof(*cubeIndices), GL_UNSIGNED_SHORT);
 
 		setTexture(*this);
 	}
@@ -164,7 +164,7 @@ namespace Blob::GL {
 		setArrayVAO(3, "Normal", GL_FLOAT, (uint32_t)offsetof(Data, norm));
 		setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(Data, texCoor));
 
-		setIndices((unsigned short *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
+		setIndices(planeIndices, sizeof(planeIndices)/sizeof(*planeIndices), GL_UNSIGNED_SHORT);
 
 		setTexture(*this);
 	}
@@ -178,7 +178,7 @@ namespace Blob::GL {
 		setArrayVAO(3, "Normal", GL_FLOAT, (uint32_t)offsetof(Data, norm));
 		setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(Data, texCoor));
 
-		setIndices((unsigned short *) octagonalPrismIndices, (GLsizei) sizeof(octagonalPrismIndices), GL_UNSIGNED_SHORT);
+		setIndices(octagonalPrismIndices, sizeof(octagonalPrismIndices)/sizeof(*octagonalPrismIndices), GL_UNSIGNED_SHORT);
 
 		setTexture(*this);
 	}
