@@ -305,7 +305,7 @@ int main(int, char**)
 
 			imguiRenderable.setBuffer(vbo, sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
 
-			imguiRenderable.setIndices((uint8_t*)cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * (sizeof(unsigned short)/8), GL_UNSIGNED_SHORT);
+			imguiRenderable.setIndices(cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size, GL_UNSIGNED_SHORT);
 
 			for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
 			{

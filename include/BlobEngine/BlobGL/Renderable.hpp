@@ -18,7 +18,7 @@ namespace Blob::GL {
 		friend Graphic;
 	private:
 
-		uint8_t *indices{};
+		unsigned short *indices{};
 		int32_t numOfIndices{};
 		uint32_t indicesType{};
 
@@ -39,7 +39,7 @@ namespace Blob::GL {
 
 		void setArrayVAO(uint32_t valuePerVector, const char *name, uint32_t dataType, uint32_t arrayOffset, bool normalized = false);
 
-		void setIndices(uint8_t *indices, int32_t numOfIndices, uint32_t indicesType);
+		void setIndices(unsigned short *indices, int32_t numOfIndices, uint32_t indicesType);
 
 		const VertexArrayObject &getVao() const;
 	};

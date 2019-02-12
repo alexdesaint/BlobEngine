@@ -152,7 +152,7 @@ namespace Blob::GL::Text {
 		//setPositionVAO(2, GL_FLOAT, 0);
 		//setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor));
 
-		setIndices((GLubyte *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
+		setIndices((unsigned short *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
 
 		setTexture(*alphabet);
 	}
@@ -180,7 +180,7 @@ namespace Blob::GL::Text {
 		//setPositionVAO(2, GL_FLOAT, 0);
 		//setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor));
 
-		setIndices((GLubyte *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
+		setIndices((unsigned short *) planeIndices, (GLsizei) sizeof(planeIndices), GL_UNSIGNED_SHORT);
 
 		setTexture(*this);
 	}

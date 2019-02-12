@@ -244,7 +244,7 @@ namespace Blob::GL {
 			glDrawElements(GL_TRIANGLES, renderable.numOfIndices, renderable.indicesType, renderable.indices);
 	}
 
-	void Graphic::draw(const Renderable &renderable, int numOfElements, uint64_t offset, glm::mat4 shapeModel) {
+	void Graphic::draw(const Renderable &renderable, int numOfElements, uint64_t elementOffset, glm::mat4 shapeModel) {
 
 		if(renderable.shaderProgram == nullptr)
 			throw BlobException("Error on Graphic::draw : No shader program set");
@@ -262,9 +262,9 @@ namespace Blob::GL {
 		}
 
 		if (renderable.indexed)
-			glDrawElements(GL_TRIANGLES, numOfElements, renderable.indicesType, &renderable.indices[offset]);
+			glDrawElements(GL_TRIANGLES, numOfElements, renderable.indicesType, &renderable.indices[elementOffset]);
 		else
-			glDrawArrays(GL_TRIANGLES, offset, numOfElements);
+			glDrawArrays(GL_TRIANGLES, elementOffset, numOfElements);
 	}
 
 	void Graphic::draw(const Shape &shape, glm::mat4 sceneModel) {
