@@ -173,7 +173,7 @@ namespace Blob::GL {
 	void Renderable::setTexture(Texture &t) {
 		texture = &t;
 	}
-
+/*
 	GLuint getGlTypeSize(GLenum dataType) {
 		GLuint typeSize;
 
@@ -205,7 +205,7 @@ namespace Blob::GL {
 
 		return typeSize;
 	}
-
+*/
 	void Renderable::setArrayVAO(uint32_t valuePerVector, const char *name, uint32_t dataType, uint32_t arrayOffset, bool normalized) {
 		if(shaderProgram == nullptr)
 			throw BlobException("Error in Renderable : Can't set Array in VAO if no Shader is set");

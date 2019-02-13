@@ -18,6 +18,7 @@ namespace Blob::GL {
 		friend Graphic;
 	private:
 
+		//TODO: create a subclass for the index
 		unsigned short *indices{};
 		int32_t numOfIndices{};
 		uint32_t indicesType{};
@@ -29,7 +30,11 @@ namespace Blob::GL {
 		ShaderProgram *shaderProgram = nullptr;
 
 		Texture *texture = nullptr;
+
 	public:
+		bool cullFace = true;
+		bool depthTest = false;
+		bool scissorTest = false;
 
 		void setShaderProgram(ShaderProgram *shaderProgram);
 

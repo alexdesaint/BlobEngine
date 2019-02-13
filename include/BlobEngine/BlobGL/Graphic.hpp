@@ -159,6 +159,11 @@ namespace Blob::GL {
 		glm::vec3 cameraLookAt; // and looks at the origin
 		glm::vec3 cameraUp;  // Head is up (set to 0,-1,0 to look upside-down)
 
+		//imgui
+		ShaderProgram *imguiShaderProgram;
+		Texture *imguiFontTexture;
+		Renderable *imguiRenderable;
+
 		static std::array<bool, Key::KeyCount> keys;
 
 		std::chrono::high_resolution_clock::time_point lastFrameTime;
@@ -167,7 +172,7 @@ namespace Blob::GL {
 		void enableDebugCallBack();
 
 	public:
-		Graphic(bool fullScreen = true, unsigned int w = 640, unsigned int h = 480);
+		explicit Graphic(bool fullScreen = true, unsigned int w = 640, unsigned int h = 480);
 
 		~Graphic();
 
@@ -186,6 +191,8 @@ namespace Blob::GL {
 		void draw(const Shape &shape, glm::mat4 sceneModel = glm::mat4(1.0));
 
 		void draw(const Scene &scene);
+
+		void drawImGUI();
 
 		bool isOpen() const;
 

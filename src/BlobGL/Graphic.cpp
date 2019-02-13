@@ -16,6 +16,9 @@
 //glm
 #include <glm/gtc/type_ptr.hpp>
 
+//imgui
+#include <imgui.h>
+
 
 static void GLAPIENTRY openglCallbackFunction(
 		GLenum source,
@@ -63,6 +66,19 @@ namespace Blob::GL {
 		}
 	}
 
+	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+	{
+		//if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+		//	popup_menu();
+
+		double mouse_x, mouse_y;
+		glfwGetCursorPos(window, &mouse_x, &mouse_y);
+		ImGuiIO& io = ImGui::GetIO();
+		io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
+
+		io.MouseDown[button] = action;
+	}
+
 	void framebuffer_size_callback(GLFWwindow *window, int w, int h) {
 		auto g = (Graphic*) glfwGetWindowUserPointer(window);
 		g->resize(w, h);
@@ -83,10 +99,6 @@ namespace Blob::GL {
 			cameraPosition(0, 0, 2),
 			cameraLookAt(0, 0, 0),
 			cameraUp(0, 0, 1) {
-
-		//settings.depthBits = 24;
-		//settings.stencilBits = 8;
-		//settings.antialiasingLevel = 4;
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -125,29 +137,26 @@ namespace Blob::GL {
 
 		enableDebugCallBack();
 
-		/*glEnable(GL_CULL_FACE); // cull face
-		glCullFace(GL_FRONT);// cull back face
-		glFrontFace(GL_CW);// GL_CCW for counter clock-wise
-		glEnable(GL_DEPTH_TEST);*/
+		//general settings
+		glFrontFace(GL_CW);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //pour faire des lignes
 		glClearColor(0.2, 0.2, 0.2, 1.0);
 		glViewport(0, 0, w, h);
-
-		//imgui
+		glCullFace(GL_FRONT);
+		//alpha
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_SCISSOR_TEST);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glfwSetWindowUserPointer((GLFWwindow *) window, this);
 		glfwSetFramebufferSizeCallback((GLFWwindow *) window, framebuffer_size_callback);
 		glfwSetKeyCallback((GLFWwindow *) window, (GLFWkeyfun) key_callback);
+		glfwSetMouseButtonCallback((GLFWwindow *) window, mouse_button_callback);
 
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 
+		//imgui
 		projectionMatrix2D =
 		{
 				2.0f/(width), 0.0f,         	0.0f,   0.0f,
@@ -155,7 +164,35 @@ namespace Blob::GL {
 				0.0f,         0.0f,        	-1.0f,  0.0f,
 				-1.f,			1.f,  			0.0f,	1.0f,
 		};
+		ImGui::CreateContext();
+		ImGui::StyleColorsDark();
+		ImGuiIO& io = ImGui::GetIO();
+		io.DisplayFramebufferScale = ImVec2(getFrameBufferSize().x/getSize().x, getFrameBufferSize().y/getSize().y);
+		io.DisplaySize = ImVec2(getSize().x, getSize().y);
 
+		io.IniFilename = nullptr;
+
+		imguiFontTexture = new Texture();
+		unsigned char* pixels;
+		int width, height;
+		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+		imguiFontTexture->setRGBA32data(pixels, width, height);
+		io.Fonts->TexID = (ImTextureID)imguiFontTexture;
+		if(!io.Fonts->IsBuilt())
+			throw BlobException("imgui Fonts not build");
+
+		imguiRenderable = new Renderable();
+		imguiRenderable->scissorTest = true;
+		imguiRenderable->cullFace = false;
+
+		imguiShaderProgram = new ShaderProgram("data/vertex2D.glsl", "data/fragment2D.glsl");
+		imguiRenderable->setShaderProgram(imguiShaderProgram);
+
+		imguiRenderable->setArrayVAO(2, "Position", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, pos));
+		imguiRenderable->setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, uv));
+		imguiRenderable->setArrayVAO(4, "Color", GL_UNSIGNED_BYTE, (uint32_t)offsetof(ImDrawVert, col), true);
+
+		//create Froms
 		createVBO();
 		Text::createVBO();
 
@@ -165,21 +202,26 @@ namespace Blob::GL {
 	Graphic::~Graphic() {
 		deleteVBO();
 		Text::deleteVBO();
+		ImGui::DestroyContext();
+		delete imguiShaderProgram;
+		delete imguiFontTexture;
+		delete imguiRenderable;
 
 		glfwDestroyWindow((GLFWwindow *) window);
 		glfwTerminate();
 	}
 
 	void Graphic::clear() {
+		glDisable(GL_SCISSOR_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
 	float Graphic::display() {
 		glfwSwapBuffers((GLFWwindow *) window);
 
-
 		auto now = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<float> diff = now - lastFrameTime;
+		ImGui::GetIO().DeltaTime = diff.count();
 		fpsCouner = fpsCouner + diff;
 		lastFrameTime = now;
 
@@ -215,6 +257,11 @@ namespace Blob::GL {
 
 		if(ww != w || hh != h)
 			glfwSetWindowSize((GLFWwindow *) window, w, h);
+
+		//TODO ajouter ImVec2 --> Vec2f
+		ImGuiIO& io = ImGui::GetIO();
+		io.DisplayFramebufferScale = ImVec2(getFrameBufferSize().x/getSize().x, getFrameBufferSize().y/getSize().y);
+		io.DisplaySize = ImVec2(getSize().x, getSize().y);
 	}
 
 	std::ostream &operator<<(std::ostream &out, const glm::mat4 &vec) {
@@ -227,6 +274,22 @@ namespace Blob::GL {
 	void Graphic::draw(const Renderable &renderable, glm::mat4 shapeModel) {
 		if(renderable.shaderProgram == nullptr)
 			throw BlobException("Error on Graphic::draw : No shader program set");
+
+		if(renderable.cullFace)
+			glEnable(GL_CULL_FACE);
+		else
+			glDisable(GL_CULL_FACE);
+
+		if(renderable.scissorTest)
+			glEnable(GL_SCISSOR_TEST);
+		else
+			glDisable(GL_SCISSOR_TEST);
+
+		if(renderable.depthTest)
+			glEnable(GL_DEPTH_TEST);
+		else
+			glDisable(GL_DEPTH_TEST);
+
 
 		glUseProgram(renderable.shaderProgram->getProgram());
 		glBindVertexArray(renderable.vao.getVertexArrayObject());
@@ -248,6 +311,21 @@ namespace Blob::GL {
 
 		if(renderable.shaderProgram == nullptr)
 			throw BlobException("Error on Graphic::draw : No shader program set");
+
+		if(renderable.cullFace)
+			glEnable(GL_CULL_FACE);
+		else
+			glDisable(GL_CULL_FACE);
+
+		if(renderable.scissorTest)
+			glEnable(GL_SCISSOR_TEST);
+		else
+			glDisable(GL_SCISSOR_TEST);
+
+		if(renderable.depthTest)
+			glEnable(GL_DEPTH_TEST);
+		else
+			glDisable(GL_DEPTH_TEST);
 
 		glUseProgram(renderable.shaderProgram->getProgram());
 		glBindVertexArray(renderable.vao.getVertexArrayObject());
@@ -296,6 +374,54 @@ namespace Blob::GL {
 */
 		for (auto r : scene.shapes)
 			draw(*r, modelMatrix);
+	}
+
+	void Graphic::drawImGUI() {
+		ImGui::Render();
+		ImDrawData *drawData = ImGui::GetDrawData();
+
+		ImGuiIO& io = ImGui::GetIO();
+
+		VertexBufferObject imguiVBO;
+
+		drawData->ScaleClipRects(io.DisplayFramebufferScale);
+
+		int fb_height = (int)(drawData->DisplaySize.y * io.DisplayFramebufferScale.y);
+		//
+
+		unsigned int sizeTot = 0;
+		for (int n = 0; n < drawData->CmdListsCount; n++) {
+			const ImDrawList *cmd_list = drawData->CmdLists[n];
+
+			sizeTot += cmd_list->VtxBuffer.Size;
+		}
+
+		if(sizeTot > 0)
+			imguiVBO.setData(nullptr, sizeTot * sizeof(ImDrawVert), true);
+
+		unsigned int offset = 0;
+
+		for (int n = 0; n < drawData->CmdListsCount; n++) {
+			ImDrawList* cmd_list = drawData->CmdLists[n];
+			size_t idx_buffer_offset = 0;
+
+			imguiVBO.setSubData((uint8_t*) cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
+
+			imguiRenderable->setBuffer(imguiVBO, sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
+
+			imguiRenderable->setIndices(cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size, GL_UNSIGNED_SHORT);
+
+			for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
+				const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
+
+				glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
+
+				imguiRenderable->setTexture(*(Texture*)pcmd->TextureId);
+				draw(*imguiRenderable, pcmd->ElemCount, idx_buffer_offset);
+
+				idx_buffer_offset += pcmd->ElemCount;
+			}
+		}
 	}
 
 	bool Graphic::isOpen() const {

@@ -15,10 +15,6 @@ using namespace Blob::GL;
 
 int main(int argc, char *argv[]) {
 
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-
 	try {
 		Graphic graphic(false);
 		ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
@@ -51,40 +47,10 @@ int main(int argc, char *argv[]) {
 		text.setScale(0.1, 0.1, 1);
 		text.setPosition(-1, 0.9, 0);
 
-		//imGUI init
-		ShaderProgram shaderProgram2D("data/vertex2D.glsl", "data/fragment2D.glsl");
-
-		Texture fontTexture;
-		ImGuiIO& io = ImGui::GetIO();
-		io.IniFilename = nullptr;
-
-		//Font
-		unsigned char* pixels;
-		int width, height;
-		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-		fontTexture.setRGBA32data(pixels, width, height);
-
-		io.Fonts->TexID = (ImTextureID)&fontTexture;
-
-		if(!io.Fonts->IsBuilt())
-			cout << "Font not Build" << endl;
-
-
 		//Demo window init
 		bool show_demo_window = true;
 		bool show_another_window = false;
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-		VertexBufferObject imguiVBO;
-
-		Renderable imguiRenderable;
-		imguiRenderable.setShaderProgram(&shaderProgram2D);
-
-		imguiRenderable.setArrayVAO(2, "Position", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, pos));
-		imguiRenderable.setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(ImDrawVert, uv));
-		imguiRenderable.setArrayVAO(4, "Color", GL_UNSIGNED_BYTE, (uint32_t)offsetof(ImDrawVert, col), true);
-
-		//
 
 		while (graphic.isOpen()) {
 			graphic.clear();
@@ -105,10 +71,6 @@ int main(int argc, char *argv[]) {
 			graphic.draw(op);
 
 			//imgui /////////////////////////////////////
-
-			//display size
-			io.DisplayFramebufferScale = ImVec2(graphic.getFrameBufferSize().x/graphic.getSize().x, graphic.getFrameBufferSize().y/graphic.getSize().y);
-			io.DisplaySize = ImVec2(graphic.getSize().x, graphic.getSize().y);
 
 			ImGui::NewFrame();
 
@@ -148,67 +110,13 @@ int main(int argc, char *argv[]) {
 				ImGui::End();
 			}
 
-			//Render
-			ImGui::Render();
-			ImDrawData *drawData = ImGui::GetDrawData();
-
-			drawData->ScaleClipRects(io.DisplayFramebufferScale);
-
-			//clip ??
-			GLint last_scissor_box[4]; glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
-			bool clip_origin_lower_left = true;
-
-			GLenum last_clip_origin = 0; glGetIntegerv(GL_CLIP_ORIGIN, (GLint*)&last_clip_origin); // Support for GL 4.5's glClipControl(GL_UPPER_LEFT)
-			if (last_clip_origin == GL_UPPER_LEFT)
-				clip_origin_lower_left = false;
-
-			int fb_height = (int)(drawData->DisplaySize.y * io.DisplayFramebufferScale.y);
-			//
-
-			unsigned int sizeTot = 0;
-			for (int n = 0; n < drawData->CmdListsCount; n++) {
-				const ImDrawList *cmd_list = drawData->CmdLists[n];
-
-				sizeTot += cmd_list->VtxBuffer.Size;
-			}
-
-			if(sizeTot > 0)
-				imguiVBO.setData(nullptr, sizeTot * sizeof(ImDrawVert), true);
-
-			unsigned int offset = 0;
-
-			for (int n = 0; n < drawData->CmdListsCount; n++) {
-				ImDrawList* cmd_list = drawData->CmdLists[n];
-				size_t idx_buffer_offset = 0;
-
-				imguiVBO.setSubData((uint8_t*) cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
-
-				imguiRenderable.setBuffer(imguiVBO, sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
-
-				imguiRenderable.setIndices(cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size, GL_UNSIGNED_SHORT);
-
-				for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
-					const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
-
-					glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
-
-					imguiRenderable.setTexture(*(Texture*)pcmd->TextureId);
-					graphic.draw(imguiRenderable, pcmd->ElemCount, idx_buffer_offset);
-
-					idx_buffer_offset += pcmd->ElemCount;
-				}
-			}
-
-			glScissor(0, 0, graphic.getSize().x, graphic.getSize().y);
-
+			graphic.drawImGUI();
 			graphic.display();
 		}
 
 	} catch (BlobException &exception) {
 		cout << exception.what() << std::endl;
 	}
-
-	ImGui::DestroyContext();
 
 	return 0;
 }
