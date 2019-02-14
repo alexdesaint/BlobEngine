@@ -60,28 +60,79 @@ namespace Blob::GL {
 
 	std::array<bool, Key::KeyCount> Graphic::keys;
 
-	void key_callback(void *window, int key, int scancode, int action, int mods) {
-		if (action != 2) {
-			Graphic::keys[key] = (bool) action;
-		}
+	void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+		ImGuiIO& io = ImGui::GetIO();
+		if (action == GLFW_PRESS)
+			io.KeysDown[key] = true;
+		else if (action == GLFW_RELEASE)
+			io.KeysDown[key] = false;
+
+		// Modifiers are not reliable across systems
+		io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+		io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+		io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
 	}
 
-	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-	{
+	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 		//if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 		//	popup_menu();
 
-		double mouse_x, mouse_y;
-		glfwGetCursorPos(window, &mouse_x, &mouse_y);
 		ImGuiIO& io = ImGui::GetIO();
-		io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
 
-		io.MouseDown[button] = action;
+		io.MouseDown[button] = action != GLFW_RELEASE;
+	}
+
+	GLFWcursor* g_MouseCursors[ImGuiMouseCursor_COUNT] = {nullptr};
+	int oldCursor = 0;
+
+	void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MousePos = ImVec2((float)xpos, (float)ypos);
+
+		ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+		if(imgui_cursor != oldCursor) {
+			if (imgui_cursor == ImGuiMouseCursor_None) {
+				// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			} else {
+				// Show OS mouse cursor
+				if (g_MouseCursors[imgui_cursor] != nullptr)
+					glfwSetCursor(window, g_MouseCursors[imgui_cursor]);
+				else
+					glfwSetCursor(window, g_MouseCursors[ImGuiMouseCursor_Arrow]);
+
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			}
+		}
+		oldCursor = imgui_cursor;
+	}
+
+	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseWheelH += (float)xoffset;
+		io.MouseWheel += (float)yoffset;
+	}
+
+	void character_callback(GLFWwindow* window, unsigned int c) {
+		ImGuiIO& io = ImGui::GetIO();
+		if (c > 0 && c < 0x10000)
+			io.AddInputCharacter((unsigned short)c);
 	}
 
 	void framebuffer_size_callback(GLFWwindow *window, int w, int h) {
 		auto g = (Graphic*) glfwGetWindowUserPointer(window);
 		g->resize(w, h);
+	}
+
+	static const char* GetClipboardText(void* user_data)
+	{
+		return glfwGetClipboardString((GLFWwindow*)user_data);
+	}
+
+	static void SetClipboardText(void* user_data, const char* text)
+	{
+		glfwSetClipboardString((GLFWwindow*)user_data, text);
 	}
 
 	void Graphic::enableDebugCallBack() {
@@ -134,7 +185,6 @@ namespace Blob::GL {
 
 		if (!gladLoadGL()) throw BlobException("Can't loadBMP openGL");
 
-
 		enableDebugCallBack();
 
 		//general settings
@@ -148,10 +198,59 @@ namespace Blob::GL {
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		ImGui::CreateContext();
+		ImGui::StyleColorsDark();
+		ImGuiIO& io = ImGui::GetIO();
+
+		//user pointer
 		glfwSetWindowUserPointer((GLFWwindow *) window, this);
 		glfwSetFramebufferSizeCallback((GLFWwindow *) window, framebuffer_size_callback);
-		glfwSetKeyCallback((GLFWwindow *) window, (GLFWkeyfun) key_callback);
+
+		//callback
+		// Setup back-end capabilities flags
+		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
+		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;          // We can honor io.WantSetMousePos requests (optional, rarely used)
+		io.BackendPlatformName = "BlobEngine";
+
+		// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
+		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
+		io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
+		io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
+		io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
+		io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
+		io.KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
+		io.KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
+		io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
+		io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
+		io.KeyMap[ImGuiKey_Insert] = GLFW_KEY_INSERT;
+		io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
+		io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
+		io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
+		io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
+		io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
+		io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
+		io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
+		io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
+		io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
+		io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
+		io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
+		glfwSetKeyCallback((GLFWwindow *) window, key_callback);
 		glfwSetMouseButtonCallback((GLFWwindow *) window, mouse_button_callback);
+
+		g_MouseCursors[ImGuiMouseCursor_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+		g_MouseCursors[ImGuiMouseCursor_TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+		g_MouseCursors[ImGuiMouseCursor_ResizeAll] = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);   // FIXME: GLFW doesn't have this.
+		g_MouseCursors[ImGuiMouseCursor_ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
+		g_MouseCursors[ImGuiMouseCursor_ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+		g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);  // FIXME: GLFW doesn't have this.
+		g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);  // FIXME: GLFW doesn't have this.
+		g_MouseCursors[ImGuiMouseCursor_Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+		glfwSetCursorPosCallback((GLFWwindow *) window, cursor_position_callback);
+		glfwSetScrollCallback((GLFWwindow *) window, scroll_callback);
+		glfwSetCharCallback((GLFWwindow *) window, character_callback);
+
+		io.SetClipboardTextFn = SetClipboardText;
+		io.GetClipboardTextFn = GetClipboardText;
 
 		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
@@ -164,9 +263,6 @@ namespace Blob::GL {
 				0.0f,         0.0f,        	-1.0f,  0.0f,
 				-1.f,			1.f,  			0.0f,	1.0f,
 		};
-		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
-		ImGuiIO& io = ImGui::GetIO();
 		io.DisplayFramebufferScale = ImVec2(getFrameBufferSize().x/getSize().x, getFrameBufferSize().y/getSize().y);
 		io.DisplaySize = ImVec2(getSize().x, getSize().y);
 

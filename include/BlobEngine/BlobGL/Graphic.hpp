@@ -140,8 +140,6 @@ namespace Blob::GL {
 	};
 
 	class Graphic {
-		friend void key_callback(void *window, int key, int scancode, int action, int mods);
-
 	private:
 
 		bool quit = false;
