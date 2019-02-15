@@ -1,7 +1,7 @@
-#include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/BlobGL/Shapes.hpp>
 #include <glad/glad.h>
 
-namespace Blob::GL {
+namespace Blob::GL::Shapes {
 
 	struct Data {
 		float coor[3];
@@ -130,22 +130,81 @@ namespace Blob::GL {
 			26, 27, 28, 26, 28, 29, // back
 			30, 31, 32, 30, 32, 33, // back
 	};
-
+	
 	VertexBufferObject *vbo;
+	ShaderProgram *shader;
 
-	void createVBO() {
+	void init() {
 		vbo = new VertexBufferObject((GLubyte *) data, sizeof(data));
+		shader = new ShaderProgram();
+
+		shader->addVertexShader(R"=====(
+	#version 450
+
+	layout (location = 0) in vec3 Position;
+	layout (location = 1) in vec3 Normal;
+	layout (location = 2) in vec2 TexturePosition;
+	
+	out vec3 FragPos;
+	out vec3 FragNormal;
+	out vec2 TexCoord;
+	
+	uniform mat4 model;
+	uniform mat4 view;
+	uniform mat4 projection;
+	
+	void main()
+	{
+		FragPos = vec3(model * vec4(Position, 1.0));
+		FragNormal = mat3(transpose(inverse(model))) * Normal;
+	
+		gl_Position = projection * view * vec4(FragPos, 1.0);
+	
+		TexCoord = TexturePosition;
+	}
+	)=====");
+		shader->addFragmentShader(R"=====(
+	#version 450
+
+	out vec4 FragColor;
+	
+	in vec3 FragNormal;
+	in vec3 FragPos;
+	in vec2 TexCoord;
+	
+	uniform sampler2D ourTexture;
+	
+	void main()
+	{
+		vec3 lightPos = vec3(4.0, 4.0, 0.0);
+		vec3 lightColor = vec3(1.0, 1.0, 1.0);
+		vec4 objectColor = texture(ourTexture, TexCoord);
+		//
+		float ambientStrength = 0.2;
+		vec3 ambient = ambientStrength * lightColor;
+	
+		// diffuse
+		vec3 norm = normalize(FragNormal);
+		vec3 lightDir = normalize(vec3(1.0, -1.0, 2.0));
+		float diff = max(dot(norm, lightDir), 0.0);
+		vec3 diffuse = diff * lightColor;
+	
+		FragColor = vec4(ambient + diffuse, 1.0) * objectColor;
+	}
+	)=====");
+		shader->linkShaders();
 	}
 
-	void deleteVBO() {
+	void destroy() {
 		delete vbo;
+		delete shader;
 	}
 
-	Cube::Cube(ShaderProgram *shaderProgram) : Texture(0, 100, 100) {
+	Cube::Cube() : Texture(0, 100, 100) {
 		setBuffer(*vbo, sizeof(Data));
 
-		setShaderProgram(shaderProgram);
-
+		setShaderProgram(*shader);
+		
 		setArrayVAO(3, "Position", GL_FLOAT, (uint32_t)offsetof(Data, coor));
 		setArrayVAO(3, "Normal", GL_FLOAT, (uint32_t)offsetof(Data, norm));
 		setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t)offsetof(Data, texCoor));
@@ -155,10 +214,10 @@ namespace Blob::GL {
 		setTexture(*this);
 	}
 
-	Plane::Plane(ShaderProgram *shaderProgram) : Texture(0, 100, 100) {
+	Plane::Plane() : Texture(0, 100, 100) {
 		setBuffer(*vbo, sizeof(Data), 4 * 6 * sizeof(Data));
 
-		setShaderProgram(shaderProgram);
+		setShaderProgram(*shader);
 
 		setArrayVAO(3, "Position", GL_FLOAT, (uint32_t)offsetof(Data, coor));
 		setArrayVAO(3, "Normal", GL_FLOAT, (uint32_t)offsetof(Data, norm));
@@ -169,10 +228,10 @@ namespace Blob::GL {
 		setTexture(*this);
 	}
 
-	OctagonalPrism::OctagonalPrism(ShaderProgram *shaderProgram) : Texture(0, 100, 100) {
+	OctagonalPrism::OctagonalPrism() : Texture(0, 100, 100) {
 		setBuffer(*vbo, sizeof(Data), (4 * 6 + 4) * sizeof(Data));
 
-		setShaderProgram(shaderProgram);
+		setShaderProgram(*shader);
 
 		setArrayVAO(3, "Position", GL_FLOAT, (uint32_t)offsetof(Data, coor));
 		setArrayVAO(3, "Normal", GL_FLOAT, (uint32_t)offsetof(Data, norm));

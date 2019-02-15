@@ -5,7 +5,7 @@
 #include <BlobEngine/Collision/CollisionDetector.hpp>
 
 #include <BlobEngine/BlobGL/Graphic.hpp>
-#include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/BlobGL/Shapes.hpp>
 
 using namespace Blob;
 using namespace Blob::GL;

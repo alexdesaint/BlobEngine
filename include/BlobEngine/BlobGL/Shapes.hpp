@@ -3,27 +3,26 @@
 
 #include <BlobEngine/BlobGL/Renderable.hpp>
 
-namespace Blob::GL {
+namespace Blob::GL::Shapes {
 
-	void createVBO();
+	void init();
 
-	void deleteVBO();
+	void destroy();
 
 	class Cube : public Renderable, public Texture {
 	public:
-		explicit Cube(ShaderProgram *shaderProgram);
+		explicit Cube();
 	};
 
 	class Plane : public Renderable, public Texture {
 	public:
-		explicit Plane(ShaderProgram *shaderProgram);
+		explicit Plane();
 	};
 
 	class OctagonalPrism : public Renderable, public Texture {
 	public:
-		explicit OctagonalPrism(ShaderProgram *shaderProgram);
+		explicit OctagonalPrism();
 	};
-
 }
 
 #endif //BLOBENGINE_CUBE_HPP

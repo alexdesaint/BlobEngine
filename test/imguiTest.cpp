@@ -1,6 +1,5 @@
 #include <BlobEngine/BlobGL/Graphic.hpp>
-#include <BlobEngine/BlobGL/Form.hpp>
-#include <BlobEngine/BlobGL/Text.hpp>
+#include <BlobEngine/BlobGL/Shapes.hpp>
 
 #include <BlobEngine/Time.hpp>
 #include <BlobEngine/BlobException.hpp>
@@ -12,14 +11,14 @@
 using namespace std;
 using namespace Blob;
 using namespace Blob::GL;
+using namespace Blob::GL::Shapes;
 
 int main(int argc, char *argv[]) {
 
 	try {
 		Graphic graphic(false);
-		ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
 
-		Cube c1(&shaderProgram), c2(&shaderProgram);
+		Cube c1, c2;
 
 		c1.setPosition(-5.f, 0.f, 0.f);
 
@@ -29,23 +28,19 @@ int main(int argc, char *argv[]) {
 
 		list<Cube> cubeList;
 
-		cubeList.emplace_back(&shaderProgram);
+		cubeList.emplace_back();
 
-		Plane p(&shaderProgram);
+		Plane p;
 
 		p.move(0, 2, 0);
 		p.setScale(2, 2, 2);
 		p.setColor(255, 255, 255);
 
-		OctagonalPrism op(&shaderProgram);
+		OctagonalPrism op;
 
 		graphic.setCameraPosition(5, 0, 5);
 
 		Time::TimePoint start = Time::now();
-
-		Text::Text text("BLOBENGINE, alexandredlsb@gmail.com");
-		text.setScale(0.1, 0.1, 1);
-		text.setPosition(-1, 0.9, 0);
 
 		//Demo window init
 		bool show_demo_window = true;

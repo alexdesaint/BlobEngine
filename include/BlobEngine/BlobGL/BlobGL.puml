@@ -24,7 +24,7 @@ namespace Blob {
 		-width : unsigned int
 		+clear() : void
 		+display() : void
-		+draw(unsigned int shaderProgram, unsigned int vao, int mvpLocation, int numOfPoints) : void
+		+draw(unsigned int shader, unsigned int vao, int mvpLocation, int numOfPoints) : void
 		-enableDebugCallBack() : void
 		+resize(unsigned int w, unsigned int h) : void
 	}

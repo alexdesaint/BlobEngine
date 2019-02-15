@@ -225,8 +225,8 @@ namespace Blob::GL {
 		return vao;
 	}
 
-	void Renderable::setShaderProgram(ShaderProgram *shaderProgram) {
-		Renderable::shaderProgram = shaderProgram;
+	void Renderable::setShaderProgram(ShaderProgram &shaderProgram) {
+		Renderable::shaderProgram = &shaderProgram;
 	}
 
 }

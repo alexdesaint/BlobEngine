@@ -36,7 +36,7 @@ namespace Blob::GL {
 		bool depthTest = false;
 		bool scissorTest = false;
 
-		void setShaderProgram(ShaderProgram *shaderProgram);
+		void setShaderProgram(ShaderProgram &shaderProgram);
 
 		void setBuffer(VertexBufferObject &vbo, int32_t stride, uint32_t dataOffset = 0);
 

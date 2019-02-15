@@ -29,14 +29,14 @@ int main(int argc, char *argv[]) {
 		Blob::glTF2::Shape &s1 = mainScene.getShape(0);
 
 
-		Blob::GL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
+		Blob::GL::ShaderProgram shader("../data/vertex.glsl", "../data/fragment.glsl");
 
 		graphic.setCameraPosition(10, 10, 10);
 
 		while (graphic.isOpen()) {
 			graphic.clear();
 
-			graphic.draw(s1, shaderProgram);
+			graphic.draw(s1, shader);
 
 			graphic.display();
 		}

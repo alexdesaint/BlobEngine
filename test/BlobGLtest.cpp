@@ -1,6 +1,5 @@
 #include <BlobEngine/BlobGL/Graphic.hpp>
-#include <BlobEngine/BlobGL/Form.hpp>
-#include <BlobEngine/BlobGL/Text.hpp>
+#include <BlobEngine/BlobGL/Shapes.hpp>
 
 #include <BlobEngine/Time.hpp>
 #include <BlobEngine/BlobException.hpp>
@@ -9,14 +8,12 @@
 using namespace std;
 using namespace Blob;
 using namespace Blob::GL;
+using namespace Blob::GL::Shapes;
 
 int main(int argc, char *argv[]) {
 
 	try {
 		Graphic graphic(false);
-		Blob::GL::ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
-		Blob::GL::ShaderProgram shaderProgram2D("data/vertex2D.glsl", "data/fragment2D.glsl");
-
 		Cube c1, c2;
 
 		c1.setPosition(-5.f, 0.f, 0.f);
@@ -42,10 +39,6 @@ int main(int argc, char *argv[]) {
 
 		Time::TimePoint start = Time::now();
 
-		Text::Text text("BLOBENGINE, alexandredlsb@gmail.com");
-		text.setScale(0.1, 0.1, 1);
-		text.setPosition(-1, 0.9, 0);
-
 		while (graphic.isOpen()) {
 			graphic.clear();
 
@@ -54,15 +47,13 @@ int main(int argc, char *argv[]) {
 
 			c1.setRotation(angle * 40, 0.f, 0.f, 1.f);
 
-			graphic.draw(c1, shaderProgram);
-			graphic.draw(c2, shaderProgram);
+			graphic.draw(c1);
+			graphic.draw(c2);
 
-			graphic.draw(p, shaderProgram);
-
-			graphic.draw(text, shaderProgram2D);
+			graphic.draw(p);
 
 			op.setRotation(angle * 40, 0.f, 0.f, 1.f);
-			graphic.draw(op, shaderProgram);
+			graphic.draw(op);
 
 			graphic.display();
 
