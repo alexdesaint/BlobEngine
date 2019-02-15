@@ -178,6 +178,7 @@ namespace Blob::Collision {
 
 		float timeFlow;
 
+		bool timeStoped = false;
 	public:
 
 		//StaticObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
@@ -187,5 +188,9 @@ namespace Blob::Collision {
 		void checkCollision(RectDynamic &object);
 
 		void update();
+
+		void pause();
+
+		void unpause();
 	};
 }

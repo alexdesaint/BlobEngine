@@ -321,15 +321,27 @@ namespace Blob::Collision {
 
 	void CollisionDetector::update() {
 
-		timeFlow = getElapsedTime();
+		if (!timeStoped) {
+			timeFlow = getElapsedTime();
 /*
 		for (CircleDynamic *object : circleDynamicList) {
 			if (!object->speed.isNull())
 				checkCollision(*object);
 		}
 */
-		for (RectDynamic *object : rectDynamicList) {
-			checkCollision(*object);
+			for (RectDynamic *object : rectDynamicList) {
+				checkCollision(*object);
+			}
 		}
+	}
+
+	void CollisionDetector::pause() {
+		timeStoped = true;
+
+	}
+
+	void CollisionDetector::unpause() {
+		timeStoped = false;
+		getElapsedTime();
 	}
 }

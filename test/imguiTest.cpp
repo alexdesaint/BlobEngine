@@ -5,7 +5,7 @@
 #include <BlobEngine/BlobException.hpp>
 #include <iostream>
 
-#include <imgui.h>
+#include <BlobEngine/imguiForBlob.hpp>
 #include <glad/glad.h>
 
 using namespace std;

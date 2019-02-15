@@ -33,7 +33,7 @@ namespace Blob::GL {
 
 	public:
 		bool cullFace = true;
-		bool depthTest = false;
+		bool depthTest = true;
 		bool scissorTest = false;
 
 		void setShaderProgram(ShaderProgram &shaderProgram);

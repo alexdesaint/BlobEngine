@@ -16,7 +16,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 //imgui
-#include <imgui.h>
+#include <BlobEngine/imguiForBlob.hpp>
 
 
 static void GLAPIENTRY openglCallbackFunction(
@@ -60,6 +60,12 @@ namespace Blob::GL {
 	std::array<bool, Key::KeyCount> Graphic::keys;
 
 	void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+
+		if (action != 2) {
+			auto g = (Graphic *) glfwGetWindowUserPointer(window);
+			g->getKeys()[key] = (bool) action;
+		}
+
 		ImGuiIO& io = ImGui::GetIO();
 		if (action == GLFW_PRESS)
 			io.KeysDown[key] = true;
@@ -87,7 +93,7 @@ namespace Blob::GL {
 
 	void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.MousePos = ImVec2((float)xpos, (float)ypos);
+		io.MousePos = Vec2f((float) xpos, (float) ypos);
 
 		ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
 		if(imgui_cursor != oldCursor) {
@@ -262,29 +268,24 @@ namespace Blob::GL {
 				0.0f,         0.0f,        	-1.0f,  0.0f,
 				-1.f,			1.f,  			0.0f,	1.0f,
 		};
-		io.DisplayFramebufferScale = ImVec2(getFrameBufferSize().x/getSize().x, getFrameBufferSize().y/getSize().y);
-		io.DisplaySize = ImVec2(getSize().x, getSize().y);
+		io.DisplayFramebufferScale = getFrameBufferSize() / getSize();
+		io.DisplaySize = getSize();
 
 		io.IniFilename = nullptr;
 
 		imguiFontTexture = new Texture();
-		unsigned char* pixels;
-		int width, height;
-		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-		imguiFontTexture->setRGBA32data(pixels, width, height);
-		io.Fonts->TexID = (ImTextureID)imguiFontTexture;
-		if(!io.Fonts->IsBuilt())
-			throw BlobException("imgui Fonts not build");
+		rebuildFontImGUI();
 
 		imguiRenderable = new Renderable();
 		imguiRenderable->scissorTest = true;
 		imguiRenderable->cullFace = false;
+		imguiRenderable->depthTest = false;
 
 		imguiShaderProgram = new ShaderProgram();
 		imguiShaderProgram->addVertexShader(R"=====(
-	#version 450
+#version 450
 
-	layout (location = 0) in vec2 Position;
+layout (location = 0) in vec2 Position;
 layout (location = 1) in vec2 TexturePosition;
 layout (location = 2) in vec4 Color;
 
@@ -298,11 +299,11 @@ void main()
     Frag_Color = Color;
     gl_Position = projection * vec4(Position.xy, 0, 1);
 }
-	)=====");
+		)=====");
 		imguiShaderProgram->addFragmentShader(R"=====(
-	#version 450
+#version 450
 
-	layout (location = 0) out vec4 Out_Color;
+layout (location = 0) out vec4 Out_Color;
 
 in vec2 Frag_UV;
 in vec4 Frag_Color;
@@ -312,7 +313,7 @@ void main() {
     //Out_Color = vec4(1.f, 1.f, 1.f, 1.f);
     Out_Color = Frag_Color * texture(Texture, Frag_UV.st);
 }
-	)=====");
+		)=====");
 		imguiShaderProgram->linkShaders();
 
 		imguiRenderable->setShaderProgram(*imguiShaderProgram);
@@ -385,10 +386,9 @@ void main() {
 		if(ww != w || hh != h)
 			glfwSetWindowSize((GLFWwindow *) window, w, h);
 
-		//TODO ajouter ImVec2 --> Vec2f
 		ImGuiIO& io = ImGui::GetIO();
-		io.DisplayFramebufferScale = ImVec2(getFrameBufferSize().x/getSize().x, getFrameBufferSize().y/getSize().y);
-		io.DisplaySize = ImVec2(getSize().x, getSize().y);
+		io.DisplayFramebufferScale = getFrameBufferSize() / getSize();
+		io.DisplaySize = getSize();
 	}
 
 	std::ostream &operator<<(std::ostream &out, const glm::mat4 &vec) {
@@ -551,6 +551,17 @@ void main() {
 		}
 	}
 
+	void Graphic::rebuildFontImGUI() {
+		unsigned char *pixels;
+		int width, height;
+		ImGuiIO &io = ImGui::GetIO();
+		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+		imguiFontTexture->setRGBA32data(pixels, width, height);
+		io.Fonts->TexID = (ImTextureID) imguiFontTexture;
+		if (!io.Fonts->IsBuilt())
+			throw BlobException("imgui Fonts not build");
+	}
+
 	bool Graphic::isOpen() const {
 		return !(glfwWindowShouldClose((GLFWwindow *) window) || quit);
 	}
@@ -579,7 +590,7 @@ void main() {
 		projectionMatrix = glm::ortho(left, right, bottom, top, zNear, zFar);
 	}
 
-	const std::array<bool, KeyCount> &Graphic::getKeys() {
+	std::array<bool, KeyCount> &Graphic::getKeys() {
 		return keys;
 	}
 

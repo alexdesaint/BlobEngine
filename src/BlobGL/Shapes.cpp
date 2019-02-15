@@ -173,12 +173,13 @@ namespace Blob::GL::Shapes {
 	in vec2 TexCoord;
 	
 	uniform sampler2D ourTexture;
+uniform float texScale;
 	
 	void main()
 	{
 		vec3 lightPos = vec3(4.0, 4.0, 0.0);
 		vec3 lightColor = vec3(1.0, 1.0, 1.0);
-		vec4 objectColor = texture(ourTexture, TexCoord);
+		vec4 objectColor = texture(ourTexture, TexCoord * texScale);
 		//
 		float ambientStrength = 0.2;
 		vec3 ambient = ambientStrength * lightColor;

@@ -180,7 +180,7 @@ namespace Blob::GL {
 
 		void resize(unsigned int w, unsigned int h);
 
-		Blob::Vec2i getSize() { return {width, height}; }
+		Blob::Vec2f getSize() { return {(float) width, (float) height}; }
 
 		void draw(const Renderable &renderable, glm::mat4 shapeModel = glm::mat4(1.0));
 
@@ -191,6 +191,8 @@ namespace Blob::GL {
 		void draw(const Scene &scene);
 
 		void drawImGUI();
+
+		void rebuildFontImGUI();
 
 		bool isOpen() const;
 
@@ -204,7 +206,7 @@ namespace Blob::GL {
 
 		Blob::Vec2f getFrameBufferSize();
 
-		static const std::array<bool, KeyCount> &getKeys();
+		static std::array<bool, KeyCount> &getKeys();
 
 		void *getWindow() const;
 
