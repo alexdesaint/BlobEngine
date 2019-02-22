@@ -173,7 +173,7 @@ namespace Blob::GL::Shapes {
 	in vec2 TexCoord;
 	
 	uniform sampler2D ourTexture;
-uniform float texScale;
+	uniform vec2 texScale;
 	
 	void main()
 	{

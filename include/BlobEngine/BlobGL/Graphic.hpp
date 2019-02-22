@@ -157,6 +157,8 @@ namespace Blob::GL {
 		glm::vec3 cameraLookAt; // and looks at the origin
 		glm::vec3 cameraUp;  // Head is up (set to 0,-1,0 to look upside-down)
 
+		float cameraAngle;
+
 		//imgui
 		ShaderProgram *imguiShaderProgram;
 		Texture *imguiFontTexture;
@@ -170,7 +172,7 @@ namespace Blob::GL {
 		void enableDebugCallBack();
 
 	public:
-		explicit Graphic(bool fullScreen = true, unsigned int w = 640, unsigned int h = 480);
+		explicit Graphic(bool fullScreen = true, unsigned int w = 800, unsigned int h = 450);
 
 		~Graphic();
 
@@ -203,6 +205,8 @@ namespace Blob::GL {
 		void setCameraLookAt(float x, float y, float z);
 
 		void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar);
+
+		void setCameraAngle(float cameraAngle);
 
 		Blob::Vec2f getFrameBufferSize();
 

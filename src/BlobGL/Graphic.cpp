@@ -154,7 +154,8 @@ namespace Blob::GL {
 			height(h),
 			cameraPosition(0, 0, 2),
 			cameraLookAt(0, 0, 0),
-			cameraUp(0, 0, 1) {
+			cameraUp(0, 0, 1),
+			cameraAngle(PI/4) {
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -257,7 +258,7 @@ namespace Blob::GL {
 		io.SetClipboardTextFn = SetClipboardText;
 		io.GetClipboardTextFn = GetClipboardText;
 
-		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
+		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, 0.1f, 100.0f);
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 
 		//imgui
@@ -368,7 +369,7 @@ void main() {
 		height = h;
 		width = w;
 
-		projectionMatrix = glm::perspective(glm::radians(45.0f), width / (GLfloat) height, 0.1f, 100.0f);
+		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, 0.1f, 100.0f);
 
 		projectionMatrix2D =
 				{
@@ -427,7 +428,7 @@ void main() {
 
 		if (renderable.texture != nullptr) {
 			glBindTexture(GL_TEXTURE_2D, renderable.texture->texture);
-			glUniform1f(renderable.shaderProgram->textureScale, renderable.texture->textureScale);
+			glUniform2f(renderable.shaderProgram->textureScale, renderable.texture->textureScale.x, renderable.texture->textureScale.y);
 		}
 
 		if (renderable.indexed)
@@ -463,7 +464,7 @@ void main() {
 
 		if (renderable.texture != nullptr) {
 			glBindTexture(GL_TEXTURE_2D, renderable.texture->texture);
-			glUniform1f(renderable.shaderProgram->textureScale, renderable.texture->textureScale);
+			glUniform2f(renderable.shaderProgram->textureScale, renderable.texture->textureScale.x, renderable.texture->textureScale.y);
 		}
 
 		if (renderable.indexed)
@@ -606,6 +607,11 @@ void main() {
 
 	void *Graphic::getWindow() const {
 		return window;
+	}
+
+	void Graphic::setCameraAngle(float cameraAngle) {
+		Graphic::cameraAngle = cameraAngle;
+		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, 0.1f, 100.0f);
 	}
 
 }

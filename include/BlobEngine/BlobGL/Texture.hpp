@@ -2,6 +2,7 @@
 #define BLOBENGINE_TEXTURE_HPP
 
 #include <string>
+#include <BlobEngine/Geometrie.hpp>
 
 namespace Blob::GL {
 
@@ -11,9 +12,9 @@ namespace Blob::GL {
 		friend Graphic;
 	private:
 
-		unsigned int texture;//, sampler;
+		unsigned int texture, height, width;//, sampler;
 
-		float textureScale = 1;
+		Blob::Vec2f textureScale = {1, 1};
 
 		bool depth = false, textureLoaded = false;
 
@@ -28,13 +29,15 @@ namespace Blob::GL {
 
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
-		void setRGBA32data(uint8_t *pixels, int width, int height, bool nearest = false);
+		void setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height, bool nearest = false);
 
 		unsigned int getTextureID() const;
 
 		void reset();
 
-		void setTextureScale(float textureScale);
+		void setTextureScale(Blob::Vec2f textureScale);
+
+		Vec2f getSize() const;
 
 		~Texture();
 	};

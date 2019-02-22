@@ -40,8 +40,11 @@ namespace Blob::GL {
 			throw BlobException("Fail to load Texture : " + path);
 		}
 
-		glTextureStorage2D(texture, 1, GL_RGB8, bitmap.width, bitmap.height);
-		glTextureSubImage2D(texture, 0, 0, 0, bitmap.width, bitmap.height, GL_RGB, GL_UNSIGNED_BYTE, bitmap.data);
+		this->width = (unsigned int) bitmap.width;
+		this->height = (unsigned int) bitmap.height;
+
+		glTextureStorage2D(texture, 1, GL_RGB8, width, height);
+		glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, bitmap.data);
 		if (nearest) {
 			glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -61,18 +64,22 @@ namespace Blob::GL {
 			textureLoaded = true;
 
 		uint8_t color[3] = {r, g, b};
-
+		this->width = 1;
+		this->height = 1;
 		glTextureStorage2D(texture, 1, GL_RGB8, 1, 1);
 		glTextureSubImage2D(texture, 0, 0, 0, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, color);
 		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 
-	void Texture::setRGBA32data(uint8_t *pixels, int width, int height, bool nearest) {
+	void Texture::setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height, bool nearest) {
 		if (textureLoaded) {
 			reset();
 			textureLoaded = false;
 		}
+
+		this->width = width;
+		this->height = height;
 
 		glTextureStorage2D(texture, 1, GL_RGBA8, width, height);
 		glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
@@ -96,7 +103,11 @@ namespace Blob::GL {
 		return texture;
 	}
 
-	void Texture::setTextureScale(float textureScale) {
-		Texture::textureScale = textureScale;
+	void Texture::setTextureScale(Blob::Vec2f s) {
+		Texture::textureScale = s;
+	}
+
+	Vec2f Texture::getSize() const {
+		return {(float)width, (float)height};
 	}
 }
