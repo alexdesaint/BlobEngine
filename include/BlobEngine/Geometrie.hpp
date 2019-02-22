@@ -103,7 +103,7 @@ namespace Blob {
 			return {-y, x};
 		}
 
-		double getOrientationRad();
+		double getOrientation();
 
 		double getOrientationDeg();
 

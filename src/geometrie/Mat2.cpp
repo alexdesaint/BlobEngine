@@ -11,7 +11,7 @@ namespace Blob {
 	}
 
 	template<typename T>
-	double Mat2<T>::getOrientationRad() {
+	double Mat2<T>::getOrientation() {
 		return std::atan2(y, x);
 	}
 
@@ -35,11 +35,4 @@ namespace Blob {
 
 		return *this;
 	}
-
-	/*template<typename T>
-	void Mat2<T>::round(int v) {
-		v = (int) pow(10, v);
-		x = std::round(x * v) / v;
-		y = std::round(y * v) / v;
-	}*/
 }

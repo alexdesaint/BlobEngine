@@ -19,11 +19,11 @@ namespace Blob::GL {
 	}
 
 	void Movable::setRotation(float r, float x, float y, float z) {
-		rotateMatrix = glm::rotate(mat4(1.0f), radians(r), vec3(x, y, z));
+		rotateMatrix = glm::rotate(mat4(1.0f), r, vec3(x, y, z));
 	}
 
 	void Movable::rotate(float r, float x, float y, float z) {
-		rotateMatrix = glm::rotate(rotateMatrix, radians(r), vec3(x, y, z));
+		rotateMatrix = glm::rotate(rotateMatrix, r, vec3(x, y, z));
 	}
 
 	void Movable::setScale(float x, float y, float z) {
