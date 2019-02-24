@@ -6,28 +6,27 @@
 namespace Blob {
 
 	template<typename T>
-	double Mat2<T>::length() {
+	float Mat2<T>::length() {
 		return std::sqrt(x * x + y * y);
 	}
 
 	template<typename T>
-	double Mat2<T>::getOrientation() {
+	float Mat2<T>::getOrientation() {
 		return std::atan2(y, x);
 	}
 
 	template<typename T>
-	double Mat2<T>::getOrientationDeg() {
+	float Mat2<T>::getOrientationDeg() {
 		return std::atan2(y, x) * 180 / PI;
 	}
 
 	template<typename T>
-	Mat2<T> Mat2<T>::setLength(double newLength) {
-		double oldLength = length2();
-		double Rapport;
+	Mat2<T> Mat2<T>::setLength(float newLength) {
+		float oldLength = length2();
 		newLength = newLength * newLength;
 
 		if (oldLength != 0) {
-			Rapport = std::sqrt(newLength / oldLength);
+			float Rapport = std::sqrt(newLength / oldLength);
 
 			x *= Rapport;
 			y *= Rapport;

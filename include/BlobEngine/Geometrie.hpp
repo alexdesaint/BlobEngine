@@ -83,7 +83,7 @@ namespace Blob {
 			return x * x + y * y;
 		}
 
-		double length();
+		float length();
 
 		T scalaire(Mat2 B) {
 			return x * B.x + y * B.y;
@@ -97,15 +97,15 @@ namespace Blob {
 			return {(float) (x * invLength), (float) (y * invLength)};
 		}
 
-		Mat2 setLength(double newLength);
+		Mat2 setLength(float newLength);
 
 		Mat2 rotate() {
 			return {-y, x};
 		}
 
-		double getOrientation();
+		float getOrientation();
 
-		double getOrientationDeg();
+		float getOrientationDeg();
 
 		void reset() {
 			x = 0;

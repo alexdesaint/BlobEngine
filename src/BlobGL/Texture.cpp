@@ -107,7 +107,7 @@ namespace Blob::GL {
 		Texture::textureScale = s;
 	}
 
-	Vec2f Texture::getSize() const {
+	Vec2f Texture::getTextureSize() const {
 		return {(float)width, (float)height};
 	}
 }

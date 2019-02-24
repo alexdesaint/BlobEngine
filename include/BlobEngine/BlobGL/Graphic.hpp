@@ -153,10 +153,13 @@ namespace Blob::GL {
 		glm::mat4 projectionMatrix2D;
 		glm::mat4 viewMatrix{1};
 
+		//view matrix
 		glm::vec3 cameraPosition; // Camera position in World Space
 		glm::vec3 cameraLookAt; // and looks at the origin
 		glm::vec3 cameraUp;  // Head is up (set to 0,-1,0 to look upside-down)
 
+		//projection matrix
+		Vec2f cameraRange = {1, 100};
 		float cameraAngle;
 
 		//imgui
@@ -201,6 +204,8 @@ namespace Blob::GL {
 		friend std::ostream &operator<<(std::ostream &s, const Graphic &a);
 
 		void setCameraPosition(float x, float y, float z);
+
+		void setCameraRange(Vec2f range);
 
 		void setCameraLookAt(float x, float y, float z);
 

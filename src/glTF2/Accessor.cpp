@@ -85,7 +85,7 @@ namespace Blob::glTF2 {
 			s << endl;
 /*
 			auto *points = a.bufferView.getData(d.bufferView, d.byteOffset);
-			auto size = a.bufferView.getSize(d.bufferView, d.byteOffset);
+			auto size = a.bufferView.getTextureSize(d.bufferView, d.byteOffset);
 
 			switch(d.componentType){
 				case GL_FLOAT :

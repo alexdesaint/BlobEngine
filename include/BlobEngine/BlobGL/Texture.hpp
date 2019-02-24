@@ -37,7 +37,7 @@ namespace Blob::GL {
 
 		void setTextureScale(Blob::Vec2f textureScale);
 
-		Vec2f getSize() const;
+		Vec2f getTextureSize() const;
 
 		~Texture();
 	};

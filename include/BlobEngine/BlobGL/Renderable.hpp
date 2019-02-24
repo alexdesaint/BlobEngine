@@ -12,10 +12,8 @@
 
 namespace Blob::GL {
 
-	class Graphic;
-
 	class Renderable : public Movable {
-		friend Graphic;
+		friend class Graphic;
 	private:
 
 		//TODO: create a subclass for the index

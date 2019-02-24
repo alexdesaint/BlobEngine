@@ -258,7 +258,7 @@ namespace Blob::GL {
 		io.SetClipboardTextFn = SetClipboardText;
 		io.GetClipboardTextFn = GetClipboardText;
 
-		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, 0.1f, 100.0f);
+		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, cameraRange.x, cameraRange.y);
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 
 		//imgui
@@ -369,7 +369,7 @@ void main() {
 		height = h;
 		width = w;
 
-		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, 0.1f, 100.0f);
+		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, cameraRange.x, cameraRange.y);
 
 		projectionMatrix2D =
 				{
@@ -581,10 +581,21 @@ void main() {
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 	}
 
+	void Graphic::setCameraRange(Blob::Vec2f range) {
+		cameraRange = range;
+
+		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, cameraRange.x, cameraRange.y);
+	}
+
 	void Graphic::setCameraLookAt(float x, float y, float z) {
 		cameraLookAt = glm::vec3(x, y, z);
 
 		viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
+	}
+
+	void Graphic::setCameraAngle(float cameraAngle) {
+		Graphic::cameraAngle = cameraAngle;
+		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, cameraRange.x, cameraRange.y);
 	}
 
 	void Graphic::setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
@@ -608,10 +619,4 @@ void main() {
 	void *Graphic::getWindow() const {
 		return window;
 	}
-
-	void Graphic::setCameraAngle(float cameraAngle) {
-		Graphic::cameraAngle = cameraAngle;
-		projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, 0.1f, 100.0f);
-	}
-
 }
