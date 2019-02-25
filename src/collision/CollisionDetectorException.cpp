@@ -87,7 +87,7 @@ namespace BlobEngine {
 		sf::ContextSettings settings;
 		settings.antialiasingLevel = 8;
 
-		sf::RenderWindow window(sf::VideoMode(800, 400), "BlobEngine test", sf::Style::Close, settings);
+		sf::RenderWindow window(sf::VideoMode(800, 400), "Blob test", sf::Style::Close, settings);
 
 		window.setFramerateLimit(60);
 

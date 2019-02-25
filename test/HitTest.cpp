@@ -239,7 +239,7 @@ int main() {
 		unsigned int windowWidth = 600, windowHeight = 600, width = 440, height = 440, widthOff =
 				(windowWidth - width) / 2, heightOff = (windowHeight - height) / 2;
 
-		sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "BlobEngine test", sf::Style::Close,
+		sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Blob test", sf::Style::Close,
 								settings);
 		window.setFramerateLimit(60);
 

@@ -1,4 +1,5 @@
-add_subdirectory(BlobGL)
+add_subdirectory(GL)
+add_subdirectory(VK)
 add_subdirectory(collision)
 add_subdirectory(geometrie)
 add_subdirectory(glTF2)

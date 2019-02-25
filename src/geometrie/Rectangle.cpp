@@ -1,4 +1,4 @@
-#include <BlobEngine/Geometrie.hpp>
+#include <Blob/Geometrie.hpp>
 
 namespace Blob {
 	bool Rectangle::overlap(const Rectangle &r) {

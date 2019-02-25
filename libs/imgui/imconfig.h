@@ -72,7 +72,7 @@ namespace ImGui
 }
 */
 
-#include <BlobEngine/Geometrie.hpp>
+#include <Blob/Geometrie.hpp>
 namespace Blob {
 	//class Vec2f;
 
@@ -84,7 +84,7 @@ namespace Blob {
         ImVec2(const Blob::Vec2f& f) { x = f.x; y = f.y; }                       \
         operator Blob::Vec2f() const { return Blob::Vec2f(x,y); }
 
-//#include <BlobEngine/BlobGL/Texture.hpp>
+//#include <Blob/GL/Texture.hpp>
 
 #define ImTextureID textureID
 

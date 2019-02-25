@@ -12,3 +12,5 @@ target_link_libraries(imguiTest BlobGL imgui -static -static-libgcc -static-libs
 
 #STATIC : -lmingw32 SDL2main SDL2-static
 #STATIC : -mwindows -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
+
+add_subdirectory(VK)

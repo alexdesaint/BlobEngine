@@ -19,6 +19,12 @@ if (NOT OPENGL_FOUND )
 endif()
 include_directories(${OPENGL_INCLUDE_DIR})
 
+find_package(Vulkan REQUIRED)
+if (NOT Vulkan_FOUND )
+	message(ERROR "Vulkan not found")
+endif()
+include_directories(${VULKAN_INCLUDE_DIR})
+
 add_subdirectory(libs)
 add_subdirectory(src)
 add_subdirectory(test)

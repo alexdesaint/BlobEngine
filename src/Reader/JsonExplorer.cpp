@@ -1,10 +1,10 @@
-#include <BlobEngine/Reader/JsonExplorer.hpp>
+#include <Blob/Reader/JsonExplorer.hpp>
 
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
 #include <rapidjson/istreamwrapper.h>
 
-#include <BlobEngine/BlobException.hpp>
+#include <Blob/Exception.hpp>
 
 #include <fstream>
 #include <iostream>

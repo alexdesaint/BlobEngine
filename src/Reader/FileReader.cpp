@@ -1,6 +1,6 @@
-#include <BlobEngine/Reader/FileReader.hpp>
+#include <Blob/Reader/FileReader.hpp>
 
-#include <BlobEngine/BlobException.hpp>
+#include <Blob/Exception.hpp>
 #include <sstream>
 #include <iostream>
 
@@ -9,7 +9,7 @@ namespace Blob::Reader {
 	FileReader::FileReader(const std::string &FilePath) {
 		inFile.open(FilePath, std::ios::in | std::ios::binary | std::ios::ate);
 		if (!inFile.is_open())
-			throw BlobException("FileReader : cannot open the file");
+			throw Exception("FileReader : cannot open the file");
 
 		size = inFile.tellg();
 		inFile.seekg(0, std::ios::beg);
@@ -25,7 +25,7 @@ namespace Blob::Reader {
 
 		inFile.open(FilePath, std::ios::in | std::ios::binary | std::ios::ate);
 		if (!inFile.is_open())
-			throw BlobException("FileReader : cannot open the file");
+			throw Exception("FileReader : cannot open the file");
 
 		size = inFile.tellg();
 		inFile.seekg(0, std::ios::beg);

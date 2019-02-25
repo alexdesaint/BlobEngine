@@ -2,7 +2,7 @@
 #include <chrono>
 #include <math.h>
 
-#include <BlobEngine/Collision/CollisionDetector.hpp>
+#include <Blob/Collision/CollisionDetector.hpp>
 
 namespace Blob::Collision {
 
