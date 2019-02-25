@@ -12,7 +12,9 @@ namespace Blob::GL {
 		friend Graphic;
 	private:
 
-		unsigned int texture, height, width;//, sampler;
+		unsigned int texture; // the opengl texture
+
+		int height, width, bitPerPixel;//images data
 
 		Blob::Vec2f textureScale = {1, 1};
 

@@ -1,3 +1,4 @@
-add_library(Collision CollisionDetector.cpp)
-target_link_libraries(Collision Geometrie)
-target_include_directories(Collision PUBLIC ../../include)
+add_library(BlobCollision CollisionDetector.cpp)
+add_library(Blob::Collision ALIAS BlobCollision)
+target_link_libraries(BlobCollision Geometrie)
+target_include_directories(BlobCollision PUBLIC ../../include)

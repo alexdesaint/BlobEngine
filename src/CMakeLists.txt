@@ -5,5 +5,6 @@ add_subdirectory(geometrie)
 add_subdirectory(glTF2)
 add_subdirectory(Reader)
 
-add_library(Time Time.cpp)
-target_include_directories(Time PUBLIC ../include)
+add_library(BlobTime Time.cpp)
+add_library(Blob::Time ALIAS BlobTime)
+target_include_directories(BlobTime PUBLIC ../include)

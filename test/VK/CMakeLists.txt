@@ -1,8 +1,8 @@
-add_executable(testInstance testInstance.cpp)
-target_link_libraries(testInstance Blob::VK)
+add_executable(TestInstance TestInstance.cpp)
+target_link_libraries(TestInstance Blob::VK)
 
-add_executable(testPhysicalDevice testPhysicalDevice.cpp)
-target_link_libraries(testPhysicalDevice Blob::VK)
+add_executable(TestPhysicalDevice TestPhysicalDevice.cpp)
+target_link_libraries(TestPhysicalDevice Blob::VK)
 
-add_executable(testQueueFamily testQueueFamily.cpp)
-target_link_libraries(testQueueFamily Blob::VK)
+add_executable(TestQueueFamily TestQueueFamily.cpp)
+target_link_libraries(TestQueueFamily Blob::VK)

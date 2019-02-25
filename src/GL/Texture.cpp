@@ -2,7 +2,9 @@
 #include <Blob/Exception.hpp>
 
 #include <glad/glad.h>
-#include <libbmpread/bmpread.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #include <vector>
 
@@ -34,17 +36,14 @@ namespace Blob::GL {
 		else
 			textureLoaded = true;
 
-		bmpread_t bitmap;
+		unsigned char* rgb = stbi_load( path.c_str(), &width, &height, &bitPerPixel, 3 );
 
-		if (!bmpread(path.c_str(), BMPREAD_TOP_DOWN, &bitmap)) {
+		if (rgb == nullptr) {
 			throw Exception("Fail to load Texture : " + path);
 		}
 
-		this->width = (unsigned int) bitmap.width;
-		this->height = (unsigned int) bitmap.height;
-
 		glTextureStorage2D(texture, 1, GL_RGB8, width, height);
-		glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, bitmap.data);
+		glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, rgb);
 		if (nearest) {
 			glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -53,7 +52,7 @@ namespace Blob::GL {
 			glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 
-		bmpread_free(&bitmap);
+		stbi_image_free( rgb );
 	}
 
 	void Texture::setColor(uint8_t r, uint8_t g, uint8_t b) {
