@@ -16,17 +16,15 @@ namespace Blob::GL {
 		std::list<Renderable *> renderables;
 		std::list<Shape *> shapes;
 
-	protected:
+	public:
 
-		void addRenderable(Renderable *r);
+		void addRenderable(Renderable &r);
 
-		void addRenderable(Shape *r);
+		void addRenderable(Shape &r);
 
-		void removeRenderable(Renderable *r);
+		void removeRenderable(Renderable &r);
 
-		void removeRenderable(Shape *r);
-
-		//size_t getRenderableSize() const;
+		void removeRenderable(Shape &r);
 	};
 }
 

@@ -251,6 +251,7 @@ namespace Blob::GL {
 		g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);  // FIXME: GLFW doesn't have this.
 		g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);  // FIXME: GLFW doesn't have this.
 		g_MouseCursors[ImGuiMouseCursor_Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+		io.MousePos = Vec2f();
 		glfwSetCursorPosCallback((GLFWwindow *) window, cursor_position_callback);
 		glfwSetScrollCallback((GLFWwindow *) window, scroll_callback);
 		glfwSetCharCallback((GLFWwindow *) window, character_callback);
@@ -602,12 +603,41 @@ void main() {
 		projectionMatrix = glm::ortho(left, right, bottom, top, zNear, zFar);
 	}
 
-	std::array<bool, KeyCount> &Graphic::getKeys() {
-		return keys;
-	}
+	std::array<float, 3> Graphic::getWorldPosition() {
+		ImGuiIO& io = ImGui::GetIO();
 
-	void Graphic::close() {
-		quit = true;
+		Vec2f mousePos = io.MousePos;
+		mousePos = mousePos / getSize() * 2;
+		mousePos.x = mousePos.x - 1;
+		mousePos.y = 1 - mousePos.y;
+
+		/*//Look at test
+		glm::vec4 posCamera(50, 50, 15, 1);
+
+		ImGui::Text("World pos : %.3f, %.3f, %.3f", posCamera.x, posCamera.y, posCamera.z);
+		posCamera = (projectionMatrix * viewMatrix) * posCamera;
+		ImGui::Text("camera pos : %.3f, %.3f, %.3f", posCamera.x, posCamera.y, posCamera.z);
+		posCamera = posCamera / posCamera.w;
+		ImGui::Text("camera rerange : %.3f, %.3f, %.3f", posCamera.x, posCamera.y, (posCamera.z + 1) / 2);
+		posCamera = glm::inverse(projectionMatrix * viewMatrix) * posCamera;
+		ImGui::Text("inverse : %.3f, %.3f, %.3f", posCamera.x, posCamera.y, posCamera.z);
+		posCamera = posCamera / posCamera.w;
+		ImGui::Text("inverse rerange : %.3f, %.3f, %.3f", posCamera.x, posCamera.y, posCamera.z);
+		//
+		*/
+
+		float z;
+
+		glReadPixels((int)io.MousePos.x, height - (int)io.MousePos.y, 1, 1,  GL_DEPTH_COMPONENT,  GL_FLOAT, &z);
+
+		z = (z * 2) - 1;
+
+		glm::vec4 pos(mousePos.x, mousePos.y, z, 1);
+
+		pos = glm::inverse(projectionMatrix * viewMatrix) * pos;
+		pos = pos / pos.w;
+
+		return {pos.x, pos.y, pos.z};
 	}
 
 	Blob::Vec2f Graphic::getFrameBufferSize() {
@@ -616,7 +646,15 @@ void main() {
 		return {(float)display_w, (float)display_h};
 	}
 
+	std::array<bool, KeyCount> &Graphic::getKeys() {
+		return keys;
+	}
+
 	void *Graphic::getWindow() const {
 		return window;
+	}
+
+	void Graphic::close() {
+		quit = true;
 	}
 }

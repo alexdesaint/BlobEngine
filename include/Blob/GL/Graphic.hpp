@@ -151,7 +151,7 @@ namespace Blob::GL {
 
 		glm::mat4 projectionMatrix;
 		glm::mat4 projectionMatrix2D;
-		glm::mat4 viewMatrix{1};
+		glm::mat4 viewMatrix;
 
 		//view matrix
 		glm::vec3 cameraPosition; // Camera position in World Space
@@ -212,6 +212,8 @@ namespace Blob::GL {
 		void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar);
 
 		void setCameraAngle(float cameraAngle);
+
+		std::array<float, 3> getWorldPosition();
 
 		Blob::Vec2f getFrameBufferSize();
 
