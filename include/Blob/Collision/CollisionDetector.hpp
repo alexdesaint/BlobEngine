@@ -1,58 +1,52 @@
 #pragma once
 
-#include <BlobEngine/Geometrie.hpp>
-#include <BlobEngine/BlobException.hpp>
-#include <BlobEngine/Collision/Reaction.hpp>
+#include <Blob/Geometrie.hpp>
+#include <Blob/Exception.hpp>
+#include <Blob/Collision/Reaction.hpp>
 
 #include <deque>
 #include <list>
+#include <unordered_map>
 
 namespace Blob::Collision {
 
 	class CollisionDetector;
 
-	class StaticObject {
+	class Object {
 		friend CollisionDetector;
 	private:
-		const void *objectData;
 		int objectType;
 
 	protected:
-		explicit StaticObject(int objectType, const void *objectData) :
-				objectData(objectData),
-				objectType(objectType) {}
-
 		void setObjectType(int objectType) {
-			StaticObject::objectType = objectType;
+			Object::objectType = objectType;
 		}
 
-		virtual void hit(int objectType, const void *objectData) {}
+		Object(int objectType) : objectType(objectType) {}
 	};
 
-	class DynamicObject {
+	class StaticObject : public Object {
 		friend CollisionDetector;
-	private:
-		const void *objectData;
-		int objectType;
+	protected:
+		explicit StaticObject(int objectType) : Object(objectType) {}
 
+		virtual void hit(int objectType, Object &object) {}
+	};
+
+	class DynamicObject : public Object {
+		friend CollisionDetector;
 	protected:
 		Vec2f speed{};
 
-		explicit DynamicObject(int objectType, const void *objectData) :
-				objectData(objectData),
-				objectType(objectType) {}
+		explicit DynamicObject(int objectType) : Object(objectType) {}
 
-		virtual Reaction hit(int objectType, const void *objectData) {
+		virtual Reaction hit(int objectType, Object &object) {
 			return STOP;
 		}
 
 		virtual void preCollisionUpdate() {}
 
 		virtual void postCollisionUpdate() {}
-
-		void setObjectType(int objectType) {
-			DynamicObject::objectType = objectType;
-		}
 
 		virtual bool moove() {
 			return true;
@@ -70,8 +64,7 @@ namespace Blob::Collision {
 
 		void disableCollision();
 
-	public:
-		explicit CircleStatic(const int objectType, const void *objectData) : StaticObject(objectType, objectData) {
+		explicit CircleStatic(const int objectType) : StaticObject(objectType) {
 			enableCollision();
 		}
 
@@ -91,8 +84,7 @@ namespace Blob::Collision {
 
 		void disableCollision();
 
-	public:
-		explicit CircleDynamic(const int objectType, const void *objectData) : DynamicObject(objectType, objectData) {
+		explicit CircleDynamic(const int objectType) : DynamicObject(objectType) {
 			enableCollision();
 		}
 
@@ -111,8 +103,7 @@ namespace Blob::Collision {
 
 		void disableCollision();
 
-	public:
-		explicit RectStatic(const int objectType, const void *objectData) : StaticObject(objectType, objectData) {
+		explicit RectStatic(const int objectType) : StaticObject(objectType) {
 			enableCollision();
 		}
 
@@ -131,8 +122,7 @@ namespace Blob::Collision {
 
 		void disableCollision();
 
-	public:
-		explicit RectDynamic(const int objectType, const void *objectData) : DynamicObject(objectType, objectData) {
+		explicit RectDynamic(const int objectType) : DynamicObject(objectType) {
 			enableCollision();
 		}
 
@@ -152,8 +142,7 @@ namespace Blob::Collision {
 
 		void disableCollision();
 
-	public:
-		explicit LineStatic(const int objectType, const void *objectData) : StaticObject(objectType, objectData) {
+		explicit LineStatic(const int objectType) : StaticObject(objectType) {
 			enableCollision();
 		}
 
@@ -169,6 +158,8 @@ namespace Blob::Collision {
 		friend RectDynamic;
 		friend LineStatic;
 	private:
+
+		static std::unordered_map<int64_t, std::list<Object *>> spacialHash;
 
 		static std::list<CircleStatic *> circleStaticList;
 		static std::list<CircleDynamic *> circleDynamicList;

@@ -2,19 +2,22 @@
 #include <list>
 #include <deque>
 
-#include <BlobEngine/Collision/CollisionDetector.hpp>
+#include <Blob/Collision/CollisionDetector.hpp>
 
-#include <BlobEngine/BlobGL/Graphic.hpp>
-#include <BlobEngine/BlobGL/Shapes.hpp>
+#include <Blob/GL/Graphic.hpp>
+#include <Blob/GL/Shapes.hpp>
 
 using namespace Blob;
+using namespace Blob::Collision;
 using namespace Blob::GL;
 
-class MainRect : public RectDynamic, public Cube {
+class MainRect : public RectDynamic, public Shapes::Cube {
 private:
 	const std::array<bool, Key::KeyCount> &keys;
+	bool isHit = false;
 
 	void preCollisionUpdate() final {
+		isHit = false;
 		Vec2f Acceleration;
 
 		if (keys[Key::LEFT]) {
@@ -31,12 +34,16 @@ private:
 		}
 
 		if (!Acceleration.isNull()) {
-			speed = Acceleration.setLength(1);
+			speed = Acceleration.setLength(3);
 		} else
 			speed.reset();
 	}
 
 	void postCollisionUpdate() final {
+		if(isHit)
+			setColor(255, 0, 0);
+		else
+			setColor(0, 100, 100);
 		setPosition(position.x, position.y, 0.5f);
 	}
 
@@ -49,11 +56,14 @@ public:
 		setScale(r, r, r);
 		setPosition(x, y, 0.5f);
 	}
+
+	Reaction hit(int objectType, Object &object) final {
+		isHit = true;
+		return STOP;
+	}
 };
 
-class Box : public RectStatic, public Cube {
-private:
-
+class Box : public RectStatic, public Shapes::Cube {
 public:
 	explicit Box(int x, int y, int r = 1) : RectStatic(0) {
 		position = {(float) x, (float) y};
@@ -67,16 +77,11 @@ public:
 int main() {
 
 	try {
-		Graphic graphic(640, 480);
-		ShaderProgram shaderProgram("../Blob/data/vertex.glsl", "../Blob/data/fragment.glsl");
+		Graphic graphic(false);
 
 		CollisionDetector collisionDetector;
 
-		Plane p;
-
-		p.move(0, 2, 0);
-
-		MainRect mainRect(4, 4, 1, graphic.getKeys());
+		MainRect mainRect(4, 4, 1, Graphic::getKeys());
 
 		std::list<Box> rectanges;
 
@@ -91,13 +96,12 @@ int main() {
 			graphic.clear();
 
 			for (auto &rect : rectanges) {
-				graphic.draw(rect, shaderProgram);
+				graphic.draw(rect);
 			}
 
 			collisionDetector.update();
 
-			graphic.draw(p, shaderProgram);
-			graphic.draw(mainRect, shaderProgram);
+			graphic.draw(mainRect);
 
 			graphic.display();
 

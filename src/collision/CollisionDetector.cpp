@@ -6,8 +6,11 @@
 
 namespace Blob::Collision {
 
-//CircleStatic
+	int64_t hashCoor(Vec2f pos) {
+		return ((int64_t)pos.x) | ((int64_t)pos.x << 32);
+	}
 
+	//CircleStatic
 	void CircleStatic::enableCollision() {
 		CollisionDetector::circleStaticList.push_front(this);
 		elementIt = CollisionDetector::circleStaticList.begin();
@@ -17,8 +20,7 @@ namespace Blob::Collision {
 		CollisionDetector::circleStaticList.erase(elementIt);
 	}
 
-//CircleDynamic
-
+	//CircleDynamic
 	void CircleDynamic::enableCollision() {
 		CollisionDetector::circleDynamicList.push_front(this);
 		elementIt = CollisionDetector::circleDynamicList.begin();
@@ -30,10 +32,17 @@ namespace Blob::Collision {
 
 
 	//RectStatic
-
 	void RectStatic::enableCollision() {
 		CollisionDetector::rectStaticList.push_front(this);
 		elementIt = CollisionDetector::rectStaticList.begin();
+
+		auto hash = hashCoor(position);
+
+		auto it = CollisionDetector::spacialHash.find(hash);
+		if(it == CollisionDetector::spacialHash.end())
+			CollisionDetector::spacialHash[hash] = {this};
+		else
+			it->second.push_back(this);
 	}
 
 	void RectStatic::disableCollision() {
@@ -41,7 +50,6 @@ namespace Blob::Collision {
 	}
 
 	//RectDynamic
-
 	void RectDynamic::enableCollision() {
 		CollisionDetector::rectDynamicList.push_front(this);
 		elementIt = CollisionDetector::rectDynamicList.begin();
@@ -51,8 +59,7 @@ namespace Blob::Collision {
 		CollisionDetector::rectDynamicList.erase(elementIt);
 	}
 
-//LineStatic
-
+	//LineStatic
 	void LineStatic::enableCollision() {
 		CollisionDetector::lineStaticList.push_front(this);
 		elementIt = CollisionDetector::lineStaticList.begin();
@@ -62,7 +69,8 @@ namespace Blob::Collision {
 		CollisionDetector::lineStaticList.erase(elementIt);
 	}
 
-//CollisionDetector
+	//CollisionDetector
+	std::unordered_map<int64_t, std::list<Object *>> CollisionDetector::spacialHash;
 
 	std::list<CircleStatic *> CollisionDetector::circleStaticList{};
 	std::list<CircleDynamic *> CollisionDetector::circleDynamicList{};
@@ -213,8 +221,8 @@ namespace Blob::Collision {
 		if (object.speed.isNull()) {
 			for (RectStatic *rect : rectStaticList) {
 				if (rect->overlap(object) || object.overlap(*rect)) {
-					rect->hit(object.objectType, object.objectData);
-					object.hit(rect->objectType, rect->objectData);
+					rect->hit(object.objectType, object);
+					object.hit(rect->objectType, *rect);
 				}
 			}
 
@@ -235,9 +243,9 @@ namespace Blob::Collision {
 
 			for (RectStatic *rect : rectStaticList) {
 				if (rect->overlap(object) || object.overlap(*rect)) {
-					rect->hit(object.objectType, object.objectData);
+					rect->hit(object.objectType, object);
 
-					if (object.hit(rect->objectType, rect->objectData) != IGNORE) {
+					if (object.hit(rect->objectType, *rect) != IGNORE) {
 						i = numOfStep;
 						object.position = old;
 						break;
@@ -254,9 +262,9 @@ namespace Blob::Collision {
 			for (RectDynamic *rect : rectDynamicList) {
 				if (rect != &object) {
 					if (rect->overlap(object) || object.overlap(*rect)) {
-						rect->hit(object.objectType, object.objectData);
+						rect->hit(object.objectType, object);
 
-						if (object.hit(rect->objectType, rect->objectData) != IGNORE) {
+						if (object.hit(rect->objectType, *rect) != IGNORE) {
 							i = numOfStep;
 							object.position = old;
 							break;
@@ -279,9 +287,9 @@ namespace Blob::Collision {
 
 			for (RectStatic *rect : rectStaticList) {
 				if (rect->overlap(object) || object.overlap(*rect)) {
-					rect->hit(object.objectType, object.objectData);
+					rect->hit(object.objectType, object);
 
-					if (object.hit(rect->objectType, rect->objectData) != IGNORE) {
+					if (object.hit(rect->objectType, *rect) != IGNORE) {
 						i = numOfStep;
 						object.position = old;
 						break;
@@ -298,9 +306,9 @@ namespace Blob::Collision {
 			for (RectDynamic *rect : rectDynamicList) {
 				if (rect != &object) {
 					if (rect->overlap(object) || object.overlap(*rect)) {
-						rect->hit(object.objectType, object.objectData);
+						rect->hit(object.objectType, object);
 
-						if (object.hit(rect->objectType, rect->objectData) != IGNORE) {
+						if (object.hit(rect->objectType, *rect) != IGNORE) {
 							i = numOfStep;
 							object.position = old;
 							break;

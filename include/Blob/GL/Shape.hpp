@@ -19,12 +19,16 @@ namespace Blob::GL {
 	public:
 
 		void addRenderable(Renderable &r);
+		void addRenderable(Renderable *r);
 
 		void addRenderable(Shape &r);
+		void addRenderable(Shape *r);
 
 		void removeRenderable(Renderable &r);
+		void removeRenderable(Renderable *r);
 
 		void removeRenderable(Shape &r);
+		void removeRenderable(Shape *r);
 	};
 }
 
