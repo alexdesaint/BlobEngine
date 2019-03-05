@@ -47,6 +47,9 @@ namespace Blob::Collision {
 
 	void RectStatic::disableCollision() {
 		CollisionDetector::rectStaticList.erase(elementIt);
+
+		auto hash = hashCoor(position);
+		CollisionDetector::spacialHash[hash].remove(this);
 	}
 
 	//RectDynamic
@@ -218,7 +221,7 @@ namespace Blob::Collision {
 	void CollisionDetector::checkCollision(RectDynamic &object) {
 		object.preCollisionUpdate();
 
-		if (object.speed.isNull()) {
+		if(object.speed.isNull()) {
 			for (RectStatic *rect : rectStaticList) {
 				if (rect->overlap(object) || object.overlap(*rect)) {
 					rect->hit(object.objectType, object);
