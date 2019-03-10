@@ -113,23 +113,23 @@ namespace Blob {
 
 
 namespace Blob {
-	class Mat2 <template <typename T>> {
-		+Mat2()
-		+Mat2(T x, T y)
-		+Mat2(Mat2 point1, Mat2 point2)
-		+operator*(Mat2 mat2) : Mat2
-		+operator*(T a) : Mat2
-		+operator+(Mat2 mat2) : Mat2
-		+operator+(T a) : Mat2
-		+operator-(Mat2 mat2) : Mat2
-		+operator-(T a) : Mat2
-		+operator/(Mat2 mat2) : Mat2
-		+operator/(T a) : Mat2
-		+rotate() : Mat2
-		+setLength(double newLength) : Mat2
-		+getNormal() : Mat2<float>
+	class Vec2 <template <typename T>> {
+		+Vec2()
+		+Vec2(T x, T y)
+		+Vec2(Vec2 point1, Vec2 point2)
+		+operator*(Vec2 mat2) : Vec2
+		+operator*(T a) : Vec2
+		+operator+(Vec2 mat2) : Vec2
+		+operator+(T a) : Vec2
+		+operator-(Vec2 mat2) : Vec2
+		+operator-(T a) : Vec2
+		+operator/(Vec2 mat2) : Vec2
+		+operator/(T a) : Vec2
+		+rotate() : Vec2
+		+setLength(double newLength) : Vec2
+		+getNormal() : Vec2<float>
 		+length2() : T
-		+scalaire(Mat2 B) : T
+		+scalaire(Vec2 B) : T
 		+x : T
 		+x : T
 		+x : T
@@ -138,8 +138,8 @@ namespace Blob {
 		+getOrientationRad() : double
 		+length() : double
 		+operator*=(float a) : void
-		+operator+=(const Mat2<T>& v) : void
-		+operator-=(const Mat2<T>& v) : void
+		+operator+=(const Vec2<T>& v) : void
+		+operator-=(const Vec2<T>& v) : void
 		+reset() : void
 	}
 }

@@ -20,4 +20,8 @@ namespace Blob {
 			   ((position.x + xdiff <= r.position.x + rxdiff) && (position.x + xdiff >= r.position.x - rxdiff) &&
 				(position.y + ydiff <= r.position.y + rydiff) && (position.y + ydiff >= r.position.y - rydiff));
 	}
+
+	std::array<Vec2f, 4> Rectangle::getPoints() {
+		return {position + size/2, position - size/2, position + size.rotate()/2, position - size.rotate()/2};
+	}
 }

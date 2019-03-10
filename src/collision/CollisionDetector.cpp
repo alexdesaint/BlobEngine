@@ -1,12 +1,21 @@
 #include <list>
 #include <chrono>
 #include <math.h>
+#include <unordered_set>
+
+//debug
+#include <imgui.h>
+#include <sstream>
 
 #include <Blob/Collision/CollisionDetector.hpp>
 
 namespace Blob::Collision {
 
 	int64_t hashCoor(Vec2f pos) {
+		return ((int64_t)pos.x) | ((int64_t)pos.x << 32);
+	}
+
+	int64_t hashCoor(Vec2i pos) {
 		return ((int64_t)pos.x) | ((int64_t)pos.x << 32);
 	}
 
@@ -218,6 +227,7 @@ namespace Blob::Collision {
 		object.enableCollision();
 	}
 */
+	//classic object to object test
 	void CollisionDetector::checkCollision(RectDynamic &object) {
 		object.preCollisionUpdate();
 
@@ -330,6 +340,63 @@ namespace Blob::Collision {
 		object.postCollisionUpdate();
 	}
 
+	using namespace std;
+
+	list<Vec2i> getPath(Vec2i pos, Vec2i dest) {
+		list<Vec2i> path;
+		int i, iMax;
+		if(pos.x < dest.x) {
+			i = pos.x;
+			iMax = dest.x;
+		} else {
+			i = dest.x;
+			iMax = pos.x;
+		}
+
+		int jBeg, jMax;
+		if(pos.y < dest.y) {
+			jBeg = pos.y;
+			jMax = dest.y;
+		} else {
+			jBeg = dest.y;
+			jMax = pos.y;
+		}
+
+		for(; i <= iMax; i++) {
+			for(int j = jBeg; j <= jMax; j++)
+				path.emplace_back(i, j);
+		}
+
+		return path;
+	}
+
+	void CollisionDetector::checkCollision2(Blob::Collision::RectDynamic &object) {
+		object.preCollisionUpdate();
+
+		Vec2f frameMove = object.speed * timeFlow;
+
+		list<Vec2i> path;
+
+		for(auto p : object.getPoints()) {
+			ImGui::Text("%.2f, %.2f", p.x, p.y);
+			auto a = getPath(p.cast<int>(), (p + frameMove).cast<int>());
+			path.insert(path.end(), a.begin(), a.end());
+		}
+
+		unordered_set<int64_t> cases;
+		for(auto p : path)
+			cases.insert(hashCoor(p));
+
+		stringstream s;
+
+		for(const auto &p : cases)
+			s << hex << p << " ";
+
+		ImGui::Text(s.str().c_str());
+
+		object.postCollisionUpdate();
+	}
+
 	void CollisionDetector::update() {
 
 		if (!timeStoped) {
@@ -341,7 +408,7 @@ namespace Blob::Collision {
 		}
 */
 			for (RectDynamic *object : rectDynamicList) {
-				checkCollision(*object);
+				checkCollision2(*object);
 			}
 		}
 	}

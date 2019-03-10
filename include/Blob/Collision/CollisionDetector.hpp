@@ -177,6 +177,7 @@ namespace Blob::Collision {
 		//void checkCollision(CircleDynamic &object);
 
 		void checkCollision(RectDynamic &object);
+		void checkCollision2(RectDynamic &object);
 
 		void update();
 

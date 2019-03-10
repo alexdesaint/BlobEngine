@@ -6,6 +6,8 @@
 
 #include <Blob/GL/Graphic.hpp>
 #include <Blob/GL/Shapes.hpp>
+#include <imgui.h>
+
 
 using namespace Blob;
 using namespace Blob::Collision;
@@ -94,6 +96,8 @@ int main() {
 
 		while (graphic.isOpen()) {
 			graphic.clear();
+			ImGui::NewFrame();
+			ImGui::Begin("Debug");
 
 			for (auto &rect : rectanges) {
 				graphic.draw(rect);
@@ -103,6 +107,8 @@ int main() {
 
 			graphic.draw(mainRect);
 
+			ImGui::End();
+			graphic.drawImGUI();
 			graphic.display();
 
 		}
