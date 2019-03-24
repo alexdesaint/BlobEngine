@@ -131,39 +131,6 @@ namespace Blob::Collision {
         std::list<RectStatic *>::iterator elementIt{};
     protected:
 
-<<<<<<< HEAD
-	class Object {
-		friend CollisionDetector;
-	private:
-		int objectType;
-
-	protected:
-		void setObjectType(int objectType) {
-			Object::objectType = objectType;
-		}
-
-		Object(int objectType) : objectType(objectType) {}
-	};
-
-	class StaticObject : public Object {
-		friend CollisionDetector;
-	protected:
-		explicit StaticObject(int objectType) : Object(objectType) {}
-
-		virtual void hit(int objectType, Object &object) {}
-	};
-
-	class DynamicObject : public Object {
-		friend CollisionDetector;
-	protected:
-		Vec2f speed{};
-
-		explicit DynamicObject(int objectType) : Object(objectType) {}
-
-		virtual Reaction hit(int objectType, Object &object) {
-			return STOP;
-		}
-=======
         void enableCollision();
 
         void disableCollision();
@@ -217,7 +184,6 @@ namespace Blob::Collision {
             disableCollision();
         }
     };
->>>>>>> tmp
 
     class CollisionDetector {
         friend CircleStatic;
@@ -229,12 +195,6 @@ namespace Blob::Collision {
 
         static std::unordered_map<int64_t, std::list<Object *>> spacialHash;
 
-<<<<<<< HEAD
-		virtual bool moove() {
-			return true;
-		};
-	};
-=======
         static std::list<CircleStatic *> circleStaticList;
         static std::list<CircleDynamic *> circleDynamicList;
         static std::list<RectStatic *> rectStaticList;
@@ -242,137 +202,23 @@ namespace Blob::Collision {
         static std::list<LineStatic *> lineStaticList;
 
         float timeFlow;
->>>>>>> tmp
 
         bool timeStoped = false;
 
         void computeLocalCollision(RectDynamic &object, const std::list<Object *> &targets, Blob::Vec2f frameMove);
 
-<<<<<<< HEAD
-		explicit CircleStatic(const int objectType) : StaticObject(objectType) {
-			enableCollision();
-		}
-
-		~CircleStatic() {
-			disableCollision();
-		}
-	};
-
-	class CircleDynamic : public DynamicObject {
-		friend CollisionDetector;
-	private:
-		std::list<CircleDynamic *>::iterator elementIt{};
-	protected:
-		Circle mainCircle{};
-=======
     public:
->>>>>>> tmp
 
         //StaticObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
 
         //void checkCollision(CircleDynamic &object);
 
-<<<<<<< HEAD
-		explicit CircleDynamic(const int objectType) : DynamicObject(objectType) {
-			enableCollision();
-		}
-=======
         void checkCollision(RectDynamic &object);
->>>>>>> tmp
 
         void update();
 
         void pause();
 
-<<<<<<< HEAD
-		void enableCollision();
-
-		void disableCollision();
-
-		explicit RectStatic(const int objectType) : StaticObject(objectType) {
-			enableCollision();
-		}
-
-		~RectStatic() {
-			disableCollision();
-		}
-	};
-
-	class RectDynamic : public DynamicObject, public Rectangle {
-		friend CollisionDetector;
-	private:
-		std::list<RectDynamic *>::iterator elementIt{};
-	protected:
-
-		void enableCollision();
-
-		void disableCollision();
-
-		explicit RectDynamic(const int objectType) : DynamicObject(objectType) {
-			enableCollision();
-		}
-
-		~RectDynamic() {
-			disableCollision();
-		}
-	};
-
-	class LineStatic : public StaticObject {
-		friend CollisionDetector;
-	private:
-		std::list<LineStatic *>::iterator elementIt{};
-	protected:
-		std::deque<Point2f> lines{};
-
-		void enableCollision();
-
-		void disableCollision();
-
-		explicit LineStatic(const int objectType) : StaticObject(objectType) {
-			enableCollision();
-		}
-
-		~LineStatic() {
-			disableCollision();
-		}
-	};
-
-	class CollisionDetector {
-		friend CircleStatic;
-		friend CircleDynamic;
-		friend RectStatic;
-		friend RectDynamic;
-		friend LineStatic;
-	private:
-
-		static std::unordered_map<int64_t, std::list<Object *>> spacialHash;
-
-		static std::list<CircleStatic *> circleStaticList;
-		static std::list<CircleDynamic *> circleDynamicList;
-		static std::list<RectStatic *> rectStaticList;
-		static std::list<RectDynamic *> rectDynamicList;
-		static std::list<LineStatic *> lineStaticList;
-
-		float timeFlow;
-
-		bool timeStoped = false;
-	public:
-
-		//StaticObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
-
-		//void checkCollision(CircleDynamic &object);
-
-		void checkCollision(RectDynamic &object);
-		void checkCollision2(RectDynamic &object);
-
-		void update();
-
-		void pause();
-
-		void unpause();
-	};
-=======
         void unpause();
     };
->>>>>>> tmp
 }

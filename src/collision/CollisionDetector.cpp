@@ -12,21 +12,6 @@
 
 namespace Blob::Collision {
 
-<<<<<<< HEAD
-	int64_t hashCoor(Vec2f pos) {
-		return ((int64_t)pos.x) | ((int64_t)pos.x << 32);
-	}
-
-	int64_t hashCoor(Vec2i pos) {
-		return ((int64_t)pos.x) | ((int64_t)pos.x << 32);
-	}
-
-	//CircleStatic
-	void CircleStatic::enableCollision() {
-		CollisionDetector::circleStaticList.push_front(this);
-		elementIt = CollisionDetector::circleStaticList.begin();
-	}
-=======
     int64_t hashCoor(Vec2f pos) {
         return (0xFFFFFFFF & (int32_t) pos.x) | ((int64_t) pos.y << 32);
     }
@@ -34,7 +19,6 @@ namespace Blob::Collision {
     int64_t hashCoor(Vec2i pos) {
         return (0xFFFFFFFF & (int32_t) pos.x) | ((int64_t) pos.y << 32);
     }
->>>>>>> tmp
 
     //CircleStatic
     void CircleStatic::enableCollision() {
@@ -42,13 +26,6 @@ namespace Blob::Collision {
         elementIt = CollisionDetector::circleStaticList.begin();
     }
 
-<<<<<<< HEAD
-	//CircleDynamic
-	void CircleDynamic::enableCollision() {
-		CollisionDetector::circleDynamicList.push_front(this);
-		elementIt = CollisionDetector::circleDynamicList.begin();
-	}
-=======
     void CircleStatic::disableCollision() {
         CollisionDetector::circleStaticList.erase(elementIt);
     }
@@ -58,7 +35,6 @@ namespace Blob::Collision {
         CollisionDetector::circleDynamicList.push_front(this);
         elementIt = CollisionDetector::circleDynamicList.begin();
     }
->>>>>>> tmp
 
     void CircleDynamic::disableCollision() {
         CollisionDetector::circleDynamicList.erase(elementIt);
@@ -69,34 +45,6 @@ namespace Blob::Collision {
         CollisionDetector::rectStaticList.push_front(this);
         elementIt = CollisionDetector::rectStaticList.begin();
 
-<<<<<<< HEAD
-	//RectStatic
-	void RectStatic::enableCollision() {
-		CollisionDetector::rectStaticList.push_front(this);
-		elementIt = CollisionDetector::rectStaticList.begin();
-
-		auto hash = hashCoor(position);
-
-		auto it = CollisionDetector::spacialHash.find(hash);
-		if(it == CollisionDetector::spacialHash.end())
-			CollisionDetector::spacialHash[hash] = {this};
-		else
-			it->second.push_back(this);
-	}
-
-	void RectStatic::disableCollision() {
-		CollisionDetector::rectStaticList.erase(elementIt);
-
-		auto hash = hashCoor(position);
-		CollisionDetector::spacialHash[hash].remove(this);
-	}
-
-	//RectDynamic
-	void RectDynamic::enableCollision() {
-		CollisionDetector::rectDynamicList.push_front(this);
-		elementIt = CollisionDetector::rectDynamicList.begin();
-	}
-=======
         auto hash = hashCoor(position);
 
         auto it = CollisionDetector::spacialHash.find(hash);
@@ -118,19 +66,11 @@ namespace Blob::Collision {
         CollisionDetector::rectDynamicList.push_front(this);
         elementIt = CollisionDetector::rectDynamicList.begin();
     }
->>>>>>> tmp
 
     void RectDynamic::disableCollision() {
         CollisionDetector::rectDynamicList.erase(elementIt);
     }
 
-<<<<<<< HEAD
-	//LineStatic
-	void LineStatic::enableCollision() {
-		CollisionDetector::lineStaticList.push_front(this);
-		elementIt = CollisionDetector::lineStaticList.begin();
-	}
-=======
     //LineStatic
     void LineStatic::enableCollision() {
         CollisionDetector::lineStaticList.push_front(this);
@@ -140,21 +80,15 @@ namespace Blob::Collision {
     void LineStatic::disableCollision() {
         CollisionDetector::lineStaticList.erase(elementIt);
     }
->>>>>>> tmp
 
     //CollisionDetector
     std::unordered_map<int64_t, std::list<Object *>> CollisionDetector::spacialHash;
 
-<<<<<<< HEAD
-	//CollisionDetector
-	std::unordered_map<int64_t, std::list<Object *>> CollisionDetector::spacialHash;
-=======
     std::list<CircleStatic *> CollisionDetector::circleStaticList{};
     std::list<CircleDynamic *> CollisionDetector::circleDynamicList{};
     std::list<RectStatic *> CollisionDetector::rectStaticList{};
     std::list<RectDynamic *> CollisionDetector::rectDynamicList{};
     std::list<LineStatic *> CollisionDetector::lineStaticList{};
->>>>>>> tmp
 
     float getElapsedTime() {
         static std::chrono::high_resolution_clock::time_point lastFrameTime;
@@ -293,203 +227,6 @@ namespace Blob::Collision {
 		object.enableCollision();
 	}
 */
-<<<<<<< HEAD
-	//classic object to object test
-	void CollisionDetector::checkCollision(RectDynamic &object) {
-		object.preCollisionUpdate();
-
-		if(object.speed.isNull()) {
-			for (RectStatic *rect : rectStaticList) {
-				if (rect->overlap(object) || object.overlap(*rect)) {
-					rect->hit(object.objectType, object);
-					object.hit(rect->objectType, *rect);
-				}
-			}
-
-			object.postCollisionUpdate();
-			return;
-		}
-
-		Vec2f frameMove = object.speed * timeFlow;
-
-		auto numOfStep = static_cast<unsigned int>(ceil(frameMove.length() * 100));
-
-		Vec2f stepMove = frameMove / numOfStep;
-
-		for (unsigned int i = 0; i < numOfStep; i++) {
-			Point2f old(object.position);
-
-			object.position.x = object.position.x + stepMove.x;
-
-			for (RectStatic *rect : rectStaticList) {
-				if (rect->overlap(object) || object.overlap(*rect)) {
-					rect->hit(object.objectType, object);
-
-					if (object.hit(rect->objectType, *rect) != IGNORE) {
-						i = numOfStep;
-						object.position = old;
-						break;
-					}
-				}
-
-				if (!object.moove()) {
-					i = numOfStep;
-					object.position = old;
-					break;
-				}
-			}
-
-			for (RectDynamic *rect : rectDynamicList) {
-				if (rect != &object) {
-					if (rect->overlap(object) || object.overlap(*rect)) {
-						rect->hit(object.objectType, object);
-
-						if (object.hit(rect->objectType, *rect) != IGNORE) {
-							i = numOfStep;
-							object.position = old;
-							break;
-						}
-					}
-
-					if (!object.moove()) {
-						i = numOfStep;
-						object.position = old;
-						break;
-					}
-				}
-			}
-		}
-
-		for (unsigned int i = 0; i < numOfStep; i++) {
-			Point2f old(object.position);
-
-			object.position.y = object.position.y + stepMove.y;
-
-			for (RectStatic *rect : rectStaticList) {
-				if (rect->overlap(object) || object.overlap(*rect)) {
-					rect->hit(object.objectType, object);
-
-					if (object.hit(rect->objectType, *rect) != IGNORE) {
-						i = numOfStep;
-						object.position = old;
-						break;
-					}
-				}
-
-				if (!object.moove()) {
-					i = numOfStep;
-					object.position = old;
-					break;
-				}
-			}
-
-			for (RectDynamic *rect : rectDynamicList) {
-				if (rect != &object) {
-					if (rect->overlap(object) || object.overlap(*rect)) {
-						rect->hit(object.objectType, object);
-
-						if (object.hit(rect->objectType, *rect) != IGNORE) {
-							i = numOfStep;
-							object.position = old;
-							break;
-						}
-					}
-
-					if (!object.moove()) {
-						i = numOfStep;
-						object.position = old;
-						break;
-					}
-				}
-			}
-		}
-
-		object.postCollisionUpdate();
-	}
-
-	using namespace std;
-
-	list<Vec2i> getPath(Vec2i pos, Vec2i dest) {
-		list<Vec2i> path;
-		int i, iMax;
-		if(pos.x < dest.x) {
-			i = pos.x;
-			iMax = dest.x;
-		} else {
-			i = dest.x;
-			iMax = pos.x;
-		}
-
-		int jBeg, jMax;
-		if(pos.y < dest.y) {
-			jBeg = pos.y;
-			jMax = dest.y;
-		} else {
-			jBeg = dest.y;
-			jMax = pos.y;
-		}
-
-		for(; i <= iMax; i++) {
-			for(int j = jBeg; j <= jMax; j++)
-				path.emplace_back(i, j);
-		}
-
-		return path;
-	}
-
-	void CollisionDetector::checkCollision2(Blob::Collision::RectDynamic &object) {
-		object.preCollisionUpdate();
-
-		Vec2f frameMove = object.speed * timeFlow;
-
-		list<Vec2i> path;
-
-		for(auto p : object.getPoints()) {
-			ImGui::Text("%.2f, %.2f", p.x, p.y);
-			auto a = getPath(p.cast<int>(), (p + frameMove).cast<int>());
-			path.insert(path.end(), a.begin(), a.end());
-		}
-
-		unordered_set<int64_t> cases;
-		for(auto p : path)
-			cases.insert(hashCoor(p));
-
-		stringstream s;
-
-		for(const auto &p : cases)
-			s << hex << p << " ";
-
-		ImGui::Text(s.str().c_str());
-
-		object.postCollisionUpdate();
-	}
-
-	void CollisionDetector::update() {
-
-		if (!timeStoped) {
-			timeFlow = getElapsedTime();
-/*
-		for (CircleDynamic *object : circleDynamicList) {
-			if (!object->speed.isNull())
-				checkCollision(*object);
-		}
-*/
-			for (RectDynamic *object : rectDynamicList) {
-				checkCollision2(*object);
-			}
-		}
-	}
-
-	void CollisionDetector::pause() {
-		timeStoped = true;
-
-	}
-
-	void CollisionDetector::unpause() {
-		timeStoped = false;
-		getElapsedTime();
-	}
-=======
     //classic object to object test
     void
     CollisionDetector::computeLocalCollision(RectDynamic &object, const std::list<Object *> &targets, Vec2f frameMove) {
@@ -665,5 +402,4 @@ namespace Blob::Collision {
         timeStoped = false;
         getElapsedTime();
     }
->>>>>>> tmp
 }

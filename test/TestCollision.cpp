@@ -42,11 +42,7 @@ private:
 	}
 
 	void postCollisionUpdate() final {
-<<<<<<< HEAD
-		if(isHit)
-=======
 		if (isHit)
->>>>>>> tmp
 			setColor(255, 0, 0);
 		else
 			setColor(0, 100, 100);
@@ -64,14 +60,8 @@ public:
 		setPosition(x, y, 0.5f);
 	}
 
-<<<<<<< HEAD
-	Reaction hit(int objectType, Object &object) final {
-		isHit = true;
-		return STOP;
-=======
 	void hit(int objectType, Object &object) final {
 		isHit = true;
->>>>>>> tmp
 	}
 };
 
@@ -90,11 +80,7 @@ int main() {
 
 		CollisionDetector collisionDetector;
 
-<<<<<<< HEAD
-		MainRect mainRect(4, 4, 1, Graphic::getKeys());
-=======
 		MainRect mainRect(4.5f, 4.5f, 1, Graphic::getKeys());
->>>>>>> tmp
 
 		std::list<Box> rectanges;
 
