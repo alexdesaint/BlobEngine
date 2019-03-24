@@ -1,5 +1,5 @@
 add_executable(TestCollision TestCollision.cpp)
-target_link_libraries(TestCollision Collision BlobGL)
+target_link_libraries(TestCollision Blob::Collision Blob::GL)
 
 add_executable(TestglTF2 TestglTF2.cpp)
 target_link_libraries(TestglTF2 glTF2 BlobGL glad FileReader JsonExplorer -lglu32 -lopengl32 ${SDL2_LIBRARIES})

@@ -8,11 +8,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-find_package(SFML 2.5 COMPONENTS window graphics network audio system REQUIRED)
-if (NOT SFML_FOUND)
-	message(ERROR "SFML not found")
-endif()
-
 find_package(OpenGL REQUIRED)
 if (NOT OPENGL_FOUND )
 	message(ERROR "OpenGL not found")

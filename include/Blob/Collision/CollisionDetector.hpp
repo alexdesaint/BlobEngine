@@ -1,196 +1,224 @@
 #pragma once
 
-#include <BlobEngine/Geometrie.hpp>
-#include <BlobEngine/BlobException.hpp>
-#include <BlobEngine/Collision/Reaction.hpp>
+#include <Blob/Geometrie.hpp>
+#include <Blob/Exception.hpp>
+#include <Blob/Collision/Reaction.hpp>
 
 #include <deque>
 #include <list>
+#include <unordered_map>
 
 namespace Blob::Collision {
 
-	class CollisionDetector;
+    class CollisionDetector;
 
-	class StaticObject {
-		friend CollisionDetector;
-	private:
-		const void *objectData;
-		int objectType;
+    /**
+     * Object is a virtual class
+     * An object have a type to define him and can be hit
+     */
+    class Object : virtual public Form {
+        friend CollisionDetector;
+    private:
+        int objectType;
 
-	protected:
-		explicit StaticObject(int objectType, const void *objectData) :
-				objectData(objectData),
-				objectType(objectType) {}
+    protected:
+        /**
+         * To set the type of the object
+         * The type is used to define the child class of this Object.
+         * Typic
+         * @param objectType
+         */
+        void setObjectType(int objectType) {
+            Object::objectType = objectType;
+        }
 
-		void setObjectType(int objectType) {
-			StaticObject::objectType = objectType;
-		}
+        explicit Object(int objectType) : objectType(objectType) {}
 
-		virtual void hit(int objectType, const void *objectData) {}
-	};
+        virtual void hit(int objectType, Object &object) {}
+    };
 
-	class DynamicObject {
-		friend CollisionDetector;
-	private:
-		const void *objectData;
-		int objectType;
+    class DynamicObject : public Object {
+        friend CollisionDetector;
+    private:
+        Reaction reaction = STOP;
 
-	protected:
-		Vec2f speed{};
+    protected:
+        Vec2f speed{};
 
-		explicit DynamicObject(int objectType, const void *objectData) :
-				objectData(objectData),
-				objectType(objectType) {}
+        explicit DynamicObject(int objectType) : Object(objectType) {}
 
-		virtual Reaction hit(int objectType, const void *objectData) {
-			return STOP;
-		}
+        /**
+         * Set the reaction when you hit an object.
+         * Can bet set in 'hit' to set the reaction of the current collision or in the constructor if you know you will
+         * only use one reaction type.
+         *
+         * The default value is 'STOP'
+         *
+         * @param reaction
+         */
+        void setReaction(Reaction reaction) {
+            this->reaction = reaction;
+        }
 
-		virtual void preCollisionUpdate() {}
+        /**
+         * This method is used to stop the dynamic object from moving.
+         * it will be called each time the collision detector move the target.
+         * For example, you can implement this method to return false when the object have reach the destination.
+         *
+         * @return return true to keep moving or false to stop
+         */
+        virtual bool moove() {
+            return true;
+        };
 
-		virtual void postCollisionUpdate() {}
+        /**
+         * This method is called right before the collision is computed.
+         * It's the perfect moment to set the final speed
+         */
+        virtual void preCollisionUpdate() {}
 
-		void setObjectType(int objectType) {
-			DynamicObject::objectType = objectType;
-		}
+        /**
+         * This method is called right after the collision is computed
+         * It can be used to check is you had a collision during this move.
+         * For example if 'hit' has not been called between 'preCollisionUpdate' and 'postCollisionUpdate'.
+         */
+        virtual void postCollisionUpdate() {}
+    };
 
-		virtual bool moove() {
-			return true;
-		};
-	};
+    class CircleStatic : public Object {
+        friend CollisionDetector;
+    private:
+        std::list<CircleStatic *>::iterator elementIt{};
+    protected:
+        Circle mainCircle{};
 
-	class CircleStatic : public StaticObject {
-		friend CollisionDetector;
-	private:
-		std::list<CircleStatic *>::iterator elementIt{};
-	protected:
-		Circle mainCircle{};
+        void enableCollision();
 
-		void enableCollision();
+        void disableCollision();
 
-		void disableCollision();
+        explicit CircleStatic(const int objectType) : Object(objectType) {
+            enableCollision();
+        }
 
-	public:
-		explicit CircleStatic(const int objectType, const void *objectData) : StaticObject(objectType, objectData) {
-			enableCollision();
-		}
+        ~CircleStatic() {
+            disableCollision();
+        }
+    };
 
-		~CircleStatic() {
-			disableCollision();
-		}
-	};
+    class CircleDynamic : public DynamicObject {
+        friend CollisionDetector;
+    private:
+        std::list<CircleDynamic *>::iterator elementIt{};
+    protected:
+        Circle mainCircle{};
 
-	class CircleDynamic : public DynamicObject {
-		friend CollisionDetector;
-	private:
-		std::list<CircleDynamic *>::iterator elementIt{};
-	protected:
-		Circle mainCircle{};
+        void enableCollision();
 
-		void enableCollision();
+        void disableCollision();
 
-		void disableCollision();
+        explicit CircleDynamic(const int objectType) : DynamicObject(objectType) {
+            enableCollision();
+        }
 
-	public:
-		explicit CircleDynamic(const int objectType, const void *objectData) : DynamicObject(objectType, objectData) {
-			enableCollision();
-		}
+        ~CircleDynamic() {
+            disableCollision();
+        }
+    };
 
-		~CircleDynamic() {
-			disableCollision();
-		}
-	};
+    class RectStatic : public Object, private Rectangle {
+        friend CollisionDetector;
+    private:
+        std::list<RectStatic *>::iterator elementIt{};
+    protected:
 
-	class RectStatic : public StaticObject, public Rectangle {
-		friend CollisionDetector;
-	private:
-		std::list<RectStatic *>::iterator elementIt{};
-	protected:
+        void enableCollision();
 
-		void enableCollision();
+        void disableCollision();
 
-		void disableCollision();
+        explicit RectStatic(Vec2f position, Vec2f size, const int objectType) :
+                Rectangle(position, size),
+                Object(objectType) {
+            enableCollision();
+        }
 
-	public:
-		explicit RectStatic(const int objectType, const void *objectData) : StaticObject(objectType, objectData) {
-			enableCollision();
-		}
+        ~RectStatic() {
+            disableCollision();
+        }
+    };
 
-		~RectStatic() {
-			disableCollision();
-		}
-	};
+    class RectDynamic : public DynamicObject, public Rectangle {
+        friend CollisionDetector;
+    private:
+        std::list<RectDynamic *>::iterator elementIt{};
+    protected:
 
-	class RectDynamic : public DynamicObject, public Rectangle {
-		friend CollisionDetector;
-	private:
-		std::list<RectDynamic *>::iterator elementIt{};
-	protected:
+        void enableCollision();
 
-		void enableCollision();
+        void disableCollision();
 
-		void disableCollision();
+        explicit RectDynamic(const int objectType) : DynamicObject(objectType) {
+            enableCollision();
+        }
 
-	public:
-		explicit RectDynamic(const int objectType, const void *objectData) : DynamicObject(objectType, objectData) {
-			enableCollision();
-		}
+        ~RectDynamic() {
+            disableCollision();
+        }
+    };
 
-		~RectDynamic() {
-			disableCollision();
-		}
-	};
+    class LineStatic : public Object {
+        friend CollisionDetector;
+    private:
+        std::list<LineStatic *>::iterator elementIt{};
+    protected:
+        std::deque<Point2f> lines{};
 
-	class LineStatic : public StaticObject {
-		friend CollisionDetector;
-	private:
-		std::list<LineStatic *>::iterator elementIt{};
-	protected:
-		std::deque<Point2f> lines{};
+        void enableCollision();
 
-		void enableCollision();
+        void disableCollision();
 
-		void disableCollision();
+        explicit LineStatic(const int objectType) : Object(objectType) {
+            enableCollision();
+        }
 
-	public:
-		explicit LineStatic(const int objectType, const void *objectData) : StaticObject(objectType, objectData) {
-			enableCollision();
-		}
+        ~LineStatic() {
+            disableCollision();
+        }
+    };
 
-		~LineStatic() {
-			disableCollision();
-		}
-	};
+    class CollisionDetector {
+        friend CircleStatic;
+        friend CircleDynamic;
+        friend RectStatic;
+        friend RectDynamic;
+        friend LineStatic;
+    private:
 
-	class CollisionDetector {
-		friend CircleStatic;
-		friend CircleDynamic;
-		friend RectStatic;
-		friend RectDynamic;
-		friend LineStatic;
-	private:
+        static std::unordered_map<int64_t, std::list<Object *>> spacialHash;
 
-		static std::list<CircleStatic *> circleStaticList;
-		static std::list<CircleDynamic *> circleDynamicList;
-		static std::list<RectStatic *> rectStaticList;
-		static std::list<RectDynamic *> rectDynamicList;
-		static std::list<LineStatic *> lineStaticList;
+        static std::list<CircleStatic *> circleStaticList;
+        static std::list<CircleDynamic *> circleDynamicList;
+        static std::list<RectStatic *> rectStaticList;
+        static std::list<RectDynamic *> rectDynamicList;
+        static std::list<LineStatic *> lineStaticList;
 
-		float timeFlow;
+        float timeFlow;
 
-		bool timeStoped = false;
-	public:
+        bool timeStoped = false;
 
-		//StaticObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
+        void computeLocalCollision(RectDynamic &object, const std::list<Object *> &targets, Blob::Vec2f frameMove);
 
-		//void checkCollision(CircleDynamic &object);
+    public:
 
-		void checkCollision(RectDynamic &object);
+        //StaticObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
 
-		void update();
+        //void checkCollision(CircleDynamic &object);
 
-		void pause();
+        void checkCollision(RectDynamic &object);
 
-		void unpause();
-	};
+        void update();
+
+        void pause();
+
+        void unpause();
+    };
 }

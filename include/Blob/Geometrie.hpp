@@ -1,82 +1,97 @@
 #pragma once
 
 #include <cfloat>
+#include <ostream>
+#include <array>
 
 #define PI 3.14159265f
 
 namespace Blob {
 
 	template<typename T>
-	class Mat2 {
+	class Vec2 {
 	public:
 		T x = 0, y = 0;
 
-		Mat2() = default;
+		Vec2() = default;
 
-		Mat2(T x, T y) : x(x), y(y) {}
+		Vec2(T x, T y) : x(x), y(y) {}
 
-		Mat2(Mat2 point1, Mat2 point2) {
+		Vec2(const Vec2 &point1, const Vec2 &point2) {
 			x = point2.x - point1.x;
 			y = point2.y - point1.y;
 		}
 
-		//operator with Mat2
-		Mat2 operator-(Mat2 mat2) {
-			return {x - mat2.x, y - mat2.y};
+		//operator with Vec2
+		Vec2 operator-(const Vec2 &v) {
+			return {x - v.x, y - v.y};
 		}
 
-		Mat2 operator+(Mat2 mat2) {
-			return {x + mat2.x, y + mat2.y};
+		Vec2 operator+(const Vec2 &v) {
+			return {x + v.x, y + v.y};
 		}
 
-		Mat2 operator*(Mat2 mat2) {
-			return {x * mat2.x, y * mat2.y};
+		Vec2 operator*(const Vec2 &v) {
+			return {x * v.x, y * v.y};
 		}
 
-		Mat2 operator/(Mat2 mat2) {
-			return {x / mat2.x, y / mat2.y};
+		Vec2 operator/(const Vec2 &v) {
+			return {x / v.x, y / v.y};
 		}
 
 		/*
-		Mat2& operator=(Mat2 mat2) {
+		Vec2& operator=(Vec2 mat2) {
 			return {x * mat2.x, y * mat2.y};
 		}
 		*/
 
-		//operator with T
-		Mat2 operator+(T a) {
-			return {a + x, a + y};
-		}
-
-		Mat2 operator-(T a) {
-			return {x - a, y - a};
-		}
-
-		Mat2 operator*(T a) {
-			return {a * x, a * y};
-		}
-
-		Mat2 operator/(T a) {
-			return {x / a, y / a};
-		}
-
-		//test
 		/// Add a vector to this vector.
-		void operator+=(const Mat2<T> &v) {
+		void operator+=(const Vec2 &v) {
 			x += v.x;
 			y += v.y;
 		}
 
 		/// Subtract a vector from this vector.
-		void operator-=(const Mat2<T> &v) {
+		void operator-=(const Vec2 &v) {
 			x -= v.x;
 			y -= v.y;
 		}
 
-		/// Multiply this vector by a scalar.
-		void operator*=(float a) {
+		//operator with T
+		Vec2 operator+(T a) {
+			return {a + x, a + y};
+		}
+
+		Vec2 operator-(T a) {
+			return {x - a, y - a};
+		}
+
+		Vec2 operator*(T a) {
+			return {a * x, a * y};
+		}
+
+		Vec2 operator/(T a) {
+			return {x / a, y / a};
+		}
+
+		void operator+=(T a) {
+			x += a;
+			y += a;
+		}
+
+		void operator-=(T a) {
+			x -= a;
+			y -= a;
+		}
+
+		void operator*=(T a) {/// Multiply this vector by a scalar.
 			x *= a;
 			y *= a;
+		}
+
+		void operator/=(T a) {
+			x /= a;
+			y /= a;
 		}
 
 		T length2() {
@@ -85,21 +100,21 @@ namespace Blob {
 
 		float length();
 
-		T scalaire(Mat2 B) {
+		T scalaire(Vec2 B) {
 			return x * B.x + y * B.y;
 		}
 
-		Mat2<float> getNormal() {
-			double l = length();
+		Vec2<float> getNormal() {
+			float l = length();
 
-			double invLength = 1.0f / l;
+			float invLength = 1.f / l;
 
-			return {(float) (x * invLength), (float) (y * invLength)};
+			return {x * invLength, y * invLength};
 		}
 
-		Mat2 setLength(float newLength);
+		Vec2 setLength(float newLength);
 
-		Mat2 rotate() {
+		Vec2 rotate() {
 			return {-y, x};
 		}
 
@@ -116,19 +131,42 @@ namespace Blob {
 			return ((x == 0) && (y == 0));
 		}
 
-		//void round(int v);
+		template<typename U>
+		Vec2<U> cast() {
+			return {(U) x, (U) y};
+		}
+
+		friend std::ostream &operator<<(std::ostream &os, const Vec2 &dt) {
+			os << dt.x << ", " << dt.y;
+			return os;
+		}
+
+		std::string str() {
+			return std::to_string(x) + ", " + std::to_string(y);
+		}
 	};
 
 	template
-	class Mat2<float>;
+	class Vec2<float>;
 
-	//typedef Mat2<int> Point2i;
-	typedef Mat2<float> Point2f;
-	//typedef Mat2<double> Point2d;
-	typedef Mat2<int> Vec2i;
-	typedef Mat2<unsigned int> Vec2ui;
-	typedef Mat2<float> Vec2f;
-	//typedef Mat2<double> Vec2d;
+	//typedef Vec2<int> Point2i;
+	typedef Vec2<float> Point2f;
+	//typedef Vec2<double> Point2d;
+	typedef Vec2<int> Vec2i;
+	typedef Vec2<unsigned int> Vec2ui;
+	typedef Vec2<float> Vec2f;
+	//typedef Vec2<double> Vec2d;
+
+	class Rectangle;
+	//class Circle;
+	//class Line;
+
+	class Form {
+	protected:
+		virtual bool overlap(const Rectangle &rect) = 0;
+		//virtual bool overlap(const Circle &rect) = 0;
+		//virtual bool overlap(const Line &rect) = 0;
+	};
 
 	class Circle {
 	public:
@@ -175,16 +213,20 @@ namespace Blob {
 		}
 	};
 
-	class Rectangle {
+	class Rectangle : virtual public Form {
 	public:
+		///The center of the rectangle
 		Point2f position;
-		Vec2f size;
 
+		///full size of the sides
+		Vec2f size;
 
 		Rectangle() : position(), size() {}
 
 		Rectangle(Point2f position, Vec2f size) : position(position), size(size) {}
 
-		bool overlap(const Rectangle &r);
+		std::array<Vec2f, 4> getPoints();
+
+		bool overlap(const Rectangle &r) final;
 	};
 };
