@@ -1,7 +1,6 @@
 #include <Blob/GL/Movable.hpp>
 
-#include <glm/ext/matrix_transform.inl>
-#include <glm/detail/func_trigonometric.inl>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Blob::GL {
 	using namespace glm;

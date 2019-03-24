@@ -78,14 +78,27 @@ namespace Blob {
 			x += a;
 			y += a;
 		}
+<<<<<<< HEAD
+=======
+
+>>>>>>> tmp
 		void operator-=(T a) {
 			x -= a;
 			y -= a;
 		}
+<<<<<<< HEAD
+=======
+
+>>>>>>> tmp
 		void operator*=(T a) {/// Multiply this vector by a scalar.
 			x *= a;
 			y *= a;
 		}
+		void operator/=(T a) {
+			x /= a;
+			y /= a;
+		}
+
 		void operator/=(T a) {
 			x /= a;
 			y /= a;
@@ -128,6 +141,7 @@ namespace Blob {
 			return ((x == 0) && (y == 0));
 		}
 
+<<<<<<< HEAD
 		template <typename U>
 		Vec2<U> cast() {
 			return {(U)x, (U)y};
@@ -135,6 +149,14 @@ namespace Blob {
 
 		friend std::ostream& operator<<(std::ostream& os, const Vec2& dt)
 		{
+=======
+		template<typename U>
+		Vec2<U> cast() {
+			return {(U) x, (U) y};
+		}
+
+		friend std::ostream &operator<<(std::ostream &os, const Vec2 &dt) {
+>>>>>>> tmp
 			os << dt.x << ", " << dt.y;
 			return os;
 		}
@@ -154,6 +176,20 @@ namespace Blob {
 	typedef Vec2<unsigned int> Vec2ui;
 	typedef Vec2<float> Vec2f;
 	//typedef Vec2<double> Vec2d;
+<<<<<<< HEAD
+=======
+
+	class Rectangle;
+	//class Circle;
+	//class Line;
+
+	class Form {
+	protected:
+		virtual bool overlap(const Rectangle &rect) = 0;
+		//virtual bool overlap(const Circle &rect) = 0;
+		//virtual bool overlap(const Line &rect) = 0;
+	};
+>>>>>>> tmp
 
 	class Circle {
 	public:
@@ -200,11 +236,13 @@ namespace Blob {
 		}
 	};
 
-	class Rectangle {
+	class Rectangle : virtual public Form {
 	public:
+		///The center of the rectangle
 		Point2f position;
-		Vec2f size;
 
+		///full size of the sides
+		Vec2f size;
 
 		Rectangle() : position(), size() {}
 
@@ -212,6 +250,10 @@ namespace Blob {
 
 		std::array<Vec2f, 4> getPoints();
 
+<<<<<<< HEAD
 		bool overlap(const Rectangle &r);
+=======
+		bool overlap(const Rectangle &r) final;
+>>>>>>> tmp
 	};
 };

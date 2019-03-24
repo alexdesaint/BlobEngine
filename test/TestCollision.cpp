@@ -42,7 +42,11 @@ private:
 	}
 
 	void postCollisionUpdate() final {
+<<<<<<< HEAD
 		if(isHit)
+=======
+		if (isHit)
+>>>>>>> tmp
 			setColor(255, 0, 0);
 		else
 			setColor(0, 100, 100);
@@ -51,28 +55,31 @@ private:
 
 public:
 
-	explicit MainRect(int x, int y, int r, const std::array<bool, Key::KeyCount> &keys) : RectDynamic(1), keys(keys) {
-		position = {(float) x, (float) y};
-		size = {(float) r, (float) r};
+	explicit MainRect(float x, float y, float r, const std::array<bool, Key::KeyCount> &keys) : RectDynamic(1),
+																								keys(keys) {
+		position = {x, y};
+		size = {r, r};
 
 		setScale(r, r, r);
 		setPosition(x, y, 0.5f);
 	}
 
+<<<<<<< HEAD
 	Reaction hit(int objectType, Object &object) final {
 		isHit = true;
 		return STOP;
+=======
+	void hit(int objectType, Object &object) final {
+		isHit = true;
+>>>>>>> tmp
 	}
 };
 
 class Box : public RectStatic, public Shapes::Cube {
 public:
-	explicit Box(int x, int y, int r = 1) : RectStatic(0) {
-		position = {(float) x, (float) y};
-		size = {(float) r, (float) r};
-
+	explicit Box(float x, float y, float r = 1) : RectStatic({x, y}, {r, r}, 0) {
 		setScale(r, r, r);
-		setPosition(x, y, 0.5f);
+		setPosition(x, y, r / 2);
 	}
 };
 
@@ -83,7 +90,11 @@ int main() {
 
 		CollisionDetector collisionDetector;
 
+<<<<<<< HEAD
 		MainRect mainRect(4, 4, 1, Graphic::getKeys());
+=======
+		MainRect mainRect(4.5f, 4.5f, 1, Graphic::getKeys());
+>>>>>>> tmp
 
 		std::list<Box> rectanges;
 
@@ -91,6 +102,8 @@ int main() {
 		rectanges.emplace_back(0, 1);
 		rectanges.emplace_back(-1, 0);
 		rectanges.emplace_back(0, -1);
+
+		rectanges.emplace_back(2.5, 2.5, 0.8);
 
 		graphic.setCameraPosition(10, 0, 10);
 

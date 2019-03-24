@@ -8,7 +8,7 @@ namespace Blob::Reader {
 	class FileReader {
 	private:
 		std::ifstream inFile;
-		std::fpos_t size = 0;
+        std::streampos size = 0;
 	public:
 
 		explicit FileReader(const std::string &FilePath);

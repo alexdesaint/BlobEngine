@@ -14,6 +14,7 @@
 
 //glm
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 //imgui
 #include <imgui.h>
@@ -140,6 +141,10 @@ namespace Blob::GL {
 		glfwSetClipboardString((GLFWwindow*)user_data, text);
 	}
 
+    void GLFWErrorCallback(int error, const char *description) {
+        std::cout << "GLFW Error " << error << " : " << description;
+    }
+
 	void Graphic::enableDebugCallBack() {
 		// Enable the debug callback
 
@@ -157,13 +162,20 @@ namespace Blob::GL {
 			cameraUp(0, 0, 1),
 			cameraAngle(PI/4) {
 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+        glfwSetErrorCallback(GLFWErrorCallback);
 
-		glfwWindowHint(GLFW_SAMPLES, 8);
+        static const int GLmajor = 4;
+        static const int GLminor = 5;
 
 		if (!glfwInit())
 			throw Exception("Can't init glfw");
+
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLmajor);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLminor);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+        glfwWindowHint(GLFW_SAMPLES, 8);
 
 		if (fullScreen) {
 			const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -186,12 +198,20 @@ namespace Blob::GL {
 		}
 
 		glfwMakeContextCurrent((GLFWwindow *) window);
-		gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 		glfwSwapInterval(1);
 
-		if (!gladLoadGL()) throw Exception("Can't loadBMP openGL");
+        if (!GL_VERSION_4_5) {
+            Exception("OpenGL too old");
+        }
+        if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) throw Exception("Fail to load openGL");
 
-		enableDebugCallBack();
+        if (GLmajor != GLVersion.major || GLminor != GLVersion.minor)
+            throw Exception("Fail to load the right version of OpenGL. Loaded version : " +
+                            std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor) +
+                            " instead of " + std::to_string(GLmajor) + "." + std::to_string(GLminor) +
+                            ". System version : " + (char *) glGetString(GL_VERSION));
+
+        enableDebugCallBack();
 
 		//general settings
 		glFrontFace(GL_CW);
