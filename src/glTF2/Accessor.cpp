@@ -1,6 +1,7 @@
 #include <Blob/glTF2/Accessor.hpp>
 
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
