@@ -2,6 +2,16 @@ language: cpp
 compiler:
   - clang
   - gcc
+sudo: false
+dist: trusty
+addons:
+    apt:
+        packages:
+            - cmake
+            - libxrandr-dev
+            - libxinerama-dev
+            - libxcursor-dev
+            - libxi-dev
 before_script:
   - cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release  
 script:
