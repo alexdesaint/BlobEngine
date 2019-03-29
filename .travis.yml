@@ -7,7 +7,7 @@ dist: trusty
 addons:
     apt:
         packages:
-            - cmake
+            - libglm-dev
             - libxrandr-dev
             - libxinerama-dev
             - libxcursor-dev
