@@ -1,4 +1,4 @@
-#include <BlobEngine/glTF2/Accessor.hpp>
+#include <Blob/glTF2/Accessor.hpp>
 
 #include <iostream>
 
@@ -45,7 +45,7 @@ namespace Blob::glTF2 {
 
 			data[i].bufferView = buff.getInt("bufferView");
 
-			data[i].componentType = (GLenum) buff.getInt("componentType");
+			data[i].componentType = (uint32_t) buff.getInt("componentType");
 
 			data[i].type = strToType(buff.getString("type").c_str());
 
@@ -57,7 +57,7 @@ namespace Blob::glTF2 {
 	}
 
 	template<typename T>
-	std::ostream &printArray(std::ostream &s, GLubyte *b, int size, int nbOfElements) {
+	std::ostream &printArray(std::ostream &s, uint8_t *b, int size, int nbOfElements) {
 		for (int k = 0; k < size / sizeof(T); k++) {
 			s << ((T *) b)[k] << " ";
 			if (nbOfElements > 1 && (k + 1) % nbOfElements == 0)
@@ -109,23 +109,23 @@ namespace Blob::glTF2 {
 		return s;
 	}
 
-	GLsizei Accessor::getOffset(int Accessor) {
+	size_t Accessor::getOffset(int Accessor) {
 		return bufferView.getOffset(data[Accessor].bufferView) + data[Accessor].byteOffset;
 	}
 
-	GLenum Accessor::getType(int Accessor) {
+	uint32_t Accessor::getType(int Accessor) {
 		return data[Accessor].componentType;
 	}
 
-	GLsizei Accessor::getSize(int Accessor) {
+    size_t Accessor::getSize(int Accessor) {
 		return bufferView.getSize(data[Accessor].bufferView, data[Accessor].byteOffset);
 	}
 
-	GLsizei Accessor::getNumOfVector(int Accessor) {
+    size_t Accessor::getNumOfVector(int Accessor) {
 		return data[Accessor].count;
 	}
 
-	GLuint Accessor::getValuePerVector(int Accessor) {
+	uint32_t Accessor::getValuePerVector(int Accessor) {
 		return data[Accessor].type;
 	}
 

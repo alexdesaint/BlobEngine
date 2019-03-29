@@ -1,9 +1,9 @@
 #ifndef BLOBENGINE_SCENEMANAGER_HPP
 #define BLOBENGINE_SCENEMANAGER_HPP
 
-#include <BlobEngine/glTF2/Asset.hpp>
-#include <BlobEngine/glTF2/Scene.hpp>
-#include <BlobEngine/glTF2/Mesh.hpp>
+#include <Blob/glTF2/Asset.hpp>
+#include <Blob/glTF2/Scene.hpp>
+#include <Blob/glTF2/Mesh.hpp>
 
 #include <vector>
 

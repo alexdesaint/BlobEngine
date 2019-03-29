@@ -1,4 +1,4 @@
-#include <BlobEngine/glTF2/Mesh.hpp>
+#include <Blob/glTF2/Mesh.hpp>
 
 #include <iostream>
 
@@ -157,7 +157,7 @@ namespace Blob::glTF2 {
 				24, 25, 26
 		};*/
 
-		const std::vector<GLushort> cudeIndices = {
+		const std::vector<uint16_t> cudeIndices = {
 				0, 1, 2, 0, 2, 3,    // front
 				4, 5, 6, 4, 6, 7,    // back
 				8, 9, 10, 8, 10, 11,   // top
@@ -166,7 +166,7 @@ namespace Blob::glTF2 {
 				20, 21, 22, 20, 22, 23,   // left
 		};
 
-		vbo.setData((GLubyte *) data.data(), sizeof(Data) * data.size());
+		vbo.setData((uint8_t *) data.data(), sizeof(Data) * data.size());
 
 		//vbo.setData((GLubyte*)dataBuffer.data(), dataBuffer.size() * sizeof(data));
 
@@ -178,11 +178,11 @@ namespace Blob::glTF2 {
 			for (auto &j : i) {
 				j.setBuffer(vbo, sizeof(Data), j.dataBufferOffset * sizeof(Data));
 
-				j.setPositionVAO(3, GL_FLOAT, 0);
-				j.setNormalVAO(3, GL_FLOAT, sizeof(Data::coor));
-				j.setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::normal));
+				//j.setPositionVAO(3, GL_FLOAT, 0);
+				//j.setNormalVAO(3, GL_FLOAT, sizeof(Data::coor));
+				//j.setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::normal));
 
-				j.setIndices((GLubyte *) cudeIndices.data(), (GLsizei) cudeIndices.size(), GL_UNSIGNED_SHORT);
+				//j.setIndices((GLubyte *) cudeIndices.data(), (GLsizei) cudeIndices.size(), GL_UNSIGNED_SHORT);
 			}
 		}
 	}

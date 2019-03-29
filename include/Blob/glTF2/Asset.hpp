@@ -1,7 +1,7 @@
 #ifndef BLOBENGINE_ASSET_HPP
 #define BLOBENGINE_ASSET_HPP
 
-#include <BlobEngine/Reader/JsonExplorer.hpp>
+#include <Blob/Reader/JsonExplorer.hpp>
 
 namespace Blob::glTF2 {
 

@@ -1,4 +1,4 @@
-#include <BlobEngine/glTF2/Shape.hpp>
+#include <Blob/glTF2/Shape.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 
@@ -33,8 +33,8 @@ namespace Blob::glTF2 {
 	std::ostream &operator<<(std::ostream &s, const Shape &a) {
 		s << "Shape {" << endl;
 
-		if (a.getRenderableSize() > 0)
-			s << "mesh : " << a.mesh << endl;
+		//if (a.getRenderableSize() > 0)
+		//	s << "mesh : " << a.mesh << endl;
 
 		s << "}" << endl;
 		return s;

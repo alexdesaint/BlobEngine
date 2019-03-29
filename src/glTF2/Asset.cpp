@@ -1,5 +1,5 @@
-#include <BlobEngine/glTF2/Asset.hpp>
-#include <BlobEngine/BlobException.hpp>
+#include <Blob/glTF2/Asset.hpp>
+#include <Blob/Exception.hpp>
 
 #include <iostream>
 
@@ -14,7 +14,7 @@ namespace Blob::glTF2 {
 		version = j.getString("version");
 
 		if (version != "2.0")
-			throw BlobException(string("glTF : can't loadBMP version ") + version);
+			throw Exception(string("glTF : can't loadBMP version ") + version);
 	}
 
 	ostream &operator<<(ostream &s, const Asset &a) {

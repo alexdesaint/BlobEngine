@@ -1,11 +1,10 @@
 #ifndef BLOBENGINE_BUFFER_HPP
 #define BLOBENGINE_BUFFER_HPP
 
-#include <BlobEngine/Reader/JsonExplorer.hpp>
+#include <Blob/Reader/JsonExplorer.hpp>
 
-#include <BlobEngine/BlobGL/VertexBufferObject.hpp>
+#include <Blob/GL/VertexBufferObject.hpp>
 
-#include <glad/glad.h>
 #include <vector>
 
 namespace Blob::glTF2 {
@@ -15,7 +14,7 @@ namespace Blob::glTF2 {
 		struct Data {
 			std::string uri; //!< The uri of the buffer. Can be a filepath, a data uri, etc. (required)
 			size_t byteLength = 0; //!< The length of the buffer in bytes. (default: 0)
-			std::vector<GLubyte> d;
+			std::vector<uint8_t> d;
 		};
 
 		std::vector<Data> data;
@@ -26,7 +25,7 @@ namespace Blob::glTF2 {
 
 		friend std::ostream &operator<<(std::ostream &s, const Buffer &a);
 
-		const std::vector<GLubyte> &getData() const;
+		const std::vector<uint8_t> &getData() const;
 	};
 }
 

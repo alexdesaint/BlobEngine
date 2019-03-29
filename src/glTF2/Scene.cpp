@@ -1,4 +1,4 @@
-#include <BlobEngine/glTF2/Scene.hpp>
+#include <Blob/glTF2/Scene.hpp>
 
 #include <iostream>
 
@@ -14,7 +14,7 @@ namespace Blob::glTF2 {
 		}
 
 		for (unsigned int i = 0; i < size; i++) {
-			addRenderable(&nodes[i]);
+			addShape(nodes[i]);
 		}
 	}
 

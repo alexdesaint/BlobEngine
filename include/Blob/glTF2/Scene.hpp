@@ -1,9 +1,9 @@
 #ifndef BLOBENGINE_SCENE_HPP
 #define BLOBENGINE_SCENE_HPP
 
-#include <BlobEngine/BlobGL/Scene.hpp>
-#include <BlobEngine/glTF2/Shape.hpp>
-#include <BlobEngine/glTF2/Mesh.hpp>
+#include <Blob/GL/Scene.hpp>
+#include <Blob/glTF2/Shape.hpp>
+#include <Blob/glTF2/Mesh.hpp>
 
 #include <vector>
 

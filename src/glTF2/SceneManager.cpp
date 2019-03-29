@@ -1,4 +1,4 @@
-#include <BlobEngine/glTF2/SceneManager.hpp>
+#include <Blob/glTF2/SceneManager.hpp>
 
 #include <iostream>
 

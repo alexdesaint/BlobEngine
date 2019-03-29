@@ -1,7 +1,7 @@
-#include <BlobEngine/glTF2/Buffer.hpp>
+#include <Blob/glTF2/Buffer.hpp>
 
-#include <BlobEngine/BlobException.hpp>
-#include <BlobEngine/Reader/FileReader.hpp>
+#include <Blob/Exception.hpp>
+#include <Blob/Reader/FileReader.hpp>
 
 #include <iostream>
 
@@ -27,7 +27,7 @@ namespace Blob::glTF2 {
 			Reader::FileReader fileReader(data[i].uri);
 
 			if (fileReader.getSize() != data[i].byteLength)
-				throw BlobException("File typeSize don't fit");
+				throw Exception("File typeSize don't fit");
 
 			data[i].d.resize(data[i].byteLength);
 
@@ -36,7 +36,7 @@ namespace Blob::glTF2 {
 		}
 
 		if (data.size() > 1)
-			throw BlobException("Multiple Buffer Not Supported");
+			throw Exception("Multiple Buffer Not Supported");
 	}
 
 	std::ostream &operator<<(std::ostream &s, const Buffer &a) {
@@ -51,7 +51,7 @@ namespace Blob::glTF2 {
 		return s;
 	}
 
-	const vector<GLubyte> &Buffer::getData() const {
+	const vector<uint8_t> &Buffer::getData() const {
 		return data[0].d;
 	}
 }

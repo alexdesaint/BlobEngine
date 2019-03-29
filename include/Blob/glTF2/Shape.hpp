@@ -1,9 +1,8 @@
 #ifndef BLOBENGINE_SHAPE_GLTF2_HPP
 #define BLOBENGINE_SHAPE_GLTF2_HPP
 
-#include <BlobEngine/glTF2/Mesh.hpp>
-
-#include <BlobEngine/BlobGL/Shape.hpp>
+#include <Blob/glTF2/Mesh.hpp>
+#include <Blob/GL/Shape.hpp>
 
 namespace Blob::glTF2 {
 

@@ -1,10 +1,9 @@
 #ifndef BLOBENGINE_ACCESSOR_HPP
 #define BLOBENGINE_ACCESSOR_HPP
 
-#include <glad/glad.h>
 #include <vector>
-#include <BlobEngine/glTF2/BufferView.hpp>
-#include <BlobEngine/Reader/JsonExplorer.hpp>
+#include <Blob/glTF2/BufferView.hpp>
+#include <Blob/Reader/JsonExplorer.hpp>
 
 namespace Blob::glTF2 {
 
@@ -17,8 +16,8 @@ namespace Blob::glTF2 {
 		struct Data {
 			int bufferView;            //!< The ID of the bufferView. (required)
 			unsigned int byteOffset = 0;        //!< The offset relative to the start of the bufferView in bytes.
-			GLenum componentType;    //!< The datatype of components in the attribute. (required)
-			GLsizei count;                //!< The number of attributes referenced by this accessor. (required)
+			u_int32_t componentType;    //!< The datatype of components in the attribute. (required)
+            int count;                //!< The number of attributes referenced by this accessor. (required)
 			Type type;                        //!< Specifies if the attribute is a scalar, vector, or matrix. (required)
 			std::vector<float> max;                //!< Maximum value of each component in this attribute.
 			std::vector<float> min;                //!< Minimum value of each component in this attribute.
@@ -30,15 +29,15 @@ namespace Blob::glTF2 {
 
 		explicit Accessor(Reader::JsonExplorer explorer);
 
-		GLsizei getOffset(int Accessor);
+		size_t getOffset(int Accessor);
 
-		GLenum getType(int Accessor);
+		uint32_t getType(int Accessor);
 
-		GLsizei getSize(int Accessor);
+		size_t getSize(int Accessor);
 
-		GLsizei getNumOfVector(int Accessor);
+		size_t getNumOfVector(int Accessor);
 
-		GLuint getValuePerVector(int Accessor);
+		uint32_t getValuePerVector(int Accessor);
 
 		friend std::ostream &operator<<(std::ostream &s, Accessor &a);
 

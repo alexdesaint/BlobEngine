@@ -1,8 +1,8 @@
 #ifndef BLOBENGINE_MESH_HPP
 #define BLOBENGINE_MESH_HPP
 
-#include <BlobEngine/BlobGL/Renderable.hpp>
-#include <BlobEngine/glTF2/Accessor.hpp>
+#include <Blob/GL/Renderable.hpp>
+#include <Blob/glTF2/Accessor.hpp>
 
 namespace Blob::glTF2 {
 
@@ -10,9 +10,9 @@ namespace Blob::glTF2 {
 	private:
 
 		struct Data {
-			GLfloat coor[3];
-			GLfloat normal[3];
-			GLfloat texCoor[2];
+			float_t coor[3];
+            float_t normal[3];
+            float_t texCoor[2];
 		};
 
 		std::vector<Data> dataBuffer;

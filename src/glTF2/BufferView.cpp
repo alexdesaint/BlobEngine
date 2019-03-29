@@ -1,4 +1,4 @@
-#include <BlobEngine/glTF2/BufferView.hpp>
+#include <Blob/glTF2/BufferView.hpp>
 
 #include <iostream>
 
@@ -39,11 +39,11 @@ namespace Blob::glTF2 {
 		return s;
 	}
 
-	GLsizei BufferView::getOffset(int BufferView) {
+    size_t BufferView::getOffset(int BufferView) {
 		return data[BufferView].byteOffset;
 	}
 
-	GLsizei BufferView::getSize(int BufferView, GLsizei offset) {
+    size_t BufferView::getSize(int BufferView, size_t offset) {
 		return data[BufferView].byteLength - offset;
 	}
 }

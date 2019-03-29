@@ -1,9 +1,8 @@
 #ifndef BLOBENGINE_BUFFERVIEW_HPP
 #define BLOBENGINE_BUFFERVIEW_HPP
 
-#include <BlobEngine/Reader/JsonExplorer.hpp>
-#include <BlobEngine/glTF2/Buffer.hpp>
-#include <glad/glad.h>
+#include <Blob/Reader/JsonExplorer.hpp>
+#include <Blob/glTF2/Buffer.hpp>
 #include <vector>
 
 namespace Blob::glTF2 {
@@ -18,8 +17,8 @@ namespace Blob::glTF2 {
 
 		struct Data {
 			int buffer = 0; //! The ID of the buffer. (required)
-			GLsizei byteOffset = 0; //! The offset into the buffer in bytes. (required)
-			GLsizei byteLength = 0; //! The length of the bufferView in bytes. (default: 0)
+			size_t byteOffset = 0; //! The offset into the buffer in bytes. (required)
+            size_t byteLength = 0; //! The length of the bufferView in bytes. (default: 0)
 			Target target = BufferViewTarget_ARRAY_BUFFER; //! The target that the WebGL buffer should be bound to.
 		};
 
@@ -28,9 +27,9 @@ namespace Blob::glTF2 {
 	public:
 		explicit BufferView(Reader::JsonExplorer explorer);
 
-		GLsizei getOffset(int BufferView);
+        size_t getOffset(int BufferView);
 
-		GLsizei getSize(int BufferView, GLsizei offset);
+        size_t getSize(int BufferView, size_t offset);
 
 		friend std::ostream &operator<<(std::ostream &s, const BufferView &a);
 	};

@@ -1,5 +1,7 @@
 add_subdirectory(GL)
-add_subdirectory(VK)
+if (BLOBVK)
+    add_subdirectory(VK)
+endif ()
 add_subdirectory(collision)
 add_subdirectory(geometrie)
 add_subdirectory(glTF2)
