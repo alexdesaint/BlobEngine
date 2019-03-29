@@ -45,7 +45,7 @@ namespace Blob::Collision {
         CollisionDetector::rectStaticList.push_front(this);
         elementIt = CollisionDetector::rectStaticList.begin();
 
-        auto hash = hashCoor(position);
+        auto hash = hashCoor(getPosition());
 
         auto it = CollisionDetector::spacialHash.find(hash);
         if (it == CollisionDetector::spacialHash.end())
@@ -57,7 +57,7 @@ namespace Blob::Collision {
     void RectStatic::disableCollision() {
         CollisionDetector::rectStaticList.erase(elementIt);
 
-        auto hash = hashCoor(position);
+        auto hash = hashCoor(getPosition());
         CollisionDetector::spacialHash[hash].remove(this);
     }
 
@@ -248,56 +248,52 @@ namespace Blob::Collision {
         Vec2f stepMove = frameMove / numOfStep;
 
         for (unsigned int i = 0; i < numOfStep; i++) {
-            Point2f old(object.position);
-
-            object.position.x = object.position.x + stepMove.x;
+            Rectangle r(Vec2f{stepMove.x, 0} + object.getPosition(), object.getSize());
 
             for (Object *target : targets) {
                 if (target != &object) {
-                    if (target->overlap(object)) {
+                    if (target->overlap(r)) {
                         target->hit(object.objectType, object);
                         object.hit(target->objectType, *target);
 
                         if (object.reaction != IGNORE) {
                             i = numOfStep;
-                            object.position = old;
                             break;
                         }
                     }
 
                     if (!object.moove()) {
                         i = numOfStep;
-                        object.position = old;
                         break;
                     }
+
+                    object.setPosition(r.getPosition());
                 } else
                     ImGui::Text("Found Me");
             }
         }
 
         for (unsigned int i = 0; i < numOfStep; i++) {
-            Point2f old(object.position);
-
-            object.position.y = object.position.y + stepMove.y;
+            Rectangle r(Vec2f{stepMove.x, 0} + object.getPosition(), object.getSize());
 
             for (Object *target : targets) {
                 if (target != &object) {
-                    if (target->overlap(object)) {
+                    if (target->overlap(r)) {
                         target->hit(object.objectType, object);
                         object.hit(target->objectType, *target);
 
                         if (object.reaction != IGNORE) {
                             i = numOfStep;
-                            object.position = old;
                             break;
                         }
                     }
 
                     if (!object.moove()) {
                         i = numOfStep;
-                        object.position = old;
                         break;
                     }
+
+                    object.setPosition(r.getPosition());
                 } else
                     ImGui::Text("Found Me");
             }
@@ -367,7 +363,7 @@ namespace Blob::Collision {
         }
 
         if (targets.empty())
-            object.position += frameMove;
+            object.setPosition(frameMove + object.getPosition());
         else
             computeLocalCollision(object, targets, frameMove);
 

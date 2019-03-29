@@ -2,6 +2,7 @@
 #define BLOBENGINE_MOVABLE_HPP
 
 #include <glm/mat4x4.hpp>
+#include <Blob/Geometrie.hpp>
 
 namespace Blob::GL {
 
@@ -18,6 +19,8 @@ namespace Blob::GL {
 		glm::mat4 getModelMatrix() const;
 
 		void setPosition(float x, float y, float z);
+
+        void setPosition(const Vec2f &xy, float z);
 
 		void move(float x, float y, float z);
 

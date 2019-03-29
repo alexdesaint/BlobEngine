@@ -146,14 +146,19 @@ namespace Blob {
 		}
 	};
 
-	template
-	class Vec2<float>;
+    template
+    class Vec2<float>;
 
-	//typedef Vec2<int> Point2i;
+    template
+    class Vec2<int>;
+    //template class Vec2<unsigned int>;
+    //template class Vec2<double>;
+
+    typedef Vec2<int> Point2i;
 	typedef Vec2<float> Point2f;
 	//typedef Vec2<double> Point2d;
 	typedef Vec2<int> Vec2i;
-	typedef Vec2<unsigned int> Vec2ui;
+    //typedef Vec2<unsigned int> Vec2ui;
 	typedef Vec2<float> Vec2f;
 	//typedef Vec2<double> Vec2d;
 
@@ -214,12 +219,14 @@ namespace Blob {
 	};
 
 	class Rectangle : virtual public Form {
-	public:
-		///The center of the rectangle
-		Point2f position;
+    private:
 
-		///full size of the sides
-		Vec2f size;
+        ///The center of the rectangle
+        Point2f position;
+
+        ///full size of the sides
+        Vec2f size;
+    public:
 
 		Rectangle() : position(), size() {}
 
@@ -228,5 +235,13 @@ namespace Blob {
 		std::array<Vec2f, 4> getPoints();
 
 		bool overlap(const Rectangle &r) final;
-	};
+
+        const Point2f &getPosition() const;
+
+        const Vec2f &getSize() const;
+
+        void setPosition(const Point2f &position);
+
+        void setSize(const Vec2f &size);
+    };
 };

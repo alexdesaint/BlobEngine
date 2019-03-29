@@ -13,6 +13,10 @@ namespace Blob::GL {
 		translateMatrix = translate(mat4(1.0f), vec3(x, y, z));
 	}
 
+    void Movable::setPosition(const Vec2f &xy, float z) {
+        translateMatrix = translate(mat4(1.0f), vec3(xy.x, xy.y, z));
+    }
+
 	void Movable::move(float x, float y, float z) {
 		translateMatrix = translate(translateMatrix, vec3(x, y, z));
 	}

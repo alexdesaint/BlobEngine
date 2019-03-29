@@ -25,4 +25,20 @@ namespace Blob {
 		return {position + size/2, position - size/2, position + size.rotate()/2, position - size.rotate()/2};
 	}
 
+    const Point2f &Rectangle::getPosition() const {
+        return position;
+    }
+
+    const Vec2f &Rectangle::getSize() const {
+        return size;
+    }
+
+    void Rectangle::setPosition(const Point2f &position) {
+        Rectangle::position = position;
+    }
+
+    void Rectangle::setSize(const Vec2f &size) {
+        Rectangle::size = size;
+    }
+
 }

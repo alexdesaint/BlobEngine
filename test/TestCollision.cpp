@@ -46,18 +46,16 @@ private:
 			setColor(255, 0, 0);
 		else
 			setColor(0, 100, 100);
-		setPosition(position.x, position.y, 0.5f);
+        Cube::setPosition(getPosition(), 0.5f);
 	}
 
 public:
 
-	explicit MainRect(float x, float y, float r, const std::array<bool, Key::KeyCount> &keys) : RectDynamic(1),
-																								keys(keys) {
-		position = {x, y};
-		size = {r, r};
-
-		setScale(r, r, r);
-		setPosition(x, y, 0.5f);
+    explicit MainRect(float x, float y, float r, const std::array<bool, Key::KeyCount> &keys) :
+            RectDynamic({x, y}, {r, r}, 1),
+            keys(keys) {
+        Cube::setScale(r, r, r);
+        Cube::setPosition(x, y, 0.5f);
 	}
 
 	void hit(int objectType, Object &object) final {
@@ -68,8 +66,8 @@ public:
 class Box : public RectStatic, public Shapes::Cube {
 public:
 	explicit Box(float x, float y, float r = 1) : RectStatic({x, y}, {r, r}, 0) {
-		setScale(r, r, r);
-		setPosition(x, y, r / 2);
+        Cube::setScale(r, r, r);
+        Cube::setPosition(x, y, r / 2);
 	}
 };
 

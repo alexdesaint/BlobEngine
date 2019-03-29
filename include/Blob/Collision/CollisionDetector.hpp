@@ -125,12 +125,11 @@ namespace Blob::Collision {
         }
     };
 
-    class RectStatic : public Object, private Rectangle {
+    class RectStatic : public Object, public Rectangle {
         friend CollisionDetector;
     private:
         std::list<RectStatic *>::iterator elementIt{};
     protected:
-
         void enableCollision();
 
         void disableCollision();
@@ -156,7 +155,9 @@ namespace Blob::Collision {
 
         void disableCollision();
 
-        explicit RectDynamic(const int objectType) : DynamicObject(objectType) {
+        explicit RectDynamic(Vec2f position, Vec2f size, const int objectType) :
+                Rectangle(position, size),
+                DynamicObject(objectType) {
             enableCollision();
         }
 
