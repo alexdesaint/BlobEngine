@@ -10,9 +10,9 @@ namespace Blob::glTF2 {
 	private:
 
 		struct Data {
-			float_t coor[3];
-            float_t normal[3];
-            float_t texCoor[2];
+			float coor[3];
+            float normal[3];
+            float texCoor[2];
 		};
 
 		std::vector<Data> dataBuffer;
