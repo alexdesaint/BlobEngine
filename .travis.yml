@@ -1,18 +1,20 @@
 language: cpp
 compiler:
   - clang
-  - gcc
 sudo: false
 dist: trusty
 addons:
-    apt:
-        packages:
-            - libglm-dev
-            - libxrandr-dev
-            - libxinerama-dev
-            - libxcursor-dev
-            - libxi-dev
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libglm-dev
+      - libxrandr-dev
+      - libxinerama-dev
+      - libxcursor-dev
+      - libxi-dev
+      - libstdc++-7-dev
 before_script:
   - cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release  
 script:
-  - cmake --build build 
+  - cmake --build build
