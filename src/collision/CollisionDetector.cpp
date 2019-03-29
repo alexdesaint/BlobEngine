@@ -367,7 +367,7 @@ namespace Blob::Collision {
         else
             computeLocalCollision(object, targets, frameMove);
 
-        ImGui::Text(s.str().c_str());
+        ImGui::Text("%s", s.str().c_str());
 
         object.postCollisionUpdate();
     }

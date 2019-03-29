@@ -112,7 +112,7 @@ namespace Blob {
 			return {x * invLength, y * invLength};
 		}
 
-		Vec2 setLength(float newLength);
+        Vec2<T> setLength(float newLength);
 
 		Vec2 rotate() {
 			return {-y, x};
@@ -145,14 +145,6 @@ namespace Blob {
 			return std::to_string(x) + ", " + std::to_string(y);
 		}
 	};
-
-    template
-    class Vec2<float>;
-
-    template
-    class Vec2<int>;
-    //template class Vec2<unsigned int>;
-    //template class Vec2<double>;
 
     typedef Vec2<int> Point2i;
 	typedef Vec2<float> Point2f;
