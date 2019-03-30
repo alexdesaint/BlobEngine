@@ -4,7 +4,7 @@ if (BLOBVK)
 endif ()
 add_subdirectory(collision)
 add_subdirectory(geometrie)
-add_subdirectory(glTF2)
+#add_subdirectory(glTF2)
 add_subdirectory(Reader)
 
 add_library(BlobTime Time.cpp)
