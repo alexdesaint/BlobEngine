@@ -25,4 +25,4 @@ matrix:
     - cmake -H. -Bbuild -G"Visual Studio 15 2017"
     script:
     - export PATH=$MSBUILD_PATH:$PATH
-    - msbuild /P:Configuration=Release /std:c++17 /p:Platform=x64 build\ALL_BUILD.vcxproj
+    - MSBuild.exe /P:Configuration=Release /std:c++17 /p:Platform=x64 build\ALL_BUILD.vcxproj
