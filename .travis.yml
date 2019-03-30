@@ -3,6 +3,7 @@ os:
   - windows
 language: cpp
 before_script:
+  - cmake --help
   - cmake -H. -Bbuild -G"Unix Makefiles"
 script:
   - cmake --build build --config Release
