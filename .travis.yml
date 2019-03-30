@@ -1,4 +1,8 @@
 language: cpp
+before_script:
+  - cmake -H. -Bbuild
+script:
+  - cmake --build build --config Release
 matrix:
   include:
     - os: linux
@@ -14,13 +18,4 @@ matrix:
             - libxcursor-dev
             - libxi-dev
             - libstdc++-7-dev
-      before_script:
-        - cmake -H. -Bbuild
-      script:
-        - cmake --build build --config Release
     - os: windows
-      before_script:
-        - nuget install glm
-        - cmake -H. -Bbuild
-      script:
-        - cmake --build build --config Release

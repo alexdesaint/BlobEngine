@@ -6,6 +6,11 @@ set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(json)
 
+#glm
+add_subdirectory(glm)
+set(BUILD_STATIC_LIBS OFF CACHE BOOL "" FORCE)
+set(GLM_TEST_ENABLE OFF CACHE BOOL "" FORCE)
+
 #stb
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE stb/)
