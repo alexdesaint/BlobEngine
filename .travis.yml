@@ -12,7 +12,6 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - libglm-dev
             - libxrandr-dev
             - libxinerama-dev
             - libxcursor-dev
