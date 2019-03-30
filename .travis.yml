@@ -1,20 +1,22 @@
+os:
+  - linux
+  - windows
 language: cpp
 before_script:
   - cmake -H. -Bbuild -G"Unix Makefiles"
 script:
   - cmake --build build --config Release
-matrix:
-  include:
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - libxrandr-dev
-            - libxinerama-dev
-            - libxcursor-dev
-            - libxi-dev
-            - libstdc++-7-dev
-    - os: windows
+compiler: clang
+addons:
+  choco:
+    packages:
+      - make
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libxrandr-dev
+      - libxinerama-dev
+      - libxcursor-dev
+      - libxi-dev
+      - libstdc++-7-dev
