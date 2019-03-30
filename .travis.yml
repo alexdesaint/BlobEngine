@@ -29,7 +29,6 @@ matrix:
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
       before_script:
         - cmake -H. -Bbuild
-  allow_failures:
     - os: windows
       compiler: clang
       before_script:
@@ -39,4 +38,5 @@ matrix:
     - os: windows
       before_script:
         - cmake -H. -Bbuild
-      
+  allow_failures:
+    - os: windows
