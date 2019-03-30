@@ -15,11 +15,12 @@ matrix:
             - libxi-dev
             - libstdc++-7-dev
       before_script:
-        - cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
+        - cmake -H. -Bbuild
       script:
-        - cmake --build build
+        - cmake --build build --config Release
     - os: windows
       before_script:
-        - cmake -H. -Bbuild -G"Visual Studio 15 2017"
+        - nuget install glm
+        - cmake -H. -Bbuild
       script:
         - cmake --build build --config Release
