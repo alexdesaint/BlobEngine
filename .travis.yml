@@ -20,4 +20,5 @@ matrix:
     - os: windows
       before_script:
         - choco install make 
+        - export CXX=clang-cl
         - cmake -H. -Bbuild -G"Unix Makefiles"
