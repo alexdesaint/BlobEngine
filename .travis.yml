@@ -19,7 +19,10 @@ matrix:
     script:
     - cmake --build build
   - os: windows
+    env:
+    - MSBUILD_PATH="C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/Bin"
     before_script:
     - cmake -H. -Bbuild -G"Visual Studio 15 2017"
     script:
-    - msbuild /P:Configuration=Release build\ALL_BUILD.vcxproj /std:c++17
+    - export PATH=$MSBUILD_PATH:$PATH
+    - msbuild /P:Configuration=Release /std:c++17 /p:Platform=x64 build\ALL_BUILD.vcxproj
