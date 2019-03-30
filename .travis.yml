@@ -1,8 +1,6 @@
 language: cpp
 script:
-  - cmake -H. -Bbuild -G"Unix Makefiles"
   - cmake --build build --config Release
-compiler: clang
 addons:
   apt:
     sources:
@@ -16,8 +14,24 @@ addons:
 matrix:
   include:
     - os: linux
+      compiler: clang
+      before_script:
+        - cmake -H. -Bbuild
+    - os: linux
+      compiler: gcc
+      before_script:
+        - cmake -H. -Bbuild
+  allow_failures:
+    - os: windows
+      compiler: clang
+      before_script:
+        - choco install make 
+        - export CC=clang-cl
+        - cmake -H. -Bbuild -G"Unix Makefiles"
     - os: windows
       before_script:
         - choco install make 
         - export CXX=clang-cl
         - export CC=clang-cl
+        - cmake -H. -Bbuild
+      
