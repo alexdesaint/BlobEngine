@@ -34,9 +34,9 @@ matrix:
       before_script:
         - choco install make 
         - export CC=clang-cl
-        - cmake -H. -Bbuild -G"Unix Makefiles" -DCMAKE_GENERATOR_PLATFORM=x64
+        - cmake -H. -Bbuild -G"Unix Makefiles"
     - os: windows
       before_script:
-        - cmake -H. -Bbuild -DCMAKE_GENERATOR_PLATFORM=x64
+        - cmake -H. -Bbuild -G"Visual Studio 15 2017 Win64"
   allow_failures:
     - os: windows
