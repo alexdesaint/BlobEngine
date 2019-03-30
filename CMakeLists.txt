@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 project(BlobEngine LANGUAGES CXX C)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+set(BUILD_SHARED_LIBS OFF)
 
 option(BLOBTEST "Build the tests" OFF)
 option(BLOBVK "Build Vulkan" OFF)

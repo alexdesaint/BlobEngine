@@ -7,6 +7,7 @@ set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(json)
 
 #glm
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(GLM_TEST_ENABLE OFF CACHE BOOL "" FORCE)
 add_subdirectory(glm)
 
