@@ -37,6 +37,6 @@ matrix:
         - cmake -H. -Bbuild -G"Unix Makefiles"
     - os: windows
       before_script:
-        - cmake -H. -Bbuild
+        - cmake -H. -Bbuild -G"Visual Studio 15 2017 Win64"
   allow_failures:
     - os: windows
