@@ -16,7 +16,7 @@ namespace Blob::glTF2 {
 		struct Data {
 			int bufferView;            //!< The ID of the bufferView. (required)
 			unsigned int byteOffset = 0;        //!< The offset relative to the start of the bufferView in bytes.
-			u_int32_t componentType;    //!< The datatype of components in the attribute. (required)
+			uint32_t componentType;    //!< The datatype of components in the attribute. (required)
             int count;                //!< The number of attributes referenced by this accessor. (required)
 			Type type;                        //!< Specifies if the attribute is a scalar, vector, or matrix. (required)
 			std::vector<float> max;                //!< Maximum value of each component in this attribute.
