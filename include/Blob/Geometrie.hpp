@@ -140,10 +140,6 @@ namespace Blob {
 			os << dt.x << ", " << dt.y;
 			return os;
 		}
-
-		std::string str() {
-			return std::to_string(x) + ", " + std::to_string(y);
-		}
 	};
 
     typedef Vec2<int> Point2i;

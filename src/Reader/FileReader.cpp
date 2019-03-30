@@ -3,6 +3,7 @@
 #include <Blob/Exception.hpp>
 #include <sstream>
 #include <iostream>
+#include <vector>
 
 namespace Blob::Reader {
 
@@ -37,13 +38,13 @@ namespace Blob::Reader {
 
 	std::string FileReader::getString(int length) {
 
-		char buffer[length + 1];
+		std::vector<char> buffer(length + 1);
 
-		inFile.read(buffer, length);
+		inFile.read(buffer.data(), length);
 
 		buffer[length] = '\0';
 
-		return std::string(buffer);
+		return std::string(buffer.begin(), buffer.end());
 	}
 
 	std::string FileReader::toString() {
