@@ -2,6 +2,7 @@
 #include <list>
 #include <deque>
 
+class test_class;
 #include <Blob/Collision/CollisionDetector.hpp>
 
 #include <Blob/GL/Graphic.hpp>
@@ -9,9 +10,109 @@
 #include <imgui.h>
 
 
+using namespace std;
 using namespace Blob;
 using namespace Blob::Collision;
 using namespace Blob::GL;
+
+class test_class {
+public:
+    CollisionDetector collisionDetector;
+
+    test_class() {
+        Vec2f p1(-3.4, -2.9), p2(3, -2), p3(3, 2), p4(-3, 2);
+
+        if(p1.cast<int>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p1)))
+            cout << "ERROR : " << p1 << " --hash--unhash-> " <<
+            CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p1)) << endl;
+
+        if(p2.cast<int>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p2)))
+            cout << "ERROR : " << p1 << " --hash--unhash-> " <<
+                 CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p2)) << endl;
+
+        if(p3.cast<int>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p3)))
+            cout << "ERROR : " << p1 << " --hash--unhash-> " <<
+                 CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p3)) << endl;
+
+        if(p4.cast<int>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p4)))
+            cout << "ERROR : " << p1 << " --hash--unhash-> " <<
+                 CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p4)) << endl;
+/*
+        for(auto &p : CollisionDetector::getPath(p1, p2))
+            cout << CollisionDetector::unhashCoor(p) << endl;
+
+        for(auto &p : CollisionDetector::getPath(p2, p3))
+            cout << CollisionDetector::unhashCoor(p) << endl;
+
+        for(auto &p : CollisionDetector::getPath(p3, p4))
+            cout << CollisionDetector::unhashCoor(p) << endl;
+
+        for(auto &p : CollisionDetector::getPath(p4, p1))
+            cout << CollisionDetector::unhashCoor(p) << endl;*/
+
+        cout << "spacialHash :" << endl;
+        for(const auto& p : CollisionDetector::spacialHash) {
+            cout << CollisionDetector::unhashCoor(p.first) << endl;
+            for(Object* k : p.second) {
+                cout << k << endl;
+            }
+        }
+
+
+        RectStatic rs({2.5, 2.5}, {0.1, 0.1}, 0);
+        cout << "adding : " << &rs << " to map" << endl;
+
+        RectDynamic rd({3.5, 2.5}, {0.1, 0.1}, 0);
+        cout << "adding : " << &rd << " to map" << endl;
+
+        cout << "spacialHash :" << endl;
+        for(auto p : CollisionDetector::spacialHash) {
+            cout << CollisionDetector::unhashCoor(p.first) << endl;
+            for(Object* k : p.second) {
+                cout << k << endl;
+            }
+        }
+
+        cout << "Old pos : " << rd.getPosition() << endl;
+
+        //CollisionDetector::computeLocalCollision(rd, CollisionDetector::spacialHash[CollisionDetector::hashCoor(rs.getPosition())],
+        //        {-2, 0});
+
+        cout << "New pos : " << rd.getPosition() << endl;
+
+        cout << "spacialHash :" << endl;
+        for(auto p : CollisionDetector::spacialHash) {
+            cout << CollisionDetector::unhashCoor(p.first) << endl;
+            for(Object* k : p.second) {
+                cout << k << endl;
+            }
+        }
+
+
+        //test rasterize
+        cout << "Rasterize" << endl;
+        for(auto i : Rectangle({2, 2}, {2, 2}).rasterize())
+            cout << i << endl;
+
+        cout << "Rasterize" << endl;
+        for(auto i : Rectangle({2, 2}, {1, 3}).rasterize())
+            cout << i << endl;
+
+        cout << "Rasterize" << endl;
+        for(auto i : Rectangle({2.5, 2.5}, {0.8, 0.8}).rasterize())
+            cout << i << endl;
+    }
+
+    ~test_class() {
+        cout << "spacialHash (should be empty) :" << endl;
+        for(auto p : CollisionDetector::spacialHash) {
+            cout << CollisionDetector::unhashCoor(p.first) << endl;
+            for(Object* k : p.second) {
+                cout << k << endl;
+            }
+        }
+    }
+};
 
 class MainRect : public RectDynamic, public Shapes::Cube {
 private:
@@ -65,13 +166,15 @@ public:
 
 class Box : public RectStatic, public Shapes::Cube {
 public:
-	explicit Box(float x, float y, float r = 1) : RectStatic({x, y}, {r, r}, 0) {
+	Box(float x, float y, float r = 1) : RectStatic({x, y}, {r, r}, 0) {
         Cube::setScale(r, r, r);
         Cube::setPosition(x, y, r / 2);
 	}
 };
 
 int main() {
+
+    test_class();
 
 	try {
 		Graphic graphic(false);
@@ -87,7 +190,7 @@ int main() {
 		rectanges.emplace_back(-1, 0);
 		rectanges.emplace_back(0, -1);
 
-		rectanges.emplace_back(2.5, 2.5, 0.8);
+		rectanges.emplace_back(3, 3, 0.8);
 
 		graphic.setCameraPosition(10, 0, 10);
 

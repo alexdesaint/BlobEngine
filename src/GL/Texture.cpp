@@ -36,7 +36,7 @@ namespace Blob::GL {
 		else
 			textureLoaded = true;
 
-		unsigned char* rgb = stbi_load( path.c_str(), &width, &height, &bitPerPixel, 3 );
+		unsigned char* rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
 
 		if (rgb == nullptr) {
 			throw Exception("Fail to load Texture : " + path);

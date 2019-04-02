@@ -5,35 +5,69 @@
 
 //debug
 #include <imgui.h>
-#include <sstream>
 
 #include <Blob/Collision/CollisionDetector.hpp>
 
 
 namespace Blob::Collision {
 
-    int64_t hashCoor(Vec2f pos) {
-        return (0xFFFFFFFF & (int32_t) pos.x) | ((int64_t) pos.y << 32);
+    uint64_t CollisionDetector::hashCoor(Vec2f pos) {
+        return (0xFFFFFFFF & (uint64_t) (uint32_t) (pos.x)) | ((uint64_t) (uint32_t) (pos.y) << 32);
     }
 
-    int64_t hashCoor(Vec2i pos) {
-        return (0xFFFFFFFF & (int32_t) pos.x) | ((int64_t) pos.y << 32);
+    Vec2i CollisionDetector::unhashCoor(uint64_t pos) {
+        uint32_t x = 0xFFFFFFFF & pos;
+        uint32_t y = 0xFFFFFFFF & (pos >> 32);
+        return {(int32_t) x, (int32_t) y};
     }
 
-    //CircleStatic
-    void CircleStatic::enableCollision() {
-        CollisionDetector::circleStaticList.push_front(this);
-        elementIt = CollisionDetector::circleStaticList.begin();
+    uint64_t CollisionDetector::hashCoor(Vec2i pos) {
+        return (0xFFFFFFFF & (uint32_t) pos.x) | ((uint64_t) pos.y << 32);
     }
 
-    void CircleStatic::disableCollision() {
-        CollisionDetector::circleStaticList.erase(elementIt);
+    void CollisionDetector::addToSpacialHash(std::list<Vec2i> pos, Blob::Collision::Object *o) {
+        for (const auto &p : pos) {
+            auto hash = CollisionDetector::hashCoor(p);
+
+            auto it = CollisionDetector::spacialHash.find(hash);
+            if (it == CollisionDetector::spacialHash.end())
+                CollisionDetector::spacialHash[hash] = {o};
+            else {
+                if (it->second.find(o) == it->second.end())
+                    it->second.insert(o);
+                else
+                    throw Exception("Insertion in Spacial Hash but element already exist");
+            }
+        }
     }
 
-    //CircleDynamic
-    void CircleDynamic::enableCollision() {
-        CollisionDetector::circleDynamicList.push_front(this);
-        elementIt = CollisionDetector::circleDynamicList.begin();
+    void CollisionDetector::removeFromSpacialHash(std::list<Vec2i> pos, Blob::Collision::Object *o) {
+        for (const auto &p : pos) {
+            auto hash = CollisionDetector::hashCoor(p);
+            auto d = CollisionDetector::spacialHash[hash].erase(o);
+
+            if (d != 1)
+                throw Exception("Remove in Spacial Hash but no element");
+
+            if (CollisionDetector::spacialHash[hash].empty())
+                CollisionDetector::spacialHash.erase(hash);
+        }
+    }
+
+    //Object
+    std::list<Object *> Object::getImtemsHere(Blob::Vec2f pos) {
+        auto hash = CollisionDetector::hashCoor(pos);
+
+        auto it = CollisionDetector::spacialHash.find(hash);
+        if (it == CollisionDetector::spacialHash.end())
+            return std::list<Object *>();
+        else
+            return std::list<Object *>(CollisionDetector::spacialHash[hash].begin(),
+                                       CollisionDetector::spacialHash[hash].end());
+    }
+
+    int Object::getObjectType() const {
+        return objectType;
     }
 
     void CircleDynamic::disableCollision() {
@@ -42,53 +76,39 @@ namespace Blob::Collision {
 
     //RectStatic
     void RectStatic::enableCollision() {
-        CollisionDetector::rectStaticList.push_front(this);
-        elementIt = CollisionDetector::rectStaticList.begin();
-
-        auto hash = hashCoor(getPosition());
-
-        auto it = CollisionDetector::spacialHash.find(hash);
-        if (it == CollisionDetector::spacialHash.end())
-            CollisionDetector::spacialHash[hash] = {this};
-        else
-            it->second.push_back(this);
+        CollisionDetector::addToSpacialHash(rasterize(), this);
     }
 
     void RectStatic::disableCollision() {
-        CollisionDetector::rectStaticList.erase(elementIt);
-
-        auto hash = hashCoor(getPosition());
-        CollisionDetector::spacialHash[hash].remove(this);
+        CollisionDetector::removeFromSpacialHash(rasterize(), this);
     }
 
     //RectDynamic
     void RectDynamic::enableCollision() {
         CollisionDetector::rectDynamicList.push_front(this);
         elementIt = CollisionDetector::rectDynamicList.begin();
+
+        CollisionDetector::addToSpacialHash(rasterize(), this);
     }
 
     void RectDynamic::disableCollision() {
         CollisionDetector::rectDynamicList.erase(elementIt);
+
+        CollisionDetector::removeFromSpacialHash(rasterize(), this);
     }
 
     //LineStatic
     void LineStatic::enableCollision() {
-        CollisionDetector::lineStaticList.push_front(this);
-        elementIt = CollisionDetector::lineStaticList.begin();
     }
 
     void LineStatic::disableCollision() {
-        CollisionDetector::lineStaticList.erase(elementIt);
     }
 
     //CollisionDetector
-    std::unordered_map<int64_t, std::list<Object *>> CollisionDetector::spacialHash;
+    std::unordered_map<int64_t, std::unordered_set<Object *>> CollisionDetector::spacialHash;
 
-    std::list<CircleStatic *> CollisionDetector::circleStaticList{};
     std::list<CircleDynamic *> CollisionDetector::circleDynamicList{};
-    std::list<RectStatic *> CollisionDetector::rectStaticList{};
     std::list<RectDynamic *> CollisionDetector::rectDynamicList{};
-    std::list<LineStatic *> CollisionDetector::lineStaticList{};
 
     float getElapsedTime() {
         static std::chrono::high_resolution_clock::time_point lastFrameTime;
@@ -227,75 +247,60 @@ namespace Blob::Collision {
 		object.enableCollision();
 	}
 */
-    //classic object to object test
-    void
-    CollisionDetector::computeLocalCollision(RectDynamic &object, const std::list<Object *> &targets, Vec2f frameMove) {
 
-        /*if (object.speed.isNull()) {
-            for (RectStatic *rect : rectStaticList) {
-                if (rect->overlap(object) || object.overlap(*rect)) {
-                    rect->hit(object.objectType, object);
-                    object.hit(rect->objectType, *rect);
+    bool
+    CollisionDetector::targetOverlap(RectDynamic &object, Rectangle &r, const std::unordered_set<Object *> &targets,
+                                     std::unordered_map<Object *, Reaction> &hittedObjects) {
+        bool ret = false;
+
+        for (Object *target : targets) {
+            if (target->overlap(r)) {
+                if (hittedObjects.find(target) == hittedObjects.end()) {
+                    target->hit(object.objectType, object);
+                    object.hit(target->objectType, *target);
+                    hittedObjects[target] = object.reaction;
+                }
+
+                if (hittedObjects[target] == STOP) {
+                    ret = true;
                 }
             }
+        }
+        return ret;
+    }
 
-            object.postCollisionUpdate();
-            return;
-        }*/
+    void
+    CollisionDetector::computeLocalCollision(RectDynamic &object, const std::unordered_set<Object *> &targets,
+                                             Vec2f frameMove) {
 
         auto numOfStep = static_cast<unsigned int>(ceil(frameMove.length() * 100));
 
         Vec2f stepMove = frameMove / numOfStep;
 
+        Rectangle r({}, object.getSize());
+
+        std::unordered_map<Object *, Reaction> hittedObjects;
+
         for (unsigned int i = 0; i < numOfStep; i++) {
-            Rectangle r(Vec2f{stepMove.x, 0} + object.getPosition(), object.getSize());
 
-            for (Object *target : targets) {
-                if (target != &object) {
-                    if (target->overlap(r)) {
-                        target->hit(object.objectType, object);
-                        object.hit(target->objectType, *target);
+            r.setPosition(object.getPosition() + Vec2f{stepMove.x, 0});
 
-                        if (object.reaction != IGNORE) {
-                            i = numOfStep;
-                            break;
-                        }
-                    }
+            if (!targetOverlap(object, r, targets, hittedObjects)) {
+                object.setPosition(r.getPosition());
 
-                    if (!object.moove()) {
-                        i = numOfStep;
-                        break;
-                    }
-
-                    object.setPosition(r.getPosition());
-                } else
-                    ImGui::Text("Found Me");
+                if (!object.keepMoving()) {
+                    break;
+                }
             }
-        }
 
-        for (unsigned int i = 0; i < numOfStep; i++) {
-            Rectangle r(Vec2f{stepMove.x, 0} + object.getPosition(), object.getSize());
+            r.setPosition(object.getPosition() + Vec2f{0, stepMove.y});
 
-            for (Object *target : targets) {
-                if (target != &object) {
-                    if (target->overlap(r)) {
-                        target->hit(object.objectType, object);
-                        object.hit(target->objectType, *target);
+            if (!targetOverlap(object, r, targets, hittedObjects)) {
+                object.setPosition(r.getPosition());
 
-                        if (object.reaction != IGNORE) {
-                            i = numOfStep;
-                            break;
-                        }
-                    }
-
-                    if (!object.moove()) {
-                        i = numOfStep;
-                        break;
-                    }
-
-                    object.setPosition(r.getPosition());
-                } else
-                    ImGui::Text("Found Me");
+                if (!object.keepMoving()) {
+                    break;
+                }
             }
         }
     }
@@ -309,7 +314,7 @@ namespace Blob::Collision {
      * @param dest Final position of the path
      * @return list of the block position between these two points
      */
-    list<int64_t> getPath(Vec2i pos, Vec2i dest) {
+    list<int64_t> CollisionDetector::getPath(Vec2i pos, Vec2i dest) {
         list<int64_t> path;
         int i, iMax;
         if (pos.x < dest.x) {
@@ -345,29 +350,30 @@ namespace Blob::Collision {
         list<int64_t> path;
 
         for (auto p : object.getPoints()) {
-            ImGui::Text("%.1f, %.1f", p.x, p.y);
             auto a = getPath(p.cast<int>(), (p + frameMove).cast<int>());
             path.insert(path.end(), a.begin(), a.end());
         }
 
-        stringstream s;
-
-        std::list<Object *> targets;
+        std::unordered_set<Object *> targets;
 
         for (const auto &p : path) {
-            s << hex << p << " ";
-
             auto search = spacialHash.find(p);
-            if (search != spacialHash.end())
-                targets.insert(targets.end(), spacialHash[p].begin(), spacialHash[p].end());
+            if (search != spacialHash.end()) {
+                targets.insert(spacialHash[p].begin(), spacialHash[p].end());
+            }
         }
+
+        targets.erase(&object);
+
+        removeFromSpacialHash(object.rasterize(), &object);
 
         if (targets.empty())
             object.setPosition(frameMove + object.getPosition());
         else
             computeLocalCollision(object, targets, frameMove);
 
-        ImGui::Text("%s", s.str().c_str());
+        addToSpacialHash(object.rasterize(), &object);
+
 
         object.postCollisionUpdate();
     }

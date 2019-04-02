@@ -3,6 +3,7 @@
 #include <cfloat>
 #include <ostream>
 #include <array>
+#include <list>
 
 #define PI 3.14159265f
 
@@ -13,6 +14,7 @@ namespace Blob {
 	public:
 		T x = 0, y = 0;
 
+		//Constructors
 		Vec2() = default;
 
 		Vec2(T x, T y) : x(x), y(y) {}
@@ -23,54 +25,70 @@ namespace Blob {
 		}
 
 		//operator with Vec2
-		Vec2 operator-(const Vec2 &v) {
+        bool operator==(const Vec2 &v) const {
+            return x == v.x && y == v.y;
+        }
+
+        bool operator!=(const Vec2 &v) const {
+            return x != v.x || y != v.y;
+        }
+
+		Vec2 operator-(const Vec2 &v) const {
 			return {x - v.x, y - v.y};
 		}
 
-		Vec2 operator+(const Vec2 &v) {
+		Vec2 operator+(const Vec2 &v) const {
 			return {x + v.x, y + v.y};
 		}
 
-		Vec2 operator*(const Vec2 &v) {
+		Vec2 operator*(const Vec2 &v) const {
 			return {x * v.x, y * v.y};
 		}
 
-		Vec2 operator/(const Vec2 &v) {
+		Vec2 operator/(const Vec2 &v) const {
 			return {x / v.x, y / v.y};
 		}
 
-		/*
-		Vec2& operator=(Vec2 mat2) {
-			return {x * mat2.x, y * mat2.y};
-		}
-		*/
+        void operator+=(const Vec2 &v) {
+            x += v.x;
+            y += v.y;
+        }
 
-		/// Add a vector to this vector.
-		void operator+=(const Vec2 &v) {
-			x += v.x;
-			y += v.y;
-		}
+        void operator-=(const Vec2 &v) {
+            x -= v.x;
+            y -= v.y;
+        }
 
-		/// Subtract a vector from this vector.
-		void operator-=(const Vec2 &v) {
-			x -= v.x;
-			y -= v.y;
+        void operator*=(const Vec2 &v) {
+            x *= v.x;
+            y *= v.y;
+        }
+
+        void operator/=(const Vec2 &v) {
+            x /= v.x;
+            y /= v.y;
+        }
+
+        Vec2 &operator=(const Vec2 &v) {
+            x = v.x;
+            y = v.y;
+			return *this;
 		}
 
 		//operator with T
-		Vec2 operator+(T a) {
+		Vec2 operator+(T a) const {
 			return {a + x, a + y};
 		}
 
-		Vec2 operator-(T a) {
+		Vec2 operator-(T a) const {
 			return {x - a, y - a};
 		}
 
-		Vec2 operator*(T a) {
+		Vec2 operator*(T a) const {
 			return {a * x, a * y};
 		}
 
-		Vec2 operator/(T a) {
+		Vec2 operator/(T a) const {
 			return {x / a, y / a};
 		}
 
@@ -84,7 +102,7 @@ namespace Blob {
 			y -= a;
 		}
 
-		void operator*=(T a) {/// Multiply this vector by a scalar.
+		void operator*=(T a) {
 			x *= a;
 			y *= a;
 		}
@@ -94,17 +112,24 @@ namespace Blob {
 			y /= a;
 		}
 
-		T length2() {
+        Vec2 &operator=(const T a) {
+            x = a;
+            y = a;
+            return *this;
+        }
+
+        //Functions
+		T length2() const {
 			return x * x + y * y;
 		}
 
-		float length();
+		float length() const;
 
-		T scalaire(Vec2 B) {
+		T scalaire(Vec2 B) const {
 			return x * B.x + y * B.y;
 		}
 
-		Vec2<float> getNormal() {
+		Vec2<float> getNormal() const {
 			float l = length();
 
 			float invLength = 1.f / l;
@@ -114,28 +139,29 @@ namespace Blob {
 
         Vec2<T> setLength(float newLength);
 
-		Vec2 rotate() {
+		Vec2 rotate() const {
 			return {-y, x};
 		}
 
-		float getOrientation();
+		float getOrientation() const;
 
-		float getOrientationDeg();
+		float getOrientationDeg() const;
 
 		void reset() {
 			x = 0;
 			y = 0;
 		}
 
-		bool isNull() {
+		bool isNull() const {
 			return ((x == 0) && (y == 0));
 		}
 
 		template<typename U>
-		Vec2<U> cast() {
+		Vec2<U> cast() const {
 			return {(U) x, (U) y};
 		}
 
+		//Print operator
 		friend std::ostream &operator<<(std::ostream &os, const Vec2 &dt) {
 			os << dt.x << ", " << dt.y;
 			return os;
@@ -222,7 +248,11 @@ namespace Blob {
 
 		std::array<Vec2f, 4> getPoints();
 
+		bool overlapBigger(const Rectangle &r) const;
+
 		bool overlap(const Rectangle &r) final;
+
+		std::list<Vec2i> rasterize();
 
         const Point2f &getPosition() const;
 

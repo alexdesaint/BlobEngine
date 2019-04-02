@@ -29,11 +29,15 @@ namespace Blob::GL {
 		rotateMatrix = glm::rotate(rotateMatrix, r, vec3(x, y, z));
 	}
 
-	void Movable::setScale(float x, float y, float z) {
-		scaleMatrix = scale(mat4(1.0f), vec3(x, y, z));
+	void Movable::setScale(float xyz) {
+		scaleMatrix = scale(mat4(1.0f), vec3(xyz, xyz, xyz));
 	}
 
-	void Movable::rescale(float x, float y, float z) {
-		scaleMatrix = scale(scaleMatrix, vec3(x, y, z));
+    void Movable::setScale(float x, float y, float z) {
+        scaleMatrix = scale(mat4(1.0f), vec3(x, y, z));
+    }
+
+	void Movable::rescale(float xyz) {
+		scaleMatrix = scale(scaleMatrix, vec3(xyz, xyz, xyz));
 	}
 }

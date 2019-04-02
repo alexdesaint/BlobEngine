@@ -1,3 +1,5 @@
+#include <utility>
+
 #ifndef BLOBENGINE_BLOBEXCEPTION_HPP
 #define BLOBENGINE_BLOBEXCEPTION_HPP
 
@@ -5,18 +7,20 @@
 #include <utility>
 #include <string>
 
-class Exception : public std::exception {
-private:
-	const std::string errorMsg;
+namespace Blob {
+    class Exception : public std::exception {
+    private:
+        const std::string errorMsg;
 
-public:
-	//explicit Exception(const char *errorMsg) : errorMsg(errorMsg){}
+    public:
+        //explicit Exception(const char *errorMsg) : errorMsg(errorMsg){}
 
-	explicit Exception(std::string errorMsg) : errorMsg(std::move(errorMsg)) {}
+        explicit Exception(std::string errorMsg) : errorMsg(std::move(errorMsg)) {}
 
-	const char *what() const noexcept override {
-		return errorMsg.c_str();
-	}
-};
+        const char *what() const noexcept override {
+            return errorMsg.c_str();
+        }
+    };
+}
 
 #endif //BLOBENGINE_BLOBEXCEPTION_HPP

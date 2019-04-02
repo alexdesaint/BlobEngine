@@ -28,8 +28,10 @@ namespace Blob::GL {
 
 		void rotate(float r, float x, float y, float z);
 
+		void setScale(float xyz);
 		void setScale(float x, float y, float z);
 
+		void rescale(float xyz);
 		void rescale(float x, float y, float z);
 	};
 }

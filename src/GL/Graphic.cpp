@@ -37,7 +37,7 @@ static void GLAPIENTRY openglCallbackFunction(
 
 	switch (severity) {
 		case GL_DEBUG_SEVERITY_NOTIFICATION :
-			std::cout << "Notification :" << std::endl << message;
+			std::cout << "Notification :" << std::endl << message << std::endl;
 			break;
 		case GL_DEBUG_SEVERITY_LOW:
 			std::cout << "Low severity Error :" << std::endl << message;

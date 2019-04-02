@@ -12,31 +12,31 @@ namespace Blob {
     class Vec2<int>;
 
 	template<typename T>
-    float Vec2<T>::length() {
+    float Vec2<T>::length() const {
 		return std::sqrt(x * x + y * y);
 	}
 
-    template float Vec2<float>::length();
+    template float Vec2<float>::length() const;
 
-    template float Vec2<int>::length();
+    template float Vec2<int>::length() const;
 
 	template<typename T>
-    float Vec2<T>::getOrientation() {
+    float Vec2<T>::getOrientation() const{
 		return std::atan2(y, x);
 	}
 
-    template float Vec2<float>::getOrientation();
+    template float Vec2<float>::getOrientation() const;
 
-    template float Vec2<int>::getOrientation();
+    template float Vec2<int>::getOrientation() const;
 
 	template<typename T>
-    float Vec2<T>::getOrientationDeg() {
+    float Vec2<T>::getOrientationDeg() const{
 		return std::atan2(y, x) * 180 / PI;
 	}
 
-    template float Vec2<float>::getOrientationDeg();
+    template float Vec2<float>::getOrientationDeg() const;
 
-    template float Vec2<int>::getOrientationDeg();
+    template float Vec2<int>::getOrientationDeg() const;
 
     template<typename T>
     Vec2<T> Vec2<T>::setLength(float newLength) {

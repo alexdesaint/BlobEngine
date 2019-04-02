@@ -1,11 +1,11 @@
-#include <BlobEngine/BlobGL/Graphic.hpp>
-#include <BlobEngine/BlobGL/Shapes.hpp>
+#include <Blob/GL/Graphic.hpp>
+#include <Blob/GL/Shapes.hpp>
 
-#include <BlobEngine/Time.hpp>
-#include <BlobEngine/BlobException.hpp>
+#include <Blob/Time.hpp>
+#include <Blob/Exception.hpp>
 #include <iostream>
 
-#include <BlobEngine/imguiForBlob.hpp>
+#include <imgui.h>
 #include <glad/glad.h>
 
 using namespace std;
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
 			graphic.display();
 		}
 
-	} catch (BlobException &exception) {
+	} catch (Exception &exception) {
 		cout << exception.what() << std::endl;
 	}
 

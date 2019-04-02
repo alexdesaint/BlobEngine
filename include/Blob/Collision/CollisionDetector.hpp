@@ -7,6 +7,7 @@
 #include <deque>
 #include <list>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace Blob::Collision {
 
@@ -35,6 +36,11 @@ namespace Blob::Collision {
         explicit Object(int objectType) : objectType(objectType) {}
 
         virtual void hit(int objectType, Object &object) {}
+
+        std::list<Object *> getImtemsHere(Vec2f pos);
+
+    public:
+        int getObjectType() const;
     };
 
     class DynamicObject : public Object {
@@ -67,7 +73,7 @@ namespace Blob::Collision {
          *
          * @return return true to keep moving or false to stop
          */
-        virtual bool moove() {
+        virtual bool keepMoving() {
             return true;
         };
 
@@ -134,6 +140,7 @@ namespace Blob::Collision {
 
         void disableCollision();
 
+    public:
         explicit RectStatic(Vec2f position, Vec2f size, const int objectType) :
                 Rectangle(position, size),
                 Object(objectType) {
@@ -155,6 +162,7 @@ namespace Blob::Collision {
 
         void disableCollision();
 
+    public:
         explicit RectDynamic(Vec2f position, Vec2f size, const int objectType) :
                 Rectangle(position, size),
                 DynamicObject(objectType) {
@@ -192,21 +200,38 @@ namespace Blob::Collision {
         friend RectStatic;
         friend RectDynamic;
         friend LineStatic;
+        friend Object;
+#ifdef TEST
+        friend test_class;
+#endif
     private:
 
-        static std::unordered_map<int64_t, std::list<Object *>> spacialHash;
+        static std::unordered_map<int64_t, std::unordered_set<Object *>> spacialHash;
 
-        static std::list<CircleStatic *> circleStaticList;
         static std::list<CircleDynamic *> circleDynamicList;
-        static std::list<RectStatic *> rectStaticList;
         static std::list<RectDynamic *> rectDynamicList;
-        static std::list<LineStatic *> lineStaticList;
 
-        float timeFlow;
+        float timeFlow = 0;
 
         bool timeStoped = false;
 
-        void computeLocalCollision(RectDynamic &object, const std::list<Object *> &targets, Blob::Vec2f frameMove);
+        static uint64_t hashCoor(Vec2f pos);
+
+        static Vec2i unhashCoor(uint64_t pos);
+
+        static uint64_t hashCoor(Vec2i pos);
+
+        static void addToSpacialHash(std::list<Vec2i> pos, Object *o);
+
+        static void removeFromSpacialHash(std::list<Vec2i> pos, Object *o);
+
+        static bool targetOverlap(RectDynamic &object, Rectangle &r, const std::unordered_set<Object *> &targets,
+                                  std::unordered_map<Object *, Reaction> &hittedObjects);
+
+        static void
+        computeLocalCollision(RectDynamic &object, const std::unordered_set<Object *> &targets, Blob::Vec2f frameMove);
+
+        static std::list<int64_t> getPath(Vec2i pos, Vec2i dest);
 
     public:
 
