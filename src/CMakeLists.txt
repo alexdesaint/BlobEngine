@@ -10,3 +10,8 @@ add_subdirectory(Reader)
 add_library(BlobTime STATIC Time.cpp)
 add_library(Blob::Time ALIAS BlobTime)
 target_include_directories(BlobTime PUBLIC ../include)
+
+add_library(BlobControls STATIC Controls.cpp)
+add_library(Blob::Controls ALIAS BlobControls)
+target_link_libraries(BlobControls glfw imgui)
+target_include_directories(BlobControls PUBLIC ../include)
