@@ -249,7 +249,7 @@ namespace Blob {
             keys[GLFW_KEY_ESCAPE + 1] = &Keys::ESCAPE;
             keys[GLFW_KEY_ENTER + 1] = &Keys::ENTER;
             keys[GLFW_KEY_TAB + 1] = &Keys::TAB;
-            keys[GLFW_KEY_BACKSPACE + 1] = &Keys::BACKSLASH;
+            keys[GLFW_KEY_BACKSPACE + 1] = &Keys::BACKSPACE;
             keys[GLFW_KEY_INSERT + 1] = &Keys::INSERT;
             keys[GLFW_KEY_DELETE + 1] = &Keys::DELETE;
             keys[GLFW_KEY_RIGHT + 1] = &Keys::RIGHT;
