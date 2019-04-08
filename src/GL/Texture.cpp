@@ -10,31 +10,29 @@
 
 namespace Blob::GL {
 
-	Texture::Texture() {
-		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
+    void Texture::init(){
+        if (textureLoaded)
+            glDeleteTextures(1, &texture);
+
+        glCreateTextures(GL_TEXTURE_2D, 1, &texture);
+        textureLoaded = true;
 	}
 
 	Texture::Texture(const std::string &path, bool nearest) {
-		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
 		loadBMP(path, nearest);
 	}
 
 	Texture::Texture(uint8_t r, uint8_t g, uint8_t b) {
-		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-
 		setColor(r, g, b);
 	}
 
 	Texture::~Texture() {
-		glDeleteTextures(1, &texture);
+        if(textureLoaded)
+		    glDeleteTextures(1, &texture);
 	}
 
 	void Texture::loadBMP(const std::string &path, bool nearest) {
-
-		if (textureLoaded)
-			reset();
-		else
-			textureLoaded = true;
+        init();
 
 		unsigned char* rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
 
@@ -56,11 +54,7 @@ namespace Blob::GL {
 	}
 
 	void Texture::setColor(uint8_t r, uint8_t g, uint8_t b) {
-
-		if (textureLoaded)
-			reset();
-		else
-			textureLoaded = true;
+        init();
 
 		uint8_t color[3] = {r, g, b};
 		this->width = 1;
@@ -72,10 +66,7 @@ namespace Blob::GL {
 	}
 
 	void Texture::setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height, bool nearest) {
-		if (textureLoaded) {
-			reset();
-			textureLoaded = false;
-		}
+        init();
 
 		this->width = width;
 		this->height = height;
@@ -93,17 +84,8 @@ namespace Blob::GL {
 		textureLoaded = true;
 	}
 
-	void Texture::reset() {
-		glDeleteTextures(1, &texture);
-		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-	}
-
 	unsigned int Texture::getTextureID() const {
 		return texture;
-	}
-
-	void Texture::setTextureScale(Blob::Vec2f s) {
-		Texture::textureScale = s;
 	}
 
 	Vec2f Texture::getTextureSize() const {

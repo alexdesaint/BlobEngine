@@ -29,6 +29,8 @@ namespace Blob::GL {
 
 		Texture *texture = nullptr;
 
+        Blob::Vec2f textureScale = {1, 1};
+
 	public:
 		bool cullFace = true;
 		bool depthTest = true;
@@ -45,7 +47,11 @@ namespace Blob::GL {
 		void setIndices(unsigned short *indices, int32_t numOfIndices, uint32_t indicesType);
 
 		const VertexArrayObject &getVao() const;
-	};
+
+        const Vec2f &getTextureScale() const;
+
+        void setTextureScale(const Vec2f &textureScale);
+    };
 }
 
 #endif //BLOBENGINE_RENDERABLE_HPP

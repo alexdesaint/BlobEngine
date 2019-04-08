@@ -133,10 +133,12 @@ namespace Blob::GL::Shapes {
 	
 	VertexBufferObject *vbo;
 	ShaderProgram *shader;
+    Texture *texture;
 
 	void init() {
 		vbo = new VertexBufferObject((GLubyte *) data, sizeof(data));
 		shader = new ShaderProgram();
+		texture = new Texture(0, 100, 100);
 
 		shader->addVertexShader(R"=====(
 	#version 450
@@ -199,9 +201,10 @@ namespace Blob::GL::Shapes {
 	void destroy() {
 		delete vbo;
 		delete shader;
+		delete texture;
 	}
 
-	Cube::Cube() : Texture(0, 100, 100) {
+	Cube::Cube() {
 		setBuffer(*vbo, sizeof(Data));
 
 		setShaderProgram(*shader);
@@ -212,10 +215,10 @@ namespace Blob::GL::Shapes {
 
 		setIndices(cubeIndices, sizeof(cubeIndices)/sizeof(*cubeIndices), GL_UNSIGNED_SHORT);
 
-		setTexture(*this);
+		setTexture(*Blob::GL::Shapes::texture);
 	}
 
-	Plane::Plane() : Texture(0, 100, 100) {
+	Plane::Plane() {
 		setBuffer(*vbo, sizeof(Data), 4 * 6 * sizeof(Data));
 
 		setShaderProgram(*shader);
@@ -226,10 +229,10 @@ namespace Blob::GL::Shapes {
 
 		setIndices(planeIndices, sizeof(planeIndices)/sizeof(*planeIndices), GL_UNSIGNED_SHORT);
 
-		setTexture(*this);
+        setTexture(*Blob::GL::Shapes::texture);
 	}
 
-	OctagonalPrism::OctagonalPrism() : Texture(0, 100, 100) {
+	OctagonalPrism::OctagonalPrism() {
 		setBuffer(*vbo, sizeof(Data), (4 * 6 + 4) * sizeof(Data));
 
 		setShaderProgram(*shader);
@@ -240,6 +243,6 @@ namespace Blob::GL::Shapes {
 
 		setIndices(octagonalPrismIndices, sizeof(octagonalPrismIndices)/sizeof(*octagonalPrismIndices), GL_UNSIGNED_SHORT);
 
-		setTexture(*this);
+        setTexture(*Blob::GL::Shapes::texture);
 	}
 }

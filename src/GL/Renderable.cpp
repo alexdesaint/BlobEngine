@@ -229,4 +229,12 @@ namespace Blob::GL {
 		Renderable::shaderProgram = &shaderProgram;
 	}
 
+    const Vec2f &Renderable::getTextureScale() const {
+        return textureScale;
+    }
+
+    void Renderable::setTextureScale(const Vec2f &textureScale) {
+        Renderable::textureScale = textureScale;
+    }
+
 }

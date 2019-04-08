@@ -9,17 +9,17 @@ namespace Blob::GL::Shapes {
 
 	void destroy();
 
-	class Cube : public Renderable, public Texture {
+	class Cube : public Renderable {
 	public:
 		explicit Cube();
 	};
 
-	class Plane : public Renderable, public Texture {
+	class Plane : public Renderable {
 	public:
 		explicit Plane();
 	};
 
-	class OctagonalPrism : public Renderable, public Texture {
+	class OctagonalPrism : public Renderable {
 	public:
 		explicit OctagonalPrism();
 	};

@@ -12,18 +12,17 @@ namespace Blob::GL {
 		friend Graphic;
 	private:
 
-		unsigned int texture; // the opengl texture
+		unsigned int texture = -1; // the opengl texture
 
-		int height, width, bitPerPixel;//images data
-
-		Blob::Vec2f textureScale = {1, 1};
+		int height = 0, width = 0, bitPerPixel = 0;//images data
 
 		bool depth = false, textureLoaded = false;
 
+		void init();
 	public:
-		Texture();
+		Texture() = default;
 
-		Texture(const std::string &path, bool nearest = false);
+		explicit Texture(const std::string &path, bool nearest = false);
 
 		Texture(uint8_t r, uint8_t g, uint8_t b);
 
@@ -34,10 +33,6 @@ namespace Blob::GL {
 		void setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height, bool nearest = false);
 
 		unsigned int getTextureID() const;
-
-		void reset();
-
-		void setTextureScale(Blob::Vec2f textureScale);
 
 		Vec2f getTextureSize() const;
 

@@ -25,9 +25,9 @@ namespace Blob::GL {
 
         int width, height;
 
-        glm::mat4 projectionMatrix;
-        glm::mat4 projectionMatrix2D;
-        glm::mat4 viewMatrix;
+        glm::mat4 projectionMatrix{};
+        glm::mat4 projectionMatrix2D{};
+        glm::mat4 viewMatrix{};
 
         //view matrix
         glm::vec3 cameraPosition; // Camera position in World Space
@@ -91,8 +91,6 @@ namespace Blob::GL {
         std::array<float, 3> getWorldPosition();
 
         Blob::Vec2f getFrameBufferSize();
-
-        void getControllers();
 
         void close();
     };
