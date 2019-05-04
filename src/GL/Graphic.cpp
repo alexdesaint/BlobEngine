@@ -38,16 +38,15 @@ static void GLAPIENTRY openglCallbackFunction(
             std::cout << "Notification :" << std::endl << message << std::endl;
             break;
         case GL_DEBUG_SEVERITY_LOW:
-            std::cout << "Low severity Error :" << std::endl << message;
+            std::cout << "Low severity Error :" << std::endl << message << std::endl;
             break;
         case GL_DEBUG_SEVERITY_MEDIUM:
-            std::cout << "Medium severity Error :" << std::endl << message;
+            std::cout << "Medium severity Error :" << std::endl << message << std::endl;
             break;
         case GL_DEBUG_SEVERITY_HIGH:
-            std::cout << "High severity Error :" << std::endl << message;
-            abort();
+            throw Blob::Exception(std::string("High severity Error :") + message);
         default:
-            std::cout << "Unknow Error severity :" << std::endl << message;
+            std::cout << "Unknow Error severity :" << std::endl << message << std::endl;
             break;
     }
 }
