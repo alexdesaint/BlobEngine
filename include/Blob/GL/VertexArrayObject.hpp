@@ -3,7 +3,6 @@
 
 #include <Blob/GL/VertexBufferObject.hpp>
 
-
 namespace Blob::GL {
 
 	class VertexArrayObject {
