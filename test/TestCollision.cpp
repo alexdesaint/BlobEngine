@@ -116,23 +116,22 @@ public:
 
 class MainRect : public RectDynamic, public Shapes::Cube {
 private:
-	const std::array<bool, Key::KeyCount> &keys;
 	bool isHit = false;
 
 	void preCollisionUpdate() final {
 		isHit = false;
 		Vec2f Acceleration;
 
-		if (keys[Key::LEFT]) {
+        if (Controls::Keys::LEFT) {
 			Acceleration.y -= 1;
 		}
-		if (keys[Key::RIGHT]) {
+        if (Controls::Keys::RIGHT) {
 			Acceleration.y += 1;
 		}
-		if (keys[Key::UP]) {
+        if (Controls::Keys::UP) {
 			Acceleration.x -= 1;
 		}
-		if (keys[Key::DOWN]) {
+        if (Controls::Keys::DOWN) {
 			Acceleration.x += 1;
 		}
 
@@ -144,17 +143,16 @@ private:
 
 	void postCollisionUpdate() final {
 		if (isHit)
-			setColor(255, 0, 0);
+            setTexture(*Colors::Red);
 		else
-			setColor(0, 100, 100);
+            setTexture(*Colors::Blue);
         Cube::setPosition(getPosition(), 0.5f);
 	}
 
 public:
 
-    explicit MainRect(float x, float y, float r, const std::array<bool, Key::KeyCount> &keys) :
-            RectDynamic({x, y}, {r, r}, 1),
-            keys(keys) {
+    explicit MainRect(float x, float y, float r) :
+            RectDynamic({x, y}, {r, r}, 1) {
         Cube::setScale(r, r, r);
         Cube::setPosition(x, y, 0.5f);
 	}
@@ -174,14 +172,14 @@ public:
 
 int main() {
 
-    test_class();
+    (test_class());
 
 	try {
 		Graphic graphic(false);
 
 		CollisionDetector collisionDetector;
 
-		MainRect mainRect(4.5f, 4.5f, 1, Graphic::getKeys());
+        MainRect mainRect(4.5f, 4.5f, 1);
 
 		std::list<Box> rectanges;
 

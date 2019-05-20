@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 			Time::Duration flow = start - Time::now();
 			float angle = flow.count();
 
-			c1.setRotation(angle * 40, 0.f, 0.f, 1.f);
+            c1.setRotation(angle, 0.f, 0.f, 1.f);
 
 			graphic.draw(c1);
 			graphic.draw(c2);
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 
 			//graphic.draw(text);
 
-			op.setRotation(angle * 40, 0.f, 0.f, 1.f);
+            op.setRotation(angle, 0.f, 0.f, 1.f);
 			graphic.draw(op);
 
 			//imgui /////////////////////////////////////
