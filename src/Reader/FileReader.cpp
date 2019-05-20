@@ -81,7 +81,7 @@ namespace Blob::Reader {
 	}
 
     std::ostream &operator<<(std::ostream &s, FileReader &a) {
-        std::fpos pos = a.inFile.tellg();
+        auto pos = a.inFile.tellg();
         a.restart();
 
         int cpt = 0;
@@ -100,6 +100,8 @@ namespace Blob::Reader {
         }
 
         s << std::dec << std::endl;
+
+        a.inFile.seekg(pos);
 
         return s;
     }
