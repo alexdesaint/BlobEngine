@@ -33,6 +33,10 @@ namespace Blob::GL {
         static ShaderProgram *Shader_3D_POSITION_NORMAL;
         static ShaderProgram *Shader_3D_POSITION_NORMAL_TEXCOORD_0;
     };
+
+    struct Colors {
+        static Texture *Blue, *Red, *Orange, *Yellow, *Green, *Pink;
+    };
 }
 
 #endif //BLOBENGINE_CUBE_HPP

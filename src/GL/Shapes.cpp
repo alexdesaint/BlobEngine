@@ -8,6 +8,8 @@ namespace Blob::GL {
     ShaderProgram *Shaders::Shader_3D_POSITION_NORMAL;
     ShaderProgram *Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0;
 
+    Texture *Colors::Blue, *Colors::Red, *Colors::Orange, *Colors::Yellow, *Colors::Green, *Colors::Pink;
+
     void initShaders() {
 
         Shaders::Shader_2D_POSITION_TEXCOORD_0_COLOR_0 = new ShaderProgram();
@@ -326,12 +328,26 @@ namespace Blob::GL::Shapes {
 		vbo = new VertexBufferObject((GLubyte *) data, sizeof(data));
 		texture = new Texture(0, 100, 100);
         initShaders();
+
+        Colors::Red = new Texture(255, 0, 0);
+        Colors::Orange = new Texture(255, 127, 0);
+        Colors::Yellow = new Texture(255, 255, 0);
+        Colors::Green = new Texture(0, 255, 0);
+        Colors::Blue = new Texture(0, 0, 255);
+        Colors::Pink = new Texture(255, 0, 255);
 	}
 
 	void destroy() {
 		delete vbo;
 		delete texture;
         destroyShaders();
+
+        delete Colors::Blue;
+        delete Colors::Red;
+        delete Colors::Orange;
+        delete Colors::Yellow;
+        delete Colors::Green;
+        delete Colors::Pink;
 	}
 
 	Cube::Cube() {
