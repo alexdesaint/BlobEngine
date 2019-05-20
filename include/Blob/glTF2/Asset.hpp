@@ -1,7 +1,8 @@
 #ifndef BLOBENGINE_ASSET_HPP
 #define BLOBENGINE_ASSET_HPP
 
-#include <Blob/Reader/JsonExplorer.hpp>
+#include <iostream>
+#include <nlohmann/json.hpp>
 
 namespace Blob::glTF2 {
 
@@ -10,7 +11,7 @@ namespace Blob::glTF2 {
 		std::string version;
 
 	public:
-		explicit Asset(Reader::JsonExplorer j);
+        void load(const nlohmann::json &j);
 
 		friend std::ostream &operator<<(std::ostream &s, const Asset &a);
 	};

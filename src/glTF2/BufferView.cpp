@@ -1,49 +1,49 @@
 #include <Blob/glTF2/BufferView.hpp>
 
 #include <iostream>
+#include <Blob/Exception.hpp>
 
 using namespace std;
 
 namespace Blob::glTF2 {
 
-	BufferView::BufferView(Reader::JsonExplorer explorer) {
-		explorer.goToBaseNode();
+    BufferView::BufferView(const nlohmann::json &j, std::list<Buffer> &buffers) {
 
-		Reader::JsonExplorer buff;
+        if (j.find("buffer") == j.end())
+            throw Exception("glTF : Required field \"buffer\" not found");
+        j.at("buffer").get_to(buffer);
 
-		data.resize((size_t) explorer.getArraySize("bufferViews"));
+        bufferIt = std::next(buffers.begin(), buffer);
 
-		for (int i = 0; i < data.size(); i++) {
-			buff = explorer.getArrayObject("bufferViews", i);
+        if (j.find("byteOffset") != j.end())
+            j.at("byteOffset").get_to(byteOffset);
 
-			data[i].byteOffset = buff.getInt("byteOffset");
+        if (j.find("byteLength") == j.end())
+            throw Exception("glTF : Required field \"byteLength\" not found");
+        j.at("byteLength").get_to(byteLength);
 
-			if (buff.hasMember("byteLength"))
-				data[i].byteLength = buff.getInt("byteLength");
+        if (j.find("target") != j.end())
+            j.at("target").get_to(target);
 
-			data[i].target = static_cast<Target>(buff.getInt("target"));
+        if (j.find("byteStride") != j.end())
+            j.at("byteStride").get_to(byteStride);
 
-			data[i].buffer = buff.getInt("buffer");
-		}
-	}
+        if (j.find("name") != j.end())
+            j.at("name").get_to(name);
 
-	std::ostream &operator<<(std::ostream &s, const BufferView &a) {
-		s << "BufferView {" << std::endl;
-		for (auto i : a.data) {
-			s << "byteOffset : " << i.byteOffset << endl;
-			s << "byteLength : " << i.byteLength << endl;
-			s << "buffer : " << i.buffer << endl;
-			s << "target : " << i.target << endl;
-		}
-		s << "}" << endl;
+        setData(bufferIt->getData(byteLength, byteOffset).data(), byteLength);
+    }
+
+    std::ostream &operator<<(std::ostream &s, const BufferView &i) {
+        s << "  BufferView {" << endl;
+
+        s << "    byteOffset : " << i.byteOffset << endl;
+        s << "    byteLength : " << i.byteLength << endl;
+        s << "    byteStride : " << i.byteStride << endl;
+        s << "    buffer : " << i.buffer << endl;
+        s << "    target : " << i.target << endl;
+
+        s << "  }" << endl;
 		return s;
-	}
-
-    size_t BufferView::getOffset(int BufferView) {
-		return data[BufferView].byteOffset;
-	}
-
-    size_t BufferView::getSize(int BufferView, size_t offset) {
-		return data[BufferView].byteLength - offset;
 	}
 }

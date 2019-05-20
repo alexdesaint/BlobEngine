@@ -13,22 +13,26 @@ namespace Blob::GL {
 		friend Graphic;
 	private:
 
-		std::list<Renderable *> renderables;
-		std::list<Shape *> shapes;
+        std::list<const Renderable *> renderables;
+        std::list<const Shape *> shapes;
 
 	public:
 
-		void addRenderable(Renderable &r);
-		void addRenderable(Renderable *r);
+        void addRenderable(const Renderable &r);
 
-		void addRenderable(Shape &r);
-		void addRenderable(Shape *r);
+        void addRenderable(const Renderable *r);
+
+        void addRenderable(const Shape &r);
+
+        void addRenderable(const Shape *r);
 
 		void removeRenderable(Renderable &r);
 		void removeRenderable(Renderable *r);
 
 		void removeRenderable(Shape &r);
 		void removeRenderable(Shape *r);
+
+        friend std::ostream &operator<<(std::ostream &s, const Shape &a);
 	};
 }
 

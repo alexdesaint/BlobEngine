@@ -36,9 +36,8 @@ namespace Blob::GL {
 
 		unsigned char* rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
 
-		if (rgb == nullptr) {
+        if (rgb == nullptr)
 			throw Exception("Fail to load Texture : " + path);
-		}
 
 		glTextureStorage2D(texture, 1, GL_RGB8, width, height);
 		glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, rgb);
@@ -83,6 +82,20 @@ namespace Blob::GL {
 
 		textureLoaded = true;
 	}
+
+    void Texture::setImage(const std::string &path) {
+        init();
+
+        unsigned char *rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
+
+        if (rgb == nullptr)
+            throw Exception("Fail to load Texture : " + path);
+
+        glTextureStorage2D(texture, 1, GL_RGB8, width, height);
+        glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, rgb);
+
+        stbi_image_free(rgb);
+    }
 
 	unsigned int Texture::getTextureID() const {
 		return texture;

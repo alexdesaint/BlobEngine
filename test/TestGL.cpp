@@ -15,13 +15,13 @@ int main(int argc, char *argv[]) {
 	try {
 		Graphic graphic(false);
 		Cube c1, c2;
+        Texture t("data/cube.bmp"), white(255, 255, 255);
 
 		c1.setPosition(-5.f, 0.f, 0.f);
 
-		c1.loadBMP("data/cube.bmp");
+        c1.setTexture(t);
 		c2.setPosition(0.f, -2.f, 0.f);
 		c2.setScale(4, 1, 1);
-		//c2.setColor(100, 0, 0);
 
 		list<Cube> cubeList;
 
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
 		p.move(0, 2, 0);
 		p.setScale(2, 2, 2);
-		p.setColor(255, 255, 255);
+        p.setTexture(white);
 
 		OctagonalPrism op;
 

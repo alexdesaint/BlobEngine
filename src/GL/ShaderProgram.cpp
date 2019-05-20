@@ -22,6 +22,12 @@ Blob::GL::ShaderProgram::ShaderProgram(const std::string &pathVertex, const std:
 	linkShaders();
 }
 
+Blob::GL::ShaderProgram::~ShaderProgram() {
+    glDeleteProgram(program);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+}
+
 void Blob::GL::ShaderProgram::addVertexShader(const std::string &src) {
 
 	// Create an empty vertex shader handle
@@ -135,18 +141,10 @@ void Blob::GL::ShaderProgram::linkShaders() {
 	GLint isLinked = 0;
 	glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
 	if (isLinked == GL_FALSE) {
-		GLint maxLength = 0;
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
-		// The maxLength includes the NULL character
 		std::vector<GLchar> infoLog(maxLength);
 		glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
-
-		// We don't need the program anymore.
-		glDeleteProgram(program);
-		// Don't leak shaders either.
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
 
 		throw Exception(infoLog.data());
 	}

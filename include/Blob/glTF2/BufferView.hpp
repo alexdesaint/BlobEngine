@@ -1,35 +1,34 @@
 #ifndef BLOBENGINE_BUFFERVIEW_HPP
 #define BLOBENGINE_BUFFERVIEW_HPP
 
-#include <Blob/Reader/JsonExplorer.hpp>
-#include <Blob/glTF2/Buffer.hpp>
+
 #include <vector>
+#include <list>
+#include <nlohmann/json.hpp>
+#include <Blob/glTF2/Buffer.hpp>
+#include <Blob/GL/VertexBufferObject.hpp>
 
 namespace Blob::glTF2 {
 
 	//! A view into a buffer generally representing a subset of the buffer.
-	class BufferView {
-	private:
+    class BufferView : public GL::VertexBufferObject {
+    public:
 		enum Target {
+            NotSet = 0,
 			BufferViewTarget_ARRAY_BUFFER = 34962,
 			BufferViewTarget_ELEMENT_ARRAY_BUFFER = 34963
 		};
 
-		struct Data {
-			int buffer = 0; //! The ID of the buffer. (required)
-			size_t byteOffset = 0; //! The offset into the buffer in bytes. (required)
-            size_t byteLength = 0; //! The length of the bufferView in bytes. (default: 0)
-			Target target = BufferViewTarget_ARRAY_BUFFER; //! The target that the WebGL buffer should be bound to.
-		};
+        size_t buffer; ///< The index of the buffer. required
+        size_t byteOffset = 0; ///< The offset into the buffer in bytes. default: 0
+        size_t byteLength; ///< The length of the bufferView in bytes. required
+        size_t byteStride = 0; ///< The stride, in bytes.
+        std::string name; ///< The user-defined name of this object.
+        Target target = NotSet; ///< The target that the WebGL buffer should be bound to.
 
-		std::vector<Data> data;
+        std::list<Buffer>::iterator bufferIt;
 
-	public:
-		explicit BufferView(Reader::JsonExplorer explorer);
-
-        size_t getOffset(int BufferView);
-
-        size_t getSize(int BufferView, size_t offset);
+        BufferView(const nlohmann::json &j, std::list<Buffer> &buffers);
 
 		friend std::ostream &operator<<(std::ostream &s, const BufferView &a);
 	};

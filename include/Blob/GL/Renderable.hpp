@@ -38,11 +38,14 @@ namespace Blob::GL {
 
 		void setShaderProgram(ShaderProgram &shaderProgram);
 
-		void setBuffer(VertexBufferObject &vbo, int32_t stride, uint32_t dataOffset = 0);
+        void setBuffer(VertexBufferObject &vbo, int32_t stride, uint32_t dataOffset = 0, uint32_t pos = 0);
 
 		void setTexture(Texture &t);
 
-		void setArrayVAO(uint32_t valuePerVector, const char *name, uint32_t dataType, uint32_t arrayOffset, bool normalized = false);
+        void setArrayVAO(uint32_t valuePerVector, const char *name, uint32_t dataType,
+                         uint32_t relativeOffset, bool normalized = false, uint32_t pos = 0);
+
+        void setBufferIndices(VertexBufferObject &vbo);
 
 		void setIndices(unsigned short *indices, int32_t numOfIndices, uint32_t indicesType);
 

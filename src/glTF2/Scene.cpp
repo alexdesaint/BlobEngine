@@ -1,32 +1,27 @@
 #include <Blob/glTF2/Scene.hpp>
 
-#include <iostream>
-
 using namespace std;
 
 namespace Blob::glTF2 {
-	Scene::Scene(Reader::JsonExplorer explorer, Mesh &m) {
 
-		int size = explorer.getArraySize("nodes");
+    Scene::Scene(const nlohmann::json &j, std::list<Node> &nodesList) {
+        if (j.find("nodes") != j.end())
+            j.at("nodes").get_to(nodes);
 
-		for (unsigned int i = 0; i < size; i++) {
-			nodes.emplace_back(explorer.getArrayInt("nodes", i), explorer, m);
-		}
+        for (const auto &n : nodes)
+            addRenderable(*std::next(nodesList.begin(), n));
 
-		for (unsigned int i = 0; i < size; i++) {
-			addShape(nodes[i]);
-		}
-	}
-
-	glTF2::Shape &Scene::getShape(unsigned int num) {
-		return nodes[num];
+        if (j.find("name") != j.end())
+            j.at("name").get_to(name);
 	}
 
 	std::ostream &operator<<(std::ostream &s, const Scene &a) {
-		s << "Scene {" << endl;
-		for (const Shape &node : a.nodes)
-			s << node;
-		s << "}" << endl;
+        s << "  Scene {" << endl;
+
+        s << "    nodes :";
+        for (const auto &node : a.nodes)
+            s << " " << node;
+        s << endl << "  }" << endl;
 		return s;
 	}
 }

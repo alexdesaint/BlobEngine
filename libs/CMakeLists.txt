@@ -1,7 +1,7 @@
 #glad
 add_subdirectory(glad)
 
-#rapid json
+#json
 set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(json)

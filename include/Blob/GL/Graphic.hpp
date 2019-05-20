@@ -39,7 +39,6 @@ namespace Blob::GL {
         float cameraAngle;
 
         //imgui
-        ShaderProgram *imguiShaderProgram;
         Texture *imguiFontTexture;
         Renderable *imguiRenderable;
 

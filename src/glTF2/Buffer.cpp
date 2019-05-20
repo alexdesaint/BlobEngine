@@ -9,49 +9,46 @@ using namespace std;
 
 namespace Blob::glTF2 {
 
-	Buffer::Buffer(Reader::JsonExplorer explorer) {
-		explorer.goToBaseNode();
+    Buffer::Buffer(const nlohmann::json &j, const std::string &path) {
+        if (j.find("uri") != j.end())
+            j.at("uri").get_to(uri);
 
-		Reader::JsonExplorer buff;
+        if (j.find("byteLength") == j.end())
+            throw Exception("glTF : Required field \"byteLength\" not found");
+        j.at("byteLength").get_to(byteLength);
 
-		data.resize((size_t) explorer.getArraySize("buffers"));
+        if (j.find("name") != j.end())
+            j.at("name").get_to(name);
 
-		for (int i = 0; i < data.size(); i++) {
-			buff = explorer.getArrayObject("buffers", i);
+        //j.at("extensions").get_to(p.extensions);
 
-			data[i].uri = Reader::FileReader::getFilePath(Reader::JsonExplorer::path) + buff.getString("uri");
+        uri = path + uri;
+    }
 
-			if (buff.hasMember("byteLength"))
-				data[i].byteLength = static_cast<size_t>(buff.getInt("byteLength"));
+    ostream &operator<<(ostream &s, const Buffer &a) {
+        s << "  Buffer {" << endl;
 
-			Reader::FileReader fileReader(data[i].uri);
-
-			if (fileReader.getSize() != data[i].byteLength)
-				throw Exception("File typeSize don't fit");
-
-			data[i].d.resize(data[i].byteLength);
-
-			for (int j = 0; j < data[i].byteLength; j++)
-				data[i].d[j] = fileReader.readNextByte();
-		}
-
-		if (data.size() > 1)
-			throw Exception("Multiple Buffer Not Supported");
-	}
-
-	std::ostream &operator<<(std::ostream &s, const Buffer &a) {
-		s << "Buffer {" << std::endl;
-		for (const auto &i : a.data) {
-			s << i.uri << endl << "byteLength : " << i.byteLength << endl << "data : ";
-			for (const auto &j : i.d)
-				s << hex << uppercase << (unsigned int) j << ' ';
-			s << endl;
-		}
-		s << "}" << endl;
+        s << "    " << a.uri << endl << "    byteLength : " << a.byteLength << endl << "    data : " << endl;
+        Reader::FileReader fileReader(a.uri);
+        s << fileReader;
+        s << "  }" << endl;
 		return s;
 	}
 
-	const vector<uint8_t> &Buffer::getData() const {
-		return data[0].d;
-	}
+    std::vector<uint8_t> Buffer::getData(size_t length, size_t offset) {
+        Reader::FileReader fileReader(uri);
+
+        if (fileReader.getSize() != byteLength)
+            throw Exception("File typeSize don't fit");
+
+        std::vector<uint8_t> bytes(length);
+
+        fileReader.goTo(offset);
+
+        for (int i = 0; i < length; i++)
+            bytes[i] = fileReader.readNextByte();
+
+        return bytes;
+    }
+
 }

@@ -6,31 +6,28 @@
 
 namespace Blob::GL {
 
-	class VertexArrayObject;
-
 	class VertexBufferObject {
-		friend VertexArrayObject;
 	private:
-		uint32_t vertexBufferObject;
-	public:
-		uint32_t getVertexBufferObject() const;
+        uint32_t vertexBufferObject = -1;
 
-	private:
-
-		int64_t dataSize;
+        int64_t dataSize = 0;
 
 		bool targetSet = false;
 
 	public:
+        uint32_t getVertexBufferObject() const;
+
 		VertexBufferObject();
 
 		VertexBufferObject(uint8_t *data, int64_t dataSize);
 
+        VertexBufferObject(const VertexBufferObject &) = delete;
+
+        ~VertexBufferObject();
+
 		void setData(uint8_t *data, int64_t dataSize, bool dynamic = false);
 
 		void setSubData(uint8_t *data, int64_t dataSize, int64_t offset = 0);
-
-		~VertexBufferObject();
 	};
 }
 

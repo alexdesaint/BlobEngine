@@ -1,22 +1,19 @@
 #ifndef BLOBENGINE_SCENE_HPP
 #define BLOBENGINE_SCENE_HPP
 
-#include <Blob/GL/Scene.hpp>
-#include <Blob/glTF2/Shape.hpp>
-#include <Blob/glTF2/Mesh.hpp>
-
 #include <vector>
+#include <nlohmann/json.hpp>
+#include <Blob/glTF2/Node.hpp>
 
 namespace Blob::glTF2 {
 
-	class Scene : public GL::Scene {
+    class Scene : public GL::Shape {
 	public:
 
-		std::vector<glTF2::Shape> nodes;
+        std::vector<int> nodes;
+        std::string name;
 
-		explicit Scene(Reader::JsonExplorer explorer, Mesh &m);
-
-		glTF2::Shape &getShape(unsigned int num);
+        Scene(const nlohmann::json &j, std::list<Node> &nodesList);
 
 		friend std::ostream &operator<<(std::ostream &s, const Scene &a);
 	};

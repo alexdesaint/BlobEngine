@@ -21,6 +21,10 @@ namespace Blob::GL {
 
 		ShaderProgram(const std::string &pathVertex, const std::string &pathFragment);
 
+        ShaderProgram(const ShaderProgram &) = delete;
+
+        ~ShaderProgram();
+
 		void addVertexShader(const std::string &src);
 
 		void addVertexShaderFile(const std::string &path);

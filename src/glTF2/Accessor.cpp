@@ -1,7 +1,10 @@
 #include <Blob/glTF2/Accessor.hpp>
 
+#include <Blob/Exception.hpp>
+
 #include <iostream>
 #include <cstring>
+#include <glad/glad.h>
 
 using namespace std;
 
@@ -34,27 +37,44 @@ namespace Blob::glTF2 {
 		return Accessor::SCALAR;
 	}
 
-	Accessor::Accessor(Reader::JsonExplorer explorer) : bufferView(explorer) {
-		explorer.goToBaseNode();
+    Accessor::Accessor(const nlohmann::json &j, std::list<BufferView> &bufferViews) {
 
-		Reader::JsonExplorer buff;
+        if (j.find("bufferView") != j.end())
+            j.at("bufferView").get_to(bufferView);
 
-		data.resize((size_t) explorer.getArraySize("accessors"));
+        bufferViewIt = std::next(bufferViews.begin(), bufferView);
 
-		for (int i = 0; i < data.size(); i++) {
-			buff = explorer.getArrayObject("accessors", i);
+        if (j.find("byteOffset") != j.end())
+            j.at("byteOffset").get_to(byteOffset);
 
-			data[i].bufferView = buff.getInt("bufferView");
+        if (j.find("componentType") == j.end())
+            throw Exception("glTF : Required field \"componentType\" not found");
 
-			data[i].componentType = (uint32_t) buff.getInt("componentType");
+        j.at("componentType").get_to(componentType);
 
-			data[i].type = strToType(buff.getString("type").c_str());
+        if (j.find("normalized") != j.end())
+            j.at("normalized").get_to(normalized);
 
-			if (buff.hasMember("byteOffset"))
-				data[i].byteOffset = static_cast<unsigned int>(buff.getInt("byteOffset"));
+        if (j.find("count") == j.end())
+            throw Exception("glTF : Required field \"count\" not found");
 
-			data[i].count = static_cast<unsigned int>(buff.getInt("count"));
-		}
+        j.at("count").get_to(count);
+
+        if (j.find("type") == j.end())
+            throw Exception("glTF : Required field \"type\" not found");
+
+        string typeStr;
+        j.at("type").get_to(typeStr);
+        type = strToType(typeStr.c_str());
+
+        if (j.find("min") != j.end())
+            j.at("min").get_to(min);
+
+        if (j.find("max") != j.end())
+            j.at("max").get_to(max);
+
+        if (j.find("name") != j.end())
+            j.at("name").get_to(name);
 	}
 
 	template<typename T>
@@ -67,68 +87,102 @@ namespace Blob::glTF2 {
 		return s << endl;
 	}
 
-	std::ostream &operator<<(std::ostream &s, Accessor &a) {
+    std::ostream &operator<<(std::ostream &s, const Accessor &d) {
 
-		s << "Accessor {" << endl;
+        s << "  Accessor {" << endl;
 
-		for (Accessor::Data &d : a.data) {
-			s << "{\nbyteOffset : " << d.byteOffset << endl;
-			s << "count : " << d.count << endl;
+        s << "    bufferView : " << d.bufferView << endl;
 
-			s << "max : ";
-			for (auto &m : d.max)
-				s << m << " ";
-			s << endl;
+        s << "    byteOffset : " << d.byteOffset << endl;
 
-			s << "min : ";
-			for (auto &m : d.min)
-				s << m << " ";
-			s << endl;
-/*
-			auto *points = a.bufferView.getData(d.bufferView, d.byteOffset);
-			auto size = a.bufferView.getTextureSize(d.bufferView, d.byteOffset);
+        switch (d.componentType) {
+            case GL_FLOAT :
+                s << "    componentType : float" << endl;
+                break;
+            case GL_UNSIGNED_SHORT :
+                s << "    componentType : unsigned short" << endl;
+                break;
+            default:
+                s << "    componentType " << d.componentType << " not implemented" << endl;
+                break;
+        }
 
-			switch(d.componentType){
-				case GL_FLOAT :
-					s << "componentType : float" << endl;
+        s << "    normalized : " << d.normalized << endl;
 
-					printArray<float>(s, points, size, d.type);
-					break;
-				case GL_UNSIGNED_SHORT :
-					s << "componentType : unsigned short" << endl;
+        switch (d.type) {
+            case Accessor::Type::MAT2 :
+                s << "    type : MAT2 or VEC4" << endl;
+                break;
+            case Accessor::Type::MAT3 :
+                s << "    type : MAT3" << endl;
+                break;
+            case Accessor::Type::MAT4 :
+                s << "    type : MAT4" << endl;
+                break;
+            case Accessor::Type::SCALAR :
+                s << "    type : SCALAR" << endl;
+                break;
+            case Accessor::Type::VEC2 :
+                s << "    type : VEC2" << endl;
+                break;
+            case Accessor::Type::VEC3 :
+                s << "    type : VEC3" << endl;
+                break;
+            default:
+                s << "    Type " << d.type << " not implemented" << endl;
+                break;
+        }
 
-					printArray<GLushort>(s, points, size, d.type);
-					break;
-				default:
-					s << "type " << d.componentType << " not implemented" << endl;
-					break;
-			}*/
-			s << "}" << endl;
-		}
+        s << "    count : " << d.count << endl;
 
-		s << "}" << endl;
-		return s;
-	}
+        if (!d.max.empty()) {
+            s << "    max : ";
+            for (auto &m : d.max)
+                s << m << " ";
+            s << endl;
+        }
 
-	size_t Accessor::getOffset(int Accessor) {
-		return bufferView.getOffset(data[Accessor].bufferView) + data[Accessor].byteOffset;
-	}
+        if (!d.min.empty()) {
+            s << "    min : ";
+            for (auto &m : d.min)
+                s << m << " ";
+            s << endl;
+        }
 
-	uint32_t Accessor::getType(int Accessor) {
-		return data[Accessor].componentType;
-	}
+        s << "  }" << endl;
+        return s;
+    }
 
-    size_t Accessor::getSize(int Accessor) {
-		return bufferView.getSize(data[Accessor].bufferView, data[Accessor].byteOffset);
-	}
+    uint32_t Accessor::getGlTypeSize(GLenum dataType) {
+        GLuint typeSize;
 
-    size_t Accessor::getNumOfVector(int Accessor) {
-		return data[Accessor].count;
-	}
+        switch (dataType) {
+            case GL_BYTE:
+                typeSize = sizeof(GLbyte);
+                break;
+            case GL_UNSIGNED_BYTE:
+                typeSize = sizeof(GLubyte);
+                break;
+            case GL_SHORT:
+                typeSize = sizeof(GLshort);
+                break;
+            case GL_UNSIGNED_SHORT:
+                typeSize = sizeof(GLushort);
+                break;
+            case GL_INT:
+                typeSize = sizeof(GLint);
+                break;
+            case GL_UNSIGNED_INT:
+                typeSize = sizeof(GLuint);
+                break;
+            case GL_FLOAT:
+                typeSize = sizeof(GLfloat);
+                break;
+            default:
+                throw Exception("incorrect Type of data");
+        }
 
-	uint32_t Accessor::getValuePerVector(int Accessor) {
-		return data[Accessor].type;
-	}
-
+        return typeSize;
+    }
 }
 

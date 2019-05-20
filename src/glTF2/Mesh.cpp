@@ -1,213 +1,131 @@
 #include <Blob/glTF2/Mesh.hpp>
-
-#include <iostream>
+#include <Blob/Exception.hpp>
+#include <Blob/GL/Shapes.hpp>
 
 using namespace std;
 
 namespace Blob::glTF2 {
 
-	Mesh::Mesh(Reader::JsonExplorer explorer) : accessor(explorer), buffer(explorer) {
-		explorer.goToBaseNode();
-/*
-		Reader::JsonExplorer dat;
+    Mesh::Primitive::Primitive(const nlohmann::json &j, std::list<Blob::glTF2::Accessor> &a,
+                               std::list<Material> &materials) {
+        if (j.find("attributes") == j.end())
+            throw Exception("glTF : Required field \"attributes\" not found");
 
-		primitives.resize((size_t)explorer.getArraySize("meshes"));
+        j.at("attributes").get_to(attributes);
 
-		auto b = buffer.getData();
+        if (attributes.find("POSITION") == attributes.end())
+            throw Exception(R"(glTF : Required field "POSITION" in "attributes" not found)");
 
-		size_t totalPoints = 0;
+        switch (attributes.size()) {
+            case 1:
+                setShaderProgram(*GL::Shaders::Shader_3D_POSITION);
+                break;
+            case 2:
+                if (attributes.find("NORMAL") != attributes.end())
+                    setShaderProgram(*GL::Shaders::Shader_3D_POSITION_NORMAL);
+                else
+                    throw Exception(R"(glTF : fail to find the right shader)");
+                break;
+            case 3:
+                if (attributes.find("NORMAL") != attributes.end() && attributes.find("TEXCOORD_0") != attributes.end())
+                    setShaderProgram(*GL::Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0);
+                else
+                    throw Exception(R"(glTF : fail to find the right shader)");
+                break;
+            default:
+                throw Exception(R"(glTF : fail to find the right shader)");
+        }
 
-		for(int i = 0; i < primitives.size(); i++) {
-			dat = explorer.getArrayObject("meshes", i);
+        // TODO: optimise this part, the data need to be in one Interleaved vertex. if the offset < stride
+        int32_t pos = 0;
+        for (const auto &k : attributes) {
+            auto accessorIt = std::next(a.begin(), k.second);
 
-			primitives[i].resize((size_t)dat.getArraySize("primitives"));
+            setBuffer(*accessorIt->bufferViewIt, accessorIt->bufferViewIt->byteStride, accessorIt->byteOffset, pos);
 
-			Reader::JsonExplorer prim;
+            setArrayVAO(accessorIt->type, k.first.c_str(), accessorIt->componentType, 0, accessorIt->normalized, pos);
 
-			for (int j = 0; j < primitives[i].size(); j++) {
-				prim = dat.getArrayObject("primitives", j);
+            pos++;
+        }
 
-				if(prim.hasMember("indices")) {
-					primitives[i][j].indices = prim.getInt("indices");
-				}
+        if (j.find("indices") != j.end()) {
+            j.at("indices").get_to(indices);
 
-				Reader::JsonExplorer attr = prim.getObject("attributes");
+            auto indicesIt = std::next(a.begin(), indices);
 
-				primitives[i][j].position = attr.getInt("POSITION");
+            setBufferIndices(*indicesIt->bufferViewIt);
 
-				totalPoints +=  accessor.getNumOfVector(primitives[i][j].position);;
+            setIndices((unsigned short *) indicesIt->byteOffset, indicesIt->count, indicesIt->componentType);
+        }
 
-				if(attr.hasMember("NORMAL")) {
-					primitives[i][j].normal = attr.getInt("NORMAL");
-				}
-			}
-		}
+        if (j.find("material") != j.end()) {
+            j.at("material").get_to(material);
 
-		dataBuffer.resize(totalPoints);
+            auto materialIt = std::next(materials.begin(), material);
 
-		unsigned int dataBufferOffset = 0;
+            if (materialIt->pbrMetallicRoughness.set && materialIt->pbrMetallicRoughness.baseColorTexture.set)
+                setTexture(*materialIt->pbrMetallicRoughness.baseColorTexture.indexIt);
+        }
 
-		for(auto &i : primitives) {
-			for (auto &j : i) {
-				if(j.indices != -1) {
-					auto indices = (GLubyte *)&b[accessor.getOffset(j.indices)];
+        if (j.find("mode") != j.end())
+            j.at("mode").get_to(mode);
 
-					j.setIndices(indices, accessor.getNumOfVector(j.indices), accessor.getType(j.indices));
-				}
+        // setMode()
+    }
 
-				int numOfVector = accessor.getNumOfVector(j.position);
-				int positionOffset = accessor.getOffset(j.position);
+    Mesh::Mesh(const nlohmann::json &j, std::list<Blob::glTF2::Accessor> &a, std::list<Material> &materials) {
+        if (j.find("primitives") == j.end())
+            throw Exception("glTF : Required field \"primitives\" not found");
 
-				auto positions = (GLfloat*)&b[positionOffset];
+        for (const nlohmann::json &js : j["primitives"])
+            primitives.emplace_back(js, a, materials);
 
-				for(int k = 0; k < numOfVector; k++) {
-					dataBuffer[k + dataBufferOffset].coor[0] = positions[k*3];
-					dataBuffer[k + dataBufferOffset].coor[1] = positions[k*3 + 1];
-					dataBuffer[k + dataBufferOffset].coor[2] = positions[k*3 + 2];
-				}
+        if (j.find("weights") != j.end()) {
+            weights.reserve(j["weights"].size());
+            for (const nlohmann::json &js : j["weights"])
+                weights.push_back(js.get<int>());
+        }
 
-				//primitives[i][j].setPositionVAO(
-				//		a.getData(position),
-				//		a.getNumOfVector(position),
-				//		a.getValuePerVector(position),
-				//		a.getType(position)
-				//);
+        if (j.find("name") != j.end())
+            j.at("name").get_to(name);
+    }
 
-				for(int k = 0; k < numOfVector; k++) {
-					dataBuffer[k + dataBufferOffset].texCoor[0] = -1;
-					dataBuffer[k + dataBufferOffset].texCoor[1] = -1;
-				}
+    std::ostream &operator<<(std::ostream &s, const Mesh::Primitive &a) {
+        s << "    Primitive {" << endl;
+        s << "      attributes {" << endl;
+        for (const auto &k : a.attributes)
+            s << "        " << k.first << " : " << k.second << endl;
 
-				if(j.normal != -1) {
-					int normalOffset = accessor.getOffset(j.normal);
+        s << "      }" << endl;
 
-					auto normals = (GLfloat*)&b[normalOffset];
+        if (a.indices != -1)
+            s << "      indices : " << a.indices << endl;
 
-					for(int k = 0; k < numOfVector; k++) {
-						dataBuffer[k + dataBufferOffset].normal[0] = normals[k*3];
-						dataBuffer[k + dataBufferOffset].normal[1] = normals[k*3 + 1];
-						dataBuffer[k + dataBufferOffset].normal[2] = normals[k*3 + 2];
-					}
+        if (a.material != -1)
+            s << "      material : " << a.material << endl;
 
+        if (a.mode != -1)
+            s << "      mode : " << a.mode << endl;
+        s << "    }" << endl;
 
-					//primitives[i][j].setNormalVAO(
-					//		a.getData(normal),
-					//		a.getNumOfVector(normal),
-					//		a.getValuePerVector(normal),
-					//		a.getType(normal)
-					//);
-				}
+        return s;
+    }
 
-				j.dataBufferOffset = dataBufferOffset;
+    std::ostream &operator<<(std::ostream &s, const Mesh &a) {
 
-				dataBufferOffset += numOfVector;
-			}
-		}
-*/
-		std::vector<Data> data = {
-				// x = devant
-				// y = droite
-				// z = haut
+        s << "  Mesh {" << endl;
 
-				// Top face
-				{{-1.0, -1.0, 1.0},  {0.0, 0.0, 0},   {-1.0, -1.0}},        //hg
-				{{1.0,  -1.0, 1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //bg
-				{{1.0,  1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //bd
-				{{-1.0, 1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //hd
+        for (auto &i : a.primitives) {
+            s << i;
+        }
 
-				// Bottom face
-				{{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //bg
-				{{-1.0, 1.0,  -1.0}, {0.0, 0.0, 0},   {-1.0, -1.0}},    //bd
-				{{1.0,  1.0,  -1.0}, {0.0, 0.0, 0},   {-1.0, -1.0}},        //hd
-				{{1.0,  -1.0, -1.0}, {0.0, 0.0, 0},   {-1.0, -1.0}},    //hg
+        if (!a.weights.empty()) {
+            s << "    weights :" << endl;
+            for (auto &i : a.weights)
+                s << "      " << i << endl;
+        }
 
-				// Right face
-				{{-1.0, 1.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //bd
-				{{-1.0, 1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //hd
-				{{1.0,  1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //hg
-				{{1.0,  1.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //bg
-
-				// Left face
-				{{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //bg
-				{{1.0,  -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //bd
-				{{1.0,  -1.0, 1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //hd
-				{{-1.0, -1.0, 1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //hg
-
-				// Front face
-				{{1.0,  -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //bg
-				{{1.0,  1.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //bd
-				{{1.0,  1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //hd
-				{{1.0,  -1.0, 1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //hg
-
-				// Back face
-				{{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},        //bd
-				{{-1.0, -1.0, 1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //hd
-				{{-1.0, 1.0,  1.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //hg
-				{{-1.0, 1.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //bg
-
-				// ground
-				{{0,    0.0,  0.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //hg
-				{{1.0,  0.0,  0.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //bg
-				{{0.0,  1.0,  0.0},  {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //bd
-				{{-4.0, 4.0,  -1.0}, {0.0, 0.0, 0.0}, {-1.0, -1.0}},    //hd
-
-		};
-
-		/*const std::vector<GLushort> cudeIndices = {
-				24, 25, 26
-		};*/
-
-		const std::vector<uint16_t> cudeIndices = {
-				0, 1, 2, 0, 2, 3,    // front
-				4, 5, 6, 4, 6, 7,    // back
-				8, 9, 10, 8, 10, 11,   // top
-				12, 13, 14, 12, 14, 15,   // bottom
-				16, 17, 18, 16, 18, 19,   // right
-				20, 21, 22, 20, 22, 23,   // left
-		};
-
-		vbo.setData((uint8_t *) data.data(), sizeof(Data) * data.size());
-
-		//vbo.setData((GLubyte*)dataBuffer.data(), dataBuffer.size() * sizeof(data));
-
-		primitives.resize(1);
-
-		primitives[0].resize(1);
-
-		for (auto &i : primitives) {
-			for (auto &j : i) {
-				j.setBuffer(vbo, sizeof(Data), j.dataBufferOffset * sizeof(Data));
-
-				//j.setPositionVAO(3, GL_FLOAT, 0);
-				//j.setNormalVAO(3, GL_FLOAT, sizeof(Data::coor));
-				//j.setTexturePositionVAO(2, GL_FLOAT, sizeof(Data::coor) + sizeof(Data::normal));
-
-				//j.setIndices((GLubyte *) cudeIndices.data(), (GLsizei) cudeIndices.size(), GL_UNSIGNED_SHORT);
-			}
-		}
-	}
-
-	std::ostream &operator<<(std::ostream &s, Mesh &a) {
-
-		s << "Mesh {" << endl;
-
-		s << a.accessor;
-
-		for (auto &i : a.primitives) {
-
-			for (auto &j : i) {
-				//s << j;
-			}
-		}
-
-		s << "}" << endl;
-		return s;
-	}
-
-	std::vector<GL::Renderable *> Mesh::getShape(int mesh) {
-		std::vector<GL::Renderable *> ret(primitives[mesh].size());
-		for (int i = 0; i < ret.size(); i++)
-			ret[i] = &primitives[mesh][i];
-		return ret;
-	}
+        s << "  }" << endl;
+        return s;
+    }
 }

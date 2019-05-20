@@ -35,18 +35,19 @@ static void GLAPIENTRY openglCallbackFunction(
 
     switch (severity) {
         case GL_DEBUG_SEVERITY_NOTIFICATION :
-            std::cout << "Notification :" << std::endl << message << std::endl;
+            //std::cout << "Notification :" << std::endl << message << std::endl;
             break;
         case GL_DEBUG_SEVERITY_LOW:
-            std::cout << "Low severity Error :" << std::endl << message << std::endl;
+            std::cout << "Low severity Error :" << std::endl << message;
             break;
         case GL_DEBUG_SEVERITY_MEDIUM:
-            std::cout << "Medium severity Error :" << std::endl << message << std::endl;
+            std::cout << "Medium severity Error :" << std::endl << message;
             break;
         case GL_DEBUG_SEVERITY_HIGH:
-            throw Blob::Exception(std::string("High severity Error :") + message);
+            std::cout << "High severity Error :" << std::endl << message << std::endl;
+            abort();
         default:
-            std::cout << "Unknow Error severity :" << std::endl << message << std::endl;
+            std::cout << "Unknow Error severity :" << std::endl << message;
             break;
     }
 }
@@ -153,6 +154,9 @@ namespace Blob::GL {
         projectionMatrix = glm::perspective(cameraAngle, width / (GLfloat) height, cameraRange.x, cameraRange.y);
         viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 
+        //create Froms ans defaults shaders
+        Shapes::init();
+
         //imgui
         projectionMatrix2D =
                 {
@@ -174,49 +178,11 @@ namespace Blob::GL {
         imguiRenderable->cullFace = false;
         imguiRenderable->depthTest = false;
 
-        imguiShaderProgram = new ShaderProgram();
-        imguiShaderProgram->addVertexShader(R"=====(
-#version 450
-
-layout (location = 0) in vec2 Position;
-layout (location = 1) in vec2 TexturePosition;
-layout (location = 2) in vec4 Color;
-
-uniform mat4 projection;
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-
-void main()
-{
-    Frag_UV = TexturePosition;
-    Frag_Color = Color;
-    gl_Position = projection * vec4(Position.xy, 0, 1);
-}
-		)=====");
-        imguiShaderProgram->addFragmentShader(R"=====(
-#version 450
-
-layout (location = 0) out vec4 Out_Color;
-
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-uniform sampler2D Texture;
-
-void main() {
-    //Out_Color = vec4(1.f, 1.f, 1.f, 1.f);
-    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);
-}
-		)=====");
-        imguiShaderProgram->linkShaders();
-
-        imguiRenderable->setShaderProgram(*imguiShaderProgram);
+        imguiRenderable->setShaderProgram(*Shaders::Shader_2D_POSITION_TEXCOORD_0_COLOR_0);
 
         imguiRenderable->setArrayVAO(2, "Position", GL_FLOAT, (uint32_t) offsetof(ImDrawVert, pos));
         imguiRenderable->setArrayVAO(2, "TexturePosition", GL_FLOAT, (uint32_t) offsetof(ImDrawVert, uv));
         imguiRenderable->setArrayVAO(4, "Color", GL_UNSIGNED_BYTE, (uint32_t) offsetof(ImDrawVert, col), true);
-
-        //create Froms
-        Shapes::init();
 
         lastFrameTime = std::chrono::high_resolution_clock::now();
     }
@@ -224,7 +190,6 @@ void main() {
     Graphic::~Graphic() {
         Shapes::destroy();
         ImGui::DestroyContext();
-        delete imguiShaderProgram;
         delete imguiFontTexture;
         delete imguiRenderable;
 
@@ -328,6 +293,8 @@ void main() {
 
         if (renderable.indexed)
             glDrawElements(GL_TRIANGLES, renderable.numOfIndices, renderable.indicesType, renderable.indices);
+        else
+            glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 
     void Graphic::draw(const Renderable &renderable, int numOfElements, uint64_t elementOffset, glm::mat4 shapeModel) {

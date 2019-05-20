@@ -49,7 +49,7 @@ namespace Blob {
             const float *joystickAxes = nullptr;
         };
 
-        const static std::list<Controller*> &controllers;
+        const static std::list<const Controller *> &controllers;
 
         static void updateControllers();
     };

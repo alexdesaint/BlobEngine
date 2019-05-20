@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 namespace Blob::Reader {
 
@@ -56,7 +57,6 @@ namespace Blob::Reader {
 	}
 
 	std::string FileReader::getLine() {
-
 		std::string str;
 
 		std::getline(inFile, str);
@@ -72,7 +72,36 @@ namespace Blob::Reader {
 		inFile.seekg(0, std::ios::beg);
 	}
 
+    void FileReader::goTo(size_t pos) {
+        inFile.seekg(pos);
+    }
+
 	size_t FileReader::getSize() const {
 		return static_cast<size_t>(size);
 	}
+
+    std::ostream &operator<<(std::ostream &s, FileReader &a) {
+        std::fpos pos = a.inFile.tellg();
+        a.restart();
+
+        int cpt = 0;
+        while (!a.EOFReached()) {
+            s << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << (unsigned int) a.readNextByte();
+
+            cpt++;
+
+            if (cpt % 2 == 0)
+                s << ' ';
+
+            if (cpt % 16 == 0) {
+                s << std::endl;
+                cpt = 0;
+            }
+        }
+
+        s << std::dec << std::endl;
+
+        return s;
+    }
+
 }

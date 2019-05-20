@@ -1,9 +1,11 @@
+message(WARNING "Test are enable")
+
 add_executable(TestCollision TestCollision.cpp)
 target_link_libraries(TestCollision Blob::Collision Blob::GL)
 target_compile_definitions(TestCollision PUBLIC TEST)
 
-#add_executable(TestglTF2 TestglTF2.cpp)
-#target_link_libraries(TestglTF2 glTF2 BlobGL glad FileReader JsonExplorer -lglu32 -lopengl32 ${SDL2_LIBRARIES})
+add_executable(TestglTF2 TestglTF2.cpp)
+target_link_libraries(TestglTF2 Blob::glTF2)
 
 add_executable(TestGL TestGL.cpp)
 target_link_libraries(TestGL BlobGL)# -static -static-libgcc -static-libstdc++ -lpthread)

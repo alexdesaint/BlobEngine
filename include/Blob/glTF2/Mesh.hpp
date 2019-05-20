@@ -1,47 +1,52 @@
 #ifndef BLOBENGINE_MESH_HPP
 #define BLOBENGINE_MESH_HPP
 
-#include <Blob/GL/Renderable.hpp>
+#include <iostream>
+#include <nlohmann/json.hpp>
+
 #include <Blob/glTF2/Accessor.hpp>
+#include <Blob/glTF2/Material.hpp>
+#include <Blob/GL/Renderable.hpp>
 
 namespace Blob::glTF2 {
 
-	class Mesh {
-	private:
+    class Mesh {
+    public:
 
-		struct Data {
-			float coor[3];
-            float normal[3];
-            float texCoor[2];
-		};
+        class Primitive : public GL::Renderable {
+            friend Mesh;
+        public:
+            /// attributes : A dictionary object, where each key corresponds to mesh attribute semantic and each value
+            /// is the index of the accessor containing attribute's data.
 
-		std::vector<Data> dataBuffer;
+            std::map<std::string, int> attributes; ///< attributes : A dictionary object, where each key corresponds to
+            ///< mesh attribute semantic and each value is the index of the accessor containing attribute's data.
+            ///< see : https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#meshes
 
-		Buffer buffer;
+            int indices = -1; ///< The index of the accessor that contains the indices.
+            int material = -1; ///< The index of the material to apply to this primitive when rendering.
+            int mode = 4; ///< The type of primitives to render. default: 4
+            // targets; ///< An array of Morph Targets, each Morph Target is a dictionary mapping attributes
+            // (only POSITION, NORMAL, and TANGENT supported) to their deviations in the Morph Target.
 
-		Accessor accessor;
+            explicit Primitive(const nlohmann::json &j,
+                               std::list<Blob::glTF2::Accessor> &a,
+                               std::list<Material> &materials);
 
-		class Primitive : public GL::Renderable {
-			friend Mesh;
-		private:
-			unsigned int dataBufferOffset = 0;
+            friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
+        };
 
-			int position = -1;
-			int normal = -1;
-			int indices = -1;
-		};
+        std::list<Primitive> primitives; ///<An array of primitives, each defining geometry to be rendered with a
+        ///< material. Required
+        std::vector<int> weights; ///<Array of weights to be applied to the Morph Targets.
+        std::string name; ///< The user-defined name of this object.
 
-		std::vector<std::vector<Primitive>> primitives;
+        Mesh(const nlohmann::json &j, std::list<Accessor> &a, std::list<Material> &materials);
 
-		GL::VertexBufferObject vbo;
+        friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
 
-	public:
-		explicit Mesh(Reader::JsonExplorer explorer);
-
-		friend std::ostream &operator<<(std::ostream &s, Mesh &a);
-
-		std::vector<GL::Renderable *> getShape(int mesh);
-	};
+        friend std::ostream &operator<<(std::ostream &s, const Mesh &a);
+    };
 }
 
 #endif //BLOBENGINE_MESH_HPP

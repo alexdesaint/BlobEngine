@@ -272,9 +272,9 @@ namespace Blob {
 
     static Controls::Controller LOCAL_GLFW_Controllers[GLFW_JOYSTICK_LAST + 1];
 
-    std::list<Controls::Controller*> LOCAL_Controllers;
+    std::list<const Controls::Controller *> LOCAL_Controllers;
 
-    const std::list<Controls::Controller*> &Controls::controllers(LOCAL_Controllers);
+    const std::list<const Controls::Controller *> &Controls::controllers(LOCAL_Controllers);
 
     ImGuiIO *io;
 

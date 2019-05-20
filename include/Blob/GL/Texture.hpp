@@ -26,17 +26,21 @@ namespace Blob::GL {
 
 		Texture(uint8_t r, uint8_t g, uint8_t b);
 
+        Texture(const Texture &) = delete;
+
+        ~Texture();
+
 		void loadBMP(const std::string &path, bool nearest = false);
 
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
+
+        void setImage(const std::string &path);
 
 		void setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height, bool nearest = false);
 
 		unsigned int getTextureID() const;
 
 		Vec2f getTextureSize() const;
-
-		~Texture();
 	};
 }
 

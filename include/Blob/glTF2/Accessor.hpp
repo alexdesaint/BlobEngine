@@ -13,35 +13,26 @@ namespace Blob::glTF2 {
 			SCALAR = 1, VEC2 = 2, VEC3 = 3, VEC4 = 4, MAT2 = 4, MAT3 = 9, MAT4 = 16
 		};
 
-		struct Data {
-			int bufferView;            //!< The ID of the bufferView. (required)
-			unsigned int byteOffset = 0;        //!< The offset relative to the start of the bufferView in bytes.
-			uint32_t componentType;    //!< The datatype of components in the attribute. (required)
-            int count;                //!< The number of attributes referenced by this accessor. (required)
-			Type type;                        //!< Specifies if the attribute is a scalar, vector, or matrix. (required)
-			std::vector<float> max;                //!< Maximum value of each component in this attribute.
-			std::vector<float> min;                //!< Minimum value of each component in this attribute.
-		};
+        int bufferView = -1; ///< The index of the bufferView.
+        unsigned int byteOffset = 0; ///< The offset relative to the start of the bufferView in bytes. default: 0
+        uint32_t componentType; ///< The datatype of components in the attribute. (required)
+        bool normalized = false; ///< Specifies whether integer data values should be normalized. default: false
+        int count; ///< The number of attributes referenced by this accessor. (required)
+        Type type; ///< Specifies if the attribute is a scalar, vector, or matrix. (required)
+        std::vector<float> max; ///< Maximum value of each component in this attribute.
+        std::vector<float> min; ///< Minimum value of each component in this attribute.
+        //Sparse sparse; ///< Sparse storage of attributes that deviate from their initialization value.
+        std::string name; ///< The user-defined name of this object.
 
-		std::vector<Data> data;
+        //
 
-		BufferView bufferView;
+        std::list<BufferView>::iterator bufferViewIt;
 
-		explicit Accessor(Reader::JsonExplorer explorer);
+        Accessor(const nlohmann::json &j, std::list<BufferView> &bufferViews);
 
-		size_t getOffset(int Accessor);
+        static uint32_t getGlTypeSize(uint32_t dataType);
 
-		uint32_t getType(int Accessor);
-
-		size_t getSize(int Accessor);
-
-		size_t getNumOfVector(int Accessor);
-
-		uint32_t getValuePerVector(int Accessor);
-
-		friend std::ostream &operator<<(std::ostream &s, Accessor &a);
-
-		std::ostream &printData(std::ostream &s, int accessor);
+        friend std::ostream &operator<<(std::ostream &s, const Accessor &a);
 	};
 }
 

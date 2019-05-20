@@ -1,85 +1,69 @@
-#include <BlobEngine/BlobGL/Graphic.hpp>
-#include <BlobEngine/glTF2/SceneManager.hpp>
-#include <BlobEngine/BlobException.hpp>
+#include <Blob/GL/Graphic.hpp>
+#include <Blob/glTF2/SceneManager.hpp>
+#include <Blob/Exception.hpp>
 
 #include <iostream>
-#include <BlobEngine/Time.hpp>
+#include <Blob/Time.hpp>
+#include <Blob/GL/Shapes.hpp>
 
-#define TEST2
+using namespace Blob;
 
-int main(int argc, char *argv[]) {
+void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob::Vec2f cameraRange = {1, 100}) {
+    try {
+        std::cout << "test : " << path << std::endl;
 
-#ifdef TEXT1
-	try {
+        Blob::GL::Graphic graphic(false, 640, 480);
 
-		Blob::GL::Graphic graphic(640, 480);
+        Blob::glTF2::SceneManager sm(path);
 
-		//Blob::Renderable shape("../data/sphere.obj");
+        std::cout << sm;
 
-		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
-		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
-		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
-		Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
-		//Blob::glTF2::SceneManager sm("../data/poteau/poteau.gltf");
+        Blob::GL::Shape &mainScene = sm.scenes.front();
 
-		std::cout << sm;
+        graphic.setCameraPosition(x, y, z);
+        graphic.setCameraRange(cameraRange);
 
-		Blob::glTF2::Scene &mainScene = sm.getScene(0);
+        Time::TimePoint start = Time::now();
 
-		Blob::glTF2::Shape &s1 = mainScene.getShape(0);
+        while (graphic.isOpen()) {
+            graphic.clear();
 
+            Blob::Time::Duration flow = start - Time::now();
 
-		Blob::GL::ShaderProgram shader("../data/vertex.glsl", "../data/fragment.glsl");
+            mainScene.setRotation(flow.count(), 0, 1, 0);
 
-		graphic.setCameraPosition(10, 10, 10);
+            graphic.draw(mainScene);
 
-		while (graphic.isOpen()) {
-			graphic.clear();
+            graphic.display();
+        }
 
-			graphic.draw(s1, shader);
-
-			graphic.display();
-		}
-
-	} catch (BlobException &exception) {
-		std::cout << exception.what() << std::endl;
-	}
-#endif
-#ifdef TEST2
-	try {
-
-		Blob::GL::Graphic graphic(640, 480);
-
-		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
-		Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
-		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
-		//Blob::glTF2::SceneManager sm("../../gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
-		//Blob::glTF2::SceneManager sm("../data/poteau/poteau.gltf");
-
-		std::cout << sm;
-
-		Blob::glTF2::Scene &mainScene = sm.getScene(0);
-
-		Blob::GL::ShaderProgram shaderProgram("../data/vertex.glsl", "../data/fragment.glsl");
-
-		graphic.setCameraPosition(10, 10, 0);
-
-		while (graphic.isOpen()) {
-			graphic.clear();
-
-			float angle = Blob::getTime();
-
-			mainScene.setRotation(angle * 40, 0.f, 0.f, 1.f);
-
-			graphic.draw(mainScene, shaderProgram);
-
-			graphic.display();
-		}
-
-	} catch (BlobException &exception) {
-		std::cout << exception.what() << std::endl;
-	}
-#endif
-	return 0;
+    } catch (Exception &exception) {
+        std::cout << exception.what() << std::endl;
+    }
 }
 
+int main(int argc, char *argv[]) {
+    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+
+    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
+
+    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
+
+    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
+
+    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/BoxInterleaved/glTF/BoxInterleaved.gltf");
+
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/BoxTextured/glTF/BoxTextured.gltf");
+
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Duck/glTF/Duck.gltf");
+
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf");
+
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf",
+         1000, 0, 0, {100, 2000});
+
+    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf",
+    //        1000, 0, 0, {100, 2000});
+
+	return 0;
+}

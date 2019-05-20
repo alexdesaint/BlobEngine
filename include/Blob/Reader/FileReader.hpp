@@ -33,11 +33,15 @@ namespace Blob::Reader {
 
 		void restart();
 
+        void goTo(size_t pos);
+
 		std::string toString();
 
 		std::string getLine();
 
 		size_t getSize() const;
+
+        friend std::ostream &operator<<(std::ostream &s, FileReader &a);
 
 		static std::string getFileExtention(const std::string &file) {
 			return file.substr(file.find_last_of('.') + 1);

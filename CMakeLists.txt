@@ -6,9 +6,10 @@ project(BlobEngine LANGUAGES CXX C)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-option(BLOBTEST "Build the tests" OFF)
+option(BLOBTEST "Build the tests" ON)
 option(BLOBVK "Build Vulkan" OFF)
 
+set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)
 if (NOT OPENGL_FOUND)
     message(ERROR "OpenGL not found")
