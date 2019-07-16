@@ -1,5 +1,4 @@
-#ifndef BLOBENGINE_GRAPHIC_HPP
-#define BLOBENGINE_GRAPHIC_HPP
+#pragma once
 
 #include <Blob/GL/ShaderProgram.hpp>
 #include <Blob/GL/VertexArrayObject.hpp>
@@ -42,12 +41,16 @@ namespace Blob::GL {
         Texture *imguiFontTexture;
         Renderable *imguiRenderable;
 
+        //time
         std::chrono::high_resolution_clock::time_point lastFrameTime;
         std::chrono::duration<float> fpsCouner{0};
+        static float timeF;
 
         void enableDebugCallBack();
 
     public:
+        static const float &timeFlow;
+
         explicit Graphic(bool fullScreen = true, unsigned int w = 800, unsigned int h = 450);
 
         ~Graphic();
@@ -94,5 +97,3 @@ namespace Blob::GL {
         void close();
     };
 }
-
-#endif //BLOBENGINE_GRAPHIC_HPP

@@ -7,6 +7,7 @@
 #include <imgui.h>
 
 #include <Blob/Collision/CollisionDetector.hpp>
+#include <Blob/GL/Graphic.hpp>
 
 
 namespace Blob::Collision {
@@ -76,25 +77,37 @@ namespace Blob::Collision {
 
     //RectStatic
     void RectStatic::enableCollision() {
-        CollisionDetector::addToSpacialHash(rasterize(), this);
+        if(!enable) {
+            enable = true;
+            CollisionDetector::addToSpacialHash(rasterize(), this);
+        }
     }
 
     void RectStatic::disableCollision() {
-        CollisionDetector::removeFromSpacialHash(rasterize(), this);
+        if(enable) {
+            enable = false;
+            CollisionDetector::removeFromSpacialHash(rasterize(), this);
+        }
     }
 
     //RectDynamic
     void RectDynamic::enableCollision() {
-        CollisionDetector::rectDynamicList.push_front(this);
-        elementIt = CollisionDetector::rectDynamicList.begin();
+        if(!enable) {
+            enable = true;
+            CollisionDetector::rectDynamicList.push_front(this);
+            elementIt = CollisionDetector::rectDynamicList.begin();
 
-        CollisionDetector::addToSpacialHash(rasterize(), this);
+            CollisionDetector::addToSpacialHash(rasterize(), this);
+        }
     }
 
     void RectDynamic::disableCollision() {
-        CollisionDetector::rectDynamicList.erase(elementIt);
+        if(enable) {
+            enable = false;
+            CollisionDetector::rectDynamicList.erase(elementIt);
 
-        CollisionDetector::removeFromSpacialHash(rasterize(), this);
+            CollisionDetector::removeFromSpacialHash(rasterize(), this);
+        }
     }
 
     //LineStatic
@@ -109,17 +122,6 @@ namespace Blob::Collision {
 
     std::list<CircleDynamic *> CollisionDetector::circleDynamicList{};
     std::list<RectDynamic *> CollisionDetector::rectDynamicList{};
-
-    float getElapsedTime() {
-        static std::chrono::high_resolution_clock::time_point lastFrameTime;
-
-        std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<float> diff = now - lastFrameTime;
-
-        lastFrameTime = now;
-
-        return diff.count();
-    }
 
 /*
 	StaticObject *CollisionDetector::getClosetObject(Circle &object, Vec2f frameMove, Hit &hit) {
@@ -277,26 +279,26 @@ namespace Blob::Collision {
 
         Vec2f stepMove = frameMove / numOfStep;
 
-        Rectangle r({}, object.getSize());
+        Rectangle r({}, object.size);
 
         std::unordered_map<Object *, Reaction> hittedObjects;
 
         for (unsigned int i = 0; i < numOfStep; i++) {
 
-            r.setPosition(object.getPosition() + Vec2f{stepMove.x, 0});
+            r.position = object.position + Vec2f{stepMove.x, 0};
 
             if (!targetOverlap(object, r, targets, hittedObjects)) {
-                object.setPosition(r.getPosition());
+                object.position = r.position;
 
                 if (!object.keepMoving()) {
                     break;
                 }
             }
 
-            r.setPosition(object.getPosition() + Vec2f{0, stepMove.y});
+            r.position = object.position + Vec2f{0, stepMove.y};
 
             if (!targetOverlap(object, r, targets, hittedObjects)) {
-                object.setPosition(r.getPosition());
+                object.position = r.position;
 
                 if (!object.keepMoving()) {
                     break;
@@ -345,7 +347,9 @@ namespace Blob::Collision {
     void CollisionDetector::checkCollision(Blob::Collision::RectDynamic &object) {
         object.preCollisionUpdate();
 
-        Vec2f frameMove = object.speed * timeFlow;
+        Vec2f frameMove = object.speed * Blob::GL::Graphic::timeFlow;
+
+        Vec2f oldPos = object.position;
 
         list<int64_t> path;
 
@@ -358,9 +362,8 @@ namespace Blob::Collision {
 
         for (const auto &p : path) {
             auto search = spacialHash.find(p);
-            if (search != spacialHash.end()) {
+            if (search != spacialHash.end())
                 targets.insert(spacialHash[p].begin(), spacialHash[p].end());
-            }
         }
 
         targets.erase(&object);
@@ -368,12 +371,13 @@ namespace Blob::Collision {
         removeFromSpacialHash(object.rasterize(), &object);
 
         if (targets.empty())
-            object.setPosition(frameMove + object.getPosition());
+            object.position = frameMove + object.position;
         else
             computeLocalCollision(object, targets, frameMove);
 
         addToSpacialHash(object.rasterize(), &object);
 
+        object.speed = (object.position - oldPos) / Blob::GL::Graphic::timeFlow;
 
         object.postCollisionUpdate();
     }
@@ -381,8 +385,6 @@ namespace Blob::Collision {
     void CollisionDetector::update() {
 
         if (!timeStoped) {
-            timeFlow = getElapsedTime();
-
             /*
 		    for (CircleDynamic *object : circleDynamicList) {
 			    if (!object->speed.isNull())
@@ -402,6 +404,5 @@ namespace Blob::Collision {
 
     void CollisionDetector::unpause() {
         timeStoped = false;
-        getElapsedTime();
     }
 }

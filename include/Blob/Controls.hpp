@@ -47,6 +47,8 @@ namespace Blob {
 
             int joystickAxesCount = 0;
             const float *joystickAxes = nullptr;
+
+            void controllerOut() const;
         };
 
         const static std::list<const Controller *> &controllers;

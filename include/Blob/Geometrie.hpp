@@ -233,14 +233,13 @@ namespace Blob {
 	};
 
 	class Rectangle : virtual public Form {
-    private:
+    public:
 
         ///The center of the rectangle
         Point2f position;
 
         ///full size of the sides
         Vec2f size;
-    public:
 
 		Rectangle() : position(), size() {}
 
@@ -254,12 +253,12 @@ namespace Blob {
 
 		std::list<Vec2i> rasterize();
 
-        const Point2f &getPosition() const;
+        /*const Point2f &getPosition() const;
 
         const Vec2f &getSize() const;
 
         void setPosition(const Point2f &position);
 
-        void setSize(const Vec2f &size);
+        void setSize(const Vec2f &size);*/
     };
 };

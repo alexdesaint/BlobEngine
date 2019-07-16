@@ -23,6 +23,8 @@ namespace Blob::Collision {
         int objectType;
 
     protected:
+        bool enable = false;
+
         /**
          * To set the type of the object
          * The type is used to define the child class of this Object.
@@ -210,8 +212,6 @@ namespace Blob::Collision {
 
         static std::list<CircleDynamic *> circleDynamicList;
         static std::list<RectDynamic *> rectDynamicList;
-
-        float timeFlow = 0;
 
         bool timeStoped = false;
 
