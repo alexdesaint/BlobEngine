@@ -1,6 +1,7 @@
 #ifndef BLOBENGINE_MESH_HPP
 #define BLOBENGINE_MESH_HPP
 
+#include <deque>
 #include <iostream>
 #include <nlohmann/json.hpp>
 
@@ -30,7 +31,7 @@ namespace Blob::glTF2 {
             // (only POSITION, NORMAL, and TANGENT supported) to their deviations in the Morph Target.
 
             explicit Primitive(const nlohmann::json &j,
-                               std::list<Blob::glTF2::Accessor> &a,
+                               std::deque<Blob::glTF2::Accessor> &a,
                                std::list<Material> &materials);
 
             friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
@@ -41,7 +42,7 @@ namespace Blob::glTF2 {
         std::vector<int> weights; ///<Array of weights to be applied to the Morph Targets.
         std::string name; ///< The user-defined name of this object.
 
-        Mesh(const nlohmann::json &j, std::list<Accessor> &a, std::list<Material> &materials);
+        Mesh(const nlohmann::json &j, std::deque<Accessor> &a, std::list<Material> &materials);
 
         friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
 

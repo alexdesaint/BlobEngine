@@ -6,7 +6,7 @@ using namespace std;
 
 namespace Blob::glTF2 {
 
-    Mesh::Primitive::Primitive(const nlohmann::json &j, std::list<Blob::glTF2::Accessor> &a,
+    Mesh::Primitive::Primitive(const nlohmann::json &j, std::deque<Blob::glTF2::Accessor> &a,
                                std::list<Material> &materials) {
         if (j.find("attributes") == j.end())
             throw Exception("glTF : Required field \"attributes\" not found");
@@ -39,11 +39,9 @@ namespace Blob::glTF2 {
         // TODO: optimise this part, the data need to be in one Interleaved vertex. if the offset < stride
         int32_t pos = 0;
         for (const auto &k : attributes) {
-            auto accessorIt = std::next(a.begin(), k.second);
+            setBuffer(*a[k.second].bufferViewIt, a[k.second].bufferViewIt->byteStride, a[k.second].byteOffset, pos);
 
-            setBuffer(*accessorIt->bufferViewIt, accessorIt->bufferViewIt->byteStride, accessorIt->byteOffset, pos);
-
-            setArrayVAO(accessorIt->type, k.first.c_str(), accessorIt->componentType, 0, accessorIt->normalized, pos);
+            setArrayVAO(a[k.second].type, k.first.c_str(), a[k.second].componentType, 0, a[k.second].normalized, pos);
 
             pos++;
         }
@@ -51,11 +49,9 @@ namespace Blob::glTF2 {
         if (j.find("indices") != j.end()) {
             j.at("indices").get_to(indices);
 
-            auto indicesIt = std::next(a.begin(), indices);
+            setBufferIndices(*a[indices].bufferViewIt);
 
-            setBufferIndices(*indicesIt->bufferViewIt);
-
-            setIndices((unsigned short *) indicesIt->byteOffset, indicesIt->count, indicesIt->componentType);
+            setIndices((unsigned short *) a[indices].byteOffset, a[indices].count, a[indices].componentType);
         }
 
         if (j.find("material") != j.end()) {
@@ -73,7 +69,7 @@ namespace Blob::glTF2 {
         // setMode()
     }
 
-    Mesh::Mesh(const nlohmann::json &j, std::list<Blob::glTF2::Accessor> &a, std::list<Material> &materials) {
+    Mesh::Mesh(const nlohmann::json &j, std::deque<Blob::glTF2::Accessor> &a, std::list<Material> &materials) {
         if (j.find("primitives") == j.end())
             throw Exception("glTF : Required field \"primitives\" not found");
 

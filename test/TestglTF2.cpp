@@ -16,7 +16,7 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
 
         Blob::glTF2::SceneManager sm(path);
 
-        std::cout << sm;
+        //std::cout << sm;
 
         Blob::GL::Shape &mainScene = sm.scenes.front();
 
@@ -43,15 +43,16 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
 }
 
 int main(int argc, char *argv[]) {
-    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
 
-    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
+	return 0;
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
 
-    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
 
-    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
 
-    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/BoxInterleaved/glTF/BoxInterleaved.gltf");
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/BoxInterleaved/glTF/BoxInterleaved.gltf");
 
     test("/home/patapouf/Projects/glTF-Sample-Models/2.0/BoxTextured/glTF/BoxTextured.gltf");
 
@@ -59,11 +60,13 @@ int main(int argc, char *argv[]) {
 
     test("/home/patapouf/Projects/glTF-Sample-Models/2.0/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf");
 
+    test("/home/patapouf/Projects/Shapes/test.gltf");
+
     test("/home/patapouf/Projects/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf",
          1000, 0, 0, {100, 2000});
 
-    //test("/home/patapouf/Projects/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf",
-    //        1000, 0, 0, {100, 2000});
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf",
+            1000, 0, 0, {100, 2000});
 
 	return 0;
 }

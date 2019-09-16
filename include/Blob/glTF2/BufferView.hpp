@@ -1,6 +1,4 @@
-#ifndef BLOBENGINE_BUFFERVIEW_HPP
-#define BLOBENGINE_BUFFERVIEW_HPP
-
+#pragma once
 
 #include <vector>
 #include <list>
@@ -34,4 +32,3 @@ namespace Blob::glTF2 {
 	};
 }
 
-#endif //BLOBENGINE_BUFFERVIEW_HPP

@@ -104,6 +104,8 @@ namespace Blob::glTF2 {
 
         for (const json &js : j["scenes"])
             scenes.emplace_back(js, nodes);
+
+        createVBO();
     }
 
     std::ostream &operator<<(std::ostream &s, const SceneManager &a) {
@@ -147,4 +149,54 @@ namespace Blob::glTF2 {
 		s << "}" << endl;
 		return s;
 	}
+
+
+    void SceneManager::createVBO() {
+        //get the size of the buffer
+
+        size_t size = 0;
+        for (const auto &m : meshes) {
+            for (const auto &p : m.primitives) {
+
+            	// indices :
+                if(p.indices != -1)
+                    size += accessors[p.indices].bufferViewIt->byteLength;
+
+                // attributes :
+                for (const auto &a : p.attributes)
+                    size += accessors[a.second].bufferViewIt->byteLength;
+            }
+        }
+
+        cout << "VBO creation" << endl;
+        cout << "size : " << size << endl;
+
+        //local buffer creation
+        vector<uint8_t> buffer(size);
+        size_t cursor = 0;
+
+        //buffer assign values :
+        for (const auto &m : meshes) {
+            for (const auto &p : m.primitives){
+
+            	// Reading indices :
+                if(p.indices != -1) {
+                    Reader::FileReader fileReader(accessors[p.indices].bufferViewIt->bufferIt->uri);
+
+                    fileReader.goTo(accessors[p.indices].bufferViewIt->byteOffset + accessors[p.indices].byteOffset);
+
+                    // set cursor as new offset
+                    // TODO
+
+                    for (int i = 0; i < accessors[p.indices].count * accessors[p.indices].type; i++)
+                        buffer[cursor] = fileReader.readNextByte();
+                }
+
+                // Reading Data :
+				for (const auto &a : p.attributes) {
+					// TODO
+				}
+            }
+        }
+    }
 }

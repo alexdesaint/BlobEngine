@@ -1,5 +1,6 @@
-#ifndef BLOBENGINE_SCENEMANAGER_HPP
-#define BLOBENGINE_SCENEMANAGER_HPP
+#pragma once
+
+#include <deque>
 
 #include <Blob/glTF2/Asset.hpp>
 #include <Blob/glTF2/Accessor.hpp>
@@ -17,6 +18,8 @@ namespace Blob::glTF2 {
 	class SceneManager {
 	public:
 
+	    //TODO : Remplace by deque and implement random access
+
         // version check
 		Asset asset;
 
@@ -31,7 +34,7 @@ namespace Blob::glTF2 {
         std::list<Material> materials;
 
         // model part
-        std::list<Accessor> accessors;
+        std::deque<Accessor> accessors;
         std::list<Mesh> meshes;
         std::list<Node> nodes;
         std::list<Scene> scenes;
@@ -39,7 +42,9 @@ namespace Blob::glTF2 {
 		explicit SceneManager(const std::string &file);
 
         friend std::ostream &operator<<(std::ostream &s, const SceneManager &a);
+
+        GL::VertexBufferObject vertexBufferObject;
+
+        void createVBO();
 	};
 }
-
-#endif //BLOBENGINE_SCENEMANAGER_HPP
