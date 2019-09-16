@@ -40,7 +40,7 @@ namespace Blob::GL {
 
         void setBuffer(VertexBufferObject &vbo, int32_t stride, uint32_t dataOffset = 0, uint32_t pos = 0);
 
-		void setTexture(Texture &t);
+		void setTexture(Texture &texture);
 
         void setArrayVAO(uint32_t valuePerVector, const char *name, uint32_t dataType,
                          uint32_t relativeOffset, bool normalized = false, uint32_t pos = 0);

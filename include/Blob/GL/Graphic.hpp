@@ -51,7 +51,7 @@ namespace Blob::GL {
     public:
         static const float &timeFlow;
 
-        explicit Graphic(bool fullScreen = true, unsigned int w = 800, unsigned int h = 450);
+        explicit Graphic(bool fullScreen = true, unsigned int w = 640, unsigned int h = 360);
 
         ~Graphic();
 
