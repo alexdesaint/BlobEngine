@@ -220,7 +220,8 @@ namespace Blob::GL {
         glfwPollEvents();
         Controls::updateControllers();
 
-        return diff.count();
+        timeF = diff.count();
+        return timeF;
     }
 
     void Graphic::resize(unsigned int w, unsigned int h) {
@@ -515,3 +516,6 @@ namespace Blob::GL {
         quit = true;
     }
 }
+
+float Blob::GL::Graphic::timeF = 0;
+const float &Blob::GL::Graphic::timeFlow = timeF;

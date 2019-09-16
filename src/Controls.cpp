@@ -257,14 +257,14 @@ namespace Blob {
 
         int keyMap = -1;
 
-        for(int i = 0; i < GLFW_KEY_LAST + 2; i++) {
-            if(keys[i] == &key)
+        for (int i = 0; i < GLFW_KEY_LAST + 2; i++) {
+            if (keys[i] == &key)
                 keyMap = i - 1;
         }
 
-        const char* name = glfwGetKeyName(keyMap, 0);
+        const char *name = glfwGetKeyName(keyMap, 0);
 
-        if(name == nullptr)
+        if (name == nullptr)
             return std::string();
         else
             return std::string(name);
@@ -288,16 +288,18 @@ namespace Blob {
             LOCAL_GLFW_Controllers[joy].stillConnected = false;
             LOCAL_Controllers.remove(&LOCAL_GLFW_Controllers[joy]);
         }
+
+        Controls::updateControllers();
     }
 
     void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
 
         if (action != 2) {
-            (*keys[key + 1]) = (bool) action;
-            io->KeysDown[key + 1] = (bool) action;
+            (*keys[key + 1]) = (bool) action;// BlobEngine
+            io->KeysDown[key + 1] = (bool) action;// ImGUI
         }
 
-        // Modifiers are not reliable across systems
+        // ImGUI : Modifiers are not reliable across systems
         io->KeyCtrl = io->KeysDown[GLFW_KEY_LEFT_CONTROL + 1] || io->KeysDown[GLFW_KEY_RIGHT_CONTROL + 1];
         io->KeyShift = io->KeysDown[GLFW_KEY_LEFT_SHIFT + 1] || io->KeysDown[GLFW_KEY_RIGHT_SHIFT + 1];
         io->KeyAlt = io->KeysDown[GLFW_KEY_LEFT_ALT + 1] || io->KeysDown[GLFW_KEY_RIGHT_ALT + 1];
@@ -527,19 +529,35 @@ namespace Blob {
         io->GetClipboardTextFn = GetClipboardText;
 
 
-        for(int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
-            if(glfwJoystickPresent(i))
+        for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
+            if (glfwJoystickPresent(i))
                 joystick_callback(i, GLFW_CONNECTED);
         }
     }
 
     void Controls::updateControllers() {
-        for(auto c : LOCAL_Controllers) {
+        for (auto c : LOCAL_Controllers) {
             LOCAL_GLFW_Controllers[c->number].buttons =
                     glfwGetJoystickButtons(c->number, &LOCAL_GLFW_Controllers[c->number].buttonsCount);
 
             LOCAL_GLFW_Controllers[c->number].joystickAxes =
                     glfwGetJoystickAxes(c->number, &LOCAL_GLFW_Controllers[c->number].joystickAxesCount);
         }
+    }
+
+    void Controls::Controller::controllerOut() const {
+        ImGui::Begin(name.c_str());
+
+        for (int i = 0; i < joystickAxesCount; i++)
+            ImGui::SliderFloat((std::string("Axe :") + std::to_string(i)).c_str(), (float *) &joystickAxes[i], -1.0f,
+                               1.0f, "%.2f");
+
+        for (int i = 0; i < buttonsCount; i++) {
+            ImGui::Checkbox((std::string("B") + std::to_string(i + 1)).c_str(), (bool *) &buttons[i]);
+            if((i+1)%5 != 0)
+                ImGui::SameLine();
+        }
+
+        ImGui::End();
     }
 }
