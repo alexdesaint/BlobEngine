@@ -11,6 +11,8 @@ addons:
       - libxcursor-dev
       - libxi-dev
       - libstdc++-7-dev
+      - mesa-common-dev
+      - libgl1-mesa-dev
 matrix:
   include:
     - os: linux
