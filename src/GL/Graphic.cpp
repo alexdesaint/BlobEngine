@@ -120,10 +120,10 @@ namespace Blob::GL {
 
         if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) throw Exception("Fail to load openGL");
 
-        if (GLmajor != GLVersion.major || GLminor != GLVersion.minor)
+        if (GLmajor != GLVersion.major || GLminor > GLVersion.minor)
             throw Exception("Fail to load the right version of OpenGL. Loaded version : " +
                             std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor) +
-                            " instead of " + std::to_string(GLmajor) + "." + std::to_string(GLminor) +
+                            " instead of " + std::to_string(GLmajor) + "\n" + std::to_string(GLminor) +
                             ". System version : " + (char *) glGetString(GL_VERSION));
 
         enableDebugCallBack();
