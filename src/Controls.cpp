@@ -288,8 +288,6 @@ namespace Blob {
             LOCAL_GLFW_Controllers[joy].stillConnected = false;
             LOCAL_Controllers.remove(&LOCAL_GLFW_Controllers[joy]);
         }
-
-        Controls::updateControllers();
     }
 
     void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
@@ -353,6 +351,7 @@ namespace Blob {
     }
 
     void Controls::init(void *window) {
+        // keyboard init
         keys[GLFW_KEY_UNKNOWN + 1] = &LOCAL_UNKNOWN;
         keys[GLFW_KEY_SPACE + 1] = &LOCAL_SPACE;
         keys[GLFW_KEY_APOSTROPHE + 1] = &LOCAL_APOSTROPHE;
@@ -475,6 +474,7 @@ namespace Blob {
         keys[GLFW_KEY_RIGHT_SUPER + 1] = &LOCAL_RIGHT_SUPER;
         keys[GLFW_KEY_MENU + 1] = &LOCAL_MENU;
 
+        // ImGUI control init
         io = &ImGui::GetIO();
 
         //callback
@@ -522,12 +522,14 @@ namespace Blob {
         glfwSetCursorPosCallback((GLFWwindow *) window, cursor_position_callback);
         glfwSetScrollCallback((GLFWwindow *) window, scroll_callback);
         glfwSetCharCallback((GLFWwindow *) window, character_callback);
+
         io->MousePos = Vec2f();
-        glfwSetJoystickCallback(joystick_callback);
 
         io->SetClipboardTextFn = SetClipboardText;
         io->GetClipboardTextFn = GetClipboardText;
 
+        // Controller init
+        glfwSetJoystickCallback(joystick_callback);
 
         for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
             if (glfwJoystickPresent(i))
@@ -535,7 +537,10 @@ namespace Blob {
         }
     }
 
-    void Controls::updateControllers() {
+    void Controls::update() {
+        glfwPollEvents();
+
+        // Controller buttons (must be on the windows thread
         for (auto c : LOCAL_Controllers) {
             LOCAL_GLFW_Controllers[c->number].buttons =
                     glfwGetJoystickButtons(c->number, &LOCAL_GLFW_Controllers[c->number].buttonsCount);
@@ -549,8 +554,13 @@ namespace Blob {
         ImGui::Begin(name.c_str());
 
         for (int i = 0; i < joystickAxesCount; i++)
-            ImGui::SliderFloat((std::string("Axe :") + std::to_string(i)).c_str(), (float *) &joystickAxes[i], -1.0f,
-                               1.0f, "%.2f");
+            ImGui::SliderFloat(
+                    (std::string("Axe :") + std::to_string(i)).c_str(),
+                    (float *) &joystickAxes[i],
+                    -1.0f,
+                    1.0f,
+                    "%.2f"
+                    );
 
         for (int i = 0; i < buttonsCount; i++) {
             ImGui::Checkbox((std::string("B") + std::to_string(i + 1)).c_str(), (bool *) &buttons[i]);

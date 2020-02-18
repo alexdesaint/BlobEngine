@@ -1,11 +1,9 @@
-#ifndef BLOBENGINE_GLSHAPE_HPP
-#define BLOBENGINE_GLSHAPE_HPP
+#pragma once
 
-#include <Blob/GL/Renderable.hpp>
-
+#include <Blob/Renderable.hpp>
 #include <list>
 
-namespace Blob::GL {
+namespace Blob {
 
 	class Graphic;
 
@@ -35,5 +33,3 @@ namespace Blob::GL {
         friend std::ostream &operator<<(std::ostream &s, const Shape &a);
 	};
 }
-
-#endif //BLOBENGINE_GLSHAPE_HPP

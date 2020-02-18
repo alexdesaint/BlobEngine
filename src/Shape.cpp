@@ -1,6 +1,6 @@
-#include <Blob/GL/Shape.hpp>
+#include <Blob/Shape.hpp>
 
-namespace Blob::GL {
+namespace Blob {
 
     void Shape::addRenderable(const Renderable &r) {
 		renderables.emplace_back(&r);

@@ -1,7 +1,9 @@
-#include <Blob/GL/Shapes.hpp>
+#include <Blob/Shapes.hpp>
 #include <glad/glad.h>
 
-namespace Blob::GL {
+namespace Blob {
+    using namespace GL;
+
     ShaderProgram *Shaders::Shader_2D_POSITION_TEXCOORD_0_COLOR_0;
 
     ShaderProgram *Shaders::Shader_3D_POSITION;
@@ -329,7 +331,7 @@ void main() {
     }
 }
 
-namespace Blob::GL::Shapes {
+namespace Blob::Shapes {
 
     struct Data {
         float coor[3];
@@ -460,9 +462,75 @@ namespace Blob::GL::Shapes {
     };
 
     VertexBufferObject *vbo;
+    VertexArrayObject *vaoCube;
+    VertexArrayObject *vaoPlane;
+    VertexArrayObject *vaoOctagonalPrism;
 
     void init() {
         vbo = new VertexBufferObject((GLubyte *) data, sizeof(data));
+        vaoCube = new VertexArrayObject();
+        vaoCube->setBuffer(*vbo, sizeof(Data));
+        vaoCube->setArray(
+                3,
+                Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0->getAttribLocation("POSITION"),
+                GL_FLOAT,
+                (uint32_t) offsetof(Data, coor)
+        );
+        vaoCube->setArray(
+                3,
+                Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0->getAttribLocation("NORMAL"),
+                GL_FLOAT,
+                (uint32_t) offsetof(Data, norm)
+        );
+        vaoCube->setArray(
+                2,
+                Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0->getAttribLocation("TEXCOORD_0"),
+                GL_FLOAT,
+                (uint32_t) offsetof(Data, texCoor)
+        );
+
+        vaoPlane = new VertexArrayObject();
+        vaoPlane->setBuffer(*vbo, sizeof(Data), 4 * 6 * sizeof(Data));
+        vaoPlane->setArray(
+                3,
+                Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0->getAttribLocation("POSITION"),
+                GL_FLOAT,
+                (uint32_t) offsetof(Data, coor)
+        );
+        vaoPlane->setArray(
+                3,
+                Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0->getAttribLocation("NORMAL"),
+                GL_FLOAT,
+                (uint32_t) offsetof(Data, norm)
+        );
+        vaoPlane->setArray(
+                2,
+                Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0->getAttribLocation("TEXCOORD_0"),
+                GL_FLOAT,
+                (uint32_t) offsetof(Data, texCoor)
+        );
+
+        vaoOctagonalPrism = new VertexArrayObject();
+        vaoOctagonalPrism->setBuffer(*vbo, sizeof(Data), (4 * 6 + 4) * sizeof(Data));
+        vaoOctagonalPrism->setArray(
+                3,
+                Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0->getAttribLocation("POSITION"),
+                GL_FLOAT,
+                (uint32_t) offsetof(Data, coor)
+        );
+        vaoOctagonalPrism->setArray(
+                3,
+                Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0->getAttribLocation("NORMAL"),
+                GL_FLOAT,
+                (uint32_t) offsetof(Data, norm)
+        );
+        vaoOctagonalPrism->setArray(
+                2,
+                Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0->getAttribLocation("TEXCOORD_0"),
+                GL_FLOAT,
+                (uint32_t) offsetof(Data, texCoor)
+        );
+
         initShaders();
 
         Colors::maroon = new Texture(128, 0, 0);
@@ -608,6 +676,10 @@ namespace Blob::GL::Shapes {
 
     void destroy() {
         delete vbo;
+        delete vaoCube;
+        delete vaoPlane;
+        delete vaoOctagonalPrism;
+
         destroyShaders();
 
         delete Colors::maroon;
@@ -751,46 +823,21 @@ namespace Blob::GL::Shapes {
         delete Colors::white;
     }
 
-    Cube::Cube() {
-        setBuffer(*vbo, sizeof(Data));
-
-        setShaderProgram(*Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0);
-
-        setArrayVAO(3, "POSITION", GL_FLOAT, (uint32_t) offsetof(Data, coor));
-        setArrayVAO(3, "NORMAL", GL_FLOAT, (uint32_t) offsetof(Data, norm));
-        setArrayVAO(2, "TEXCOORD_0", GL_FLOAT, (uint32_t) offsetof(Data, texCoor));
+    Cube::Cube() : Renderable(*vaoCube, *Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0, *Colors::teal){
 
         setIndices(cubeIndices, sizeof(cubeIndices) / sizeof(*cubeIndices), GL_UNSIGNED_SHORT);
 
         setTexture(*Colors::teal);
     }
 
-    Plane::Plane() {
-        setBuffer(*vbo, sizeof(Data), 4 * 6 * sizeof(Data));
-
-        setShaderProgram(*Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0);
-
-        setArrayVAO(3, "POSITION", GL_FLOAT, (uint32_t) offsetof(Data, coor));
-        setArrayVAO(3, "NORMAL", GL_FLOAT, (uint32_t) offsetof(Data, norm));
-        setArrayVAO(2, "TEXCOORD_0", GL_FLOAT, (uint32_t) offsetof(Data, texCoor));
+    Plane::Plane() : Renderable(*vaoCube, *Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0, *Colors::teal){
 
         setIndices(planeIndices, sizeof(planeIndices) / sizeof(*planeIndices), GL_UNSIGNED_SHORT);
-
-        setTexture(*Colors::teal);
     }
 
-    OctagonalPrism::OctagonalPrism() {
-        setBuffer(*vbo, sizeof(Data), (4 * 6 + 4) * sizeof(Data));
-
-        setShaderProgram(*Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0);
-
-        setArrayVAO(3, "POSITION", GL_FLOAT, (uint32_t) offsetof(Data, coor));
-        setArrayVAO(3, "NORMAL", GL_FLOAT, (uint32_t) offsetof(Data, norm));
-        setArrayVAO(2, "TEXCOORD_0", GL_FLOAT, (uint32_t) offsetof(Data, texCoor));
+    OctagonalPrism::OctagonalPrism() : Renderable(*vaoCube, *Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0, *Colors::teal){
 
         setIndices(octagonalPrismIndices, sizeof(octagonalPrismIndices) / sizeof(*octagonalPrismIndices),
                    GL_UNSIGNED_SHORT);
-
-        setTexture(*Colors::teal);
     }
 }

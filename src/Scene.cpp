@@ -1,6 +1,6 @@
-#include <Blob/GL/Scene.hpp>
+#include <Blob/Scene.hpp>
 
-namespace Blob::GL {
+namespace Blob {
 
 	void Scene::addShape(Shape &r) {
 		shapes.emplace_back(&r);

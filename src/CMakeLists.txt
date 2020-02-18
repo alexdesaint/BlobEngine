@@ -7,11 +7,17 @@ add_subdirectory(geometrie)
 add_subdirectory(glTF2)
 add_subdirectory(Reader)
 
-add_library(BlobTime STATIC Time.cpp)
-add_library(Blob::Time ALIAS BlobTime)
-target_include_directories(BlobTime PUBLIC ../include)
-
-add_library(BlobControls STATIC Controls.cpp)
-add_library(Blob::Controls ALIAS BlobControls)
-target_link_libraries(BlobControls glfw imgui)
-target_include_directories(BlobControls PUBLIC ../include)
+add_library(Blob STATIC
+        Controls.cpp
+        Movable.cpp
+        ProjectionTransform.cpp
+        Renderable.cpp
+        Scene.cpp
+        Shape.cpp
+        Shapes.cpp
+        Time.cpp
+        Window.cpp
+        )
+target_include_directories(Blob PUBLIC ../../include)
+target_link_libraries(Blob glfw imgui stb glm EnTT
+        Blob::GL)

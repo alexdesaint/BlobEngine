@@ -6,10 +6,10 @@
 
 namespace Blob::GL {
 
-	class Graphic;
+	class Window;
 
 	class Texture {
-		friend Graphic;
+		friend Window;
 	private:
 
 		unsigned int texture = -1; // the opengl texture

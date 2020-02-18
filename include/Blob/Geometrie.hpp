@@ -119,17 +119,17 @@ namespace Blob {
         }
 
         //Functions
-		T length2() const {
+		[[nodiscard]] T length2() const {
 			return x * x + y * y;
 		}
 
-		float length() const;
+		[[nodiscard]] float length() const;
 
-		T scalaire(Vec2 B) const {
+		[[nodiscard]] T scalaire(Vec2 B) const {
 			return x * B.x + y * B.y;
 		}
 
-		Vec2<float> getNormal() const {
+		[[nodiscard]] Vec2<float> getNormal() const {
 			float l = length();
 
 			float invLength = 1.f / l;
@@ -139,20 +139,20 @@ namespace Blob {
 
         Vec2<T> setLength(float newLength);
 
-		Vec2 rotate() const {
+		[[nodiscard]] Vec2 rotate() const {
 			return {-y, x};
 		}
 
-		float getOrientation() const;
+		[[nodiscard]] float getOrientation() const;
 
-		float getOrientationDeg() const;
+		[[nodiscard]] float getOrientationDeg() const;
 
 		void reset() {
 			x = 0;
 			y = 0;
 		}
 
-		bool isNull() const {
+		[[nodiscard]] bool isNull() const {
 			return ((x == 0) && (y == 0));
 		}
 
@@ -247,7 +247,7 @@ namespace Blob {
 
 		std::array<Vec2f, 4> getPoints();
 
-		bool overlapBigger(const Rectangle &r) const;
+		[[nodiscard]] bool overlapBigger(const Rectangle &r) const;
 
 		bool overlap(const Rectangle &r) final;
 

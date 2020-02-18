@@ -1,0 +1,119 @@
+@startuml
+title BlobEngine
+
+namespace Blob {
+
+    class Object <Entity> {
+    }
+
+    class WindowBuilder {
+
+    }
+
+    WindowBuilder <|-- Window
+
+    Object o--> Model
+
+    EntityRegistry *--> Object
+
+    ModelTransform <|-- Shape
+    ModelTransform <|-- Scene
+    ModelTransform <|-- Model
+
+    ViewTransform <|-- Camera
+
+    Camera --> ShadowEffect
+
+    ProjectionTransform <|-- Window
+
+    class Window {
+      + draw()
+    }
+
+    Window --> Scene
+
+    class Model <Component> {
+        + Color : color
+    }
+
+    namespace GLorVK {
+        class ContextLoader {
+        }
+
+        ContextLoader <|-- Blob.Window
+
+        Blob.Model --> VAO
+        Blob.Model --> Texture
+        Blob.Model --> Shader
+        VAO ..> VBO
+
+        class PostEffect {
+
+        }
+
+        Blob.ShadowEffect --|> PostEffect
+    }
+
+    Shape o-up-> Shape
+    Shape o--> Object
+
+    Scene -right-> Camera
+    Scene o--> Shape
+
+    namespace Collision {
+        CollisionManager --> Blob.EntityRegistry
+        CollisionManager ..> HitBox
+        CollisionManager ..> Velocity
+
+
+        Blob.Object o--> Velocity
+        Blob.Object o--> HitBox
+
+        class CollisionManager <System> {
+
+        }
+
+        class HitBox <Component> {
+            + x : float
+            + y : float
+            + w : float
+            + h : float
+        }
+        class Velocity <Component> {
+            + dx : float
+            + dy : float
+        }
+    }
+
+    class Color {
+        +r : char
+        +g : char
+        +b : char
+        +a : char
+    }
+
+    class Vec2f {
+        + x : float
+        + y : float
+    }
+
+    class Controls {
+
+    }
+
+    Controls ..> Window
+}
+
+class Player <Component> {
+
+}
+
+class PlayerManager <System> {
+
+}
+
+PlayerManager ..> Player
+PlayerManager --> Blob.EntityRegistry
+
+Blob.Object o--> Player
+@enduml

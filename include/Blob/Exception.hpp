@@ -1,10 +1,7 @@
+#pragma once
+
 #include <utility>
-
-#ifndef BLOBENGINE_BLOBEXCEPTION_HPP
-#define BLOBENGINE_BLOBEXCEPTION_HPP
-
 #include <exception>
-#include <utility>
 #include <string>
 
 namespace Blob {
@@ -17,10 +14,8 @@ namespace Blob {
 
         explicit Exception(std::string errorMsg) : errorMsg(std::move(errorMsg)) {}
 
-        const char *what() const noexcept override {
+        [[nodiscard]] const char *what() const noexcept override {
             return errorMsg.c_str();
         }
     };
 }
-
-#endif //BLOBENGINE_BLOBEXCEPTION_HPP

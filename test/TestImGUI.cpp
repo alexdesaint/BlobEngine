@@ -7,6 +7,7 @@
 
 #include <imgui.h>
 #include <glad/glad.h>
+#include <entt/entt.hpp>
 
 using namespace std;
 using namespace Blob;
@@ -17,28 +18,28 @@ int main(int argc, char *argv[]) {
 
 	try {
 		Graphic graphic(false);
-
-		Cube c1, c2;
+        entt::registry registry;
 
         Texture t("data/cube.bmp"), white(255, 255, 255);
-		
-		c1.setPosition(-5.f, 0.f, 0.f);
 
-        c1.setTexture(t);
-		c2.setPosition(0.f, -2.f, 0.f);
-		c2.setScale(4, 1, 1);
+        auto entity = registry.create();
+        auto &c = registry.assign<Cube>(entity);
+        c.setPosition(-5.f, 0.f, 0.f);
+        c.setTexture(t);
 
-		list<Cube> cubeList;
+        entity = registry.create();
+        c = registry.assign<Cube>(entity);
+		c.setPosition(0.f, -2.f, 0.f);
+		c.setScale(4, 1, 1);
 
-		cubeList.emplace_back();
-
-		Plane p;
-
+        entity = registry.create();
+        auto &p = registry.assign<Plane>(entity);
 		p.move(0, 2, 0);
 		p.setScale(2, 2, 2);
         p.setTexture(white);
 
-		OctagonalPrism op;
+        entity = registry.create();
+        registry.assign<OctagonalPrism>(entity);
 
 		graphic.setCameraPosition(5, 0, 5);
 
@@ -55,17 +56,23 @@ int main(int argc, char *argv[]) {
 			Time::Duration flow = start - Time::now();
 			float angle = flow.count();
 
-            c1.setRotation(angle, 0.f, 0.f, 1.f);
+            {
+                auto view = registry.view<Movable>();
+                for (auto en: view) {
+                    auto &vel = view.get<Movable>(en);
 
-			graphic.draw(c1);
-			graphic.draw(c2);
+                    vel.setRotation(angle, 0.f, 0.f, 1.f);
+                }
+            }
 
-			graphic.draw(p);
+            {
+                auto view = registry.view<Renderable>();
+                for (auto en: view) {
+                    auto &vel = view.get<Renderable>(en);
 
-			//graphic.draw(text);
-
-            op.setRotation(angle, 0.f, 0.f, 1.f);
-			graphic.draw(op);
+                    graphic.draw(vel);
+                }
+            }
 
 			//imgui /////////////////////////////////////
 

@@ -1,9 +1,8 @@
-#ifndef BLOBENGINE_COLOR_HPP
-#define BLOBENGINE_COLOR_HPP
+#pragma once
 
 #include <cstdint>
 
-namespace BlobEngine {
+namespace Blob {
 	class Color {
 	private:
 		uint8_t R, G, B, A;
@@ -15,5 +14,3 @@ namespace BlobEngine {
 				A(A) {}
 	};
 }
-
-#endif //BLOBENGINE_COLOR_HPP

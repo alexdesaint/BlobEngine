@@ -1,9 +1,9 @@
-#include <Blob/GL/Movable.hpp>
+#include <Blob/Movable.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace Blob::GL {
+namespace Blob {
 	using namespace glm;
 
 	mat4 Movable::getModelMatrix() const {

@@ -3,12 +3,15 @@
 
 #include <string>
 #include <list>
+#include <chrono>
 
 namespace Blob {
 
     class Controls {
     public:
         static void init(void *window);
+
+        static void update();
 
         class Keys {
         public:
@@ -52,8 +55,6 @@ namespace Blob {
         };
 
         const static std::list<const Controller *> &controllers;
-
-        static void updateControllers();
     };
 }
 

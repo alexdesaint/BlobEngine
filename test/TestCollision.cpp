@@ -73,12 +73,12 @@ public:
             }
         }
 
-        cout << "Old pos : " << rd.getPosition() << endl;
+        cout << "Old pos : " << rd.position << endl;
 
         //CollisionDetector::computeLocalCollision(rd, CollisionDetector::spacialHash[CollisionDetector::hashCoor(rs.getPosition())],
         //        {-2, 0});
 
-        cout << "New pos : " << rd.getPosition() << endl;
+        cout << "New pos : " << rd.position << endl;
 
         cout << "spacialHash :" << endl;
         for(auto p : CollisionDetector::spacialHash) {
@@ -143,10 +143,10 @@ private:
 
 	void postCollisionUpdate() final {
 		if (isHit)
-            setTexture(*Colors::Red);
+            setTexture(*Colors::red);
 		else
-            setTexture(*Colors::Blue);
-        Cube::setPosition(getPosition(), 0.5f);
+            setTexture(*Colors::blue);
+        Cube::setPosition(position, 0.5f);
 	}
 
 public:

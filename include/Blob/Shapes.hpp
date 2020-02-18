@@ -1,9 +1,8 @@
-#ifndef BLOBENGINE_CUBE_HPP
-#define BLOBENGINE_CUBE_HPP
+#pragma once
 
-#include <Blob/GL/Renderable.hpp>
+#include <Blob/Renderable.hpp>
 
-namespace Blob::GL::Shapes {
+namespace Blob::Shapes {
 
     void init();
 
@@ -25,7 +24,10 @@ namespace Blob::GL::Shapes {
     };
 }
 
-namespace Blob::GL {
+// TODO: split this file and transform into class
+namespace Blob {
+    using namespace GL;
+
     struct Shaders {
         static ShaderProgram *Shader_2D_POSITION_TEXCOORD_0_COLOR_0;
 
@@ -176,5 +178,3 @@ namespace Blob::GL {
                 *white;
     };
 }
-
-#endif //BLOBENGINE_CUBE_HPP

@@ -40,4 +40,10 @@ namespace Blob::GL {
 		//lie l'attribu avec le buffer
         glVertexArrayAttribBinding(vertexArrayObject, outPosition, pos);
 	}
+
+	template<class C, typename T>
+	void VertexArrayObject::setArray() {
+		auto offset = ((uint32_t)&reinterpret_cast<char const volatile&>((((C*)0)->T)));
+		GLuint numValuePerArray = sizeof(T) / sizeof(array[0]);
+	}
 }
