@@ -6,10 +6,10 @@
 
 namespace Blob::GL {
 
-	class Window;
+	class Core;
 
 	class Texture {
-		friend Window;
+		friend Core;
 	private:
 
 		unsigned int texture = -1; // the opengl texture
@@ -19,6 +19,7 @@ namespace Blob::GL {
 		bool depth = false, textureLoaded = false;
 
 		void init();
+
 	public:
 		Texture() = default;
 

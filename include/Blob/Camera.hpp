@@ -3,6 +3,6 @@
 #include <Blob/ViewTransform.hpp>
 
 namespace Blob {
-    class Camera : ViewTransform {
-    };
+    class Camera : public ViewTransform {
+	};
 }

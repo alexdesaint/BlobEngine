@@ -4,6 +4,8 @@
 #include <Blob/Renderable.hpp>
 #include <Blob/ProjectionTransform.hpp>
 #include <Blob/ImGUI.hpp>
+#include <Blob/Camera.hpp>
+#include <Blob/WindowCore.hpp>
 
 // std
 #include <chrono>
@@ -11,55 +13,30 @@
 
 namespace Blob {
 
-    class Window : ProjectionTransform {
-    private:
+	class Window : public WindowCore, ProjectionTransform {
+	private:
+		Blob::Camera &camera;
 
-        bool quit = false;
-        void *window;
+		ImGUI imGui;
 
-        unsigned int width, height;
+		// time counting
+		std::chrono::high_resolution_clock::time_point lastFrameTime;
+		std::chrono::duration<float> fpsCouner{0};
+		static float timeF;
 
-        ImGUI imGui;
+	public:
+		Window(Blob::Camera &camera, bool fullScreen, unsigned int w = 600, unsigned int h = 400);
 
-        // time counting
-        std::chrono::high_resolution_clock::time_point lastFrameTime;
-        std::chrono::duration<float> fpsCouner{0};
-        static float timeF;
+		~Window();
 
-        static void framebuffer_size_callback(void *window, int w, int h);
+		void draw(const Renderable &renderable);
 
-        static void GLFWErrorCallback(int error, const char *description);
+		void setCamera(Camera &camera);
 
-        static void enableDebugCallBack();
+		float display();
 
-    public:
-        Window(bool fullScreen, unsigned int w, unsigned int h);
+		std::array<float, 3> getWorldPosition();
 
-        ~Window();
-
-        void clear();
-
-        float display();
-
-        void resize(unsigned int w, unsigned int h);
-
-        Blob::Vec2f getSize() { return {(float) width, (float) height}; }
-
-        void setTitle(const std::string &name);
-
-        void draw(const Renderable &renderable, glm::mat4 shapeModel = glm::mat4(1.0));
-
-        void
-        draw(const Renderable &renderable, int numOfElements, uint64_t offset, glm::mat4 shapeModel = glm::mat4(1.0));
-
-        friend std::ostream &operator<<(std::ostream &s, const Window &a);
-
-        [[nodiscard]] bool isOpen() const;
-
-        std::array<float, 3> getWorldPosition();
-
-        Blob::Vec2f getFrameBufferSize();
-
-        void close();
-    };
+		void resize(unsigned int width, unsigned int height) final;
+	};
 }

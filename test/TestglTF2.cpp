@@ -1,4 +1,4 @@
-#include <Blob/GL/Graphic.hpp>
+#include <Blob/GL/Core.hpp>
 #include <Blob/glTF2/SceneManager.hpp>
 #include <Blob/Exception.hpp>
 
@@ -12,7 +12,7 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
     try {
         std::cout << "test : " << path << std::endl;
 
-        Blob::GL::Graphic graphic(false, 640, 480);
+		Blob::GL::Core graphic(false, 640, 480);
 
         Blob::glTF2::SceneManager sm(path);
 

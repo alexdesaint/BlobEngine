@@ -28,15 +28,11 @@ namespace Blob {
         Renderable::vertexArrayObject = vertexArrayObject;
     }
 
-    void Renderable::setTextureScale(const Vec2f &textureScale) {
-        Renderable::textureScale = textureScale;
-    }
-
 	void Renderable::setIndices(unsigned short *i, int32_t noi, uint32_t it) {
-		indices = i;
-		indicesType = it;
-		numOfIndices = noi;
+		renderOptions.indices = i;
+		renderOptions.indicesType = it;
+		renderOptions.numOfIndices = noi;
 
-		indexed = true;
+		renderOptions.indexed = true;
 	}
 }

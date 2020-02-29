@@ -1,4 +1,4 @@
-#include <Blob/GL/Graphic.hpp>
+#include <Blob/GL/Core.hpp>
 #include <Blob/GL/Shapes.hpp>
 
 #include <Blob/Time.hpp>
@@ -17,17 +17,17 @@ using namespace Blob::GL::Shapes;
 int main(int argc, char *argv[]) {
 
 	try {
-		Graphic graphic(false);
-        entt::registry registry;
+		Core graphic(false);
+		entt::registry registry;
 
-        Texture t("data/cube.bmp"), white(255, 255, 255);
+		Texture t("data/cube.bmp"), white(255, 255, 255);
 
-        auto entity = registry.create();
-        auto &c = registry.assign<Cube>(entity);
-        c.setPosition(-5.f, 0.f, 0.f);
-        c.setTexture(t);
+		auto entity = registry.create();
+		auto &c = registry.assign<Cube>(entity);
+		c.setPosition(-5.f, 0.f, 0.f);
+		c.setTexture(t);
 
-        entity = registry.create();
+		entity = registry.create();
         c = registry.assign<Cube>(entity);
 		c.setPosition(0.f, -2.f, 0.f);
 		c.setScale(4, 1, 1);

@@ -1,25 +1,28 @@
-#include <Blob/GL/Graphic.hpp>
-#include <Blob/GL/Shapes.hpp>
+//#include <Blob/Core.hpp>
+#include <Blob/Shapes.hpp>
 
 #include <Blob/Time.hpp>
 #include <Blob/Exception.hpp>
 #include <iostream>
+#include <Blob/Camera.hpp>
+#include <Blob/Window.hpp>
 
 using namespace std;
 using namespace Blob;
-using namespace Blob::GL;
-using namespace Blob::GL::Shapes;
+using namespace Blob::Shapes;
 
 int main(int argc, char *argv[]) {
-
 	try {
-		Graphic graphic(false);
+
+		Camera camera;
+
+		Window window(camera, false);
 		Cube c1, c2;
-        Texture t("data/cube.bmp"), white(255, 255, 255);
+		Texture t("data/cube.bmp");
 
 		c1.setPosition(-5.f, 0.f, 0.f);
 
-        c1.setTexture(t);
+		c1.setTexture(t);
 		c2.setPosition(0.f, -2.f, 0.f);
 		c2.setScale(4, 1, 1);
 
@@ -31,32 +34,29 @@ int main(int argc, char *argv[]) {
 
 		p.move(0, 2, 0);
 		p.setScale(2, 2, 2);
-        p.setTexture(white);
+		p.setTexture(white);
 
 		OctagonalPrism op;
 
-		graphic.setCameraPosition(5, 0, 5);
+		camera.setPosition(5, 0, 5);
 
 		Time::TimePoint start = Time::now();
 
-		while (graphic.isOpen()) {
-			graphic.clear();
-
+		while (window.isOpen()) {
 			Time::Duration flow = start - Time::now();
 			float angle = flow.count();
 
 			c1.setRotation(angle, 0.f, 0.f, 1.f);
 
-			graphic.draw(c1);
-			graphic.draw(c2);
+			window.draw(c1);
+			window.draw(c2);
 
-			graphic.draw(p);
+			window.draw(p);
 
 			op.setRotation(angle, 0.f, 0.f, 1.f);
-			graphic.draw(op);
+			window.draw(op);
 
-			graphic.display();
-
+			window.display();
 		}
 
 	} catch (Exception &exception) {

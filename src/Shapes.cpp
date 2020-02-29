@@ -1,5 +1,6 @@
 #include <Blob/Shapes.hpp>
 #include <glad/glad.h>
+#include <iostream>
 
 namespace Blob {
     using namespace GL;
@@ -151,6 +152,7 @@ namespace Blob {
             *Colors::white;
 
     void initShaders() {
+        std::cout << "init Shaders" << std::endl;
 
         Shaders::Shader_2D_POSITION_TEXCOORD_0_COLOR_0 = new ShaderProgram();
         Shaders::Shader_2D_POSITION_TEXCOORD_0_COLOR_0->addVertexShader(R"=====(
@@ -329,6 +331,113 @@ void main() {
         delete Shaders::Shader_3D_POSITION_NORMAL;
         delete Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0;
     }
+
+    // ImGUI
+    struct ImGUIData : public Renderable {
+    public:
+        Texture fontTexture;
+        VertexBufferObject vertexBufferObject;
+        VertexArrayObject vertexArrayObject;
+        float projectionMatrix[16];
+
+        ImGUIData() : Renderable(vertexArrayObject, *Shaders::Shader_2D_POSITION_TEXCOORD_0_COLOR_0, fontTexture) {
+            ImGui::CreateContext();
+            ImGui::StyleColorsDark();
+
+            ImGuiIO &io = ImGui::GetIO();
+            io.BackendRendererName = "BlobEngine";// We are not upscaling the FrameBuffer
+            io.DisplayFramebufferScale = {1, 1}; // getFrameBufferSize() / getSize();
+
+            io.IniFilename = nullptr;
+
+            buildFont();
+
+            renderOptions.scissorTest = true;
+            renderOptions.cullFace = false;
+            renderOptions.depthTest = false;
+
+            vertexArrayObject.setArray<float>(2, Shaders::Shader_2D_POSITION_TEXCOORD_0_COLOR_0->getAttribLocation(
+                    "Position"), (uint32_t) offsetof(ImDrawVert, pos));
+            vertexArrayObject.setArray<float>(2, Shaders::Shader_2D_POSITION_TEXCOORD_0_COLOR_0->getAttribLocation(
+                    "TexturePosition"), (uint32_t) offsetof(ImDrawVert, uv));
+            vertexArrayObject.setArray<uint8_t>(4, Shaders::Shader_2D_POSITION_TEXCOORD_0_COLOR_0->getAttribLocation(
+                    "Color"), (uint32_t) offsetof(ImDrawVert, col), true);
+        }
+
+        void buildFont() {
+            unsigned char *pixels;
+            int w, h;
+            ImGuiIO &io = ImGui::GetIO();
+            io.Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);
+            fontTexture.setRGBA32data(pixels, w, h);
+            io.Fonts->TexID = (ImTextureID) &fontTexture;
+            if (!io.Fonts->IsBuilt())
+                throw Exception("imgui Fonts not build");
+        }
+    };
+
+    ImGUIData *imGuiData;
+
+    void initImGUI() {
+        std::cout << "init ImGUI" << std::endl;
+
+        imGuiData = new ImGUIData();
+    }
+
+    void ImGUI::draw() {
+        ImGui::Render();
+        ImDrawData *drawData = ImGui::GetDrawData();
+
+        ImGuiIO &io = ImGui::GetIO();
+
+        VertexBufferObject imguiVBO;
+
+        drawData->ScaleClipRects(io.DisplayFramebufferScale);
+
+        int fb_height = (int) (drawData->DisplaySize.y * io.DisplayFramebufferScale.y);
+        //
+
+        unsigned int sizeTot = 0;
+        for (int n = 0; n < drawData->CmdListsCount; n++) {
+            const ImDrawList *cmd_list = drawData->CmdLists[n];
+
+            sizeTot += cmd_list->VtxBuffer.Size;
+        }
+
+        if (sizeTot > 0)
+            imguiVBO.setData(nullptr, sizeTot * sizeof(ImDrawVert), true);
+
+        unsigned int offset = 0;
+
+        for (int n = 0; n < drawData->CmdListsCount; n++) {
+            ImDrawList *cmd_list = drawData->CmdLists[n];
+            size_t idx_buffer_offset = 0;
+
+            imguiVBO.setSubData((uint8_t *) cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert),
+                                offset * sizeof(ImDrawVert));
+
+            imGuiData->setBuffer(imguiVBO, sizeof(ImDrawVert), offset * sizeof(ImDrawVert));
+
+            imGuiData->setIndices(cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size, GL_UNSIGNED_SHORT);
+
+            for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
+                const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
+
+                glScissor((int) pcmd->ClipRect.x, (int) (fb_height - pcmd->ClipRect.w),
+                          (int) (pcmd->ClipRect.z - pcmd->ClipRect.x), (int) (pcmd->ClipRect.w - pcmd->ClipRect.y));
+
+                imGuiData->setTexture(*(Texture *) pcmd->TextureId);
+                GL::Core::draw(*imGuiData, pcmd->ElemCount, idx_buffer_offset);
+
+                idx_buffer_offset += pcmd->ElemCount;
+            }
+        }
+    }
+
+    void ImGUI::setWindowSize(unsigned int width, unsigned int height) {
+        io.DisplaySize = {(float) width, (float) height};
+
+    }
 }
 
 namespace Blob::Shapes {
@@ -467,6 +576,10 @@ namespace Blob::Shapes {
     VertexArrayObject *vaoOctagonalPrism;
 
     void init() {
+        initShaders();
+
+        std::cout << "init Shapes" << std::endl;
+
         vbo = new VertexBufferObject((GLubyte *) data, sizeof(data));
         vaoCube = new VertexArrayObject();
         vaoCube->setBuffer(*vbo, sizeof(Data));
@@ -530,8 +643,6 @@ namespace Blob::Shapes {
                 GL_FLOAT,
                 (uint32_t) offsetof(Data, texCoor)
         );
-
-        initShaders();
 
         Colors::maroon = new Texture(128, 0, 0);
         Colors::darkRed = new Texture(139, 0, 0);

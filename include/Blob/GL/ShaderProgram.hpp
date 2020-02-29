@@ -5,10 +5,10 @@
 
 namespace Blob::GL {
 
-	class Window;
+	class Core;
 
 	class ShaderProgram {
-		friend Window;
+		friend Core;
 	private:
 		unsigned int program;
 

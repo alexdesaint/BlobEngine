@@ -5,7 +5,7 @@
 class test_class;
 #include <Blob/Collision/CollisionDetector.hpp>
 
-#include <Blob/GL/Graphic.hpp>
+#include <Blob/GL/Core.hpp>
 #include <Blob/GL/Shapes.hpp>
 #include <imgui.h>
 
@@ -175,11 +175,11 @@ int main() {
     (test_class());
 
 	try {
-		Graphic graphic(false);
+		Core graphic(false);
 
 		CollisionDetector collisionDetector;
 
-        MainRect mainRect(4.5f, 4.5f, 1);
+		MainRect mainRect(4.5f, 4.5f, 1);
 
 		std::list<Box> rectanges;
 

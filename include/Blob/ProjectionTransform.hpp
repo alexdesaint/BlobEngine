@@ -4,20 +4,20 @@
 
 namespace Blob {
     class ProjectionTransform {
-    private:
-        glm::mat4 projectionMatrix;
-        float cameraAngle, ratio, closeRange, longRange;
-    protected:
-        float *transform;
+	protected:
+		float cameraAngle, ratio, closeRange, longRange;
+		float *projectionPtr;
+		glm::mat4 projectionMatrix;
 
-        ProjectionTransform(float cameraAngle, float ratio, float closeRange, float longRange);
+		ProjectionTransform(float cameraAngle, unsigned int width, unsigned int height, float closeRange,
+							float longRange);
 
-        void setRange(float _longRange, float _closeRrange);
+		void setRange(float _longRange, float _closeRrange);
 
-        void setAngle(float _cameraAngle);
+		void setAngle(float _cameraAngle);
 
-        void setRatio(float _ratio);
+		void setRatio(unsigned int width, unsigned int height);
 
-        void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar);
+		void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar);
     };
 }

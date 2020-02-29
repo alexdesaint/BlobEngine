@@ -1,5 +1,4 @@
-#ifndef BLOBENGINE_VERTEXBUFFEROBJECT_HPP
-#define BLOBENGINE_VERTEXBUFFEROBJECT_HPP
+#pragma once
 
 #include <vector>
 #include <cstdint>
@@ -30,5 +29,3 @@ namespace Blob::GL {
 		void setSubData(uint8_t *data, int64_t dataSize, int64_t offset = 0);
 	};
 }
-
-#endif //BLOBENGINE_VERTEXBUFFEROBJECT_HPP
