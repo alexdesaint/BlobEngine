@@ -3,7 +3,6 @@
 // BlobEngine
 #include <Blob/Renderable.hpp>
 #include <Blob/ProjectionTransform.hpp>
-#include <Blob/ImGUI.hpp>
 #include <Blob/Camera.hpp>
 #include <Blob/WindowCore.hpp>
 
@@ -16,8 +15,6 @@ namespace Blob {
 	class Window : public WindowCore, ProjectionTransform {
 	private:
 		Blob::Camera &camera;
-
-		ImGUI imGui;
 
 		// time counting
 		std::chrono::high_resolution_clock::time_point lastFrameTime;

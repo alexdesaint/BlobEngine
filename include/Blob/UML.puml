@@ -37,7 +37,7 @@ namespace Blob {
     }
 
     namespace GLorVK {
-        class ContextLoader {
+        class Core {
         }
 
         ContextLoader <|-- Blob.Window
