@@ -22,7 +22,7 @@ namespace Blob {
 		static float timeF;
 
 	public:
-		Window(Blob::Camera &camera, bool fullScreen, unsigned int w = 600, unsigned int h = 400);
+		explicit Window(Blob::Camera &camera, bool fullScreen = false, unsigned int w = 640, unsigned int h = 480);
 
 		~Window();
 

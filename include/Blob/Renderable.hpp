@@ -4,23 +4,23 @@
 #include <string>
 
 #include <Blob/GL/VertexArrayObject.hpp>
-//#include <Blob/GL/VertexBufferObject.hpp>
+#include <Blob/Material.hpp>
 #include <Blob/GL/ShaderProgram.hpp>
-#include <Blob/GL/Texture.hpp>
-#include <Blob/Movable.hpp>
+#include <Blob/ModelTransform.hpp>
 #include <Blob/RenderOptions.hpp>
 
 namespace Blob {
 
-	class Renderable : public Movable { // TODO: rename as "Model", make fully a pubic object
+	class Renderable : public ModelTransform { // TODO: rename as "Mesh", make fully a pubic object
 		friend class Window;
 
 	private:
 		GL::VertexArrayObject &vertexArrayObject;
 
-		GL::ShaderProgram &shaderProgram;
+		GL::Material material;
+		//GL::ShaderProgram &shaderProgram;
 
-		GL::Texture &texture;
+		//GL::Texture &texture;
 
 	public:
 		RenderOptions renderOptions;

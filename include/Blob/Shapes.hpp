@@ -3,7 +3,6 @@
 #include <Blob/Exception.hpp>
 #include <Blob/Renderable.hpp>
 #include <Blob/Shapes.hpp>
-#include <imgui.h>
 
 #include <iostream>
 
@@ -29,14 +28,6 @@ public:
   explicit OctagonalPrism();
 };
 } // namespace Shapes
-
-struct Shaders {
-  static GL::ShaderProgram *Shader_2D_POSITION_TEXCOORD_0_COLOR_0;
-
-  static GL::ShaderProgram *Shader_3D_POSITION;
-  static GL::ShaderProgram *Shader_3D_POSITION_NORMAL;
-  static GL::ShaderProgram *Shader_3D_POSITION_NORMAL_TEXCOORD_0;
-};
 
 struct Colors {
   static GL::Texture *maroon, *darkRed, *brown, *firebrick, *crimson, *red,

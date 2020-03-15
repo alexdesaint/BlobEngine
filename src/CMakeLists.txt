@@ -9,14 +9,15 @@ add_subdirectory(Reader)
 
 add_library(Blob STATIC
 		Controls.cpp
-		Movable.cpp
+		ModelTransform.cpp
 		ProjectionTransform.cpp
+		ViewTransform.cpp
 		Renderable.cpp
 		Scene.cpp
 		Shape.cpp
 		Shapes.cpp
 		Time.cpp
 		Window.cpp
-		WindowCore.cpp)
+		WindowCore.cpp Material.cpp)
 target_include_directories(Blob PUBLIC ../../include)
 target_link_libraries(Blob imgui stb glm EnTT Blob::GL Blob::FileReader Blob::Geometrie)

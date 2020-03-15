@@ -1,41 +1,30 @@
 #pragma once
 
-#include <glm/ext/matrix_transform.inl>
-#include <glm/gtc/type_ptr.inl>
+#include <ostream>
+#include <glm/mat4x4.hpp>
 
 namespace Blob {
-	class Window;
+class Window;
 
-	class ViewTransform {
-		friend Window;
-	private:
-		glm::mat4 viewMatrix;
+class ViewTransform {
+    friend Window;
 
-		glm::vec3 cameraPosition; /// Camera position in World Space
-		glm::vec3 cameraLookAt; /// and looks at the origin
-		glm::vec3 cameraUp;  /// Head is up (set to 0,-1,0 to look upside-down)
+private:
+    glm::vec3 cameraPosition; /// Camera position in World Space
+    glm::vec3 cameraLookAt;   /// and looks at the origin
+    glm::vec3 cameraUp;       /// Head is up (set to 0,-1,0 to look upside-down)
 
-		float *transform;
-	public:
+    glm::mat4 viewMatrix;
 
-		ViewTransform() :
-				cameraPosition(0, 0, 2),
-				cameraLookAt(0, 0, 0),
-				cameraUp(0, 0, 1),
-				viewMatrix(glm::lookAt(cameraPosition, cameraLookAt, cameraUp)),
-				transform(glm::value_ptr(viewMatrix)) {}
+public:
+    const float *transform;
 
+    ViewTransform();
 
-		void setPosition(float x, float y, float z) {
-            cameraPosition = glm::vec3(x, y, z);
+    void setPosition(float x, float y, float z);
 
-            viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
-        }
+    void setLookAt(float x, float y, float z);
 
-        void setLookAt(float x, float y, float z) {
-            cameraLookAt = glm::vec3(x, y, z);
-
-            viewMatrix = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
-        }
-    };
-}
+    friend std::ostream &operator<<(std::ostream &out, const ViewTransform &vec);
+};
+} // namespace Blob

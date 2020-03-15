@@ -1,23 +1,27 @@
 #pragma once
 
 #include <glm/mat4x4.hpp>
+#include <ostream>
 
 namespace Blob {
-    class ProjectionTransform {
-	protected:
-		float cameraAngle, ratio, closeRange, longRange;
-		float *projectionPtr;
-		glm::mat4 projectionMatrix;
+class ProjectionTransform : public glm::mat4 {
+private:
+    float cameraAngle, ratio, closeRange, longRange;
+    //glm::mat4 projectionMatrix;
 
-		ProjectionTransform(float cameraAngle, unsigned int width, unsigned int height, float closeRange,
-							float longRange);
+public:
+    const float *projectionPtr;
 
-		void setRange(float _longRange, float _closeRrange);
+    ProjectionTransform(float cameraAngle, unsigned int width, unsigned int height, float closeRange, float longRange);
 
-		void setAngle(float _cameraAngle);
+    void setRange(float _longRange, float _closeRrange);
 
-		void setRatio(unsigned int width, unsigned int height);
+    void setAngle(float _cameraAngle);
 
-		void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar);
-    };
-}
+    void setRatio(unsigned int width, unsigned int height);
+
+    void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar);
+
+    friend std::ostream &operator<<(std::ostream &out, const ProjectionTransform &vec);
+};
+} // namespace Blob

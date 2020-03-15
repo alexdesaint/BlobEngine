@@ -5,7 +5,7 @@
 
 namespace Blob {
 
-	class Scene : public Movable {
+	class Scene : public ModelTransform {
 	private:
 		std::list<Shape *> shapes;
 		Camera camera;

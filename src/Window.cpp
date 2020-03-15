@@ -6,6 +6,8 @@
 #include <Blob/GL/Core.hpp>
 #include <Blob/Shapes.hpp>
 #include <iostream>
+#include <glm/gtc/type_ptr.inl>
+#include <imgui.h>
 
 namespace Blob {
 
@@ -23,7 +25,7 @@ Window::~Window() {
 float Window::timeF = 0;
 
 float Window::display() {
-    GL::Core::clear();
+    //GL::Core::clear();
 
     swapBuffers();
 
@@ -82,7 +84,7 @@ std::array<float, 3> Window::getWorldPosition() {
 
     glm::vec4 pos(mousePos.x, mousePos.y, z, 1);
 
-    pos = glm::inverse(projectionMatrix * camera.viewMatrix) * pos;
+    pos = glm::inverse(*this * camera.viewMatrix) * pos;
     pos = pos / pos.w;
 
     return {pos.x, pos.y, pos.z};

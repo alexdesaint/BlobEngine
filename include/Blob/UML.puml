@@ -3,71 +3,76 @@ title BlobEngine
 
 namespace Blob {
 
-    class Object <Entity> {
-    }
-
-    class WindowBuilder {
-
-    }
-
-    WindowBuilder <|-- Window
-
-    Object o--> Model
-
-    EntityRegistry *--> Object
-
-    ModelTransform <|-- Shape
-    ModelTransform <|-- Scene
-    ModelTransform <|-- Model
-
-    ViewTransform <|-- Camera
-
-    Camera --> ShadowEffect
-
-    ProjectionTransform <|-- Window
-
-    class Window {
-      + draw()
-    }
-
-    Window --> Scene
-
-    class Model <Component> {
-        + Color : color
-    }
-
-    namespace GLorVK {
+    namespace GL {
         class Core {
         }
 
-        ContextLoader <|-- Blob.Window
-
-        Blob.Model --> VAO
-        Blob.Model --> Texture
-        Blob.Model --> Shader
-        VAO ..> VBO
-
-        class PostEffect {
-
-        }
-
-        Blob.ShadowEffect --|> PostEffect
+        'Core <.. Blob.Window
+        Core <.. Blob.Blob
+        VAO <-- Blob.Model
+        Indices <-- Blob.Model
+        Texture <-- Blob.Material
+        Shader <-- Blob.Material
+        VBO <-right- VAO
+        VBO <-left- Indices
     }
 
-    Shape o-up-> Shape
-    Shape o--> Object
+    Material <-- Model
 
-    Scene -right-> Camera
-    Scene o--> Shape
+    Model <--o Shape
+    Shape o-up-> Shape
+    Shape <--o Scene
+
+    Scene <-- Blob
+    Camera <-- Scene
+
+    ProjectionTransform <|-- Blob
+
+    Window <|-- Blob
+
+    class Blob {
+      + draw()
+    }
+
+    ModelTransform <|-- Shape
+    ModelTransform <|-- Scene
+    ModelTransform <|-left- Model
+
+    ViewTransform <|-- Camera
+    Window .up.> Controls
+    Blob .up.> ShapesAndImGUI
+    Blob .up.> ImGUI
+
+
+    class Color {
+        +r : char
+        +g : char
+        +b : char
+        +a : char
+    }
+}
+@enduml
+@startuml
+title BlobEngine
+
+title BlobEngine 2D collision
+
+namespace Blob {
+
+    class Object <Entity> {
+    }
+
+    EntityRegistry *-up-> Object
+
 
     namespace Collision {
         CollisionManager --> Blob.EntityRegistry
-        CollisionManager ..> HitBox
-        CollisionManager ..> Velocity
+        CollisionManager .up.> HitBox
+        CollisionManager .up.> Velocity
 
 
-        Blob.Object o--> Velocity
-        Blob.Object o--> HitBox
+        Blob.Object o-up-> Velocity
+        Blob.Object o-up-> HitBox
 
         class CollisionManager <System> {
 
@@ -85,35 +90,9 @@ namespace Blob {
         }
     }
 
-    class Color {
-        +r : char
-        +g : char
-        +b : char
-        +a : char
-    }
-
     class Vec2f {
         + x : float
         + y : float
     }
-
-    class Controls {
-
-    }
-
-    Controls ..> Window
 }
-
-class Player <Component> {
-
-}
-
-class PlayerManager <System> {
-
-}
-
-PlayerManager ..> Player
-PlayerManager --> Blob.EntityRegistry
-
-Blob.Object o--> Player
 @enduml

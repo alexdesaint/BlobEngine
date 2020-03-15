@@ -7,7 +7,7 @@ namespace Blob {
 
 	class Graphic;
 
-	class Shape : public Movable {
+	class Shape : public ModelTransform {
 		friend Graphic;
 	private:
 
