@@ -26,6 +26,8 @@ public:
     static void setVAO(const VertexArrayObject &vao);
     static void setTexture(const Texture &texture);
     static void setMat4(const float *matrix, int position);
+    static void setVec4(const float *matrix, int position);
+    static void setVec3(const float *matrix, int position);
 
     static void drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType);
     template<typename T>

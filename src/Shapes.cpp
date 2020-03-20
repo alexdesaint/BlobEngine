@@ -145,13 +145,20 @@ SingleColorMaterial::SingleColorMaterial() : Material(*singleColorShader) {}
 int SingleColorMaterial::model = -1;
 int SingleColorMaterial::view = -1;
 int SingleColorMaterial::projection = -1;
-int SingleColorMaterial::lightDir = -1;
-int SingleColorMaterial::lightColor = -1;
-int SingleColorMaterial::objectColor = -1;
+int SingleColorMaterial::lightDirPos = -1;
+int SingleColorMaterial::lightColorPos = -1;
+int SingleColorMaterial::colorPos = -1;
+float SingleColorMaterial::lightDir[] = {1.0, -1.0, 2.0};
+Color SingleColorMaterial::lightColor = Color::White;
+
 void SingleColorMaterial::applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const ModelTransform &mt) const {
     Blob::GL::Core::setMat4(pt.projectionPtr, projection);
     Blob::GL::Core::setMat4(vt.transform, view);
     Blob::GL::Core::setMat4(mt.model, model);
+
+    // Blob::GL::Core::setVec3(lightDir, lightDirPos);
+    // Blob::GL::Core::setVec3(&lightColor.R, lightColorPos);
+    Blob::GL::Core::setVec4(&color.R, colorPos);
 }
 void SingleColorMaterial::init() {
     std::cout << "init Shapes" << std::endl;
@@ -203,20 +210,22 @@ void SingleColorMaterial::init() {
 		vec3 ambient = ambientStrength * lightColor;
 
 		// diffuse
-		vec3 norm = normalize(FragNormal);
-		vec3 lightDir = normalize(lightDir);
+		vec3 norm = normalize(FragNormal); //useless ?
+		vec3 lightDir = normalize(lightDir); // useless ?
+
 		float diff = max(dot(norm, lightDir), 0.0);
 		vec3 diffuse = diff * lightColor;
 
 		FragColor = vec4(ambient + diffuse, 1.0) * objectColor;
+		FragColor = objectColor;
 	}
 	)=====");
     model = singleColorShader->getUniformLocation("model");
     view = singleColorShader->getUniformLocation("view");
     projection = singleColorShader->getUniformLocation("projection");
-    lightDir = singleColorShader->getUniformLocation("lightDir");
-    lightColor = singleColorShader->getUniformLocation("lightColor");
-    objectColor = singleColorShader->getUniformLocation("objectColor");
+    // lightDirPos = singleColorShader->getUniformLocation("lightDir");
+    // lightColorPos = singleColorShader->getUniformLocation("lightColor");
+    colorPos = singleColorShader->getUniformLocation("objectColor");
 }
 
 void addBasicShaders() {
@@ -371,17 +380,17 @@ void init() {
     vaoCube = new VertexArrayObject();
     vaoCube->setBuffer(*vbo, sizeof(Data));
     vaoCube->setArray(3, singleColorShader->getAttribLocation("POSITION"), GL_FLOAT, (uint32_t) offsetof(Data, coor));
-    vaoCube->setArray(3, singleColorShader->getAttribLocation("NORMAL"), GL_FLOAT, (uint32_t) offsetof(Data, norm));
+    // vaoCube->setArray(3, singleColorShader->getAttribLocation("NORMAL"), GL_FLOAT, (uint32_t) offsetof(Data, norm));
 
     vaoPlane = new VertexArrayObject();
     vaoPlane->setBuffer(*vbo, sizeof(Data), 4 * 6 * sizeof(Data));
     vaoPlane->setArray(3, singleColorShader->getAttribLocation("POSITION"), GL_FLOAT, (uint32_t) offsetof(Data, coor));
-    vaoPlane->setArray(3, singleColorShader->getAttribLocation("NORMAL"), GL_FLOAT, (uint32_t) offsetof(Data, norm));
+    // vaoPlane->setArray(3, singleColorShader->getAttribLocation("NORMAL"), GL_FLOAT, (uint32_t) offsetof(Data, norm));
 
     vaoOctagonalPrism = new VertexArrayObject();
     vaoOctagonalPrism->setBuffer(*vbo, sizeof(Data), (4 * 6 + 4) * sizeof(Data));
     vaoOctagonalPrism->setArray(3, singleColorShader->getAttribLocation("POSITION"), GL_FLOAT, (uint32_t) offsetof(Data, coor));
-    vaoOctagonalPrism->setArray(3, singleColorShader->getAttribLocation("NORMAL"), GL_FLOAT, (uint32_t) offsetof(Data, norm));
+    // vaoOctagonalPrism->setArray(3, singleColorShader->getAttribLocation("NORMAL"), GL_FLOAT, (uint32_t) offsetof(Data, norm));
 }
 
 void destroy() {

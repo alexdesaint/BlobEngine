@@ -19,6 +19,9 @@ target_link_libraries(TestWindowCore BlobCore)
 add_executable(TestGL TestGL.cpp)
 target_link_libraries(TestGL Blob)
 
+add_executable(TestColor TestColor.cpp)
+target_link_libraries(TestColor Blob)
+
 #STATIC : -lmingw32 SDL2main SDL2-static
 #STATIC : -mwindows -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
 

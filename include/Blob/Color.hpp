@@ -1,27 +1,30 @@
 #pragma once
 
 #include <cstdint>
+#include <ostream>
 
 namespace Blob {
 class Color {
-private:
-    uint8_t R = 0, G = 0, B = 0, A = 0;
-
 public:
-    Color() = default;
-    Color(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 0) : R(R), G(G), B(B), A(A) {}
+    float R = 0, G = 0, B = 0, A = 1.f;
 
-    const static Color maroon, darkRed, brown, firebrick, crimson, red, tomato, coral, indianRed, lightCoral, darkSalmon, salmon, lightSalmon,
-        orangeRed, darkOrange, orange, gold, darkGoldenRod, goldenRod, paleGoldenRod, darkKhaki, khaki, olive, yellow, yellowGreen, darkOliveGreen,
-        oliveDrab, lawnGreen, chartReuse, greenYellow, darkGreen, green, forestGreen, lime, limeGreen, lightGreen, paleGreen, darkSeaGreen,
-        mediumSpringGreen, springGreen, seaGreen, mediumAquaMarine, mediumSeaGreen, lightSeaGreen, darkSlateGray, teal, darkCyan, aqua, cyan,
-        lightCyan, darkTurquoise, turquoise, mediumTurquoise, paleTurquoise, aquaMarine, powderBlue, cadetBlue, steelBlue, cornFlowerBlue,
-        deepSkyBlue, dodgerBlue, lightBlue, skyBlue, lightSkyBlue, midnightBlue, navy, darkBlue, mediumBlue, blue, royalBlue, blueViolet, indigo,
-        darkSlateBlue, slateBlue, mediumSlateBlue, mediumPurple, darkMagenta, darkViolet, darkOrchid, mediumOrchid, purple, thistle, plum, violet,
-        magenta, orchid, mediumVioletRed, paleVioletRed, deepPink, hotPink, lightPink, pink, antiqueWhite, beige, bisque, blanchedAlmond, wheat,
-        cornSilk, lemonChiffon, lightGoldenRodYellow, lightYellow, saddleBrown, sienna, chocolate, peru, sandyBrown, burlyWood, tan, rosyBrown,
-        moccasin, navajoWhite, peachPuff, mistyRose, lavenderBlush, linen, oldLace, papayaWhip, seaShell, mintCream, slateGray, lightSlateGray,
-        lightSteelBlue, lavender, floralWhite, aliceBlue, ghostWhite, honeydew, ivory, azure, snow, black, dimGrey, grey, darkGrey, silver, lightGrey,
-        gainsboro, whiteSmoke, white;
+    Color() = default;
+    Color(uint32_t RGB) : R(((RGB >> 16) & 0xFF) / 255.f), G(((RGB >> 8) & 0xFF) / 255.f), B((RGB & 0xFF) / 255.f), A(1.f) {}
+    Color(float R, float G, float B, float A = 0) : R(R), G(G), B(B), A(A) {}
+
+    friend std::ostream &operator<<(std::ostream &out, const Color &vec);
+
+    const static Color LightPink, Pink, Crimson, LavenderBlush, PaleVioletRed, HotPink, DeepPink, MediumVioletRed, Orchid, Thistle, Plum, Violet,
+        Magenta, Fuchsia, DarkMagenta, Purple, MediumOrchid, DarkViolet, DarkOrchid, Indigo, BlueViolet, MediumPurple, MediumSlateBlue, SlateBlue,
+        DarkSlateBlue, Lavender, GhostWhite, Blue, MediumBlue, MidnightBlue, DarkBlue, Navy, RoyalBlue, CornflowerBlue, LightSteelBlue,
+        LightSlateGray, SlateGray, DodgerBlue, AliceBlue, SteelBlue, LightSkyBlue, SkyBlue, DeepSkyBlue, LightBlue, PowderBlue, CadetBlue, Azure,
+        LightCyan, PaleTurquoise, Cyan, Aqua, DarkTurquoise, DarkSlateGray, DarkCyan, Teal, MediumTurquoise, LightSeaGreen, Turquoise, Aquamarine,
+        MediumAquamarine, MediumSpringGreen, MintCream, SpringGreen, MediumSeaGreen, SeaGreen, Honeydew, LightGreen, PaleGreen, DarkSeaGreen,
+        LimeGreen, Lime, ForestGreen, Green, DarkGreen, Chartreuse, LawnGreen, GreenYellow, DarkOliveGreen, YellowGreen, OliveDrab, Beige,
+        LightGoldenrodYellow, Ivory, LightYellow, Yellow, Olive, DarkKhaki, LemonChiffon, PaleGoldenrod, Khaki, Gold, Cornsilk, Goldenrod,
+        DarkGoldenrod, FloralWhite, OldLace, Wheat, Moccasin, Orange, PapayaWhip, BlanchedAlmond, NavajoWhite, AntiqueWhite, Tan, BurlyWood, Bisque,
+        DarkOrange, Linen, Peru, PeachPuff, SandyBrown, Chocolate, SaddleBrown, Seashell, Sienna, LightSalmon, Coral, OrangeRed, DarkSalmon, Tomato,
+        MistyRose, Salmon, Snow, LightCoral, RosyBrown, IndianRed, Red, Brown, FireBrick, DarkRed, Maroon, White, WhiteSmoke, Gainsboro, LightGrey,
+        Silver, DarkGray, Gray, DimGray, Black;
 };
 } // namespace Blob

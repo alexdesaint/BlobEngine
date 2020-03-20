@@ -15,12 +15,14 @@ void destroy();
 /// A Material to draw in a single color
 class SingleColorMaterial : public Material {
 private:
-    static int model, view, projection, lightDir, lightColor, objectColor;
+    static int model, view, projection, lightDirPos, lightColorPos, colorPos;
 
     void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const ModelTransform &mt) const final;
 
 public:
-    Color color;
+    Color color = Color::Aqua;
+    static Color lightColor;
+    static float lightDir[3];
     SingleColorMaterial();
     static void init();
 };

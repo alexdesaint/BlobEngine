@@ -212,6 +212,14 @@ void Core::setMat4(const float *matrix, int position) {
     glUniformMatrix4fv(position, 1, GL_FALSE, matrix);
 }
 
+void Core::setVec4(const float *matrix, int position) {
+    glUniform4fv(position, 1, matrix);
+}
+
+void Core::setVec3(const float *matrix, int position) {
+    glUniform3fv(position, 1, matrix);
+}
+
 void Core::drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType) {
     glDrawElements(GL_TRIANGLES, numOfIndices, indicesType, indices);
 }
