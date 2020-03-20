@@ -1,39 +1,39 @@
-#pragma  once
+#pragma once
 
-#include <string>
 #include <Blob/Geometrie.hpp>
+#include <string>
 
 namespace Blob {
-	class WindowCore {
-	private:
-		void *window = nullptr;
+class WindowCore {
+private:
+    void *window = nullptr;
 
-		static void framebuffer_size_callback(void *window, int w, int h);
+    static void framebuffer_size_callback(void *window, int w, int h);
 
-		static void GLFWErrorCallback(int error, const char *description);
+    static void GLFWErrorCallback(int error, const char *description);
 
-	protected:
-		unsigned int width, height;
-		bool quit = false;
-		bool fullScreen;
+protected:
+    unsigned int width, height;
+    bool quit = false;
+    bool fullScreen;
 
-		WindowCore(bool fullScreen, unsigned int width, unsigned int height);
+    WindowCore(bool fullScreen, unsigned int width, unsigned int height);
 
-		~WindowCore();
+    ~WindowCore();
 
-	public:
-		[[nodiscard]] bool isOpen() const;
+public:
+    [[nodiscard]] bool isOpen() const;
 
-		Blob::Vec2f getSize() { return {(float) width, (float) height}; }
+    Blob::Vec2f getSize() { return {(float) width, (float) height}; }
 
-		Blob::Vec2f getFrameBufferSize();
+    Blob::Vec2f getFrameBufferSize();
 
-		void setTitle(const std::string &name);
+    void setTitle(const std::string &name);
 
-		virtual void resize(unsigned int w, unsigned int h);
+    virtual void resize(unsigned int w, unsigned int h);
 
-		void close();
+    void close();
 
-		void swapBuffers();
-	};
-}
+    void swapBuffers();
+};
+} // namespace Blob

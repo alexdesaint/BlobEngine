@@ -5,16 +5,17 @@
 #include <Blob/Exception.hpp>
 #include <Blob/GL/Core.hpp>
 #include <Blob/Shapes.hpp>
-#include <iostream>
-#include <glm/gtc/type_ptr.inl>
 #include <imgui.h>
+#include <iostream>
 
 namespace Blob {
 
 Window::Window(Camera &camera, bool fullScreen, unsigned int w, unsigned int h)
     : WindowCore(fullScreen, w, h), camera(camera), ProjectionTransform(PI / 4, w, h, 1, 100) {
-    ImGUI::setWindowSize(w, h);
+    imgui.setWindowSize(w, h);
+    Shapes::init();
     lastFrameTime = std::chrono::high_resolution_clock::now();
+    ImGui::NewFrame();
 }
 
 Window::~Window() {
@@ -25,9 +26,11 @@ Window::~Window() {
 float Window::timeF = 0;
 
 float Window::display() {
-    //GL::Core::clear();
 
+    imgui.draw();
     swapBuffers();
+    GL::Core::clear();
+    ImGui::NewFrame();
 
     auto now = std::chrono::high_resolution_clock::now();
     std::chrono::duration<float> diff = now - lastFrameTime;
@@ -43,10 +46,9 @@ float Window::display() {
 
 void Window::resize(unsigned int width, unsigned int height) {
     setRatio(width, height);
+    imgui.setWindowSize(width, height);
 
-    ImGUI::setWindowSize(width, height);
-
-    Blob::GL::Core::setlViewport(width, height);
+    Blob::GL::Core::setViewport(width, height);
 
     WindowCore::resize(width, height);
 
@@ -94,8 +96,12 @@ void Window::setCamera(Camera &camera_) {
     camera = camera_;
 }
 
-void Window::draw(const Renderable &renderable) {
-    GL::Core::draw(renderable.renderOptions, renderable.shaderProgram, renderable.vertexArrayObject, renderable.texture, projectionPtr, camera.transform,
-               glm::value_ptr(renderable.getModelMatrix()));
+void Window::draw(const Renderable &renderable) const {
+    Blob::GL::Core::setShader(renderable.material.shaderProgram);
+    Blob::GL::Core::setVAO(renderable.vertexArrayObject);
+
+    renderable.material.applyMaterial(*this, camera, renderable);
+
+    Blob::GL::Core::drawIndex(renderable.renderOptions.indices, renderable.renderOptions.numOfIndices, renderable.renderOptions.indicesType);
 }
 } // namespace Blob

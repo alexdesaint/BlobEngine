@@ -94,28 +94,35 @@ int main() {
     Blob::ViewTransform vt;
     Blob::ModelTransform mt;
 
-    Blob::RenderOptions ro;
-    ro.indexed = true;
-    unsigned short indices[] = {2, 1, 0, 1, 2, 3};
-    ro.indices = indices;
-    ro.numOfIndices = 6;
-    ro.indicesType = GL_UNSIGNED_SHORT;
+    int model = sp.getUniformLocation("model");
+    int view = sp.getUniformLocation("view");
+    int projection = sp.getUniformLocation("projection");
+
+    //unsigned short indices[] = {2, 1, 0, 1, 2, 3};
+    unsigned short indices[] = {0, 1, 2, 1, 2, 3};
+
+    Blob::GL::Core::setScissorTest(true);
+    Blob::GL::Core::setDepthTest(true);
+    Blob::GL::Core::setCullFace(false);
 
     while (!glfwWindowShouldClose(window)) {
-        glm::mat4 m(1), p, v(1);
 
         glfwGetFramebufferSize(window, &width, &height);
 
         pt.setRatio(width, height);
 
-        Blob::GL::Core::setlViewport(width, height);
+        Blob::GL::Core::setViewport(width, height);
 
         Blob::GL::Core::clear();
 
         mt.setRotation((float) glfwGetTime(), 0, 0, 1);
-        p = glm::ortho(-1.f, 1.f, 1.f, -1.f, -10.f, 10.f);
-        Blob::GL::Core::draw(ro, sp, vao, glm::value_ptr(p), glm::value_ptr(v), mt.model);
-        //Blob::GL::Core::draw(ro, sp, vao, pt.projectionPtr, vt.transform, mt.model);
+
+        Blob::GL::Core::setShader(sp);
+        Blob::GL::Core::setVAO(vao);
+        Blob::GL::Core::setMat4(pt.projectionPtr, projection);
+        Blob::GL::Core::setMat4(vt.transform, view);
+        Blob::GL::Core::setMat4(mt.model, model);
+        Blob::GL::Core::drawIndex(indices, 6, GL_UNSIGNED_SHORT);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

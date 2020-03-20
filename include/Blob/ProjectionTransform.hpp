@@ -4,7 +4,7 @@
 #include <ostream>
 
 namespace Blob {
-class ProjectionTransform : public glm::mat4 {
+class ProjectionTransform : public glm::mat4{
 private:
     float cameraAngle, ratio, closeRange, longRange;
     //glm::mat4 projectionMatrix;

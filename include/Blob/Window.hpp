@@ -1,10 +1,11 @@
 #pragma once
 
 // BlobEngine
-#include <Blob/Renderable.hpp>
-#include <Blob/ProjectionTransform.hpp>
 #include <Blob/Camera.hpp>
+#include <Blob/ProjectionTransform.hpp>
+#include <Blob/Renderable.hpp>
 #include <Blob/WindowCore.hpp>
+#include <Blob/ImGUI.hpp>
 
 // std
 #include <chrono>
@@ -12,28 +13,30 @@
 
 namespace Blob {
 
-	class Window : public WindowCore, ProjectionTransform {
-	private:
-		Blob::Camera &camera;
+class Window : public WindowCore, ProjectionTransform {
+private:
+    ImGUI imgui;
 
-		// time counting
-		std::chrono::high_resolution_clock::time_point lastFrameTime;
-		std::chrono::duration<float> fpsCouner{0};
-		static float timeF;
+    Blob::Camera &camera;
 
-	public:
-		explicit Window(Blob::Camera &camera, bool fullScreen = false, unsigned int w = 640, unsigned int h = 480);
+    // time counting
+    std::chrono::high_resolution_clock::time_point lastFrameTime;
+    std::chrono::duration<float> fpsCouner{0};
+    static float timeF;
 
-		~Window();
+public:
+    explicit Window(Blob::Camera &camera, bool fullScreen = false, unsigned int w = 640, unsigned int h = 480);
 
-		void draw(const Renderable &renderable);
+    ~Window();
 
-		void setCamera(Camera &camera);
+    void draw(const Renderable &renderable) const;
 
-		float display();
+    void setCamera(Camera &camera);
 
-		std::array<float, 3> getWorldPosition();
+    float display();
 
-		void resize(unsigned int width, unsigned int height) final;
-	};
-}
+    std::array<float, 3> getWorldPosition();
+
+    void resize(unsigned int width, unsigned int height) final;
+};
+} // namespace Blob

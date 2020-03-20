@@ -4,13 +4,6 @@
 
 namespace Blob {
 	struct RenderOptions {
-		bool cullFace = true;
-		bool depthTest = true;
-		bool scissorTest = false;
-
-		// Texture options
-		Blob::Vec2f textureScale = {1, 1};
-
 		// IndicesOptions
 		bool indexed = false;
 

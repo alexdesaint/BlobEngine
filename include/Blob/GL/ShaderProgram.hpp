@@ -1,47 +1,55 @@
-#ifndef BLOBENGINE_SHADERPROGRAM_HPP
-#define BLOBENGINE_SHADERPROGRAM_HPP
+#pragma once
 
 #include <string>
+#include <unordered_map>
 
 namespace Blob::GL {
 
-	class Core;
+class Core;
 
-	class ShaderProgram {
-		friend Core;
-	private:
-		unsigned int program;
+/// this program is created only once ans is used by multiple different materials
+class ShaderProgram {
+    friend Core;
 
-		unsigned int vertexShader, fragmentShader;
+private:
+    unsigned int program = 0;
 
-		int model, view, projection, textureScale;
+    unsigned int vertexShader = 0, fragmentShader = 0;
 
-	public:
-		ShaderProgram();
+    bool linked = false;
 
-		ShaderProgram(const std::string &pathVertex, const std::string &pathFragment);
+    /// TODO: replace with a u_map
+    //int model, view, projection, textureScale;
 
-        ShaderProgram(const ShaderProgram &) = delete;
+public:
+    static std::unordered_map<std::string, ShaderProgram> Shaders;
 
-        ~ShaderProgram();
+    ShaderProgram();
+    ShaderProgram(const std::string &pathVertex, const std::string &pathFragment);
+    ShaderProgram(const ShaderProgram &) = delete; /// Copy constructors
+    //ShaderProgram(ShaderProgram &&shaderProgram) noexcept; /// Move constructors
+    ShaderProgram(ShaderProgram &&shaderProgram) = delete; /// Move constructors
 
-		void addVertexShader(const std::string &src);
+    ~ShaderProgram();
 
-		void addVertexShaderFile(const std::string &path);
+    void addVertexShader(const std::string &src);
 
-		void addFragmentShader(const std::string &src);
+    void addVertexShaderFile(const std::string &path);
 
-		void addFragmentShaderFile(const std::string &path);
+    void addFragmentShader(const std::string &src);
 
-		void linkShaders();
+    void addFragmentShaderFile(const std::string &path);
 
-		unsigned int getProgram() const;
+    void linkShaders();
 
-		uint32_t getUniformLocation(const char *name);
+    [[nodiscard]] unsigned int getProgram() const;
 
-		uint32_t  getAttribLocation(const char *name);
-	};
+    /// TODO: Set as private for the map creation
+    uint32_t getUniformLocation(const char *name) const;
 
-}
+    uint32_t getAttribLocation(const char *name) const;
 
-#endif //BLOBENGINE_SHADERPROGRAM_HPP
+    [[nodiscard]] bool isValid() const { return linked; }
+};
+
+} // namespace Blob::GL

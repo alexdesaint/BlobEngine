@@ -351,6 +351,7 @@ namespace Blob {
     }
 
     void Controls::init(void *window) {
+        ImGui::CreateContext();
         // keyboard init
         keys[GLFW_KEY_UNKNOWN + 1] = &LOCAL_UNKNOWN;
         keys[GLFW_KEY_SPACE + 1] = &LOCAL_SPACE;

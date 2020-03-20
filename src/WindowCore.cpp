@@ -50,10 +50,11 @@ WindowCore::WindowCore(bool fullScreen, unsigned int width, unsigned int height)
         throw Blob::Exception("Can't create window");
     }
 
+    glfwSetWindowUserPointer((GLFWwindow *) window, this);
+    glfwSetFramebufferSizeCallback((GLFWwindow *) window, (GLFWframebuffersizefun) framebuffer_size_callback);
     glfwMakeContextCurrent((GLFWwindow *) window);
     glfwSwapInterval(1);
     GL::Core::init((void *) glfwGetProcAddress, this->width, this->height);
-    Shapes::init();
     Controls::init(window);
 }
 
@@ -93,6 +94,9 @@ void WindowCore::close() {
 void WindowCore::resize(unsigned int w, unsigned int h) {
     int ww, hh;
     glfwGetWindowSize((GLFWwindow *) window, &ww, &hh);
+
+    width = ww;
+    height = hh;
 
     if (ww != w || hh != h)
         glfwSetWindowSize((GLFWwindow *) window, w, h);

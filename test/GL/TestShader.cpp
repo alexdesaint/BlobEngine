@@ -6,13 +6,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <glm/ext.hpp>
+#include <iostream>
 
 static const struct {
     float x, y;
     float r, g, b;
 } vertices[3] = {{-0.6f, -0.4f, 1.f, 0.f, 0.f}, {0.6f, -0.4f, 0.f, 1.f, 0.f}, {0.f, 0.6f, 0.f, 0.f, 1.f}};
 
-static const char *vertex_shader_text = "#version 110\n"
+static std::string vertex_shader_text = "#version 110\n"
                                         "uniform mat4 MVP;\n"
                                         "attribute vec3 vCol;\n"
                                         "attribute vec2 vPos;\n"
@@ -23,7 +24,7 @@ static const char *vertex_shader_text = "#version 110\n"
                                         "    color = vCol;\n"
                                         "}\n";
 
-static const char *fragment_shader_text = "#version 110\n"
+static std::string fragment_shader_text = "#version 110\n"
                                           "varying vec3 color;\n"
                                           "void main()\n"
                                           "{\n"
@@ -39,7 +40,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
-int main(void) {
+int main() {
     GLFWwindow *window;
     GLuint vertex_buffer;
     GLint mvp_location, vpos_location, vcol_location;
@@ -70,10 +71,43 @@ int main(void) {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    Blob::GL::ShaderProgram sp;
+   /* auto data = Blob::GL::ShaderProgram::Shaders.emplace(std::piecewise_construct, std::make_tuple("basicShader"), std::make_tuple());
+    if(!data.second)
+        std::cout << "failed to insert" << std::endl;
+    Blob::GL::ShaderProgram &e = data.first->second;
+
+    if(e.isValid())
+        std::cout << "Valid !!!" << std::endl;
+    else
+        std::cout << "Not valid..." << std::endl;
+
+    auto nodeHandler = Blob::GL::ShaderProgram::Shaders.extract("basicShader");
+    nodeHandler.key() = "basicShader2";
+    auto data2 = Blob::GL::ShaderProgram::Shaders.insert(std::move(nodeHandler));
+
+    if(e.isValid())
+        std::cout << "Valid !!!" << std::endl;
+    else
+        std::cout << "Not valid..." << std::endl;
+
+    Blob::GL::ShaderProgram &spp = Blob::GL::ShaderProgram::Shaders["QUoi?"];
+
+    if(spp.isValid())
+        std::cout << "Valid !!!" << std::endl;
+    else
+        std::cout << "Not valid..." << std::endl;
+*/
+    Blob::GL::ShaderProgram &sp = Blob::GL::ShaderProgram::Shaders["basicShader2"];
+
+
     sp.addVertexShader(vertex_shader_text);
     sp.addFragmentShader(fragment_shader_text);
     sp.linkShaders();
+
+    if(sp.isValid())
+        std::cout << "Valid !!!" << std::endl;
+    else
+        std::cout << "Not valid..." << std::endl;
 
     // loc
     mvp_location = sp.getUniformLocation("MVP");  // glGetUniformLocation(program, "MVP");
@@ -108,6 +142,8 @@ int main(void) {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    Blob::GL::ShaderProgram::Shaders.clear();
 
     glfwDestroyWindow(window);
 

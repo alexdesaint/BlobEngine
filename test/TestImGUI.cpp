@@ -1,102 +1,148 @@
-#include <Blob/GL/Core.hpp>
-#include <Blob/Shapes.hpp>
-
-#include <Blob/Exception.hpp>
-#include <Blob/Time.hpp>
-#include <iostream>
-
 #include <glad/glad.h>
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
+#include <Blob/GL/Core.hpp>
+#include <Blob/GL/ShaderProgram.hpp>
+#include <Blob/GL/VertexBufferObject.hpp>
+#include <cstdio>
+#include <cstdlib>
+#include <glm/ext.hpp>
+
+// TRANSFORM INVOCATION !!!
+#include <Blob/ModelTransform.hpp>
+#include <Blob/ProjectionTransform.hpp>
+#include <Blob/ViewTransform.hpp>
+#include <Blob/Window.hpp>
+#include <iostream>
 #include <imgui.h>
 
-using namespace std;
-using namespace Blob;
-using namespace Blob::GL;
+static const struct {
+    float x, y;
+    float r, g, b;
+} vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f}, {0.5f, -0.5f, 0.f, 1.f, 1.f}, {-0.5f, 0.5f, 1.f, 0.f, 1.f}, {0.5f, 0.5f, 0.f, 0.f, 1.f}};
 
-int main(int argc, char *argv[]) {
+static const char *vertex_shader_text = R"=====(
+#version 450
 
-    try {
-        Core graphic(false);
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
-        Texture t("data/cube.bmp"), white(255, 255, 255);
+attribute vec3 vCol;
+attribute vec2 vPos;
 
-        graphic.setCameraPosition(5, 0, 5);
+varying vec3 color;
 
-        Time::TimePoint start = Time::now();
+void main() {
+    gl_Position = projection * view * model * vec4(vPos, 0.0, 1.0);
+    color = vCol;
+}
+)=====";
 
-        // Demo window init
-        bool show_demo_window = true;
-        bool show_another_window = false;
-        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+static const char *fragment_shader_text = "#version 450\n"
+                                          "varying vec3 color;\n"
+                                          "void main()\n"
+                                          "{\n"
+                                          "    gl_FragColor = vec4(color, 1.0);\n"
+                                          "}\n";
 
-        while (graphic.isOpen()) {
-            graphic.clear();
 
-            Time::Duration flow = start - Time::now();
-            float angle = flow.count();
+class SimpleMaterial : public Blob::Material {
+private:
+    int model = shaderProgram.getUniformLocation("model");
+    int view = shaderProgram.getUniformLocation("view");
+    int projection = shaderProgram.getUniformLocation("projection");
 
-            {
-                auto view = registry.view<Movable>();
-                for (auto en : view) {
-                    auto &vel = view.get<Movable>(en);
+    void applyMaterial(const Blob::ProjectionTransform &pt, const Blob::ViewTransform &vt, const Blob::ModelTransform &mt) const final {
+        Blob::GL::Core::setMat4(pt.projectionPtr, projection);
+        Blob::GL::Core::setMat4(vt.transform, view);
+        Blob::GL::Core::setMat4(mt.model, model);
+    }
 
-                    vel.setRotation(angle, 0.f, 0.f, 1.f);
-                }
-            }
+public:
+    explicit SimpleMaterial(const Blob::GL::ShaderProgram &sp) : Material(sp) {
 
-            {
-                auto view = registry.view<Renderable>();
-                for (auto en : view) {
-                    auto &vel = view.get<Renderable>(en);
+    }
+};
 
-                    graphic.draw(vel);
-                }
-            }
+int main() {
+    Blob::Camera camera;
 
-            // imgui /////////////////////////////////////
+    Blob::Window window(camera);
 
-            ImGui::NewFrame();
+    Blob::GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
-            if (show_demo_window)
-                ImGui::ShowDemoWindow(&show_demo_window);
+    Blob::GL::ShaderProgram sp;
+    sp.addVertexShader(vertex_shader_text);
+    sp.addFragmentShader(fragment_shader_text);
+    sp.linkShaders();
 
-            // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-            {
-                static float f = 0.0f;
-                static int counter = 0;
+    Blob::GL::VertexArrayObject vao;
+    vao.setBuffer(vbo, sizeof(vertices[0]));
+    vao.setArray(2, sp.getAttribLocation("vPos"), GL_FLOAT, 0);
+    vao.setArray(3, sp.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
 
-                ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+    Blob::RenderOptions ro;
+    ro.indexed = true;
+    unsigned short indices[] = {2, 1, 0, 1, 2, 3};
+    ro.indices = indices;
+    ro.numOfIndices = 6;
+    ro.indicesType = GL_UNSIGNED_SHORT;
 
-                ImGui::Text("This is some useful text.");          // Display some text (you can use a format strings too)
-                ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
-                ImGui::Checkbox("Another Window", &show_another_window);
+    SimpleMaterial material(sp);
 
-                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);              // Edit 1 float using a slider from 0.0f to 1.0f
-                ImGui::ColorEdit3("clear color", (float *) &clear_color); // Edit 3 floats representing a color
+    Blob::Renderable renderable(vao, material);
+    renderable.renderOptions = ro;
 
-                if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
-                    counter++;
-                ImGui::SameLine();
-                ImGui::Text("counter = %d", counter);
+    bool show_demo_window = true;
+    bool show_another_window = false;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-                ImGui::End();
-            }
+    while (window.isOpen()) {
 
-            // 3. Show another simple window.
-            if (show_another_window) {
-                ImGui::Begin("Another Window", &show_another_window); // Pass a pointer to our bool variable (the window will have a closing button
-                                                                      // that will clear the bool when clicked)
-                ImGui::Text("Hello from another window!");
-                if (ImGui::Button("Close Me"))
-                    show_another_window = false;
-                ImGui::End();
-            }
+        renderable.setRotation((float) glfwGetTime(), 0, 0, 1);
+        window.draw(renderable);
+        ImGui::NewFrame();
 
-            graphic.drawImGUI();
-            graphic.display();
+        if (show_demo_window)
+            ImGui::ShowDemoWindow(&show_demo_window);
+
+        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+        {
+            static float f = 0.0f;
+            static int counter = 0;
+
+            ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+
+            ImGui::Text("This is some useful text.");          // Display some text (you can use a format strings too)
+            ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
+            ImGui::Checkbox("Another Window", &show_another_window);
+
+            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);              // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::ColorEdit3("clear color", (float *) &clear_color); // Edit 3 floats representing a color
+
+            if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
+                counter++;
+            ImGui::SameLine();
+            ImGui::Text("counter = %d", counter);
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
         }
 
-    } catch (Exception &exception) { cout << exception.what() << std::endl; }
+        // 3. Show another simple window.
+        if (show_another_window) {
+            ImGui::Begin("Another Window", &show_another_window); // Pass a pointer to our bool variable (the window will have a closing button
+            // that will clear the bool when clicked)
+            ImGui::Text("Hello from another window!");
+            if (ImGui::Button("Close Me"))
+                show_another_window = false;
+            ImGui::End();
+        }
+
+        window.display();
+    }
 
     return 0;
 }

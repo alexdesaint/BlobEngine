@@ -61,23 +61,53 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
     (void) length;
     (void) userParam;
 
+    std::string errorName;
+
+    switch (type){
+    case GL_NO_ERROR:
+        errorName = "GL_NO_ERROR";
+        break;
+    case GL_INVALID_ENUM:
+        errorName = "GL_INVALID_ENUM";
+        break;
+    case GL_INVALID_VALUE:
+        errorName = "GL_INVALID_VALUE";
+        break;
+    case GL_INVALID_OPERATION:
+        errorName = "GL_INVALID_OPERATION";
+        break;
+    case GL_INVALID_FRAMEBUFFER_OPERATION:
+        errorName = "GL_INVALID_FRAMEBUFFER_OPERATION";
+        break;
+    case GL_OUT_OF_MEMORY:
+        errorName = "GL_OUT_OF_MEMORY";
+        break;
+    case GL_STACK_UNDERFLOW:
+        errorName = "GL_STACK_UNDERFLOW";
+        break;
+    case GL_STACK_OVERFLOW:
+        errorName = "GL_STACK_OVERFLOW";
+        break;
+    }
+
     switch (severity) {
     case GL_DEBUG_SEVERITY_NOTIFICATION:
         std::cout << "Notification :" << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_LOW:
-        std::cout << "Low severity Error :" << std::endl << message;
+        std::cout << "Low severity Error :" << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_MEDIUM:
-        std::cout << "Medium severity Error :" << std::endl << message;
+        std::cout << "Medium severity Error :" << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_HIGH:
         std::cout << "High severity Error :" << std::endl << message << std::endl;
         abort();
     default:
-        std::cout << "Unknow Error severity :" << std::endl << message;
+        std::cout << "Unknow Error severity :" << std::endl << message << std::endl;
         break;
     }
+    std::cout << "Type :" << errorName << std::endl;
 }
 
 void Core::init(void *glfwGetProcAddress, unsigned int width, unsigned int height) {
@@ -92,16 +122,24 @@ void Core::init(void *glfwGetProcAddress, unsigned int width, unsigned int heigh
 
     // Enable the debug callback
     glEnable(GL_DEBUG_OUTPUT);
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(openglCallbackFunction, nullptr);
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
     // general settings
+
+    // cull
     glFrontFace(GL_CW);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // pour faire des lignes
+    glCullFace(GL_FRONT);
+    glEnable(GL_CULL_FACE);
+
+    glDisable(GL_SCISSOR_TEST);
+
+    glEnable(GL_DEPTH_TEST);
+
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // pour faire des lignes
     glClearColor(0.2, 0.2, 0.2, 1.0);
     glViewport(0, 0, width, height);
-    glCullFace(GL_FRONT);
 
     // alpha
     glEnable(GL_BLEND);
@@ -117,77 +155,11 @@ std::ostream &operator<<(std::ostream &s, const Core &a) {
     return s;
 }
 
-void Core::draw(const RenderOptions &renderOptions, const ShaderProgram &shaderProgram, const VertexArrayObject &vertexArrayObject,
-                const Texture &texture, const float *projection, const float *view, const float *model) {
-
-    if (renderOptions.cullFace)
-        glEnable(GL_CULL_FACE);
-    else
-        glDisable(GL_CULL_FACE);
-
-    if (renderOptions.scissorTest)
-        glEnable(GL_SCISSOR_TEST);
-    else
-        glDisable(GL_SCISSOR_TEST);
-
-    if (renderOptions.depthTest)
-        glEnable(GL_DEPTH_TEST);
-    else
-        glDisable(GL_DEPTH_TEST);
-
-    glUseProgram(shaderProgram.getProgram());
-    glBindVertexArray(vertexArrayObject.getVertexArrayObject());
-
-    glUniformMatrix4fv(shaderProgram.projection, 1, GL_FALSE, projection);
-    glUniformMatrix4fv(shaderProgram.view, 1, GL_FALSE, view);
-    glUniformMatrix4fv(shaderProgram.model, 1, GL_FALSE, model);
-
-    glBindTexture(GL_TEXTURE_2D, texture.texture);
-    glUniform2f(shaderProgram.textureScale, renderOptions.textureScale.x, renderOptions.textureScale.y);
-
-    if (renderOptions.indexed)
-        glDrawElements(GL_TRIANGLES, renderOptions.numOfIndices, renderOptions.indicesType, renderOptions.indices);
-    else
-        glDrawArrays(GL_TRIANGLES, renderOptions.elementOffset, renderOptions.numOfElements);
-}
-
-void Core::draw(const RenderOptions &renderOptions, const ShaderProgram &shaderProgram, const VertexArrayObject &vertexArrayObject,
-                const float *projection, const float *view, const float *model) {
-
-    if (renderOptions.cullFace)
-        glEnable(GL_CULL_FACE);
-    else
-        glDisable(GL_CULL_FACE);
-
-    if (renderOptions.scissorTest)
-        glEnable(GL_SCISSOR_TEST);
-    else
-        glDisable(GL_SCISSOR_TEST);
-
-    if (renderOptions.depthTest)
-        glEnable(GL_DEPTH_TEST);
-    else
-        glDisable(GL_DEPTH_TEST);
-
-    glUseProgram(shaderProgram.getProgram());
-    glBindVertexArray(vertexArrayObject.getVertexArrayObject());
-
-    glUniformMatrix4fv(shaderProgram.projection, 1, GL_FALSE, projection);
-    glUniformMatrix4fv(shaderProgram.view, 1, GL_FALSE, view);
-    glUniformMatrix4fv(shaderProgram.model, 1, GL_FALSE, model);
-
-    if (renderOptions.indexed)
-        glDrawElements(GL_TRIANGLES, renderOptions.numOfIndices, renderOptions.indicesType, renderOptions.indices);
-    else
-        glDrawArrays(GL_TRIANGLES, renderOptions.elementOffset, renderOptions.numOfElements);
-}
-
 void Core::clear() {
-    glDisable(GL_SCISSOR_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void Core::setlViewport(unsigned int width, unsigned int height) {
+void Core::setViewport(unsigned int width, unsigned int height) {
     glViewport(0, 0, width, height);
 }
 
@@ -198,4 +170,65 @@ float Core::readPixel(Blob::Vec2f pos) {
 
     return z;
 }
+
+void Core::setCullFace(bool set) {
+    if (set)
+        glEnable(GL_CULL_FACE);
+    else
+        glDisable(GL_CULL_FACE);
+}
+
+void Core::setScissorTest(bool set) {
+    if (set)
+        glEnable(GL_SCISSOR_TEST);
+    else
+        glDisable(GL_SCISSOR_TEST);
+}
+
+void Core::setScissor(int x, int y, int width, int height) {
+    glScissor(x, y, width, height);
+}
+
+void Core::setDepthTest(bool set) {
+    if (set)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+}
+
+void Core::setShader(const ShaderProgram &shaderProgram) {
+    glUseProgram(shaderProgram.getProgram());
+}
+
+void Core::setVAO(const VertexArrayObject &vao) {
+    glBindVertexArray(vao.getVertexArrayObject());
+}
+
+void Core::setTexture(const Texture &texture) {
+    glBindTexture(GL_TEXTURE_2D, texture.texture);
+}
+
+void Core::setMat4(const float *matrix, int position) {
+    glUniformMatrix4fv(position, 1, GL_FALSE, matrix);
+}
+
+void Core::drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType) {
+    glDrawElements(GL_TRIANGLES, numOfIndices, indicesType, indices);
+}
+
+template<>
+void Core::drawIndex<uint8_t>(const void *indices, int32_t numOfIndices) {
+    Core::drawIndex(indices, numOfIndices, GL_UNSIGNED_BYTE);
+}
+
+template<>
+void Core::drawIndex<uint16_t>(const void *indices, int32_t numOfIndices) {
+    Core::drawIndex(indices, numOfIndices, GL_UNSIGNED_SHORT);
+}
+
+template<>
+void Core::drawIndex<uint32_t>(const void *indices, int32_t numOfIndices) {
+    Core::drawIndex(indices, numOfIndices, GL_UNSIGNED_INT);
+}
+
 } // namespace Blob::GL
