@@ -101,10 +101,6 @@ int main() {
     //unsigned short indices[] = {2, 1, 0, 1, 2, 3};
     unsigned short indices[] = {0, 1, 2, 1, 2, 3};
 
-    Blob::GL::Core::setScissorTest(true);
-    Blob::GL::Core::setDepthTest(true);
-    Blob::GL::Core::setCullFace(false);
-
     while (!glfwWindowShouldClose(window)) {
 
         glfwGetFramebufferSize(window, &width, &height);

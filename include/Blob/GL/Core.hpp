@@ -18,7 +18,9 @@ public:
     static void clear();
 
     static void setCullFace(bool set);
+//private:
     static void setScissorTest(bool set);
+//public:
     static void setScissor(int x, int y, int width, int height);
     static void setDepthTest(bool set);
     static void setViewport(unsigned int width, unsigned int height);
@@ -28,6 +30,7 @@ public:
     static void setMat4(const float *matrix, int position);
     static void setVec4(const float *matrix, int position);
     static void setVec3(const float *matrix, int position);
+    static void setFloat(float val, int position);
 
     static void drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType);
     template<typename T>

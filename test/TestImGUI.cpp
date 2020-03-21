@@ -103,7 +103,7 @@ int main() {
 
         renderable.setRotation((float) glfwGetTime(), 0, 0, 1);
         window.draw(renderable);
-        ImGui::NewFrame();
+        //ImGui::NewFrame();
 
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);

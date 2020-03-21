@@ -63,7 +63,7 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
 
     std::string errorName;
 
-    switch (type){
+    switch (type) {
     case GL_NO_ERROR:
         errorName = "GL_NO_ERROR";
         break;
@@ -129,8 +129,8 @@ void Core::init(void *glfwGetProcAddress, unsigned int width, unsigned int heigh
     // general settings
 
     // cull
-    glFrontFace(GL_CW);
-    glCullFace(GL_FRONT);
+    glFrontFace(GL_CCW);
+    //glCullFace(GL_FRONT);
     glEnable(GL_CULL_FACE);
 
     glDisable(GL_SCISSOR_TEST);
@@ -218,6 +218,10 @@ void Core::setVec4(const float *matrix, int position) {
 
 void Core::setVec3(const float *matrix, int position) {
     glUniform3fv(position, 1, matrix);
+}
+
+void Core::setFloat(float val, int position) {
+    glUniform1f(position, val);
 }
 
 void Core::drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType) {

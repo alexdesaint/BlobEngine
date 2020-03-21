@@ -95,6 +95,8 @@ void ImGUI::draw() {
     GL::Core::setVAO(vertexArrayObject);
     GL::Core::setShader(shader);
     GL::Core::setScissorTest(true);
+    GL::Core::setCullFace(false);
+    GL::Core::setDepthTest(false);
 
     for (int n = 0; n < drawData->CmdListsCount; n++) {
         ImDrawList *cmd_list = drawData->CmdLists[n];
@@ -120,6 +122,8 @@ void ImGUI::draw() {
     }
 
     GL::Core::setScissorTest(false);
+    GL::Core::setCullFace(true);
+    GL::Core::setDepthTest(true);
 }
 
 void ImGUI::setWindowSize(unsigned int width, unsigned int height) {
