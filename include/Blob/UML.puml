@@ -8,47 +8,46 @@ namespace Blob {
         }
 
         'Core <.. Blob.Window
-        Core <.. Blob.Blob
-        VAO <-- Blob.Model
-        Indices <-- Blob.Model
-        Texture <-- Blob.Material
-        Shader <-- Blob.Material
+        Core <.. Blob.Window
+        VAO <--* Blob.Mesh
+        Indices <--* Blob.Mesh
+        Texture <.. Blob.Material
+        Shader <--* Blob.Material
         VBO <-right- VAO
         VBO <-left- Indices
     }
+    interface Material
+    Material <-- Mesh
+    Material <|-- SingleColorMaterial
 
-    Material <-- Model
+    Mesh <-- Shape
+    Shape -up-> Shape
+    Shape <-- Scene
 
-    Model <--o Shape
-    Shape o-up-> Shape
-    Shape <--o Scene
-
-    Scene <-- Blob
+    Scene <-- Window
     Camera <-- Scene
+    Light <-- Scene
 
-    ProjectionTransform <|-- Blob
+    ProjectionTransform <|-- Window
 
-    Window <|-- Blob
+    WindowCore <|-- Window
 
-    class Blob {
+    class Window {
       + draw()
     }
 
     ModelTransform <|-- Shape
-    ModelTransform <|-- Scene
-    ModelTransform <|-left- Model
 
     ViewTransform <|-- Camera
-    Window .up.> Controls
-    Blob .up.> ShapesAndImGUI
-    Blob .up.> ImGUI
-
+    WindowCore .up.> Controls
+    Window .up.> Shapes
+    ImGUI <--* Window
 
     class Color {
-        +r : char
-        +g : char
-        +b : char
-        +a : char
+        +r : float
+        +g : float
+        +b : float
+        +a : float
     }
 }
 @enduml

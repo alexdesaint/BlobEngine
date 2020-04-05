@@ -31,6 +31,7 @@ public:
     static void setVec4(const float *matrix, int position);
     static void setVec3(const float *matrix, int position);
     static void setFloat(float val, int position);
+    static void setUint(int32_t val, int position);
 
     static void drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType);
     template<typename T>

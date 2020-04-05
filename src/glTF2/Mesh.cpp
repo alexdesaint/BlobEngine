@@ -1,127 +1,122 @@
+#include <Blob/glTF2/BasicFunctions.hpp>
 #include <Blob/glTF2/Mesh.hpp>
-#include <Blob/Exception.hpp>
-#include <Blob/GL/Shapes.hpp>
 
 using namespace std;
 
 namespace Blob::glTF2 {
 
-    Mesh::Primitive::Primitive(const nlohmann::json &j, std::deque<Blob::glTF2::Accessor> &a,
-                               std::list<Material> &materials) {
-        if (j.find("attributes") == j.end())
-            throw Exception("glTF : Required field \"attributes\" not found");
+void from_json(const nlohmann::json &j, Mesh::Primitive::Attribute &a) {
+    Required(j, "POSITION", a.POSITION);
+    NotRequired(j, "NORMAL", a.NORMAL);
+    NotRequired(j, "TANGENT", a.TANGENT);
+    NotRequired(j, "TEXCOORD_0", a.TEXCOORD_0);
+    NotRequired(j, "TEXCOORD_1", a.TEXCOORD_1);
+    NotRequired(j, "COLOR_0", a.COLOR_0);
+    NotRequired(j, "JOINTS_0", a.JOINTS_0);
+    NotRequired(j, "WEIGHTS_0", a.WEIGHTS_0);
+}
 
-        j.at("attributes").get_to(attributes);
+void from_json(const nlohmann::json &j, Mesh::Primitive &a) {
+    Required(j, "attributes", a.attributes);
 
-        if (attributes.find("POSITION") == attributes.end())
-            throw Exception(R"(glTF : Required field "POSITION" in "attributes" not found)");
+    NotRequired(j, "indices", a.indices);
+    NotRequired(j, "material", a.material);
+    NotRequired(j, "mode", a.mode);
+}
 
-        switch (attributes.size()) {
-            case 1:
-                setShaderProgram(*GL::Shaders::Shader_3D_POSITION);
-                break;
-            case 2:
-                if (attributes.find("NORMAL") != attributes.end())
-                    setShaderProgram(*GL::Shaders::Shader_3D_POSITION_NORMAL);
-                else
-                    throw Exception(R"(glTF : fail to find the right shader)");
-                break;
-            case 3:
-                if (attributes.find("NORMAL") != attributes.end() && attributes.find("TEXCOORD_0") != attributes.end())
-                    setShaderProgram(*GL::Shaders::Shader_3D_POSITION_NORMAL_TEXCOORD_0);
-                else
-                    throw Exception(R"(glTF : fail to find the right shader)");
-                break;
-            default:
-                throw Exception(R"(glTF : fail to find the right shader)");
-        }
+Mesh::Mesh(const nlohmann::json &j) {
+    Required(j, "primitives", primitives);
+    NotRequired(j, "weights", weights);
+    NotRequired(j, "name", name);
 
-        // TODO: optimise this part, the data need to be in one Interleaved vertex. if the offset < stride
-        int32_t pos = 0;
-        for (const auto &k : attributes) {
-            setBuffer(*a[k.second].bufferViewIt, a[k.second].bufferViewIt->byteStride, a[k.second].byteOffset, pos);
+    if(primitives.size() != 1)
+        throw Exception("Mesh with multiple primitives not supported yet");
 
-            setArrayVAO(a[k.second].type, k.first.c_str(), a[k.second].componentType, 0, a[k.second].normalized, pos);
+    for (auto &p : primitives) {
+        // Choose the Attribute
+        // VAO
+        // material
 
-            pos++;
-        }
+        uint8_t attributeDescriptor = 0;
 
-        if (j.find("indices") != j.end()) {
-            j.at("indices").get_to(indices);
+        if (p.attributes.POSITION != -1)
+            attributeDescriptor |= 0x01;
 
-            setBufferIndices(*a[indices].bufferViewIt);
+        if (p.attributes.NORMAL != -1)
+            attributeDescriptor |= 0x02;
 
-            setIndices((unsigned short *) a[indices].byteOffset, a[indices].count, a[indices].componentType);
-        }
+        if (p.attributes.TANGENT != -1)
+            attributeDescriptor |= 0x04;
 
-        if (j.find("material") != j.end()) {
-            j.at("material").get_to(material);
+        if (p.attributes.TEXCOORD_0 != -1)
+            attributeDescriptor |= 0x08;
 
-            auto materialIt = std::next(materials.begin(), material);
+        if (p.attributes.TEXCOORD_1 != -1)
+            attributeDescriptor |= 0x10;
 
-            if (materialIt->pbrMetallicRoughness.set && materialIt->pbrMetallicRoughness.baseColorTexture.set)
-                setTexture(*materialIt->pbrMetallicRoughness.baseColorTexture.indexIt);
-        }
+        if (p.attributes.COLOR_0 != -1)
+            attributeDescriptor |= 0x20;
 
-        if (j.find("mode") != j.end())
-            j.at("mode").get_to(mode);
+        if (p.attributes.JOINTS_0 != -1)
+            attributeDescriptor |= 0x40;
 
-        // setMode()
-    }
+        if (p.attributes.WEIGHTS_0 != -1)
+            attributeDescriptor |= 0x80;
 
-    Mesh::Mesh(const nlohmann::json &j, std::deque<Blob::glTF2::Accessor> &a, std::list<Material> &materials) {
-        if (j.find("primitives") == j.end())
-            throw Exception("glTF : Required field \"primitives\" not found");
-
-        for (const nlohmann::json &js : j["primitives"])
-            primitives.emplace_back(js, a, materials);
-
-        if (j.find("weights") != j.end()) {
-            weights.reserve(j["weights"].size());
-            for (const nlohmann::json &js : j["weights"])
-                weights.push_back(js.get<int>());
-        }
-
-        if (j.find("name") != j.end())
-            j.at("name").get_to(name);
-    }
-
-    std::ostream &operator<<(std::ostream &s, const Mesh::Primitive &a) {
-        s << "    Primitive {" << endl;
-        s << "      attributes {" << endl;
-        for (const auto &k : a.attributes)
-            s << "        " << k.first << " : " << k.second << endl;
-
-        s << "      }" << endl;
-
-        if (a.indices != -1)
-            s << "      indices : " << a.indices << endl;
-
-        if (a.material != -1)
-            s << "      material : " << a.material << endl;
-
-        if (a.mode != -1)
-            s << "      mode : " << a.mode << endl;
-        s << "    }" << endl;
-
-        return s;
-    }
-
-    std::ostream &operator<<(std::ostream &s, const Mesh &a) {
-
-        s << "  Mesh {" << endl;
-
-        for (auto &i : a.primitives) {
-            s << i;
-        }
-
-        if (!a.weights.empty()) {
-            s << "    weights :" << endl;
-            for (auto &i : a.weights)
-                s << "      " << i << endl;
-        }
-
-        s << "  }" << endl;
-        return s;
+        printf("attributeDescriptor : %x\n", attributeDescriptor);
     }
 }
+
+std::ostream &operator<<(std::ostream &s, const Mesh::Primitive &a) {
+    s << "    Primitive {" << endl;
+    s << "      attributes {" << endl;
+    if (a.attributes.POSITION != -1)
+        s << "        POSITION : " << a.attributes.POSITION << endl;
+    if (a.attributes.NORMAL != -1)
+        s << "        NORMAL : " << a.attributes.NORMAL << endl;
+    if (a.attributes.TANGENT != -1)
+        s << "        TANGENT : " << a.attributes.TANGENT << endl;
+    if (a.attributes.TEXCOORD_0 != -1)
+        s << "        TEXCOORD_0 : " << a.attributes.TEXCOORD_0 << endl;
+    if (a.attributes.TEXCOORD_1 != -1)
+        s << "        TEXCOORD_1 : " << a.attributes.TEXCOORD_1 << endl;
+    if (a.attributes.COLOR_0 != -1)
+        s << "        COLOR_0 : " << a.attributes.COLOR_0 << endl;
+    if (a.attributes.JOINTS_0 != -1)
+        s << "        JOINTS_0 : " << a.attributes.JOINTS_0 << endl;
+    if (a.attributes.WEIGHTS_0 != -1)
+        s << "        WEIGHTS_0 : " << a.attributes.WEIGHTS_0 << endl;
+    s << "      }" << endl;
+
+    if (a.indices != -1)
+        s << "      indices : " << a.indices << endl;
+
+    if (a.material != -1)
+        s << "      material : " << a.material << endl;
+
+    if (a.mode != -1)
+        s << "      mode : " << a.mode << endl;
+    s << "    }" << endl;
+
+    return s;
+}
+
+std::ostream &operator<<(std::ostream &s, const Mesh &a) {
+
+    s << "  Mesh {" << endl;
+
+    for (auto &i : a.primitives) {
+        s << i;
+    }
+
+    if (!a.weights.empty()) {
+        s << "    weights :" << endl;
+        for (auto &i : a.weights)
+            s << "      " << i << endl;
+    }
+
+    s << "  }" << endl;
+    return s;
+}
+
+} // namespace Blob::glTF2

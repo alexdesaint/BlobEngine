@@ -1,10 +1,10 @@
-#include <Blob/GL/Core.hpp>
-#include <Blob/glTF2/SceneManager.hpp>
 #include <Blob/Exception.hpp>
+#include <Blob/Window.hpp>
+#include <Blob/glTF2/SceneManager.hpp>
 
-#include <iostream>
+#include <Blob/Shapes.hpp>
 #include <Blob/Time.hpp>
-#include <Blob/GL/Shapes.hpp>
+#include <iostream>
 
 using namespace Blob;
 
@@ -12,40 +12,39 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
     try {
         std::cout << "test : " << path << std::endl;
 
-		Blob::GL::Core graphic(false, 640, 480);
+        Camera camera;
 
-        Blob::glTF2::SceneManager sm(path);
+        Window window(camera);
 
-        //std::cout << sm;
+        glTF2::SceneManager sm(path);
 
-        Blob::GL::Shape &mainScene = sm.scenes.front();
+        std::cout << sm;
 
-        graphic.setCameraPosition(x, y, z);
-        graphic.setCameraRange(cameraRange);
+        Scene &mainScene = sm.scenes.front();
+
+        camera.setPosition(x, y, z);
+        window.setRange(cameraRange.x, cameraRange.y);
 
         Time::TimePoint start = Time::now();
 
-        while (graphic.isOpen()) {
-            graphic.clear();
-
+        while (window.isOpen()) {
             Blob::Time::Duration flow = start - Time::now();
 
-            mainScene.setRotation(flow.count(), 0, 1, 0);
+            window.draw(mainScene);
 
-            graphic.draw(mainScene);
-
-            graphic.display();
+            window.display();
         }
 
-    } catch (Exception &exception) {
-        std::cout << exception.what() << std::endl;
-    }
+    } catch (Exception &exception) { std::cout << exception.what() << std::endl; }
 }
 
 int main(int argc, char *argv[]) {
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+    test("data/models/cubeOpti.gltf");
 
-	return 0;
+    return 0;
+
+    test("../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+
     test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
 
     test("/home/patapouf/Projects/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
@@ -62,11 +61,9 @@ int main(int argc, char *argv[]) {
 
     test("/home/patapouf/Projects/Shapes/test.gltf");
 
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf",
-         1000, 0, 0, {100, 2000});
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf", 1000, 0, 0, {100, 2000});
 
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf",
-            1000, 0, 0, {100, 2000});
+    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf", 1000, 0, 0, {100, 2000});
 
-	return 0;
+    return 0;
 }

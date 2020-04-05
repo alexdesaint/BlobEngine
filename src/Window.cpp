@@ -86,7 +86,7 @@ std::array<float, 3> Window::getWorldPosition() {
 
     glm::vec4 pos(mousePos.x, mousePos.y, z, 1);
 
-    pos = glm::inverse(*this * camera.viewMatrix) * pos;
+    pos = glm::inverse(*this * camera) * pos;
     pos = pos / pos.w;
 
     return {pos.x, pos.y, pos.z};
@@ -96,12 +96,41 @@ void Window::setCamera(Camera &camera_) {
     camera = camera_;
 }
 
-void Window::draw(const Renderable &renderable) const {
-    Blob::GL::Core::setShader(renderable.material.shaderProgram);
-    Blob::GL::Core::setVAO(renderable.vertexArrayObject);
+void Window::draw(const Mesh &mesh, glm::mat4 sceneModel) const {
+    Blob::GL::Core::setShader(mesh.material.shaderProgram);
+    Blob::GL::Core::setVAO(mesh.vertexArrayObject);
 
-    renderable.material.applyMaterial(*this, camera, renderable);
+    mesh.material.applyMaterial(*this, camera, sceneModel);
 
-    Blob::GL::Core::drawIndex(renderable.renderOptions.indices, renderable.renderOptions.numOfIndices, renderable.renderOptions.indicesType);
+    Blob::GL::Core::drawIndex(mesh.renderOptions.indices, mesh.renderOptions.numOfIndices, mesh.renderOptions.indicesType);
 }
+
+void Window::draw(const Shape &shape, glm::mat4 sceneModel) const {
+    glm::mat4 modelMatrix = sceneModel * shape;
+
+    /*std::cout << "mat :" << std::endl << modelMatrix;
+
+    std::cout << "r :" << std::endl;
+    for(Renderable *r : shape.renderables)
+            std::cout << std::hex << r << " ";
+    std::cout << std::endl;*/
+    if (shape.mesh != nullptr)
+        draw(*shape.mesh, modelMatrix);
+
+    for (auto r : shape.shapes)
+        draw(*r, modelMatrix);
+}
+
+void Window::draw(const Scene &scene) const {
+    /*std::cout << "mat :" << std::endl << modelMatrix;
+
+    std::cout << "r :" << std::endl;
+    for(Shape *r : scene.shapes)
+            std::cout << std::hex << r << " ";
+    std::cout << std::endl;*/
+
+    for (auto r : scene.shapes)
+        draw(*r);
+}
+
 } // namespace Blob

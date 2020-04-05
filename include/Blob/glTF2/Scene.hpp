@@ -1,22 +1,19 @@
-#ifndef BLOBENGINE_SCENE_HPP
-#define BLOBENGINE_SCENE_HPP
+#pragma once
 
-#include <vector>
+#include <iostream>
 #include <nlohmann/json.hpp>
+#include <Blob/Scene.hpp>
 #include <Blob/glTF2/Node.hpp>
 
 namespace Blob::glTF2 {
 
-    class Scene : public GL::Shape {
-	public:
+class Scene : public Blob::Scene {
+public:
+    std::vector<int> nodes;
+    std::string name;
 
-        std::vector<int> nodes;
-        std::string name;
+    Scene(const nlohmann::json &j, const std::vector<Node> &nodesVector);
 
-        Scene(const nlohmann::json &j, std::list<Node> &nodesList);
-
-		friend std::ostream &operator<<(std::ostream &s, const Scene &a);
-	};
-}
-
-#endif //BLOBENGINE_SCENE_HPP
+    friend std::ostream &operator<<(std::ostream &s, const Scene &a);
+};
+} // namespace Blob::glTF2

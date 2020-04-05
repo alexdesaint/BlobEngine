@@ -2,10 +2,12 @@
 
 // BlobEngine
 #include <Blob/Camera.hpp>
-#include <Blob/ProjectionTransform.hpp>
-#include <Blob/Renderable.hpp>
-#include <Blob/WindowCore.hpp>
 #include <Blob/ImGUI.hpp>
+#include <Blob/Mesh.hpp>
+#include <Blob/ProjectionTransform.hpp>
+#include <Blob/Scene.hpp>
+#include <Blob/Shape.hpp>
+#include <Blob/WindowCore.hpp>
 
 // std
 #include <chrono>
@@ -13,7 +15,7 @@
 
 namespace Blob {
 
-class Window : public WindowCore, ProjectionTransform {
+class Window : public WindowCore, public ProjectionTransform {
 private:
     ImGUI imgui;
 
@@ -29,7 +31,9 @@ public:
 
     ~Window();
 
-    void draw(const Renderable &renderable) const;
+    void draw(const Mesh &mesh, glm::mat4 sceneModel = glm::mat4(1)) const;
+    void draw(const Shape &shape, glm::mat4 sceneModel = glm::mat4(1))  const;
+    void draw(const Scene &scene) const;
 
     void setCamera(Camera &camera);
 

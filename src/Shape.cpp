@@ -1,48 +1,74 @@
 #include <Blob/Shape.hpp>
+#include <algorithm>
 
 namespace Blob {
 
-    void Shape::addRenderable(const Renderable &r) {
-		renderables.emplace_back(&r);
-	}
+Shape::Shape(Mesh &r, float LocationX, float LocationY, float LocationZ, float ScaleX, float ScaleY, float ScaleZ, float RotationX, float RotationY,
+             float RotationZ) {
+    mesh = &r;
+    setPosition(LocationX, LocationY, LocationZ);
+    setScale(ScaleX, ScaleY, ScaleZ);
+    setRotation(RotationX, 1, 0, 0);
+    setRotation(RotationY, 0, 1, 0);
+    setRotation(RotationZ, 0, 0, 1);
+}
 
-    void Shape::addRenderable(const Shape &r) {
-		shapes.emplace_back(&r);
-	}
+Shape::Shape(float LocationX, float LocationY, float LocationZ, float ScaleX, float ScaleY, float ScaleZ, float RotationX, float RotationY,
+             float RotationZ) {
+    setPosition(LocationX, LocationY, LocationZ);
+    setScale(ScaleX, ScaleY, ScaleZ);
+    setRotation(RotationX, 1, 0, 0);
+    setRotation(RotationY, 0, 1, 0);
+    setRotation(RotationZ, 0, 0, 1);
+}
 
-	void Shape::removeRenderable(Renderable &r) {
-		renderables.remove(&r);
-	}
+void Shape::setMesh(Mesh &r) {
+    mesh = &r;
+}
 
-	void Shape::removeRenderable(Shape &r) {
-		shapes.remove(&r);
-	}
+void Shape::setMesh(Mesh *r) {
+    mesh = r;
+}
 
-    void Shape::addRenderable(const Renderable *r) {
-		renderables.emplace_back(r);
-	}
+void Shape::setChild(Shape *r) {
+    shapes.emplace_back(r);
+    r->parent = this;
+}
 
-    void Shape::addRenderable(const Shape *r) {
-		shapes.emplace_back(r);
-	}
+void Shape::setChild(Shape &r) {
+    shapes.emplace_back(&r);
+    r.parent = this;
+}
 
-	void Shape::removeRenderable(Renderable *r) {
-		renderables.remove(r);
-	}
+void Shape::removeMesh() {
+    mesh = nullptr;
+}
 
-	void Shape::removeRenderable(Shape *r) {
-		shapes.remove(r);
-	}
-
-    std::ostream &operator<<(std::ostream &s, const Shape &a) {
-        s << "Shape : {" << std::endl;
-
-        for (const auto &r : a.renderables)
-            s << r << std::endl;
-        for (const auto &r : a.shapes)
-            s << *r;
-
-        s << "}" << std::endl;
-        return s;
+void Shape::removeChild(Shape &r) {
+    auto it = std::find(shapes.begin(), shapes.end(), &r);
+    if (it != shapes.end()) {
+        r.parent = nullptr;
+        shapes.erase(it);
     }
 }
+
+void Shape::removeChild(Shape *r) {
+    auto it = std::find(shapes.begin(), shapes.end(), r);
+    if (it != shapes.end()) {
+        r->parent = nullptr;
+        shapes.erase(it);
+    }
+}
+
+std::ostream &operator<<(std::ostream &s, const Shape &a) {
+    s << "Shape : {" << std::endl;
+
+    s << a.mesh << std::endl;
+
+    for (const auto &r : a.shapes)
+        s << *r;
+
+    s << "}" << std::endl;
+    return s;
+}
+} // namespace Blob

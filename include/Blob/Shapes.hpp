@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Blob/Exception.hpp>
-#include <Blob/Renderable.hpp>
+#include <Blob/Mesh.hpp>
 #include <Blob/Shapes.hpp>
 
 #include <iostream>
@@ -16,59 +16,62 @@ struct Light{
     int positionPos = -1;
     glm::vec3 position = glm::vec3(1.2f, 1.0f, 2.0f);
 
-    int ambientPos = -1;
-    Color ambient = Color(0.2f, 0.2f, 0.2f);
-    int diffusePos = -1;
-    Color diffuse = Color(0.5f, 0.5f, 0.5f);
-    int specularPos = -1;
-    Color specular = Color::White;
+    int colorPos = -1;
+    Color color = Color(1, 1, 1);
 };
 
 /// A Material to draw in a single color
 class SingleColorMaterial : public Material {
 private:
-    static int model, view, projection;//, lightDirPos, lightColorPos, colorPos;
+    static int model, view, projection;
 
     // texture
-    static int ambientPos;
-    static int diffusePos;
-    static int specularPos;
-    static int shininessPos;
+    static int albedoPos;
+    static int metallicPos;
+    static int roughnessPos;
+    static int aoPos;
 
-    static int viewPos;
+    static int optionsPos;
 
-    void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const ModelTransform &mt) const final;
+    static int camPos;
+
+    void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const glm::mat4 &mt) const final;
 
 public:
-    Color ambient = Color(1.0f, 0.5f, 0.31f);
+    const struct {
+        uint32_t Irradiance = 1;
+        uint32_t Radiance = 2;
+    } Options;
+
+    Color albedo = Color(1.0f, 0.5f, 0.31f);
+    float metallic = 0;
+    float roughness = 0;
+    float ao = 1;
+    uint32_t options = 0xFFFFFFFF;
+
+    /*Color ambient = Color(1.0f, 0.5f, 0.31f);
     Color diffuse = Color(1.0f, 0.5f, 0.31f);
     Color specular = Color(0.5f, 0.5f, 0.5f);
-    float shininess = 32;
+    float shininess = 512;*/
 
     static Light light;
 
-    //Color color = Color::Aqua;
-    //static Color lightColor;
-    //static float lightDir[3];
     SingleColorMaterial();
     static void init();
 };
 
-class Cube : public Renderable {
+class Cube : public Mesh {
 public:
-    SingleColorMaterial singleColorMaterial;
-    explicit Cube();
+    explicit Cube(const SingleColorMaterial &singleColorMaterial);
 };
 
-class Plane : public Renderable {
+class Plane : public Mesh {
 public:
-    SingleColorMaterial singleColorMaterial;
-    explicit Plane();
+    explicit Plane(const SingleColorMaterial &singleColorMaterial);
 };
 
-class OctagonalPrism : public Renderable {
+class OctagonalPrism : public Mesh {
 public:
-    SingleColorMaterial singleColorMaterial;
-    explicit OctagonalPrism();
+    explicit OctagonalPrism(const SingleColorMaterial &singleColorMaterial);
 };
 } // namespace Blob::Shapes

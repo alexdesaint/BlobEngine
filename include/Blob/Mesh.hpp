@@ -11,20 +11,17 @@
 
 namespace Blob {
 
-class Renderable : public ModelTransform { // TODO: rename as "Mesh", make fully a pubic object
+class Mesh {
     friend class Window;
-
 private:
     const Material &material;
 
-    GL::VertexArrayObject &vertexArrayObject;
+    const GL::VertexArrayObject &vertexArrayObject;
 
 public:
     RenderOptions renderOptions;
 
-    Renderable(GL::VertexArrayObject &vertexArrayObject, const Material &material);
-
-    void setVertexArrayObject(GL::VertexArrayObject &vertexArrayObject);
+    Mesh(GL::VertexArrayObject &vertexArrayObject, const Material &material);
 
     void setIndices(unsigned short *indices, int32_t numOfIndices, uint32_t indicesType);
 };

@@ -1,18 +1,19 @@
 #pragma once
 
-#include <Blob/Shape.hpp>
 #include <Blob/Camera.hpp>
+#include <Blob/Shape.hpp>
 
 namespace Blob {
 
-	class Scene : public ModelTransform {
-	private:
-		std::list<Shape *> shapes;
-		Camera camera;
+class Scene {
+    friend Window;
+private:
+    std::list<Shape const *> shapes;
+    Camera camera;
 
-	public:
-		void addShape(Shape &r);
+public:
+    void addShape(const Shape &r);
 
-		void removeShape(Shape &r);
-	};
-}
+    void removeShape(const Shape &r);
+};
+} // namespace Blob

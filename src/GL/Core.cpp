@@ -20,37 +20,6 @@ std::ostream &operator<<(std::ostream &out, const glm::mat4 &vec) {
                 out << vec[i].x << " " << vec[i].y << " " << vec[i].z << " " << vec[i].w << std::endl;
         return out;
 }
-
-void Graphic::draw(const Shape &shape, glm::mat4 sceneModel) {
-        glm::mat4 modelMatrix = sceneModel * shape.getModelMatrix();
-
-        /*std::cout << "mat :" << std::endl << modelMatrix;
-
-        std::cout << "r :" << std::endl;
-        for(Renderable *r : shape.renderables)
-                std::cout << std::hex << r << " ";
-        std::cout << std::endl;
-
-        for (auto r : shape.shapes)
-                draw(*r, modelMatrix);
-
-        for (auto r : shape.renderables)
-                draw(*r, modelMatrix);
-}
-
-void Graphic::draw(const Scene &scene) {
-        glm::mat4 modelMatrix = scene.getModelMatrix();
-
-        std::cout << "mat :" << std::endl << modelMatrix;
-
-        std::cout << "r :" << std::endl;
-        for(Shape *r : scene.shapes)
-                std::cout << std::hex << r << " ";
-        std::cout << std::endl;
-
-        for (auto r : scene.shapes)
-                draw(*r, modelMatrix);
-}
 */
 
 void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message,
@@ -222,6 +191,10 @@ void Core::setVec3(const float *matrix, int position) {
 
 void Core::setFloat(float val, int position) {
     glUniform1f(position, val);
+}
+
+void Core::setUint(int32_t val, int position) {
+    glUniform1ui(position, val);
 }
 
 void Core::drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType) {

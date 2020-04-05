@@ -4,13 +4,12 @@
 #include <ostream>
 
 namespace Blob {
-class ProjectionTransform : public glm::mat4{
+class ProjectionTransform : public glm::mat4 {
 private:
     float cameraAngle, ratio, closeRange, longRange;
-    //glm::mat4 projectionMatrix;
+    // glm::mat4 projectionMatrix;
 
 public:
-    const float *projectionPtr;
 
     ProjectionTransform(float cameraAngle, unsigned int width, unsigned int height, float closeRange, float longRange);
 

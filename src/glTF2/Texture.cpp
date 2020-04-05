@@ -3,17 +3,17 @@
 using namespace std;
 
 namespace Blob::glTF2 {
-    Texture::Texture(const nlohmann::json &j, list<Image> &images, list<Sampler> &samplers) {
+    Texture::Texture(const nlohmann::json &j, vector<Image> &images, vector<Sampler> &samplers) {
 
         if (j.find("sampler") != j.end()) {
             j.at("sampler").get_to(sampler);
-            samplerIt = next(samplers.begin(), sampler);
+            //samplerIt = next(samplers.begin(), sampler);
         }
 
         if (j.find("source") != j.end()) {
             j.at("source").get_to(source);
-            sourceIt = next(images.begin(), source);
-            setImage(sourceIt->uri);
+            //sourceIt = next(images.begin(), source);
+            //setImage(sourceIt->uri);
         }
 
         if (j.find("name") != j.end())

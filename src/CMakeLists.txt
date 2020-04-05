@@ -11,7 +11,7 @@ add_library(Blob STATIC
 		Controls.cpp
 		Time.cpp
 		Material.cpp
-		Renderable.cpp
+		Mesh.cpp
 		Window.cpp
 		WindowCore.cpp
 		Color.cpp

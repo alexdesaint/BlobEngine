@@ -133,7 +133,7 @@ void decode(uint8_t *buffer, int posNormalLen, int indicesLen) {
     }
     {
         printf("Pos, Normals :\n");
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < posNormalLen; i++) {
             printf("{{%1.1ff, %1.1ff, %1.1ff}, {%1.1ff, %1.1ff, %1.1ff}},\n", pos[i].x, pos[i].y, pos[i].z, normal[i].x, normal[i].y, normal[i].z);
         }
     }

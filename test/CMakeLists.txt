@@ -5,7 +5,7 @@ target_link_libraries(TestCollision Blob::Collision Blob::GL)
 target_compile_definitions(TestCollision PUBLIC TEST)
 
 add_executable(TestglTF2 TestglTF2.cpp)
-target_link_libraries(TestglTF2 Blob::glTF2)
+target_link_libraries(TestglTF2 Blob Blob::glTF2)
 
 add_executable(TestImGUI TestImGUI.cpp)
 target_link_libraries(TestImGUI Blob)# -static -static-libgcc -static-libstdc++ -lpthread)

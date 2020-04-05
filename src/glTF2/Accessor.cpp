@@ -1,10 +1,6 @@
 #include <Blob/glTF2/Accessor.hpp>
-
-#include <Blob/Exception.hpp>
-
-#include <cstring>
+#include <Blob/glTF2/BasicFunctions.hpp>
 #include <glad/glad.h>
-#include <iostream>
 
 using namespace std;
 
@@ -30,44 +26,20 @@ static Accessor::Type strToType(const char *str) {
     return Accessor::SCALAR;
 }
 
-Accessor::Accessor(const nlohmann::json &j, std::list<BufferView> &bufferViews) {
-
-    if (j.find("bufferView") != j.end())
-        j.at("bufferView").get_to(bufferView);
-
-    bufferViewIt = std::next(bufferViews.begin(), bufferView);
-
-    if (j.find("byteOffset") != j.end())
-        j.at("byteOffset").get_to(byteOffset);
-
-    if (j.find("componentType") == j.end())
-        throw Exception("glTF : Required field \"componentType\" not found");
-
-    j.at("componentType").get_to(componentType);
-
-    if (j.find("normalized") != j.end())
-        j.at("normalized").get_to(normalized);
-
-    if (j.find("count") == j.end())
-        throw Exception("glTF : Required field \"count\" not found");
-
-    j.at("count").get_to(count);
-
-    if (j.find("type") == j.end())
-        throw Exception("glTF : Required field \"type\" not found");
+Accessor::Accessor(const nlohmann::json &j) {
+    NotRequired(j, "bufferView", bufferView);
+    NotRequired(j, "byteOffset", byteOffset);
+    Required(j, "componentType", componentType);
+    NotRequired(j, "normalized", normalized);
+    Required(j, "count", count);
 
     string typeStr;
-    j.at("type").get_to(typeStr);
+    Required(j, "type", typeStr);
     type = strToType(typeStr.c_str());
 
-    if (j.find("min") != j.end())
-        j.at("min").get_to(min);
-
-    if (j.find("max") != j.end())
-        j.at("max").get_to(max);
-
-    if (j.find("name") != j.end())
-        j.at("name").get_to(name);
+    NotRequired(j, "min", min);
+    NotRequired(j, "max", max);
+    NotRequired(j, "name", name);
 }
 
 template<typename T>
@@ -146,7 +118,7 @@ std::ostream &operator<<(std::ostream &s, const Accessor &d) {
     return s;
 }
 
-uint32_t Accessor::getGlTypeSize(GLenum dataType) {
+uint32_t getGlTypeSize(GLenum dataType) {
     GLuint typeSize;
 
     switch (dataType) {
@@ -176,5 +148,9 @@ uint32_t Accessor::getGlTypeSize(GLenum dataType) {
     }
 
     return typeSize;
+}
+
+uint32_t Accessor::getSize() const {
+    return getGlTypeSize(componentType) * type * count;
 }
 } // namespace Blob::glTF2

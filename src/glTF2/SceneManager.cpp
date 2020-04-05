@@ -2,8 +2,9 @@
 
 #include <Blob/Reader/FileReader.hpp>
 
-#include <iostream>
+#include <Blob/Exception.hpp>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -55,148 +56,147 @@ using json = nlohmann::json;
 
 namespace Blob::glTF2 {
 
-    void from_json(const nlohmann::json &j, SceneManager &p) {
-    }
+SceneManager::SceneManager(const std::string &file) {
 
-    SceneManager::SceneManager(const std::string &file) {
+    std::ifstream i(file);
+    json j;
+    i >> j;
 
-        std::ifstream i(file);
-        json j;
-        i >> j;
+    std::string path = Reader::FileReader::getFilePath(file);
 
-        std::string path = Reader::FileReader::getFilePath(file);
+    j.at("asset").get_to(asset);
 
-        //version check
-        asset.load(j["asset"]);
+    buffers.reserve(j["buffers"].size());
+    for (const json &js : j["buffers"])
+        buffers.emplace_back(js, path);
 
-        // buffer part
-        for (const json &js : j["buffers"])
-            buffers.emplace_back(js, path);
+    j.at("bufferViews").get_to(bufferViews);
 
-        for (const json &js : j["bufferViews"])
-            bufferViews.emplace_back(js, buffers);
+    accessors.reserve(j["accessors"].size());
+    for (const json &js : j["accessors"])
+        accessors.emplace_back(js);
 
-        // material part
-        for (const json &js : j["images"])
-            images.emplace_back(js, path);
+    meshes.reserve(j["meshes"].size());
+    for (const json &js : j["meshes"])
+        meshes.emplace_back(js);
 
-        for (const json &js : j["samplers"])
-            samplers.emplace_back(js);
+    nodes.reserve(j["nodes"].size());
+    for (const json &js : j["nodes"])
+        nodes.emplace_back(js, meshes);
 
-        for (const json &js : j["textures"])
-            textures.emplace_back(js, images, samplers);
+    for (auto &node : nodes)
+        node.updateChild(nodes);
 
-        for (const json &js : j["materials"])
-            materials.emplace_back(js, textures);
-
-        // model part
-        for (const json &js : j["accessors"])
-            accessors.emplace_back(js, bufferViews);
-
-        for (const json &js : j["meshes"])
-            meshes.emplace_back(js, accessors, materials);
-
-        for (const json &js : j["nodes"])
-            nodes.emplace_back(js, meshes);
-
-        for (auto &s : nodes)
-            s.setChildren(nodes);
-
-        for (const json &js : j["scenes"])
-            scenes.emplace_back(js, nodes);
-
-        createVBO();
-    }
-
-    std::ostream &operator<<(std::ostream &s, const SceneManager &a) {
-		s << "SceneManager {" << endl;
-
-		s << a.asset;
-
-        // buffer part
-        for (const auto &b : a.buffers)
-            s << b;
-
-        for (const auto &b : a.bufferViews)
-            s << b;
-
-        // material part
-        for (const auto &b : a.images)
-            s << b;
-
-        for (const auto &b : a.samplers)
-            s << b;
-
-        for (const auto &b : a.textures)
-            s << b;
-
-        for (const auto &b : a.materials)
-            s << b;
-
-        // model part
-        for (const auto &b : a.accessors)
-            s << b;
-
-        for (const auto &b : a.meshes)
-            s << b;
-
-        for (const auto &b : a.nodes)
-            s << b;
-
-        for (const auto &b : a.scenes)
-            s << b;
-
-		s << "}" << endl;
-		return s;
-	}
-
-
-    void SceneManager::createVBO() {
-        //get the size of the buffer
-
-        size_t size = 0;
-        for (const auto &m : meshes) {
-            for (const auto &p : m.primitives) {
-
-            	// indices :
-                if(p.indices != -1)
-                    size += accessors[p.indices].bufferViewIt->byteLength;
-
-                // attributes :
-                for (const auto &a : p.attributes)
-                    size += accessors[a.second].bufferViewIt->byteLength;
-            }
-        }
-
-        cout << "VBO creation" << endl;
-        cout << "size : " << size << endl;
-
-        //local buffer creation
-        vector<uint8_t> buffer(size);
-        size_t cursor = 0;
-
-        //buffer assign values :
-        for (const auto &m : meshes) {
-            for (const auto &p : m.primitives){
-
-            	// Reading indices :
-                if(p.indices != -1) {
-                    Reader::FileReader fileReader(accessors[p.indices].bufferViewIt->bufferIt->uri);
-
-                    fileReader.goTo(accessors[p.indices].bufferViewIt->byteOffset + accessors[p.indices].byteOffset);
-
-                    // set cursor as new offset
-                    // TODO
-
-                    for (int i = 0; i < accessors[p.indices].count * accessors[p.indices].type; i++)
-                        buffer[cursor] = fileReader.readNextByte();
-                }
-
-                // Reading Data :
-				for (const auto &a : p.attributes) {
-					// TODO
-				}
-            }
-        }
-    }
+    scenes.reserve(j["scenes"].size());
+    for (const json &js : j["scenes"])
+        scenes.emplace_back(js, nodes);
 }
+
+std::ostream &operator<<(std::ostream &s, const SceneManager &a) {
+    s << "SceneManager {" << endl;
+
+    s << a.asset;
+
+    // buffer part
+    for (const auto &b : a.buffers)
+        s << b;
+
+    for (const auto &b : a.bufferViews)
+        s << b;
+    //
+    //    // material part
+    //    for (const auto &b : a.images)
+    //        s << b;
+    //
+    //    for (const auto &b : a.samplers)
+    //        s << b;
+    //
+    //    for (const auto &b : a.textures)
+    //        s << b;
+    //
+    //    for (const auto &b : a.materials)
+    //        s << b;
+
+    // model part
+    for (const auto &b : a.accessors)
+        s << b;
+
+    for (const auto &b : a.meshes)
+        s << b;
+
+    for (const auto &b : a.nodes)
+        s << b;
+
+    for (const auto &b : a.scenes)
+        s << b;
+
+    s << "}" << endl;
+    return s;
+}
+
+/// This is for optimization. We make sure :
+/// - buffer have interleaved vertex
+/// - we dont buffer what we dont use (like remove TEXCOORD_0 if no texture)
+/// - make sure same object with different transform or material are the same buffer
+/// - normalize data that need to be normalised (like NORMAL)
+void SceneManager::createVBO(std::string path) {
+    // get the size of the buffer
+
+    size_t size = 0;
+    for (const auto &m : meshes) {
+        for (const auto &p : m.primitives) {
+
+            // indices :
+            if (p.indices != -1)
+                size += accessors[p.indices].getSize();
+
+            // POSITION :
+            size += accessors[p.attributes.POSITION].getSize();
+
+            // NORMAL :
+            if (p.attributes.NORMAL != -1)
+                size += accessors[p.attributes.NORMAL].getSize();
+
+            // TEXCOORD_0 :
+            if (p.attributes.TEXCOORD_0 != -1)
+                size += accessors[p.attributes.TEXCOORD_0].getSize();
+        }
+    }
+
+    cout << "VBO creation" << endl;
+    cout << "size : " << size << endl;
+
+    if (buffers.size() != 1)
+        throw Blob::Exception("Multiple buffer not supported");
+
+    Reader::FileReader fileReader(path + buffers[0].uri);
+
+    // local buffer creation
+    std::vector<uint8_t> buffer(size);
+    //    size_t cursor = 0;
+    //
+    //    // buffer assign values :
+    //    for (const auto &m : meshes) {
+    //        for (const auto &p : m.primitives) {
+    //
+    //            // Reading indices :
+    //            if (p.indices != -1) {
+    //                Reader::FileReader fileReader(accessors[p.indices].bufferViewIt->bufferIt->uri);
+    //
+    //                fileReader.goTo(accessors[p.indices].bufferViewIt->byteOffset + accessors[p.indices].byteOffset);
+    //
+    //                // set cursor as new offset
+    //                // TODO
+    //
+    //                for (int i = 0; i < accessors[p.indices].count * accessors[p.indices].type; i++)
+    //                    buffer[cursor] = fileReader.readNextByte();
+    //            }
+    //
+    //            // Reading Data :
+    //            for (const auto &a : p.attributes) {
+    //                // TODO
+    //            }
+    //        }
+    //    }
+}
+} // namespace Blob::glTF2

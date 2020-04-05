@@ -1,9 +1,8 @@
 #pragma once
 
-#include <Blob/glTF2/Texture.hpp>
-#include <list>
-
+#include <iostream>
 #include <nlohmann/json.hpp>
+#include <Blob/glTF2/Texture.hpp>
 
 namespace Blob::glTF2 {
     class Material {
@@ -12,17 +11,16 @@ namespace Blob::glTF2 {
         /**
          * Reference to a texture.
          */
-        struct textureInfo {
+        class textureInfo {
+        public:
             bool set = false; ///< if this data is set with Json constructor
 
             size_t index; ///< The index of the texture. Required
             size_t texCoord = 0; ///< The set index of texture's TEXCOORD attribute used for texture coordinate mapping.
 
-            std::list<Texture>::iterator indexIt;
-
             textureInfo() = default;
 
-            explicit textureInfo(const nlohmann::json &j, std::list<Texture> &textures);
+            textureInfo(const nlohmann::json &j, std::vector<Texture> &textures);
         };
 
         std::string name; ///< The user-defined name of this object.
@@ -42,7 +40,7 @@ namespace Blob::glTF2 {
 
             PbrMetallicRoughness() = default;
 
-            explicit PbrMetallicRoughness(const nlohmann::json &j, std::list<Texture> &textures);
+            explicit PbrMetallicRoughness(const nlohmann::json &j, std::vector<Texture> &textures);
         } pbrMetallicRoughness;
 
         /**
@@ -53,7 +51,7 @@ namespace Blob::glTF2 {
 
             normalTextureInfo() = default;
 
-            explicit normalTextureInfo(const nlohmann::json &j, std::list<Texture> &textures);
+            normalTextureInfo(const nlohmann::json &j, std::vector<Texture> &textures);
         } normalTexture;
 
         /**
@@ -64,7 +62,7 @@ namespace Blob::glTF2 {
 
             occlusionTextureInfo() = default;
 
-            explicit occlusionTextureInfo(const nlohmann::json &j, std::list<Texture> &textures);
+            explicit occlusionTextureInfo(const nlohmann::json &j, std::vector<Texture> &textures);
         } occlusionTexture;
 
         textureInfo emissiveTexture; ///< The emissive map texture.
@@ -74,7 +72,7 @@ namespace Blob::glTF2 {
         float alphaCutoff = 0.5; ///< The alpha cutoff value of the material. default: 0.5
         bool doubleSided = false; ///< Specifies whether the material is double sided. default: false
 
-        Material(const nlohmann::json &j, std::list<Texture> &textures);
+        Material(const nlohmann::json &j, std::vector<Texture> &textures);
 
         friend std::ostream &operator<<(std::ostream &s, const Material &a);
     };

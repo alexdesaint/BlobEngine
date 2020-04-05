@@ -8,8 +8,7 @@
 namespace Blob {
 
 ProjectionTransform::ProjectionTransform(float cameraAngle, unsigned int width, unsigned int height, float closeRange, float longRange)
-    : cameraAngle(cameraAngle), ratio(width / (float) height), closeRange(closeRange), longRange(longRange),
-      projectionPtr(glm::value_ptr(*(static_cast<glm::mat4 *>(this)))) {
+    : cameraAngle(cameraAngle), ratio(width / (float) height), closeRange(closeRange), longRange(longRange) {
     *(static_cast<glm::mat4 *>(this)) = glm::perspective(cameraAngle, ratio, closeRange, longRange);
     // projectionMatrix = glm::perspective(cameraAngle, ratio, closeRange, longRange);
 }

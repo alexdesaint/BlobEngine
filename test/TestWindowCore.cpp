@@ -91,7 +91,7 @@ int main() {
 
     SimpleMaterial material(sp);
 
-    Blob::Renderable renderable(vao, material);
+    Blob::Mesh renderable(vao, material);
     renderable.renderOptions = ro;
 
     while (window.isOpen()) {

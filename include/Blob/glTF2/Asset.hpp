@@ -1,20 +1,16 @@
-#ifndef BLOBENGINE_ASSET_HPP
-#define BLOBENGINE_ASSET_HPP
+#pragma once
 
 #include <iostream>
 #include <nlohmann/json.hpp>
 
 namespace Blob::glTF2 {
 
-	class Asset {
-	private:
-		std::string version;
+class Asset {
+private:
+    std::string version;
 
-	public:
-        void load(const nlohmann::json &j);
-
-		friend std::ostream &operator<<(std::ostream &s, const Asset &a);
-	};
-}
-
-#endif //BLOBENGINE_ASSET_HPP
+public:
+    friend std::ostream &operator<<(std::ostream &s, const Asset &a);
+    friend void from_json(const nlohmann::json &j, Asset &a);
+};
+} // namespace Blob::glTF2

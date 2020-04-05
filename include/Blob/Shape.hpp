@@ -1,35 +1,35 @@
 #pragma once
 
-#include <Blob/Renderable.hpp>
+#include <Blob/Mesh.hpp>
 #include <list>
 
 namespace Blob {
 
-	class Graphic;
+class Shape : public ModelTransform {
+    friend Window;
 
-	class Shape : public ModelTransform {
-		friend Graphic;
-	private:
+private:
+    Mesh *mesh = nullptr;
+    std::list<Shape *> shapes;
+    Shape *parent = nullptr;
 
-        std::list<const Renderable *> renderables;
-        std::list<const Shape *> shapes;
+public:
+    Shape(Mesh &r, float LocationX = 0.f, float LocationY = 0.f, float LocationZ = 0.f, float ScaleX = 1.f, float ScaleY = 1.f, float ScaleZ = 1.f,
+          float RotationX = 0.f, float RotationY = 0.f, float RotationZ = 0.f);
+    Shape(float LocationX = 0.f, float LocationY = 0.f, float LocationZ = 0.f, float ScaleX = 1.f, float ScaleY = 1.f, float ScaleZ = 1.f,
+          float RotationX = 0.f, float RotationY = 0.f, float RotationZ = 0.f);
 
-	public:
+    void setMesh(Mesh &r);
+    void setMesh(Mesh *r);
 
-        void addRenderable(const Renderable &r);
+    void setChild(Shape &r);
+    void setChild(Shape *r);
 
-        void addRenderable(const Renderable *r);
+    void removeMesh();
 
-        void addRenderable(const Shape &r);
+    void removeChild(Shape &r);
+    void removeChild(Shape *r);
 
-        void addRenderable(const Shape *r);
-
-		void removeRenderable(Renderable &r);
-		void removeRenderable(Renderable *r);
-
-		void removeRenderable(Shape &r);
-		void removeRenderable(Shape *r);
-
-        friend std::ostream &operator<<(std::ostream &s, const Shape &a);
-	};
-}
+    friend std::ostream &operator<<(std::ostream &s, const Shape &a);
+};
+} // namespace Blob

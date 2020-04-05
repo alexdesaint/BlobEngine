@@ -24,9 +24,10 @@ private:
 
     // static std::unordered_map<std::string, Material> Materials;
 
+    /// TODO: add Shader Storage Buffer Object for local light sources
 protected:
     const GL::ShaderProgram &shaderProgram;
-    virtual void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const ModelTransform &mt) const = 0;
+    virtual void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const glm::mat4 &mt) const = 0;
 
     explicit Material(const GL::ShaderProgram &shaderProgram);
 };
