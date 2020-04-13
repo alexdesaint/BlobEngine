@@ -1,6 +1,7 @@
 .idea/
 bin/
 lib/
+libs/include/
 cmake-build-debug/
 cmake-build-release/
 cmake-build-debug-clang/

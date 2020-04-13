@@ -313,6 +313,9 @@ namespace Blob {
 
     void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
         io->MousePos = Vec2f((float) xpos, (float) ypos);
+#ifndef IMGUI_USER_CONFIG
+#error NOPE
+#endif
 
         ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
         if (imgui_cursor != oldCursor) {

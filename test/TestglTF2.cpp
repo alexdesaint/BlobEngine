@@ -6,6 +6,8 @@
 #include <Blob/Time.hpp>
 #include <iostream>
 
+#include <tiny_gltf.h>
+
 using namespace Blob;
 
 void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob::Vec2f cameraRange = {1, 100}) {

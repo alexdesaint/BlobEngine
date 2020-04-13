@@ -20,4 +20,4 @@ add_library(Blob STATIC
 		Scene.cpp
 		Shapes.cpp)
 target_include_directories(Blob PUBLIC ../../include)
-target_link_libraries(Blob imgui stb EnTT Blob::GL Blob::FileReader Blob::Geometrie)
+target_link_libraries(Blob imgui Blob::GL Blob::FileReader Blob::Geometrie)
