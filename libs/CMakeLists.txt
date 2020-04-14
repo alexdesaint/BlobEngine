@@ -25,6 +25,7 @@ target_include_directories(imgui PUBLIC imgui/ imguiConfig/)
 # libs
 add_library(libs INTERFACE)
 target_include_directories(libs INTERFACE stb/ include/)
+target_compile_definitions(libs INTERFACE TINYGLTF_USE_CPP14)
 
 #json
 file(DOWNLOAD https://raw.githubusercontent.com/nlohmann/json/master/single_include/nlohmann/json.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp SHOW_PROGRESS)

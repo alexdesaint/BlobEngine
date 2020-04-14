@@ -59,24 +59,25 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
         break;
     }
 
+    std::cout << "OpenGL ";
+    
     switch (severity) {
     case GL_DEBUG_SEVERITY_NOTIFICATION:
-        std::cout << "Notification :" << std::endl << message << std::endl;
+        std::cout << "Notification : " << errorName << std::endl << "    " << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_LOW:
-        std::cout << "Low severity Error :" << std::endl << message << std::endl;
+        std::cout << "Low severity Error : " << errorName << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_MEDIUM:
-        std::cout << "Medium severity Error :" << std::endl << message << std::endl;
+        std::cout << "Medium severity Error : " << errorName << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_HIGH:
-        std::cout << "High severity Error :" << std::endl << message << std::endl;
+        std::cout << "High severity Error : " << errorName << std::endl << message << std::endl;
         abort();
     default:
-        std::cout << "Unknow Error severity :" << std::endl << message << std::endl;
+        std::cout << "Unknow Error severity : " << errorName << std::endl << message << std::endl;
         break;
     }
-    std::cout << "Type :" << errorName << std::endl;
 }
 
 void Core::init(void *glfwGetProcAddress, unsigned int width, unsigned int height) {

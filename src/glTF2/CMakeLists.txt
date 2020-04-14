@@ -2,4 +2,3 @@ add_library(BlobglTF2 STATIC SceneManager.cpp Asset.cpp Buffer.cpp BufferView.cp
 add_library(Blob::glTF2 ALIAS BlobglTF2)
 target_link_libraries(BlobglTF2 Blob libs)
 target_include_directories(BlobglTF2 PUBLIC ../../include)
-target_compile_definitions(BlobglTF2 INTERFACE TINYGLTF_USE_CPP14 INTERFACE TINYGLTF_NO_INCLUDE_JSON INTERFACE TINYGLTF_NO_INCLUDE_STB_IMAGE INTERFACE TINYGLTF_NO_INCLUDE_STB_IMAGE_WRITE INTERFACE TINYGLTF_USE_RAPIDJSON)

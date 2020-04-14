@@ -3,8 +3,8 @@
 
 #include <glad/glad.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+//#define STB_IMAGE_IMPLEMENTATION
+//#include <stb_image.h>
 
 #include <vector>
 
@@ -18,20 +18,20 @@ void Texture::init() {
     textureLoaded = true;
 }
 
-Texture::Texture(const std::string &path, bool nearest) {
+/*Texture::Texture(const std::string &path, bool nearest) {
     loadBMP(path, nearest);
 }
 
 Texture::Texture(uint8_t r, uint8_t g, uint8_t b) {
     setColor(r, g, b);
-}
+}*/
 
 Texture::~Texture() {
     if (textureLoaded)
         glDeleteTextures(1, &texture);
 }
 
-void Texture::loadBMP(const std::string &path, bool nearest) {
+/*void Texture::loadBMP(const std::string &path, bool nearest) {
     init();
 
     unsigned char *rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
@@ -62,7 +62,7 @@ void Texture::setColor(uint8_t r, uint8_t g, uint8_t b) {// TODO: remove this
     glTextureSubImage2D(texture, 0, 0, 0, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, color);
     glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-}
+}*/
 
 void Texture::setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height, bool nearest) {
     init();
@@ -83,7 +83,7 @@ void Texture::setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int he
     textureLoaded = true;
 }
 
-void Texture::setImage(const std::string &path) {
+/*void Texture::setImage(const std::string &path) {
     init();
 
     unsigned char *rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
@@ -95,7 +95,7 @@ void Texture::setImage(const std::string &path) {
     glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, rgb);
 
     stbi_image_free(rgb);
-}
+}*/
 
 unsigned int Texture::getTextureID() const {
     return texture;
