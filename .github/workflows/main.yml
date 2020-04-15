@@ -23,13 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set compiler
-      run: export CC='clang' CXX='clang++'  
     - name: Submodules
       run: git submodule update --init --recursive
     - name: Install libs
       run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
     - name: Configure
-      run: cmake -H. -Bbuild
+      run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
     - name: Build
       run: cmake --build build --config Release
