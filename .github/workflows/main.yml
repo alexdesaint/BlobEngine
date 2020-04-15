@@ -31,3 +31,13 @@ jobs:
       run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
     - name: Build
       run: cmake --build build --config Release
+  Visual Studio:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Submodules
+      run: git submodule update --init --recursive
+    - name: Configure
+      run: cmake -H. -Bbuild -G "Visual Studio 2019"
+    - name: Build
+      run: cmake --build build --config Release
