@@ -28,8 +28,6 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
 
         std::string err, warn;
         bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, path);
-        
-        model.scene 
 
         std::cout << "TinyGLTF errors :" << err << std::endl;
 

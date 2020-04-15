@@ -23,7 +23,7 @@ Window::~Window() {
     Shapes::destroy();
 }
 
-float Window::timeF = 0;
+float Window::timeFlow = 0;
 
 float Window::display() {
 
@@ -40,8 +40,8 @@ float Window::display() {
 
     Controls::update();
 
-    timeF = diff.count();
-    return timeF;
+    timeFlow = diff.count();
+    return timeFlow;
 }
 
 void Window::resize(unsigned int width, unsigned int height) {

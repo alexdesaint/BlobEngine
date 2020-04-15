@@ -31,7 +31,7 @@ target_compile_definitions(libs INTERFACE TINYGLTF_USE_CPP14)
 file(DOWNLOAD https://raw.githubusercontent.com/nlohmann/json/master/single_include/nlohmann/json.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp SHOW_PROGRESS)
 
 #entt
-file(DOWNLOAD https://raw.githubusercontent.com/skypjack/entt/master/single_include/entt/entt.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/entt.hpp SHOW_PROGRESS)
+file(DOWNLOAD https://raw.githubusercontent.com/skypjack/entt/master/single_include/entt/entt.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/entt/entt.hpp SHOW_PROGRESS)
 
 #tinygltf
 file(DOWNLOAD https://raw.githubusercontent.com/syoyo/tinygltf/master/tiny_gltf.h ${CMAKE_CURRENT_SOURCE_DIR}/include/tiny_gltf.h SHOW_PROGRESS)

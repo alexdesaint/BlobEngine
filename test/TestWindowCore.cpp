@@ -53,10 +53,10 @@ private:
     int view = shaderProgram.getUniformLocation("view");
     int projection = shaderProgram.getUniformLocation("projection");
 
-    void applyMaterial(const Blob::ProjectionTransform &pt, const Blob::ViewTransform &vt, const Blob::ModelTransform &mt) const final {
-        Blob::GL::Core::setMat4(pt.projectionPtr, projection);
-        Blob::GL::Core::setMat4(vt.transform, view);
-        Blob::GL::Core::setMat4(mt.model, model);
+    void applyMaterial(const Blob::ProjectionTransform &pt, const Blob::ViewTransform &vt, const glm::mat4 &mt) const final {
+        Blob::GL::Core::setMat4(&pt[0].x, projection);
+        Blob::GL::Core::setMat4(&vt[0].x, view);
+        Blob::GL::Core::setMat4(&mt[0].x, model);
     }
 
 public:
@@ -96,7 +96,7 @@ int main() {
 
     while (window.isOpen()) {
 
-        renderable.setRotation((float) glfwGetTime(), 0, 0, 1);
+        //renderable.setRotation((float) glfwGetTime(), 0, 0, 1);
         window.draw(renderable);
 
         window.display();

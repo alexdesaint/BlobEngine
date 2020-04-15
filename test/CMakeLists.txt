@@ -1,7 +1,7 @@
 message("Blob Test are enable")
 
 add_executable(TestCollision TestCollision.cpp)
-target_link_libraries(TestCollision Blob::Collision Blob::GL)
+target_link_libraries(TestCollision Blob Blob::Collision)
 target_compile_definitions(TestCollision PUBLIC TEST)
 
 add_executable(TestglTF2 TestglTF2.cpp)
@@ -11,7 +11,7 @@ add_executable(TestImGUI TestImGUI.cpp)
 target_link_libraries(TestImGUI Blob)# -static -static-libgcc -static-libstdc++ -lpthread)
 
 add_executable(Testentt Testentt.cpp)
-target_link_libraries(Testentt BlobGL EnTT)
+target_link_libraries(Testentt libs)
 
 add_executable(TestWindowCore TestWindowCore.cpp)
 target_link_libraries(TestWindowCore Blob)

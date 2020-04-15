@@ -115,9 +115,9 @@ int main() {
 
         Blob::GL::Core::setShader(sp);
         Blob::GL::Core::setVAO(vao);
-        Blob::GL::Core::setMat4(pt.projectionPtr, projection);
-        Blob::GL::Core::setMat4(vt.transform, view);
-        Blob::GL::Core::setMat4(mt.model, model);
+        Blob::GL::Core::setMat4(&pt[0].x, projection);
+        Blob::GL::Core::setMat4(&vt[0].x, view);
+        Blob::GL::Core::setMat4(&mt[0].x, model);
         Blob::GL::Core::drawIndex(indices, 6, GL_UNSIGNED_SHORT);
 
         glfwSwapBuffers(window);

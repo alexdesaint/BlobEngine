@@ -7,7 +7,7 @@
 #include <imgui.h>
 
 #include <Blob/Collision/CollisionDetector.hpp>
-#include <Blob/GL/Core.hpp>
+#include <Blob/Window.hpp>
 
 
 namespace Blob::Collision {
@@ -347,7 +347,7 @@ namespace Blob::Collision {
     void CollisionDetector::checkCollision(Blob::Collision::RectDynamic &object) {
         object.preCollisionUpdate();
 
-		Vec2f frameMove = object.speed * Blob::GL::Core::timeFlow;
+        Vec2f frameMove = object.speed * Blob::Window::timeFlow;
 
         Vec2f oldPos = object.position;
 
@@ -377,7 +377,7 @@ namespace Blob::Collision {
 
         addToSpacialHash(object.rasterize(), &object);
 
-		object.speed = (object.position - oldPos) / Blob::GL::Core::timeFlow;
+        object.speed = (object.position - oldPos) / Blob::Window::timeFlow;
 
         object.postCollisionUpdate();
     }

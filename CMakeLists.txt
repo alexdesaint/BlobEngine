@@ -30,6 +30,3 @@ add_subdirectory(src)
 if (BLOBTEST)
     add_subdirectory(test)
 endif ()
-
-# For clang-tidy
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

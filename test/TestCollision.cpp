@@ -5,8 +5,10 @@
 class test_class;
 #include <Blob/Collision/CollisionDetector.hpp>
 
-#include <Blob/GL/Core.hpp>
-#include <Blob/GL/Shapes.hpp>
+#include <Blob/Controls.hpp>
+#include <Blob/Shapes.hpp>
+#include <Blob/Shape.hpp>
+#include <Blob/Window.hpp>
 #include <imgui.h>
 
 
@@ -114,9 +116,12 @@ public:
     }
 };
 
-class MainRect : public RectDynamic, public Shapes::Cube {
+class MainRect : public RectDynamic, public Shape {
 private:
 	bool isHit = false;
+
+    Blob::Shapes::SingleColorMaterial material;
+    Shapes::Cube mesh;
 
 	void preCollisionUpdate() final {
 		isHit = false;
@@ -142,31 +147,36 @@ private:
 	}
 
 	void postCollisionUpdate() final {
-		if (isHit)
-            setTexture(*Colors::red);
+        if (isHit)
+            material.albedo = Color::Red;
 		else
-            setTexture(*Colors::blue);
-        Cube::setPosition(position, 0.5f);
+            material.albedo = Color::Blue;
+        Shape::setPosition(position, 0.5f);
 	}
 
 public:
 
-    explicit MainRect(float x, float y, float r) :
-            RectDynamic({x, y}, {r, r}, 1) {
-        Cube::setScale(r, r, r);
-        Cube::setPosition(x, y, 0.5f);
+    MainRect(float x, float y, float r) :
+        RectDynamic({x, y}, {r, r}, 1),
+        Shape(mesh),
+            mesh(material) {
+        setScale(r, r, r);
+        setPosition(x, y, 0.5f);
 	}
 
 	void hit(int objectType, Object &object) final {
+        (void)(objectType);
+        (void)(object);
 		isHit = true;
 	}
 };
 
-class Box : public RectStatic, public Shapes::Cube {
+class Box : public RectStatic, public Shape {
+
 public:
-	Box(float x, float y, float r = 1) : RectStatic({x, y}, {r, r}, 0) {
-        Cube::setScale(r, r, r);
-        Cube::setPosition(x, y, r / 2);
+    Box(Mesh &mesh,float x, float y, float r = 1) : RectStatic({x, y}, {r, r}, 0), Shape(mesh) {
+        setScale(r, r, r);
+        setPosition(x, y, r / 2);
 	}
 };
 
@@ -175,39 +185,40 @@ int main() {
     (test_class());
 
 	try {
-		Core graphic(false);
+        Camera camera;
+        Window window(camera);
 
 		CollisionDetector collisionDetector;
 
 		MainRect mainRect(4.5f, 4.5f, 1);
 
+        Shapes::SingleColorMaterial boxMaterial;
+        Shapes::Cube boxMesh(boxMaterial);
+
 		std::list<Box> rectanges;
 
-		rectanges.emplace_back(1, 0);
-		rectanges.emplace_back(0, 1);
-		rectanges.emplace_back(-1, 0);
-		rectanges.emplace_back(0, -1);
+        rectanges.emplace_back(boxMesh, 1, 0);
+        rectanges.emplace_back(boxMesh, 0, 1);
+        rectanges.emplace_back(boxMesh, -1, 0);
+        rectanges.emplace_back(boxMesh, 0, -1);
 
-		rectanges.emplace_back(3, 3, 0.8);
+        rectanges.emplace_back(boxMesh, 3, 3, 0.8);
 
-		graphic.setCameraPosition(10, 0, 10);
+        camera.setPosition(10, 0, 10);
 
-		while (graphic.isOpen()) {
-			graphic.clear();
-			ImGui::NewFrame();
+        while (window.isOpen()) {
 			ImGui::Begin("Debug");
 
 			for (auto &rect : rectanges) {
-				graphic.draw(rect);
+                window.draw(rect);
 			}
 
 			collisionDetector.update();
 
-			graphic.draw(mainRect);
+            window.draw(mainRect);
 
-			ImGui::End();
-			graphic.drawImGUI();
-			graphic.display();
+            ImGui::End();
+            window.display();
 
 		}
 	} catch (std::exception &e) {

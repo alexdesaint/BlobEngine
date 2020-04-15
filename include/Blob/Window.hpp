@@ -24,10 +24,11 @@ private:
     // time counting
     std::chrono::high_resolution_clock::time_point lastFrameTime;
     std::chrono::duration<float> fpsCouner{0};
-    static float timeF;
 
 public:
-    explicit Window(Blob::Camera &camera, bool fullScreen = false, unsigned int w = 640, unsigned int h = 480);
+    static float timeFlow;
+
+    explicit Window(Camera &camera, bool fullScreen = false, unsigned int w = 640, unsigned int h = 480);
 
     ~Window();
 

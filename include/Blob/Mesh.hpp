@@ -21,6 +21,8 @@ private:
 public:
     RenderOptions renderOptions;
 
+    Mesh ( const Mesh & mesh);
+    Mesh ( Mesh && ) = delete;
     Mesh(GL::VertexArrayObject &vertexArrayObject, const Material &material);
 
     void setIndices(unsigned short *indices, int32_t numOfIndices, uint32_t indicesType);

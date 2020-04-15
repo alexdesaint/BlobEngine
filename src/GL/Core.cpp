@@ -167,7 +167,7 @@ void Core::setDepthTest(bool set) {
 }
 
 void Core::setShader(const ShaderProgram &shaderProgram) {
-    glUseProgram(shaderProgram.getProgram());
+    glUseProgram(shaderProgram.program);
 }
 
 void Core::setVAO(const VertexArrayObject &vao) {
