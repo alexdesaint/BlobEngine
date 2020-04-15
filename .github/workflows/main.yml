@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set compiler
-      run: sudo export CC='clang' CXX='clang++'  
+      run: export CC='clang' CXX='clang++'  
     - name: Submodules
       run: git submodule update --init --recursive
     - name: Install libs
