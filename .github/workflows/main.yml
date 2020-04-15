@@ -14,7 +14,9 @@ jobs:
     - name: Submodules
       run: git submodule update --init --recursive
     - name: Install libs
-      run: sudo apt-get install freeglut3-dev libxrandr
+      run: |
+        sudo apt-get install freeglut3-dev
+        sudo apt-get install libxrandr
     - name: Configure
       run: cmake -H. -Bbuild
     - name: Build
