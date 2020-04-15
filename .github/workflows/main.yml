@@ -19,3 +19,17 @@ jobs:
       run: cmake -H. -Bbuild
     - name: Build
       run: cmake --build build --config Release
+  clang:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set compiler
+      run: sudo export CC='clang' CXX='clang++'  
+    - name: Submodules
+      run: git submodule update --init --recursive
+    - name: Install libs
+      run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+    - name: Configure
+      run: cmake -H. -Bbuild
+    - name: Build
+      run: cmake --build build --config Release
