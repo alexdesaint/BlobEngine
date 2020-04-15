@@ -38,6 +38,6 @@ jobs:
     - name: Submodules
       run: git submodule update --init --recursive
     - name: Configure
-      run: cmake -H. -Bbuild -G"Visual Studio 16 2019"
+      run: cmake -Bbuild -G"Visual Studio 16 2019"
     - name: Build
       run: cmake --build build --config Release
