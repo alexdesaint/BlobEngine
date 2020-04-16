@@ -94,10 +94,12 @@ int main() {
     Blob::Mesh renderable(vao, material);
     renderable.renderOptions = ro;
 
+    Blob::Shape shape(renderable);
+
     while (window.isOpen()) {
 
-        //renderable.setRotation((float) glfwGetTime(), 0, 0, 1);
-        window.draw(renderable);
+        shape.setRotation((float) glfwGetTime(), 0, 0, 1);
+        window.draw(shape);
 
         window.display();
     }

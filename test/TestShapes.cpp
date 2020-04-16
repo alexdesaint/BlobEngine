@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <glm/vec3.hpp>
 #include <iostream>
+#include <vector>
 
 const uint8_t prismeBuffer[] = {
     0xf3, 0x04, 0x35, 0x3f, 0xf3, 0x04, 0x35, 0x3f, 0x00, 0x00, 0x80, 0x3f, 0xf3, 0x04, 0x35, 0x3f, 0xf3, 0x04, 0x35, 0x3f, 0x00, 0x00, 0x80, 0xbf,
@@ -95,8 +96,8 @@ void decode(uint8_t *buffer, const int posNormalLen, const int indicesLen) {
         uint8_t b[4];
     } u;
 
-    vec3 pos[posNormalLen];
-    vec3 normal[posNormalLen];
+    std::vector<vec3> pos(posNormalLen);
+    std::vector<vec3> normal(posNormalLen);
     uint16_t indices[indicesLen];
     {
         int posIndex = 0;
