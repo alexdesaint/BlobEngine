@@ -98,7 +98,7 @@ void decode(uint8_t *buffer, const int posNormalLen, const int indicesLen) {
 
     std::vector<vec3> pos(posNormalLen);
     std::vector<vec3> normal(posNormalLen);
-    uint16_t indices[indicesLen];
+    std::vector<uint16_t> indices(indicesLen);
     {
         int posIndex = 0;
         int localPosIndex = 0;
