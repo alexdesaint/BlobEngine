@@ -1,5 +1,6 @@
 # BlobEngine
-[![Build Status](https://travis-ci.org/alexdesaint/BlobEngine.svg?branch=master)](https://travis-ci.org/alexdesaint/BlobEngine)
+
+![Build Status](https://github.com/alexdesaint/BlobEngine/workflows/Build/badge.svg)
 
 Basic game engine made for learning purpose.
 
