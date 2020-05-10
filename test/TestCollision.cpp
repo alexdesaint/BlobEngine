@@ -120,7 +120,7 @@ class MainRect : public RectDynamic, public Shape {
 private:
 	bool isHit = false;
 
-    Blob::Shapes::SingleColorMaterial material;
+    Blob::SingleColorMaterial material;
     Shapes::Cube mesh;
 
 	void preCollisionUpdate() final {
@@ -192,7 +192,7 @@ int main() {
 
 		MainRect mainRect(4.5f, 4.5f, 1);
 
-        Shapes::SingleColorMaterial boxMaterial;
+        SingleColorMaterial boxMaterial;
         Shapes::Cube boxMesh(boxMaterial);
 
 		std::list<Box> rectanges;
