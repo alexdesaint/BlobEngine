@@ -19,6 +19,7 @@ Window::Window(Camera &camera, bool fullScreen, unsigned int w, unsigned int h)
 }
 
 Window::~Window() {
+    imgui.draw();
     std::cout << "delete Shapes" << std::endl;
     Shapes::destroy();
 }
@@ -97,10 +98,10 @@ void Window::setCamera(Camera &camera_) {
 }
 
 void Window::draw(const Mesh &mesh, glm::mat4 sceneModel) const {
-    Blob::GL::Core::setShader(mesh.material.shaderProgram);
+    Blob::GL::Core::setShader(mesh.material->shaderProgramPrivate);
     Blob::GL::Core::setVAO(mesh.vertexArrayObject);
 
-    mesh.material.applyMaterial(*this, camera, sceneModel);
+    mesh.material->applyMaterial(*this, camera, sceneModel);
 
     Blob::GL::Core::drawIndex(mesh.renderOptions.indices, mesh.renderOptions.numOfIndices, mesh.renderOptions.indicesType);
 }

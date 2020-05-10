@@ -22,53 +22,103 @@ void from_json(const nlohmann::json &j, Mesh::Primitive &a) {
     NotRequired(j, "indices", a.indices);
     NotRequired(j, "material", a.material);
     NotRequired(j, "mode", a.mode);
+
+    if (a.attributes.POSITION != -1)
+        a.attributeDescriptor |= 0x01;
+
+    if (a.attributes.NORMAL != -1)
+        a.attributeDescriptor |= 0x02;
+
+    if (a.attributes.TANGENT != -1)
+        a.attributeDescriptor |= 0x04;
+
+    if (a.attributes.TEXCOORD_0 != -1)
+        a.attributeDescriptor |= 0x08;
+
+    if (a.attributes.TEXCOORD_1 != -1)
+        a.attributeDescriptor |= 0x10;
+
+    if (a.attributes.COLOR_0 != -1)
+        a.attributeDescriptor |= 0x20;
+
+    if (a.attributes.JOINTS_0 != -1)
+        a.attributeDescriptor |= 0x40;
+
+    if (a.attributes.WEIGHTS_0 != -1)
+        a.attributeDescriptor |= 0x80;
 }
 
-Mesh::Mesh(const nlohmann::json &j) {
-    Required(j, "primitives", primitives);
+Mesh::Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+           std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials) {
+
+    //Required(j, "primitives", primitives);
+    primitives.reserve(j["primitives"].size());
+    for (const auto &js : j["primitives"])
+        primitives.emplace_back(js);
+
     NotRequired(j, "weights", weights);
     NotRequired(j, "name", name);
 
-    if(primitives.size() != 1)
+    if (primitives.size() != 1)
         throw Exception("Mesh with multiple primitives not supported yet");
 
     for (auto &p : primitives) {
-        // Choose the Attribute
+        // Choose the the material from the attributes
         // VAO
-        // material
+        // - check if all the data have the same buffer and bufferView
+        // - use bufferView to setBuffer
+        // - use accessor to setArray
+        // - set the material
+        // - set indices
 
-        uint8_t attributeDescriptor = 0;
+        if((p.attributeDescriptor & 3) != 3)
+            throw Exception("attributeDescriptor != 3");
 
-        if (p.attributes.POSITION != -1)
-            attributeDescriptor |= 0x01;
+        if (p.attributes.POSITION != -1) {
+            Accessor &a = accessors[p.attributes.POSITION];
+            BufferView &bv = bufferViews[a.bufferView];
+            Buffer &b = buffers[bv.buffer];
+
+            p.vao.setBuffer(b, bv.byteStride, bv.byteOffset);
+
+            p.vao.setArray(accessors[p.attributes.POSITION].type,          /// num of values per array
+                           glTF2::Material::shaderProgram->getAttribLocation("POSITION"), /// Shader position
+                           accessors[p.attributes.POSITION].componentType, /// Type
+                           accessors[p.attributes.POSITION].byteOffset,    /// Relative offset
+                           accessors[p.attributes.POSITION].normalized     /// Normalized
+            );
+        }
 
         if (p.attributes.NORMAL != -1)
-            attributeDescriptor |= 0x02;
+            p.vao.setArray(accessors[p.attributes.NORMAL].type,          /// num of values per array
+                           glTF2::Material::shaderProgram->getAttribLocation("NORMAL"), /// Shader position
+                           accessors[p.attributes.NORMAL].componentType, /// Type
+                           accessors[p.attributes.NORMAL].byteOffset,    /// Relative offset
+                           accessors[p.attributes.NORMAL].normalized     /// Normalized
+            );
 
-        if (p.attributes.TANGENT != -1)
-            attributeDescriptor |= 0x04;
+        if(p.indices != -1) {
+            Accessor &a = accessors[p.indices];
+            BufferView &bv = bufferViews[a.bufferView];
+            Buffer &b = buffers[bv.buffer];
 
-        if (p.attributes.TEXCOORD_0 != -1)
-            attributeDescriptor |= 0x08;
+            p.indicesArray = b.getData(bv.byteLength, bv.byteOffset);
 
-        if (p.attributes.TEXCOORD_1 != -1)
-            attributeDescriptor |= 0x10;
+            p.setIndices(p.indicesArray.data(), a.count, a.componentType);
+        }
 
-        if (p.attributes.COLOR_0 != -1)
-            attributeDescriptor |= 0x20;
-
-        if (p.attributes.JOINTS_0 != -1)
-            attributeDescriptor |= 0x40;
-
-        if (p.attributes.WEIGHTS_0 != -1)
-            attributeDescriptor |= 0x80;
-
-        printf("attributeDescriptor : %x\n", attributeDescriptor);
+        if(p.material != -1) {
+            // check if exist ?
+            p.setMaterial(materials[p.material]);
+        }
     }
 }
 
 std::ostream &operator<<(std::ostream &s, const Mesh::Primitive &a) {
     s << "    Primitive {" << endl;
+
+    s << "      attributeDescriptor : " << std::hex << (unsigned int) a.attributeDescriptor << endl;
+
     s << "      attributes {" << endl;
     if (a.attributes.POSITION != -1)
         s << "        POSITION : " << a.attributes.POSITION << endl;
@@ -100,6 +150,8 @@ std::ostream &operator<<(std::ostream &s, const Mesh::Primitive &a) {
 
     return s;
 }
+
+Mesh::Primitive::Primitive() : Blob::Mesh(vao) {}
 
 std::ostream &operator<<(std::ostream &s, const Mesh &a) {
 

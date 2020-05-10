@@ -1,61 +1,46 @@
-#include <entt/entt.hpp>
 #include <cstdint>
+#include <entt/entt.hpp>
 #include <iostream>
 
-struct position {
-    float x;
-    float y;
+using namespace std;
+
+class Shader {
+public:
+    string name;
+
+    void init() { cout << "init shader : " << name << endl; }
+
+    void destroy() { cout << "destroy shader : " << name << endl; }
 };
 
-struct velocity {
-    float dx;
-    float dy;
+struct Material {
+    string name;
+
+    void init() { cout << "init Material : " << name << endl; }
+
+    void destroy() { cout << "destroy Material : " << name << endl; }
 };
-
-void update(entt::registry &registry) {
-    auto view = registry.view<position, velocity>();
-
-    for(auto entity: view) {
-        auto &vel = view.get<velocity>(entity);
-
-        vel.dx = 0.;
-        vel.dy = 0.;
-    }
-}
-
-void print(entt::registry &registry) {
-    auto view = registry.view<position>();
-
-    for(auto entity: view) {
-        auto &vel = view.get<position>(entity);
-
-        std::cout << vel.x << ", " << vel.y << std::endl;
-    }
-}
-
-void update(std::uint64_t dt, entt::registry &registry) {
-    registry.view<position, velocity>().each([dt](auto &pos, auto &vel) {
-        // gets all the components of the view at once ...
-
-        pos.x += vel.dx * dt;
-        pos.y += vel.dy * dt;
-    });
-}
 
 int main() {
     entt::registry registry;
-    std::uint64_t dt = 16;
 
-    for(auto i = 0; i < 10; ++i) {
+    {
         auto entity = registry.create();
-        registry.assign<position>(entity, i * 1.f, i * 1.f);
-        if(i % 2 == 0)
-            registry.assign<velocity>(entity, i * .1f, i * .1f);
+        registry.emplace<Shader>(entity, "Defaut");
+        registry.emplace<Material>(entity, "Defaut");
     }
 
-    print(registry);
-    update(dt, registry);
-    print(registry);
-    update(registry);
-    print(registry);
+    cout << "Engine init" << endl;
+
+    registry.view<Shader>().each([](auto &s) { s.init(); });
+    registry.view<Material>().each([](auto &m) { m.init(); });
+
+    cout << "yay i run my program" << endl;
+
+    registry.view<Material>().each([](auto &m) { m.destroy(); });
+    registry.view<Shader>().each([](auto &s) { s.destroy(); });
+
+    cout << "Engine close" << endl;
+
+    return 0;
 }

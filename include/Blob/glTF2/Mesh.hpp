@@ -2,14 +2,19 @@
 
 #include <Blob/GL/VertexArrayObject.hpp>
 #include <Blob/Mesh.hpp>
+#include <Blob/glTF2/Accessor.hpp>
+#include <Blob/glTF2/BufferView.hpp>
+#include <Blob/glTF2/Buffer.hpp>
+#include <Blob/glTF2/Material.hpp>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include <vector>
 
 namespace Blob::glTF2 {
 
 class Mesh {
 public:
-    class Primitive {
+    class Primitive : public Blob::Mesh {
         friend Mesh;
 
     public:
@@ -35,19 +40,24 @@ public:
         // targets; ///< An array of Morph Targets, each Morph Target is a dictionary mapping attributes
         // (only POSITION, NORMAL, and TANGENT supported) to their deviations in the Morph Target.
 
-        //GL::VertexArrayObject vao;
+        // Engine variable
+        GL::VertexArrayObject vao;
+        uint8_t attributeDescriptor = 0;
+        std::vector<uint8_t> indicesArray;
+
+        Primitive();
 
         friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
     };
-
-    // Blob::Mesh mesh;
 
     std::vector<Primitive> primitives; ///< An array of primitives, each defining geometry to be rendered with a
     ///< material. Required
     std::vector<int> weights; ///< Array of weights to be applied to the Morph Targets.
     std::string name;         ///< The user-defined name of this object.
 
-    Mesh(const nlohmann::json &j);
+    Mesh() = delete;
+
+    Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers, std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials);
 
     friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
 

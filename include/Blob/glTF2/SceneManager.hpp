@@ -10,12 +10,10 @@
 #include <Blob/glTF2/Mesh.hpp>
 #include <Blob/glTF2/Node.hpp>
 #include <Blob/glTF2/Scene.hpp>
-/*
 #include <Blob/glTF2/Image.hpp>
 #include <Blob/glTF2/Material.hpp>
 #include <Blob/glTF2/Sampler.hpp>
 #include <Blob/glTF2/Texture.hpp>
-*/
 
 namespace Blob::glTF2 {
 class SceneManager {
@@ -25,20 +23,20 @@ public:
     Asset asset;
 
     // buffer part
-    std::vector<Buffer> buffers;
-    std::vector<BufferView> bufferViews;
+    std::vector<glTF2::Buffer> buffers;
+    std::vector<glTF2::BufferView> bufferViews;
 
     // material part
-    //    std::vector<Image> images;
-    //    std::vector<Sampler> samplers;
-    //    std::vector<Texture> textures;
-    //    std::vector<Material> materials;
+    std::vector<glTF2::Image> images;
+    std::vector<glTF2::Sampler> samplers;
+    std::vector<glTF2::Texture> textures;
+    std::vector<glTF2::Material> materials;
 
     // model part
-    std::vector<Accessor> accessors;
-    std::vector<Mesh> meshes;
-    std::vector<Node> nodes;
-    std::vector<Scene> scenes;
+    std::vector<glTF2::Accessor> accessors;
+    std::vector<glTF2::Mesh> meshes;
+    std::vector<glTF2::Node> nodes;
+    std::vector<glTF2::Scene> scenes;
 
     explicit SceneManager(const std::string &file);
 

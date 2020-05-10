@@ -6,10 +6,8 @@ using namespace std;
 namespace Blob::glTF2 {
 
 Material::textureInfo::textureInfo(const nlohmann::json &j, std::vector<Texture> &textures) {
-
     Required(j, "index", index);
     NotRequired(j, "texCoord", texCoord);
-    //indexIt = next(textures.begin(), index);
 
     set = true;
 }

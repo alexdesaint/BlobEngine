@@ -6,7 +6,7 @@ namespace Blob::GL {
 
 class VertexArrayObject {
 private:
-    uint32_t vertexArrayObject;
+    uint32_t vertexArrayObject = 0;
 
 public:
     uint32_t getVertexArrayObject() const;
@@ -14,6 +14,8 @@ public:
     VertexArrayObject();
 
     VertexArrayObject(const VertexArrayObject &) = delete;
+
+    VertexArrayObject(VertexArrayObject &&vao) noexcept;
 
     ~VertexArrayObject();
 

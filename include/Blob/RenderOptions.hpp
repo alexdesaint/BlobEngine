@@ -8,7 +8,7 @@ struct RenderOptions {
     bool indexed = false;
 
     // Index options
-    unsigned short *indices = nullptr;
+    void *indices = nullptr;
     int32_t numOfIndices = 0;
     uint32_t indicesType = 0;
 

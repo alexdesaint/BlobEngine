@@ -10,8 +10,8 @@ Node::Node(const nlohmann::json &j, std::vector<glTF2::Mesh> &meshes) {
     NotRequired(j, "children", children);
     NotRequired(j, "skin", skin);
     NotRequired(j, "matrix", matrix);
-    //if(NotRequired(j, "mesh", mesh) && !meshes[mesh].primitives.empty())
-    //    setMesh(meshes[mesh].primitives[0]);
+    if(NotRequired(j, "mesh", mesh) && !meshes[mesh].primitives.empty())
+        setMesh(meshes[mesh].primitives[0]);
     NotRequired(j, "rotation", rotation);
     NotRequired(j, "scale", scale);
     NotRequired(j, "translation", translation);

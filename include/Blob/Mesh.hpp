@@ -14,17 +14,25 @@ namespace Blob {
 class Mesh {
     friend class Window;
 private:
-    const Material &material;
-
-    const GL::VertexArrayObject &vertexArrayObject;
+    Material const *material = DefaultMaterial::defaultMaterial;
+    GL::VertexArrayObject &vertexArrayObject;
 
 public:
     RenderOptions renderOptions;
 
-    Mesh ( const Mesh & mesh);
-    Mesh ( Mesh && ) = delete;
+    explicit Mesh(GL::VertexArrayObject &vertexArrayObject);
     Mesh(GL::VertexArrayObject &vertexArrayObject, const Material &material);
 
-    void setIndices(unsigned short *indices, int32_t numOfIndices, uint32_t indicesType);
+    void setIndices(void *indices, int32_t numOfIndices, uint32_t indicesType);
+
+    template<typename T>
+    void setIndices(T *indices, int32_t numOfIndices);
+
+    void setMaterial(Material &material);
 };
+
+template<> void Mesh::setIndices<>(uint8_t *indices, int32_t numOfIndices);
+template<> void Mesh::setIndices<>(uint16_t *indices, int32_t numOfIndices);
+template<> void Mesh::setIndices<>(uint32_t *indices, int32_t numOfIndices);
+
 } // namespace Blob

@@ -3,9 +3,10 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <Blob/glTF2/Texture.hpp>
+#include <Blob/Material.hpp>
 
 namespace Blob::glTF2 {
-    class Material {
+    class Material : public SingleColorMaterial {
     public:
 
         /**
@@ -13,7 +14,7 @@ namespace Blob::glTF2 {
          */
         class textureInfo {
         public:
-            bool set = false; ///< if this data is set with Json constructor
+            bool set = false; ///< if this data is exist in the gltf file
 
             size_t index; ///< The index of the texture. Required
             size_t texCoord = 0; ///< The set index of texture's TEXCOORD attribute used for texture coordinate mapping.

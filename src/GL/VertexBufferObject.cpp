@@ -4,30 +4,26 @@
 
 namespace Blob::GL {
 
-VertexBufferObject::VertexBufferObject() {}
+VertexBufferObject::VertexBufferObject() {
+    glCreateBuffers(1, &vertexBufferObject);
+}
 
 VertexBufferObject::VertexBufferObject(GLubyte *data, GLsizeiptr dataSize) {
+    glCreateBuffers(1, &vertexBufferObject);
     setData(data, dataSize);
 }
 
 VertexBufferObject::VertexBufferObject(VertexBufferObject &&vbo) noexcept {
     vertexBufferObject = vbo.vertexBufferObject;
-    vbo.vertexBufferObject = -1;
+    vbo.vertexBufferObject = 0;
     dataSize = vbo.dataSize;
 }
 
 VertexBufferObject::~VertexBufferObject() {
-    if (vertexBufferObject != -1)
-        glDeleteBuffers(1, &vertexBufferObject);
+    glDeleteBuffers(1, &vertexBufferObject);
 }
 
 void VertexBufferObject::setData(GLubyte *data, GLsizeiptr ds, bool dynamic) {
-    if (vertexBufferObject != -1) {
-        glDeleteBuffers(1, &vertexBufferObject);
-        glCreateBuffers(1, &vertexBufferObject);
-    } else
-        glCreateBuffers(1, &vertexBufferObject);
-
     dataSize = ds;
 
     if (dynamic)

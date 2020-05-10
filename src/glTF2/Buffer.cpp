@@ -30,11 +30,26 @@ ostream &operator<<(ostream &s, const Buffer &a) {
 
     s << "    " << a.uri << endl << "    byteLength : " << a.byteLength << endl << "    data : " << endl;
 
-//    Reader::FileReader fileReader(a.uri);
-//    s << fileReader;
+    Reader::FileReader fileReader(a.uri);
+    s << fileReader;
 
     s << "  }" << endl;
     return s;
+}
+std::vector<uint8_t> Buffer::getData(size_t size, size_t offset) const {
+    std::vector<uint8_t> ret(size);
+
+    if (size + offset > byteLength)
+        throw Exception("GLTF (getData) : Wrong buffer description");
+
+    Reader::FileReader fileReader(uri);
+
+    fileReader.goTo(offset);
+
+    for (size_t i = 0; i < size; i++)
+        ret[i] = fileReader.readNextByte();
+
+    return ret;
 }
 
 } // namespace Blob::glTF2

@@ -72,10 +72,10 @@ int main(int argc, char *argv[]) {
             }
 
             ImGui::Text("Light");
-            ImGui::ColorEdit3("Light color", &Blob::Shapes::SingleColorMaterial::light.color.R);
-            ImGui::SliderFloat("Light Position X", &Blob::Shapes::SingleColorMaterial::light.position.x, -1.0f, 1.0f);
-            ImGui::SliderFloat("Light Position Y", &Blob::Shapes::SingleColorMaterial::light.position.y, -1.0f, 1.0f);
-            ImGui::SliderFloat("Light Position Z", &Blob::Shapes::SingleColorMaterial::light.position.z, -1.0f, 1.0f);
+            ImGui::ColorEdit3("Light color", &Blob::SingleColorMaterial::light.color.R);
+            ImGui::SliderFloat("Light Position X", &Blob::SingleColorMaterial::light.position.x, -1.0f, 1.0f);
+            ImGui::SliderFloat("Light Position Y", &Blob::SingleColorMaterial::light.position.y, -1.0f, 1.0f);
+            ImGui::SliderFloat("Light Position Z", &Blob::SingleColorMaterial::light.position.z, -1.0f, 1.0f);
             ImGui::End();
             //c2.setRotation(angle, 1.f, 0.f, 0.f);
 

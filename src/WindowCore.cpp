@@ -26,6 +26,7 @@ WindowCore::WindowCore(bool fullScreen, unsigned int width, unsigned int height)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Blob::GL::Core::GLminor);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
     glfwWindowHint(GLFW_SAMPLES, 8);
 

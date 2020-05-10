@@ -5,12 +5,15 @@
 #include <Blob/Shapes.hpp>
 #include <Blob/Time.hpp>
 #include <iostream>
-// #include <nlohmann/json.hpp>
+
+/*
+#include <nlohmann/json.hpp>
 #define TINYGLTF_NO_INCLUDE_JSON
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <tiny_gltf.h>
+ */
 
 using namespace Blob;
 
@@ -22,24 +25,14 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
 
         Window window(camera);
 
-        tinygltf::TinyGLTF loader;
+        glTF2::SceneManager sm(path);
 
-        tinygltf::Model model;
+        std::cout << sm;
 
-        std::string err, warn;
-        bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, path);
-
-        std::cout << "TinyGLTF errors :" << err << std::endl;
-
-        std::cout << "TinyGLTF warnings : "<< warn << std::endl;
-
-        // glTF2::SceneManager sm(path);
-
-        // std::cout << sm;
-
-        // Scene &mainScene = sm.scenes.front();
+        Scene &mainScene = sm.scenes.front();
 
         camera.setPosition(x, y, z);
+
         window.setRange(cameraRange.x, cameraRange.y);
 
         Time::TimePoint start = Time::now();
@@ -47,7 +40,7 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
         while (window.isOpen()) {
             Blob::Time::Duration flow = start - Time::now();
 
-            // window.draw(mainScene);
+            window.draw(mainScene);
 
             window.display();
         }
@@ -56,31 +49,20 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
 }
 
 int main(int argc, char *argv[]) {
-    test("data/models/cube.gltf");
+//    test("data/models/cube.gltf");
+//    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
+//    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
+//    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
 
-    return 0;
+    // More complex models
 
-    test("../gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
-
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
-
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
-
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
-
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/BoxInterleaved/glTF/BoxInterleaved.gltf");
-
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/BoxTextured/glTF/BoxTextured.gltf");
-
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/Duck/glTF/Duck.gltf");
-
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf");
-
-    test("/home/patapouf/Projects/Shapes/test.gltf");
-
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf", 1000, 0, 0, {100, 2000});
-
-    test("/home/patapouf/Projects/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf", 1000, 0, 0, {100, 2000});
+//    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
+//    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/BoxInterleaved/glTF/BoxInterleaved.gltf");
+    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/BoxTextured/glTF/BoxTextured.gltf");
+//    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/Duck/glTF/Duck.gltf");
+//    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf");
+//    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf", 1000, 0, 0, {100, 2000});
+//    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf", 1000, 0, 0, {100, 2000});
 
     return 0;
 }

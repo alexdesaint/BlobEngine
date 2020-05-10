@@ -92,7 +92,7 @@ void Core::init(void *glfwGetProcAddress, unsigned int width, unsigned int heigh
 
     // Enable the debug callback
     glEnable(GL_DEBUG_OUTPUT);
-    glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(openglCallbackFunction, nullptr);
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
@@ -216,5 +216,13 @@ template<>
 void Core::drawIndex<uint32_t>(const void *indices, int32_t numOfIndices) {
     Core::drawIndex(indices, numOfIndices, GL_UNSIGNED_INT);
 }
+
+template<> uint32_t Core::getType<int8_t>() {return GL_BYTE;}
+template<> uint32_t Core::getType<int16_t>() {return GL_SHORT;}
+template<> uint32_t Core::getType<int32_t>() {return GL_INT;}
+template<> uint32_t Core::getType<uint8_t>() {return GL_UNSIGNED_BYTE;}
+template<> uint32_t Core::getType<uint16_t>() {return GL_UNSIGNED_SHORT;}
+template<> uint32_t Core::getType<uint32_t>(){return GL_UNSIGNED_INT;}
+template<> uint32_t Core::getType<float>() {return GL_FLOAT;}
 
 } // namespace Blob::GL

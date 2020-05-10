@@ -17,8 +17,8 @@ public:
     Type type;                   ///< Specifies if the attribute is a scalar, vector, or matrix. (required)
     std::vector<float> max;      ///< Maximum value of each component in this attribute.
     std::vector<float> min;      ///< Minimum value of each component in this attribute.
-    // Sparse sparse; ///< Sparse storage of attributes that deviate from their initialization value.
-    std::string name; ///< The user-defined name of this object.
+    // Sparse sparse;               ///< Sparse storage of attributes that deviate from their initialization value.
+    std::string name;            ///< The user-defined name of this object.
 
     explicit Accessor(const nlohmann::json &j);
 

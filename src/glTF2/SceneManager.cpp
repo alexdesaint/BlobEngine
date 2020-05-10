@@ -72,13 +72,23 @@ SceneManager::SceneManager(const std::string &file) {
 
     j.at("bufferViews").get_to(bufferViews);
 
+    // image
+
+    // samplers
+
+    // textures
+
+    materials.reserve(j["materials"].size());
+    for (const json &js : j["materials"])
+        materials.emplace_back(js, textures);
+
     accessors.reserve(j["accessors"].size());
     for (const json &js : j["accessors"])
         accessors.emplace_back(js);
 
     meshes.reserve(j["meshes"].size());
     for (const json &js : j["meshes"])
-        meshes.emplace_back(js);
+        meshes.emplace_back(js, accessors, buffers, bufferViews, materials);
 
     nodes.reserve(j["nodes"].size());
     for (const json &js : j["nodes"])
@@ -103,19 +113,19 @@ std::ostream &operator<<(std::ostream &s, const SceneManager &a) {
 
     for (const auto &b : a.bufferViews)
         s << b;
-    //
-    //    // material part
-    //    for (const auto &b : a.images)
-    //        s << b;
-    //
-    //    for (const auto &b : a.samplers)
-    //        s << b;
-    //
-    //    for (const auto &b : a.textures)
-    //        s << b;
-    //
-    //    for (const auto &b : a.materials)
-    //        s << b;
+
+    // material part
+    for (const auto &b : a.images)
+        s << b;
+
+    for (const auto &b : a.samplers)
+        s << b;
+
+    for (const auto &b : a.textures)
+        s << b;
+
+    for (const auto &b : a.materials)
+        s << b;
 
     // model part
     for (const auto &b : a.accessors)
@@ -139,6 +149,7 @@ std::ostream &operator<<(std::ostream &s, const SceneManager &a) {
 /// - we dont buffer what we dont use (like remove TEXCOORD_0 if no texture)
 /// - make sure same object with different transform or material are the same buffer
 /// - normalize data that need to be normalised (like NORMAL)
+/// - separate indices buffer
 void SceneManager::createVBO(std::string path) {
     // get the size of the buffer
 

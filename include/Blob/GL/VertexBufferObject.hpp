@@ -7,7 +7,7 @@ namespace Blob::GL {
 
 class VertexBufferObject {
 private:
-    uint32_t vertexBufferObject = -1;
+    uint32_t vertexBufferObject = 0;
 
     int64_t dataSize = 0;
 

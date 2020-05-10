@@ -16,5 +16,7 @@ public:
     Buffer(const nlohmann::json &j, const std::string &path);
 
     friend std::ostream &operator<<(std::ostream &s, const Buffer &a);
+
+    std::vector<uint8_t> getData(size_t size, size_t offset) const;
 };
 } // namespace Blob::glTF2

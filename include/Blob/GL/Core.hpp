@@ -18,9 +18,9 @@ public:
     static void clear();
 
     static void setCullFace(bool set);
-//private:
+
     static void setScissorTest(bool set);
-//public:
+
     static void setScissor(int x, int y, int width, int height);
     static void setDepthTest(bool set);
     static void setViewport(unsigned int width, unsigned int height);
@@ -39,11 +39,8 @@ public:
 
     static float readPixel(Blob::Vec2f pos);
 
-    /*static void draw(const RenderOptions &renderOptions, const ShaderProgram &shaderProgram, const VertexArrayObject &vertexArrayObject,
-                     const Texture &texture, const float *projection, const float *view, const float *model);
-
-    static void draw(const RenderOptions &renderOptions, const ShaderProgram &shaderProgram, const VertexArrayObject &vertexArrayObject,
-                     const float *projection, const float *view, const float *model);*/
+    template<typename T>
+    static uint32_t getType();
 
     friend std::ostream &operator<<(std::ostream &s, const Core &a);
 };
@@ -56,5 +53,13 @@ void Core::drawIndex<uint16_t>(const void *indices, int32_t numOfIndices);
 
 template<>
 void Core::drawIndex<uint32_t>(const void *indices, int32_t numOfIndices);
+
+template<> uint32_t Core::getType<int8_t>();
+template<> uint32_t Core::getType<int16_t>();
+template<> uint32_t Core::getType<int32_t>();
+template<> uint32_t Core::getType<uint8_t>();
+template<> uint32_t Core::getType<uint16_t>();
+template<> uint32_t Core::getType<uint32_t>();
+template<> uint32_t Core::getType<float>();
 
 } // namespace Blob::GL

@@ -44,4 +44,5 @@ public:
 
     void resize(unsigned int width, unsigned int height) final;
 };
+
 } // namespace Blob
