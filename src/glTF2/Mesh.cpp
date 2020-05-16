@@ -71,8 +71,8 @@ Mesh::Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std
         // - set the material
         // - set indices
 
-        if((p.attributeDescriptor & 3) != 3)
-            throw Exception("attributeDescriptor != 3");
+        //if((p.attributeDescriptor & 3) != 3)
+        //    throw Exception("attributeDescriptor != 3");
 
         if (p.attributes.POSITION != -1) {
             Accessor &a = accessors[p.attributes.POSITION];

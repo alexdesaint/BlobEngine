@@ -65,38 +65,10 @@ int main() {
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {}
     glfwSwapInterval(1);
 
-    // NOTE: OpenGL error checks have been omitted for brevity
-
     glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-   /* auto data = Blob::GL::ShaderProgram::Shaders.emplace(std::piecewise_construct, std::make_tuple("basicShader"), std::make_tuple());
-    if(!data.second)
-        std::cout << "failed to insert" << std::endl;
-    Blob::GL::ShaderProgram &e = data.first->second;
-
-    if(e.isValid())
-        std::cout << "Valid !!!" << std::endl;
-    else
-        std::cout << "Not valid..." << std::endl;
-
-    auto nodeHandler = Blob::GL::ShaderProgram::Shaders.extract("basicShader");
-    nodeHandler.key() = "basicShader2";
-    auto data2 = Blob::GL::ShaderProgram::Shaders.insert(std::move(nodeHandler));
-
-    if(e.isValid())
-        std::cout << "Valid !!!" << std::endl;
-    else
-        std::cout << "Not valid..." << std::endl;
-
-    Blob::GL::ShaderProgram &spp = Blob::GL::ShaderProgram::Shaders["QUoi?"];
-
-    if(spp.isValid())
-        std::cout << "Valid !!!" << std::endl;
-    else
-        std::cout << "Not valid..." << std::endl;
-*/
     Blob::GL::ShaderProgram &sp = Blob::GL::ShaderProgram::Shaders["basicShader2"];
 
 

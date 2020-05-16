@@ -21,9 +21,13 @@ int DefaultMaterial::view = -1;
 int DefaultMaterial::projection = -1;
 
 void DefaultMaterial::applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const glm::mat4 &mt) const {
+    Core::setCullFace(false);
+
     Core::setMat4(&pt[0].x, projection);
     Core::setMat4(&vt[0].x, view);
     Core::setMat4(&mt[0].x, model);
+
+    Core::setCullFace(true);
 }
 
 DefaultMaterial::DefaultMaterial() : Material(*shaderProgram) {}
@@ -62,7 +66,7 @@ void main()
 {
     vec3 lightPos = vec3(4.0, 4.0, 0.0);
     vec3 lightColor = vec3(1.0, 1.0, 1.0);
-    vec4 objectColor = vec4(0.8, 0.8, 0.8, 1.0);
+    vec4 objectColor = vec4(1, 1, 1, 1.0);
     //
     float ambientStrength = 0.2;
     vec3 ambient = ambientStrength * lightColor;
