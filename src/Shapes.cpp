@@ -270,37 +270,41 @@ void init() {
     SingleColorMaterial::init();
     vbo = new VertexBufferObject((uint8_t*) data, sizeof(data));
     vaoCube = new VertexArrayObject();
+
     vaoCube->setBuffer(*vbo, sizeof(Data));
-    vaoCube->setArray<float>(3, SingleColorMaterial::shaderProgram->getAttribLocation("POSITION"), (uint32_t) offsetof(Data, coor));
-    vaoCube->setArray<float>(3, SingleColorMaterial::shaderProgram->getAttribLocation("NORMAL"), (uint32_t) offsetof(Data, norm));
+    vaoCube->setArray<float>(3, ShaderProgram::AttributeLocation::POSITION, (uint32_t) offsetof(Data, coor));
+    vaoCube->setArray<float>(3, ShaderProgram::AttributeLocation::NORMAL, (uint32_t) offsetof(Data, norm));
 
     vaoPlane = new VertexArrayObject();
     vaoPlane->setBuffer(*vbo, sizeof(Data), 4 * 6 * sizeof(Data));
-    vaoPlane->setArray<float>(3, SingleColorMaterial::shaderProgram->getAttribLocation("POSITION"), (uint32_t) offsetof(Data, coor));
-    vaoPlane->setArray<float>(3, SingleColorMaterial::shaderProgram->getAttribLocation("NORMAL"), (uint32_t) offsetof(Data, norm));
+    vaoPlane->setArray<float>(3, ShaderProgram::AttributeLocation::POSITION, (uint32_t) offsetof(Data, coor));
+    vaoPlane->setArray<float>(3, ShaderProgram::AttributeLocation::NORMAL, (uint32_t) offsetof(Data, norm));
 
     vaoOctagonalPrism = new VertexArrayObject();
     vaoOctagonalPrism->setBuffer(*vbo, sizeof(Data), (4 * 6 + 4) * sizeof(Data));
-    vaoOctagonalPrism->setArray<float>(3,  SingleColorMaterial::shaderProgram->getAttribLocation("POSITION"), (uint32_t) offsetof(Data, coor));
-    vaoOctagonalPrism->setArray<float>(3, SingleColorMaterial::shaderProgram->getAttribLocation("NORMAL"), (uint32_t) offsetof(Data, norm));
+    vaoOctagonalPrism->setArray<float>(3,  ShaderProgram::AttributeLocation::POSITION, (uint32_t) offsetof(Data, coor));
+    vaoOctagonalPrism->setArray<float>(3, ShaderProgram::AttributeLocation::NORMAL, (uint32_t) offsetof(Data, norm));
 }
 
 void destroy() {
+    DefaultMaterial::destroy();
+    SingleColorMaterial::destroy();
+
     delete vbo;
     delete vaoCube;
     delete vaoPlane;
     delete vaoOctagonalPrism;
 }
 
-Cube::Cube(const SingleColorMaterial &singleColorMaterial) : Mesh(*vaoCube, singleColorMaterial) {
+Cube::Cube(const Material &singleColorMaterial) : Mesh(*vaoCube, singleColorMaterial) {
     setIndices(cubeIndices, sizeof(cubeIndices) / sizeof(*cubeIndices));
 }
 
-Plane::Plane(const SingleColorMaterial &singleColorMaterial) : Mesh(*vaoPlane, singleColorMaterial) {
+Plane::Plane(const Material &singleColorMaterial) : Mesh(*vaoPlane, singleColorMaterial) {
     setIndices(planeIndices, sizeof(planeIndices) / sizeof(*planeIndices));
 }
 
-OctagonalPrism::OctagonalPrism(const SingleColorMaterial &singleColorMaterial) : Mesh(*vaoOctagonalPrism, singleColorMaterial) {
+OctagonalPrism::OctagonalPrism(const Material &singleColorMaterial) : Mesh(*vaoOctagonalPrism, singleColorMaterial) {
     setIndices(octagonalPrismIndices, sizeof(octagonalPrismIndices) / sizeof(*octagonalPrismIndices));
 }
 } // namespace Blob::Shapes

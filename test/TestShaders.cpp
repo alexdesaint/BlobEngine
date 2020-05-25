@@ -1,4 +1,3 @@
-//#include <Blob/Core.hpp>
 #include <Blob/Shapes.hpp>
 
 #include <Blob/Camera.hpp>
@@ -8,10 +7,15 @@
 #include <imgui.h>
 #include <iostream>
 
+/* Rename this TestMaterials
+ * add Texture test
+ *
+ * with normal and w/ normal
+*/
+
 using namespace std;
 using namespace Blob;
-using namespace Blob::Shapes;
-using namespace GL;
+using namespace Shapes;
 
 int main(int argc, char *argv[]) {
     try {
@@ -24,7 +28,9 @@ int main(int argc, char *argv[]) {
         blue.albedo = Color::DeepSkyBlue;
         orange.albedo = Color::Coral;
 
-        Cube cubeOrange(orange), cubeBlue(blue);
+        DefaultMaterial dm;
+
+        Cube cubeOrange(orange), cubeBlue(blue), cubeDm(dm);
         OctagonalPrism opOrange(orange), opBlue(blue);
         Plane p(blue);
 
@@ -33,7 +39,7 @@ int main(int argc, char *argv[]) {
             {cubeBlue, 4, 4},
             {opOrange, 0, 4},
             {opBlue, -4, 4},
-            {cubeOrange, -4, 0},
+            {cubeDm, -4, 0},
             {cubeBlue, -4, -4},
             {opOrange, 0, -4},
             {opBlue, 4, -4},
@@ -77,8 +83,6 @@ int main(int argc, char *argv[]) {
             ImGui::SliderFloat("Light Position Y", &Blob::SingleColorMaterial::light.position.y, -1.0f, 1.0f);
             ImGui::SliderFloat("Light Position Z", &Blob::SingleColorMaterial::light.position.z, -1.0f, 1.0f);
             ImGui::End();
-
-            shapes[0].setRotation(angle, 1.f, 0.f, 0.f);
 
             for(const auto &s : shapes)
                 window.draw(s);

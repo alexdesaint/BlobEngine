@@ -25,6 +25,9 @@ target_link_libraries(TestColor Blob)
 add_executable(TestShapes TestShapes.cpp)
 target_link_libraries(TestShapes Blob)
 
+add_executable(TestShaders TestShaders.cpp)
+target_link_libraries(TestShaders Blob)
+
 #STATIC : -lmingw32 SDL2main SDL2-static
 #STATIC : -mwindows -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
 

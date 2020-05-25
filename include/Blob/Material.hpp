@@ -25,6 +25,16 @@ public:
     explicit Material(const GL::ShaderProgram &shaderProgram);
 };
 
+/*
+ * Basic Shaders :
+ * Material_POSITION
+ * Material_POSITION_NORMAL
+ * Material_POSITION_NORMAL_TEXCOORD_0
+ * Material_POSITION_NORMAL_COLOR_0
+ * Material_POSITION_TEXCOORD_0
+ * Material_POSITION_COLOR_0
+ */
+
 class DefaultMaterial : public Material {
 private:
     static int model, view, projection;
@@ -42,7 +52,6 @@ public:
     static void init();
     static void destroy();
 };
-
 
 struct Light{
     int positionPos = -1;

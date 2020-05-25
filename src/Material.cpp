@@ -37,8 +37,8 @@ void DefaultMaterial::init() {
     shaderProgram = new ShaderProgram(R"=====(
 #version 450
 
-layout (location = 0) in vec3 POSITION;
-layout (location = 1) in vec3 NORMAL;
+layout(location = 0) in vec3 POSITION;
+layout(location = 1) in vec3 NORMAL;
 
 out vec3 FragPos;
 out vec3 FragNormal;
@@ -59,8 +59,8 @@ void main()
 
 out vec4 FragColor;
 
-in vec3 FragNormal;
 in vec3 FragPos;
+in vec3 FragNormal;
 
 void main()
 {
@@ -80,6 +80,9 @@ void main()
     FragColor = vec4(ambient + diffuse, 1.0) * objectColor;
 }
 	)=====");
+    model = shaderProgram->getUniformLocation("model");
+    view = shaderProgram->getUniformLocation("view");
+    projection = shaderProgram->getUniformLocation("projection");
 
     defaultMaterial = new DefaultMaterial();
 }
@@ -123,6 +126,7 @@ void SingleColorMaterial::applyMaterial(const ProjectionTransform &pt, const Vie
 
     Blob::GL::Core::setVec3(&vt.cameraPosition.x, camPos);
 }
+
 void SingleColorMaterial::init() {
     std::cout << "init SingleColorMaterial" << std::endl;
     shaderProgram = new ShaderProgram(R"=====(
@@ -130,13 +134,19 @@ void SingleColorMaterial::init() {
 
 layout (location = 0) in vec3 POSITION;
 layout (location = 1) in vec3 NORMAL;
+layout (location = 2) in vec3 TANGENT;
+layout (location = 3) in vec3 TEXCOORD_0;
+layout (location = 4) in vec3 TEXCOORD_1;
+layout (location = 5) in vec3 COLOR_0;
+layout (location = 6) in vec3 JOINTS_0;
+layout (location = 7) in vec3 WEIGHTS_0;
 
 out vec3 WorldPos;
 out vec3 Normal;
 
 uniform mat4 model;
 uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 projection;                      
 
 void main()
 {
