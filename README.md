@@ -1,4 +1,4 @@
-# BlobEngine # {#mainpage}
+# BlobEngine
 
 ![Build Status](https://github.com/alexdesaint/BlobEngine/workflows/Build/badge.svg)
 
