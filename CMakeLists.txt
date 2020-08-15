@@ -8,6 +8,29 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 option(BLOBTEST "Build the tests" ON)
 option(BLOBVK "Build Vulkan" OFF)
+option(BUILD_DOC "Build documentation" ON)
+
+# check if Doxygen is installed
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+    set(DOXYGEN_GENERATE_HTML YES)
+    set(DOXYGEN_GENERATE_MAN NO)
+    set(DOXYGEN_DISTRIBUTE_GROUP_DOC YES)
+    set(DOXYGEN_FULL_PATH_NAMES YES)
+    set(DOXYGEN_STRIP_FROM_INC_PATH ${PROJECT_SOURCE_DIR}/include)
+    #set(DOXYGEN_UML_LOOK YES)
+    #set(DOXYGEN_EXTRACT_ALL YES)
+
+    doxygen_add_docs(
+            doxygen
+            README.md
+            src
+            include
+    )
+
+else (DOXYGEN_FOUND)
+    message("Doxygen need to be installed to generate the doxygen documentation")
+endif (DOXYGEN_FOUND)
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)

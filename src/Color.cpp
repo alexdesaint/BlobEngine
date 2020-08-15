@@ -6,9 +6,6 @@ std::ostream &operator<<(std::ostream &out, const Color &vec) {
     return out;
 }
 
-// X11 colors set
-// source : http://cng.seas.rochester.edu/CNG/docs/x11color.html
-
 const Color Color::LightPink(0xFFB6C1);
 const Color Color::Pink(0xFFC0CB);
 const Color Color::Crimson(0xDC143C);

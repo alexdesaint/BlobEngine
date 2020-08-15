@@ -268,7 +268,7 @@ void addBasicShaders() {
 void init() {
     DefaultMaterial::init();
     SingleColorMaterial::init();
-    vbo = new VertexBufferObject((uint8_t*) data, sizeof(data));
+    vbo = new VertexBufferObject((uint8_t *) data, sizeof(data));
     vaoCube = new VertexArrayObject();
 
     vaoCube->setBuffer(*vbo, sizeof(Data));
@@ -282,7 +282,7 @@ void init() {
 
     vaoOctagonalPrism = new VertexArrayObject();
     vaoOctagonalPrism->setBuffer(*vbo, sizeof(Data), (4 * 6 + 4) * sizeof(Data));
-    vaoOctagonalPrism->setArray<float>(3,  ShaderProgram::AttributeLocation::POSITION, (uint32_t) offsetof(Data, coor));
+    vaoOctagonalPrism->setArray<float>(3, ShaderProgram::AttributeLocation::POSITION, (uint32_t) offsetof(Data, coor));
     vaoOctagonalPrism->setArray<float>(3, ShaderProgram::AttributeLocation::NORMAL, (uint32_t) offsetof(Data, norm));
 }
 
