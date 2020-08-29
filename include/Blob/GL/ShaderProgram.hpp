@@ -17,10 +17,6 @@ private:
     unsigned int vertexShader = 0, fragmentShader = 0;
 
     bool linked = false;
-
-    /// TODO: replace with a u_map
-    //int model, view, projection, textureScale;
-
 public:
 
     enum AttributeLocation {
@@ -56,7 +52,6 @@ public:
 
     [[nodiscard]] unsigned int getProgram() const;
 
-    /// TODO: Set as private for the map creation
     uint32_t getUniformLocation(const char *name) const;
 
     uint32_t getAttribLocation(const char *name) const;

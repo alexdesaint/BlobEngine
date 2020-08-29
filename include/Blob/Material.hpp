@@ -82,7 +82,7 @@ namespace Blob {
 
     struct Light {
         glm::vec3 position = glm::vec3(1.2f, 1.0f, 2.0f);
-        Color color = Color(1, 1, 1);
+        Color color = Color(1.f, 1.f, 1.f);
     };
 
     class PBRMaterial {
@@ -124,6 +124,8 @@ namespace Blob {
         uint32_t options = 0xFFFFFFFF;
 
         SingleColorMaterial();
+
+        SingleColorMaterial(Color albedo);
 
         static void init();
 

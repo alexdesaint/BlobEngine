@@ -207,6 +207,8 @@ vec3 saturate(vec3 x)
 
     SingleColorMaterial::SingleColorMaterial() : Material(*shaderProgram) {}
 
+    SingleColorMaterial::SingleColorMaterial(Color albedo) : Material(*shaderProgram), albedo(albedo) {}
+
     void SingleColorMaterial::applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt,
                                             const glm::mat4 &mt) const {
         Blob::GL::Core::setMat4(&pt[0].x, projection);

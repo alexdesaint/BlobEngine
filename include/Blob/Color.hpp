@@ -13,9 +13,10 @@ public:
     float R = 0, G = 0, B = 0, A = 1.f; ///<+ same
     ///@}
 
-    /// \todo Add a constructor from unsigned char value
     Color() = default;
 
+    Color(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 0) : R(R/255.f), G(G/255.f), B(B/255.f), A(A/255.f) {}
+    
     /// Hex Color Code Constructor
     /// \param RGB Hexadecimal color representation
     Color(uint32_t RGB) : R(((RGB >> 16) & 0xFF) / 255.f), G(((RGB >> 8) & 0xFF) / 255.f), B((RGB & 0xFF) / 255.f), A(1.f) {}
