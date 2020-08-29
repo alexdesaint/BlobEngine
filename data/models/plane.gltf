@@ -15,12 +15,12 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "Cube"
+            "name" : "Plane"
         }
     ],
     "meshes" : [
         {
-            "name" : "Cube",
+            "name" : "Plane",
             "primitives" : [
                 {
                     "attributes" : {
@@ -38,75 +38,75 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 24,
+            "count" : 4,
             "max" : [
                 1,
                 1,
-                1
+                0
             ],
             "min" : [
                 -1,
                 -1,
-                -1
+                0
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 24,
+            "count" : 4,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 24,
+            "count" : 4,
             "type" : "VEC4"
         },
         {
             "bufferView" : 3,
             "componentType" : 5126,
-            "count" : 24,
+            "count" : 4,
             "type" : "VEC2"
         },
         {
             "bufferView" : 4,
             "componentType" : 5123,
-            "count" : 36,
+            "count" : 6,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 288,
+            "byteLength" : 48,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 288,
-            "byteOffset" : 288
+            "byteLength" : 48,
+            "byteOffset" : 48
         },
         {
             "buffer" : 0,
-            "byteLength" : 384,
-            "byteOffset" : 576
+            "byteLength" : 64,
+            "byteOffset" : 96
         },
         {
             "buffer" : 0,
-            "byteLength" : 192,
-            "byteOffset" : 960
+            "byteLength" : 32,
+            "byteOffset" : 160
         },
         {
             "buffer" : 0,
-            "byteLength" : 72,
-            "byteOffset" : 1152
+            "byteLength" : 12,
+            "byteOffset" : 192
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 1224,
-            "uri" : "cube.bin"
+            "byteLength" : 204,
+            "uri" : "plane.bin"
         }
     ]
 }

@@ -23,19 +23,15 @@ private:
 public:
     Texture() = default;
 
-    //explicit Texture(const std::string &path, bool nearest = false);
-
-    //Texture(uint8_t r, uint8_t g, uint8_t b);
+    explicit Texture(const std::string &path, bool nearest = false);
 
     Texture(const Texture &) = delete;
 
     ~Texture();
 
-    //void loadBMP(const std::string &path, bool nearest = false);
+    void loadBMP(const std::string &path, bool nearest = false);
 
-    //void setColor(uint8_t r, uint8_t g, uint8_t b);
-
-    //void setImage(const std::string &path);
+    void setImage(const std::string &path);
 
     void setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height, bool nearest = false);
 

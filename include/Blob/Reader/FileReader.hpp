@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
 
 namespace Blob::Reader {
 class FileReader {
@@ -20,6 +21,8 @@ public:
     unsigned char readNextByte();
 
     std::string getString(int length);
+
+    static std::vector<uint8_t > loadBinaryFile(const std::string& filename);
 
     template<typename T>
     T readNextBytes() {

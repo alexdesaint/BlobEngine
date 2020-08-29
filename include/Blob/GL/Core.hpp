@@ -28,8 +28,9 @@ public:
     static void setVAO(const VertexArrayObject &vao);
     static void setTexture(const Texture &texture);
     static void setMat4(const float *matrix, int position);
-    static void setVec4(const float *matrix, int position);
+    static void setVec2(const float *matrix, int position);
     static void setVec3(const float *matrix, int position);
+    static void setVec4(const float *matrix, int position);
     static void setFloat(float val, int position);
     static void setUint(int32_t val, int position);
 

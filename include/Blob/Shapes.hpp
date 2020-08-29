@@ -14,16 +14,16 @@ void destroy();
 
 class Cube : public Mesh {
 public:
-    explicit Cube(const Material &singleColorMaterial);
+    explicit Cube(const Material &material);
 };
 
 class Plane : public Mesh {
 public:
-    explicit Plane(const Material &singleColorMaterial);
+    explicit Plane(const Material &material);
 };
 
 class OctagonalPrism : public Mesh {
 public:
-    explicit OctagonalPrism(const Material &singleColorMaterial);
+    explicit OctagonalPrism(const Material &material);
 };
 } // namespace Blob::Shapes
