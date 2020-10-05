@@ -46,10 +46,9 @@ static const char *fragment_shader_text = "#version 450\n"
                                           "    gl_FragColor = vec4(color, 1.0);\n"
                                           "}\n";
 
-
-class SimpleMaterial : public Blob::Material {
+class SimpleMaterial : public Blob::Material::Material {
 private:
-    void applyMaterial(const Blob::ProjectionTransform &pt, const Blob::ViewTransform &vt, const glm::mat4 &mt) const final {
+    void applyMaterial(const Blob::Maths::ProjectionTransform &pt, const Blob::Maths::ViewTransform &vt, const glm::mat4 &mt) const final {
         Blob::GL::Core::setMat4(&pt[0].x, projection);
         Blob::GL::Core::setMat4(&vt[0].x, view);
         Blob::GL::Core::setMat4(&mt[0].x, model);
@@ -70,9 +69,9 @@ int SimpleMaterial::view;
 int SimpleMaterial::projection;
 
 int main() {
-    Blob::Camera camera;
+    Blob::Core::Camera camera;
 
-    Blob::Window window(camera);
+    Blob::Core::Window window(camera);
 
     Blob::GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
@@ -90,7 +89,7 @@ int main() {
     vao.setArray(2, sp.getAttribLocation("vPos"), GL_FLOAT, 0);
     vao.setArray(3, sp.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
 
-    Blob::RenderOptions ro;
+    Blob::Core::RenderOptions ro;
     ro.indexed = true;
     unsigned short indices[] = {2, 1, 0, 1, 2, 3};
     ro.indices = indices;
@@ -99,10 +98,10 @@ int main() {
 
     SimpleMaterial material(sp);
 
-    Blob::Mesh renderable(vao, material);
+    Blob::Core::Mesh renderable(vao, material);
     renderable.renderOptions = ro;
 
-    Blob::Shape shape(renderable);
+    Blob::Core::Shape shape(renderable);
 
     while (window.isOpen()) {
 

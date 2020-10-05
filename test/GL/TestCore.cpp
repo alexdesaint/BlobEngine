@@ -9,7 +9,6 @@
 #include <cstdlib>
 #include <glm/ext.hpp>
 
-// TRANSFORM INVOCATION !!!
 #include <Blob/ModelTransform.hpp>
 #include <Blob/ProjectionTransform.hpp>
 #include <Blob/ViewTransform.hpp>
@@ -90,15 +89,15 @@ int main() {
     vao.setArray(2, sp.getAttribLocation("vPos"), GL_FLOAT, 0);
     vao.setArray(3, sp.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
 
-    Blob::ProjectionTransform pt(PI / 4, width, height, 0.1, 10);
-    Blob::ViewTransform vt;
-    Blob::ModelTransform mt;
+    Blob::Maths::ProjectionTransform pt(PI / 4, width, height, 0.1, 10);
+    Blob::Maths::ViewTransform vt;
+    Blob::Maths::ModelTransform mt;
 
     int model = sp.getUniformLocation("model");
     int view = sp.getUniformLocation("view");
     int projection = sp.getUniformLocation("projection");
 
-    //unsigned short indices[] = {2, 1, 0, 1, 2, 3};
+    // unsigned short indices[] = {2, 1, 0, 1, 2, 3};
     unsigned short indices[] = {0, 1, 2, 1, 2, 3};
 
     while (!glfwWindowShouldClose(window)) {
