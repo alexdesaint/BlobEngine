@@ -2,6 +2,8 @@
 
 ![Build Status](https://github.com/alexdesaint/BlobEngine/workflows/Build/badge.svg)
 
+![Demo](doc/Demo.png )
+
 Graphical engine made for learning purpose.
 
 ![compact](doc/compact.svg)
