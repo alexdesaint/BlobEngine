@@ -16,6 +16,8 @@
 using namespace std;
 using namespace Blob;
 using namespace Shapes;
+using namespace Core;
+using namespace Material;
 
 int main(int argc, char *argv[]) {
     try {
@@ -78,10 +80,10 @@ int main(int argc, char *argv[]) {
             }
 
             ImGui::Text("Light");
-            ImGui::ColorEdit3("Light color", &Blob::SingleColorMaterial::light.color.R);
-            ImGui::SliderFloat("Light Position X", &Blob::SingleColorMaterial::light.position.x, -1.0f, 1.0f);
-            ImGui::SliderFloat("Light Position Y", &Blob::SingleColorMaterial::light.position.y, -1.0f, 1.0f);
-            ImGui::SliderFloat("Light Position Z", &Blob::SingleColorMaterial::light.position.z, -1.0f, 1.0f);
+            ImGui::ColorEdit3("Light color", &SingleColorMaterial::light.color.R);
+            ImGui::SliderFloat("Light Position X", &SingleColorMaterial::light.position.x, -1.0f, 1.0f);
+            ImGui::SliderFloat("Light Position Y", &SingleColorMaterial::light.position.y, -1.0f, 1.0f);
+            ImGui::SliderFloat("Light Position Z", &SingleColorMaterial::light.position.z, -1.0f, 1.0f);
             ImGui::End();
 
             for(const auto &s : shapes)
