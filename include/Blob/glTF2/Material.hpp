@@ -6,7 +6,7 @@
 #include <Blob/Material.hpp>
 
 namespace Blob::glTF2 {
-    class Material : public SingleColorMaterial {
+class Material : public ::Blob::Material::SingleColorMaterial {
     public:
 
         /**

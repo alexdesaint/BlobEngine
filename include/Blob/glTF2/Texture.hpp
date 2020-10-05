@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <nlohmann/json.hpp>
-#include <Blob/GL/Texture.hpp>
+#include <Blob/Core/Texture.hpp>
 #include <Blob/glTF2/Image.hpp>
 #include <Blob/glTF2/Sampler.hpp>
 
@@ -11,7 +11,7 @@ namespace Blob::glTF2 {
 /**
  * A texture and its sampler.
  */
-class Texture : public GL::Texture {
+class Texture : public Core::Texture {
 public:
     int sampler = -1; ///< The index of the sampler used by this texture. When undefined, a sampler with repeat
     ///< wrapping and auto filtering should be used.

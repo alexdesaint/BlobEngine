@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-namespace Blob {
+namespace Blob::Maths {
 
 ProjectionTransform::ProjectionTransform(float cameraAngle, unsigned int width, unsigned int height, float closeRange, float longRange)
     : cameraAngle(cameraAngle), ratio(width / (float) height), closeRange(closeRange), longRange(longRange) {

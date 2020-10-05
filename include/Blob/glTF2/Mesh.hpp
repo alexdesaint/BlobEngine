@@ -14,7 +14,7 @@ namespace Blob::glTF2 {
 
 class Mesh {
 public:
-    class Primitive : public Blob::Mesh {
+    class Primitive : public Core::Mesh {
         friend Mesh;
 
     public:

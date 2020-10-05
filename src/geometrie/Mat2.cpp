@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace Blob {
+namespace Blob::Maths {
 
     template
     class Vec2<float>;

@@ -3,7 +3,7 @@
 #include <ostream>
 #include <glm/mat4x4.hpp>
 
-namespace Blob {
+namespace Blob::Maths {
 class Window;
 
 class ViewTransform : public glm::mat4 {

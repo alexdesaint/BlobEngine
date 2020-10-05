@@ -7,7 +7,7 @@
 
 namespace Blob::glTF2 {
 
-class Scene : public Blob::Scene {
+class Scene : public Core::Scene {
 public:
     std::vector<int> nodes;
     std::string name;

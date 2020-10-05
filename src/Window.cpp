@@ -8,7 +8,7 @@
 #include <imgui.h>
 #include <iostream>
 
-namespace Blob {
+namespace Blob::Core {
 
 Window::Window(Camera &camera, bool fullScreen, unsigned int w, unsigned int h)
     : WindowCore(fullScreen, w, h), camera(camera), ProjectionTransform(PI / 4, w, h, 1, 100) {
@@ -61,7 +61,7 @@ void Window::resize(unsigned int width, unsigned int height) {
 std::array<float, 3> Window::getWorldPosition() {
     ImGuiIO &io = ImGui::GetIO();
 
-    Vec2f mousePos = io.MousePos;
+    Maths::Vec2f mousePos = io.MousePos;
     mousePos = mousePos / getSize() * 2;
     mousePos.x = mousePos.x - 1;
     mousePos.y = 1 - mousePos.y;
@@ -81,7 +81,7 @@ std::array<float, 3> Window::getWorldPosition() {
     //
     */
 
-    float z = GL::Core::readPixel(Vec2f(0, -width) + io.MousePos);
+    float z = GL::Core::readPixel(Maths::Vec2f(0, -width) + io.MousePos);
 
     z = (z * 2) - 1;
 

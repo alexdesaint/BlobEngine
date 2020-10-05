@@ -123,9 +123,9 @@ namespace Blob::Shapes {
     VertexArrayObject *vaoOctagonalPrism;
 
     void init() {
-        DefaultMaterial::init();
-        SingleColorMaterial::init();
-        SingleTextureMaterial::init();
+        Material::DefaultMaterial::init();
+        Material::SingleColorMaterial::init();
+        Material::SingleTextureMaterial::init();
         vbo = new VertexBufferObject((uint8_t *) data, sizeof(data));
         vaoCube = new VertexArrayObject();
 
@@ -151,9 +151,9 @@ namespace Blob::Shapes {
     }
 
     void destroy() {
-        DefaultMaterial::destroy();
-        SingleColorMaterial::destroy();
-        SingleTextureMaterial::destroy();
+        Material::DefaultMaterial::destroy();
+        Material::SingleColorMaterial::destroy();
+        Material::SingleTextureMaterial::destroy();
 
         delete vbo;
         delete vaoCube;
@@ -161,15 +161,15 @@ namespace Blob::Shapes {
         delete vaoOctagonalPrism;
     }
 
-    Cube::Cube(const Material &material) : Mesh(*vaoCube, material) {
+    Cube::Cube(const Material::Material &material) : Mesh(*vaoCube, material) {
         setIndices(cubeIndices, sizeof(cubeIndices) / sizeof(*cubeIndices));
     }
 
-    Plane::Plane(const Material &material) : Mesh(*vaoPlane, material) {
+    Plane::Plane(const Material::Material &material) : Mesh(*vaoPlane, material) {
         setIndices(planeIndices, sizeof(planeIndices) / sizeof(*planeIndices));
     }
 
-    OctagonalPrism::OctagonalPrism(const Material &material) : Mesh(*vaoOctagonalPrism, material) {
+    OctagonalPrism::OctagonalPrism(const Material::Material &material) : Mesh(*vaoOctagonalPrism, material) {
         setIndices(octagonalPrismIndices, sizeof(octagonalPrismIndices) / sizeof(*octagonalPrismIndices));
     }
 } // namespace Blob::Shapes

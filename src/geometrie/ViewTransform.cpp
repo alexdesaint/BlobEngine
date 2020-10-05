@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.inl>
 #include <iostream>
 
-namespace Blob {
+namespace Blob::Maths {
 ViewTransform::ViewTransform() : cameraPosition(1, 0, 1), cameraLookAt(0, 0, 0), cameraUp(0, 0, 1) {
     *(static_cast<glm::mat4 *>(this)) = glm::lookAt(cameraPosition, cameraLookAt, cameraUp);
 }

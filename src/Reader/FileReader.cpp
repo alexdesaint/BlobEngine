@@ -8,6 +8,8 @@
 
 namespace Blob::Reader {
 
+using namespace Core;
+
     FileReader::FileReader(const std::string &FilePath) {
         inFile.open(FilePath, std::ios::in | std::ios::binary | std::ios::ate);
         if (!inFile.is_open())

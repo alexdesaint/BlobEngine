@@ -12,18 +12,18 @@ void init();
 
 void destroy();
 
-class Cube : public Mesh {
+class Cube : public Core::Mesh {
 public:
-    explicit Cube(const Material &material);
+    explicit Cube(const Material::Material &material);
 };
 
-class Plane : public Mesh {
+class Plane : public Core::Mesh {
 public:
-    explicit Plane(const Material &material);
+    explicit Plane(const Material::Material &material);
 };
 
-class OctagonalPrism : public Mesh {
+class OctagonalPrism : public Core::Mesh {
 public:
-    explicit OctagonalPrism(const Material &material);
+    explicit OctagonalPrism(const Material::Material &material);
 };
 } // namespace Blob::Shapes

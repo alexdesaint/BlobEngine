@@ -101,8 +101,8 @@ namespace Blob {
 	}
 }
 #define IM_VEC2_CLASS_EXTRA                                                 \
-        ImVec2(const Blob::Vec2f& f) { x = f.x; y = f.y; }                       \
-        operator Blob::Vec2f() const { return Blob::Vec2f(x,y); }
+        ImVec2(const Blob::Maths::Vec2f& f) { x = f.x; y = f.y; }                       \
+        operator Blob::Maths::Vec2f() const { return Blob::Maths::Vec2f(x,y); }
 
 //#include <Blob/GL/Texture.hpp>
 

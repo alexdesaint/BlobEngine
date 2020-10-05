@@ -37,7 +37,7 @@ public:
 
     unsigned int getTextureID() const;
 
-    Vec2f getTextureSize() const;
+    Maths::Vec2f getTextureSize() const;
 };
 } // namespace Blob::GL
 

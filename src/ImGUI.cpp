@@ -4,7 +4,7 @@
 #include <imgui.h>
 #include <iostream>
 
-namespace Blob {
+namespace Blob::Core {
 ImGUI::ImGUI() {
     std::cout << "init ImGUI" << std::endl;
 

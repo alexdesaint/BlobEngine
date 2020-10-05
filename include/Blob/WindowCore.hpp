@@ -3,7 +3,7 @@
 #include <Blob/Geometrie.hpp>
 #include <string>
 
-namespace Blob {
+namespace Blob::Core {
 class WindowCore {
 private:
     void *window = nullptr;
@@ -24,9 +24,9 @@ protected:
 public:
     [[nodiscard]] bool isOpen() const;
 
-    Blob::Vec2f getSize() { return {(float) width, (float) height}; }
+    Blob::Maths::Vec2f getSize() { return {(float) width, (float) height}; }
 
-    Blob::Vec2f getFrameBufferSize();
+    Blob::Maths::Vec2f getFrameBufferSize();
 
     void setTitle(const std::string &name);
 

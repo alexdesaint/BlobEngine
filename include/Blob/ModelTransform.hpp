@@ -3,7 +3,7 @@
 #include <Blob/Geometrie.hpp>
 #include <glm/mat4x4.hpp>
 
-namespace Blob {
+namespace Blob::Maths {
 
 class ModelTransform : public glm::mat4 {
 private:
@@ -15,7 +15,7 @@ public:
     void setModelMatrix(const std::array<float, 16> &mat);
 
     void setPosition(float x, float y, float z);
-    void setPosition(const Vec2f &xy, float z);
+    void setPosition(const Maths::Vec2f &xy, float z);
     void move(float x, float y, float z);
 
     void setRotation(float r, float x, float y, float z);

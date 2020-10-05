@@ -4,7 +4,7 @@
 #include <Blob/GL/VertexArrayObject.hpp>
 #include <Blob/GL/ShaderProgram.hpp>
 
-namespace Blob {
+namespace Blob::Core {
 class ImGUI {
 private:
     GL::Texture fontTexture;

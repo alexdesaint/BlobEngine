@@ -2,7 +2,7 @@
 
 #include <Blob/Geometrie.hpp>
 
-namespace Blob {
+namespace Blob::Core {
 struct RenderOptions {
     // IndicesOptions
     bool indexed = false;

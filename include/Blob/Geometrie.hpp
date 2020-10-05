@@ -7,7 +7,7 @@
 
 #define PI 3.14159265f
 
-namespace Blob {
+namespace Blob::Maths {
 
 template<typename T>
 class Vec2 {
@@ -154,12 +154,12 @@ class Rectangle;
 
 class Form {
 protected:
-    virtual bool overlap(const Rectangle &rect) = 0;
+    // virtual bool overlap(const Rectangle &rect) = 0;
     // virtual bool overlap(const Circle &rect) = 0;
     // virtual bool overlap(const Line &rect) = 0;
 };
 
-class Circle {
+class Circle : virtual public Form {
 public:
     float rayon = 0;
     Point2f position;
@@ -169,7 +169,7 @@ public:
     Circle(Point2f position, float rayon) : rayon(rayon), position(position) {}
 };
 
-class Line {
+class Line : virtual public Form {
 public:
     Point2f pointA;
     Point2f pointB;
@@ -214,7 +214,7 @@ public:
 
     [[nodiscard]] bool overlapBigger(const Rectangle &r) const;
 
-    bool overlap(const Rectangle &r) final;
+    bool overlap(const Rectangle &r);// final;
 
     std::list<Vec2i> rasterize();
 

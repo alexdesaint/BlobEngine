@@ -144,7 +144,7 @@ uint32_t getGlTypeSize(GLenum dataType) {
         typeSize = sizeof(GLfloat);
         break;
     default:
-        throw Exception("incorrect Type of data");
+        throw Core::Exception("incorrect Type of data");
     }
 
     return typeSize;

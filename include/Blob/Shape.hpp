@@ -3,9 +3,9 @@
 #include <Blob/Mesh.hpp>
 #include <list>
 
-namespace Blob {
+namespace Blob::Core {
 
-class Shape : public ModelTransform {
+class Shape : public Maths::ModelTransform {
     friend Window;
 
 private:

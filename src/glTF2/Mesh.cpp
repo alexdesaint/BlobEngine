@@ -60,7 +60,7 @@ Mesh::Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std
     NotRequired(j, "name", name);
 
     if (primitives.size() != 1)
-        throw Exception("Mesh with multiple primitives not supported yet");
+        throw Core::Exception("Mesh with multiple primitives not supported yet");
 
     for (auto &p : primitives) {
         // Choose the the material from the attributes
@@ -151,7 +151,7 @@ std::ostream &operator<<(std::ostream &s, const Mesh::Primitive &a) {
     return s;
 }
 
-Mesh::Primitive::Primitive() : Blob::Mesh(vao) {}
+Mesh::Primitive::Primitive() : Core::Mesh(vao) {}
 
 std::ostream &operator<<(std::ostream &s, const Mesh &a) {
 

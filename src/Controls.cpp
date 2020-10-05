@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 
-namespace Blob {
+namespace Blob::Core {
 
 static bool LOCAL_UNKNOWN = false, LOCAL_SPACE = false, LOCAL_APOSTROPHE = false, LOCAL_COMMA = false, LOCAL_MINUS = false, LOCAL_PERIOD = false,
             LOCAL_SLASH = false, LOCAL_NUM_0 = false, LOCAL_NUM_1 = false, LOCAL_NUM_2 = false, LOCAL_NUM_3 = false, LOCAL_NUM_4 = false,
@@ -127,7 +127,7 @@ GLFWcursor *g_MouseCursors[ImGuiMouseCursor_COUNT] = {nullptr};
 int oldCursor = 0;
 
 void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
-    io->MousePos = Vec2f((float) xpos, (float) ypos);
+    io->MousePos = Maths::Vec2f((float) xpos, (float) ypos);
 #ifndef IMGUI_USER_CONFIG
 #error NOPE
 #endif
@@ -339,7 +339,7 @@ void Controls::init(void *window) {
     glfwSetScrollCallback((GLFWwindow *) window, scroll_callback);
     glfwSetCharCallback((GLFWwindow *) window, character_callback);
 
-    io->MousePos = Vec2f();
+    io->MousePos = Maths::Vec2f();
 
     io->SetClipboardTextFn = SetClipboardText;
     io->GetClipboardTextFn = GetClipboardText;

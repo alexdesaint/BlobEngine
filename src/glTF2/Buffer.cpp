@@ -15,7 +15,7 @@ Buffer::Buffer(const nlohmann::json &j, const std::string &path) {
 
     Reader::FileReader fileReader(uri);
     if (fileReader.getSize() != byteLength)
-        throw Exception("GLTF: Wrong buffer description");
+        throw Core::Exception("GLTF: Wrong buffer description");
 
     vector<uint8_t> bytes(byteLength);
 
@@ -40,7 +40,7 @@ std::vector<uint8_t> Buffer::getData(size_t size, size_t offset) const {
     std::vector<uint8_t> ret(size);
 
     if (size + offset > byteLength)
-        throw Exception("GLTF (getData) : Wrong buffer description");
+        throw Core::Exception("GLTF (getData) : Wrong buffer description");
 
     Reader::FileReader fileReader(uri);
 

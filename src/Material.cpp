@@ -4,11 +4,9 @@
 #include <Blob/GL/Core.hpp>
 #include <iostream>
 
-namespace Blob {
+namespace Blob::Material {
 
     Material::Material(const GL::ShaderProgram &shaderProgram) : shaderProgramPrivate(shaderProgram) {}
-
-    using namespace GL;
 
 /********************* DefaultMaterial *********************/
 
@@ -21,21 +19,21 @@ namespace Blob {
     int DefaultMaterial::projection = -1;
 
     void
-    DefaultMaterial::applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const glm::mat4 &mt) const {
-        Core::setCullFace(false);
+    DefaultMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const glm::mat4 &mt) const {
+        GL::Core::setCullFace(false);
 
-        Core::setMat4(&pt[0].x, projection);
-        Core::setMat4(&vt[0].x, view);
-        Core::setMat4(&mt[0].x, model);
+        GL::Core::setMat4(&pt[0].x, projection);
+        GL::Core::setMat4(&vt[0].x, view);
+        GL::Core::setMat4(&mt[0].x, model);
 
-        Core::setCullFace(true);
+        GL::Core::setCullFace(true);
     }
 
     DefaultMaterial::DefaultMaterial() : Material(*shaderProgram) {}
 
     void DefaultMaterial::init() {
         std::cout << "init DefaultMaterial" << std::endl;
-        shaderProgram = new ShaderProgram(R"=====(
+        shaderProgram = new GL::ShaderProgram(R"=====(
 #version 450
 
 layout(location = 0) in vec3 POSITION;
@@ -209,7 +207,7 @@ vec3 saturate(vec3 x)
 
     SingleColorMaterial::SingleColorMaterial(Color albedo) : Material(*shaderProgram), albedo(albedo) {}
 
-    void SingleColorMaterial::applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt,
+    void SingleColorMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt,
                                             const glm::mat4 &mt) const {
         Blob::GL::Core::setMat4(&pt[0].x, projection);
         Blob::GL::Core::setMat4(&vt[0].x, view);
@@ -229,7 +227,7 @@ vec3 saturate(vec3 x)
 
     void SingleColorMaterial::init() {
         std::cout << "init SingleColorMaterial" << std::endl;
-        shaderProgram = new ShaderProgram(PBRvertex, PBRpixelHead + PBRfunctions +
+        shaderProgram = new GL::ShaderProgram(PBRvertex, PBRpixelHead + PBRfunctions +
                                                      R"=====(
 // material parameters
 uniform vec3 albedo;
@@ -328,28 +326,28 @@ void main()
 
         try {
             albedoPos = shaderProgram->getUniformLocation("albedo");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             metallicPos = shaderProgram->getUniformLocation("metallic");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             roughnessPos = shaderProgram->getUniformLocation("roughness");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             aoPos = shaderProgram->getUniformLocation("ao");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             lightPos.position = shaderProgram->getUniformLocation("lightPositions");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             lightPos.color = shaderProgram->getUniformLocation("lightColors");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             camPos = shaderProgram->getUniformLocation("camPos");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             optionsPos = shaderProgram->getUniformLocation("options");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
     }
 
     void SingleColorMaterial::destroy() {
@@ -440,7 +438,7 @@ void main()
     SingleTextureMaterial::SingleTextureMaterial(const Blob::GL::Texture &texture) : Material(*shaderProgram),
                                                                                      texture(texture) {}
 
-    void SingleTextureMaterial::applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt,
+    void SingleTextureMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt,
                                               const glm::mat4 &mt) const {
         Blob::GL::Core::setMat4(&pt[0].x, projection);
         Blob::GL::Core::setMat4(&vt[0].x, view);
@@ -462,7 +460,7 @@ void main()
 
     void SingleTextureMaterial::init() {
         std::cout << "init SingleTextureMaterial" << std::endl;
-        shaderProgram = new ShaderProgram(PBRvertex, PBRpixelHead + PBRfunctions +
+        shaderProgram = new GL::ShaderProgram(PBRvertex, PBRpixelHead + PBRfunctions +
                                                      R"=====(
 // texture
 uniform vec2 texScale;
@@ -566,28 +564,28 @@ void main()
 
         try {
             textureScalePos = shaderProgram->getUniformLocation("texScale");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             metallicPos = shaderProgram->getUniformLocation("metallic");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             roughnessPos = shaderProgram->getUniformLocation("roughness");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             aoPos = shaderProgram->getUniformLocation("ao");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             lightPos.position = shaderProgram->getUniformLocation("lightPositions");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             lightPos.color = shaderProgram->getUniformLocation("lightColors");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             camPos = shaderProgram->getUniformLocation("camPos");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
         try {
             optionsPos = shaderProgram->getUniformLocation("options");
-        } catch (Exception) {}
+        } catch (Core::Exception) {}
     }
 
     void SingleTextureMaterial::destroy() {

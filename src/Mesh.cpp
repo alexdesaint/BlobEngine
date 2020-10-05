@@ -2,13 +2,13 @@
 #include <Blob/GL/Core.hpp>
 using namespace std;
 
-namespace Blob {
+namespace Blob::Core {
 
-using namespace GL;
+//using namespace GL;
 
-Mesh::Mesh(VertexArrayObject &vertexArrayObject) : vertexArrayObject(vertexArrayObject) {}
+Mesh::Mesh(GL::VertexArrayObject &vertexArrayObject) : vertexArrayObject(vertexArrayObject) {}
 
-Mesh::Mesh(VertexArrayObject &vertexArrayObject, const Material &material) : material(&material), vertexArrayObject(vertexArrayObject) {}
+Mesh::Mesh(GL::VertexArrayObject &vertexArrayObject, const Material::Material &material) : material(&material), vertexArrayObject(vertexArrayObject) {}
 
 void Mesh::setIndices(void *i, int32_t noi, uint32_t it) {
     renderOptions.indices = i;
@@ -19,18 +19,18 @@ void Mesh::setIndices(void *i, int32_t noi, uint32_t it) {
 }
 
 template<> void Mesh::setIndices<>(uint8_t *indices, int32_t numOfIndices) {
-    setIndices(indices, numOfIndices, Core::getType<uint8_t>());
+    setIndices(indices, numOfIndices, GL::Core::getType<uint8_t>());
 }
 
 template<> void Mesh::setIndices<>(uint16_t *indices, int32_t numOfIndices) {
-    setIndices(indices, numOfIndices, Core::getType<uint16_t>());
+    setIndices(indices, numOfIndices, GL::Core::getType<uint16_t>());
 }
 
 template<> void Mesh::setIndices<>(uint32_t *indices, int32_t numOfIndices) {
-    setIndices(indices, numOfIndices, Core::getType<uint32_t>());
+    setIndices(indices, numOfIndices, GL::Core::getType<uint32_t>());
 }
 
-void Mesh::setMaterial(Material &material) {
+void Mesh::setMaterial(Material::Material &material) {
     Mesh::material = &material;
 }
 } // namespace Blob

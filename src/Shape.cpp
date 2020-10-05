@@ -1,7 +1,7 @@
 #include <Blob/Shape.hpp>
 #include <algorithm>
 
-namespace Blob {
+namespace Blob::Core {
 
 Shape::Shape(Mesh &r, float LocationX, float LocationY, float LocationZ, float ScaleX, float ScaleY, float ScaleZ, float RotationX, float RotationY,
              float RotationZ) {
@@ -71,4 +71,4 @@ std::ostream &operator<<(std::ostream &s, const Shape &a) {
     s << "}" << std::endl;
     return s;
 }
-} // namespace Blob
+} // namespace Blob::Core

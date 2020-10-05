@@ -13,7 +13,7 @@
 #include <Blob/Shapes.hpp>
 #include <iostream>
 
-namespace Blob {
+namespace Blob::Core {
 WindowCore::WindowCore(bool fullScreen, unsigned int width, unsigned int height) : width(width), height(height), fullScreen(fullScreen) {
     // The OpenGL window build
     std::cout << "init Window" << std::endl;
@@ -48,7 +48,7 @@ WindowCore::WindowCore(bool fullScreen, unsigned int width, unsigned int height)
 
     if (!window) {
         glfwTerminate();
-        throw Blob::Exception("Can't create window");
+        throw Blob::Core::Exception("Can't create window");
     }
 
     glfwSetWindowUserPointer((GLFWwindow *) window, this);
@@ -82,7 +82,7 @@ void WindowCore::setTitle(const std::string &name) {
     glfwSetWindowTitle((GLFWwindow *) window, name.c_str());
 }
 
-Blob::Vec2f WindowCore::getFrameBufferSize() {
+Blob::Maths::Vec2f WindowCore::getFrameBufferSize() {
     int display_w, display_h;
     glfwGetFramebufferSize((GLFWwindow *) window, &display_w, &display_h);
     return {(float) display_w, (float) display_h};

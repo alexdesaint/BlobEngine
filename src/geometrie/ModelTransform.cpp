@@ -3,7 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace Blob {
+namespace Blob::Maths {
 using namespace glm;
 
 void ModelTransform::setModelMatrix(const std::array<float, 16> &mat) {
@@ -15,7 +15,7 @@ void ModelTransform::setPosition(float x, float y, float z) {
     *(static_cast<glm::mat4 *>(this)) = translateMatrix * rotateMatrix * scaleMatrix;
 }
 
-void ModelTransform::setPosition(const Vec2f &xy, float z) {
+void ModelTransform::setPosition(const Maths::Vec2f &xy, float z) {
     translateMatrix = translate(mat4(1.0f), vec3(xy.x, xy.y, z));
     *(static_cast<glm::mat4 *>(this)) = translateMatrix * rotateMatrix * scaleMatrix;
 }

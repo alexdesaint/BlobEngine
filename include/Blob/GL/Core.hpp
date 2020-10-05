@@ -38,7 +38,7 @@ public:
     template<typename T>
     static void drawIndex(const void *indices, int32_t numOfIndices);
 
-    static float readPixel(Blob::Vec2f pos);
+    static float readPixel(Blob::Maths::Vec2f pos);
 
     template<typename T>
     static uint32_t getType();
@@ -55,12 +55,19 @@ void Core::drawIndex<uint16_t>(const void *indices, int32_t numOfIndices);
 template<>
 void Core::drawIndex<uint32_t>(const void *indices, int32_t numOfIndices);
 
-template<> uint32_t Core::getType<int8_t>();
-template<> uint32_t Core::getType<int16_t>();
-template<> uint32_t Core::getType<int32_t>();
-template<> uint32_t Core::getType<uint8_t>();
-template<> uint32_t Core::getType<uint16_t>();
-template<> uint32_t Core::getType<uint32_t>();
-template<> uint32_t Core::getType<float>();
+template<>
+uint32_t Core::getType<int8_t>();
+template<>
+uint32_t Core::getType<int16_t>();
+template<>
+uint32_t Core::getType<int32_t>();
+template<>
+uint32_t Core::getType<uint8_t>();
+template<>
+uint32_t Core::getType<uint16_t>();
+template<>
+uint32_t Core::getType<uint32_t>();
+template<>
+uint32_t Core::getType<float>();
 
 } // namespace Blob::GL

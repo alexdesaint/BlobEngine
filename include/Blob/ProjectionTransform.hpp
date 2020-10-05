@@ -3,7 +3,7 @@
 #include <glm/mat4x4.hpp>
 #include <ostream>
 
-namespace Blob {
+namespace Blob::Maths {
 class ProjectionTransform : public glm::mat4 {
 private:
     float cameraAngle, ratio, closeRange, longRange;

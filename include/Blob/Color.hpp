@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <ostream>
 
-namespace Blob {
+namespace Blob::Material {
 
 /// Color with float points representation.
 class Color {

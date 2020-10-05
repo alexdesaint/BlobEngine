@@ -2,7 +2,7 @@
 
 #include <Blob/ViewTransform.hpp>
 
-namespace Blob {
-    class Camera : public ViewTransform {
+namespace Blob::Core {
+    class Camera : public Maths::ViewTransform {
 	};
 }

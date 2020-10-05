@@ -7,7 +7,7 @@ template<typename T>
 static void Required(const nlohmann::json &j, const std::string &name, T &s) {
     auto o = j.find(name);
     if (o == j.end())
-        throw Blob::Exception("glTF : Required field \"" + name + "\" not found");
+        throw Blob::Core::Exception("glTF : Required field \"" + name + "\" not found");
     else
         o->get_to(s);
 }

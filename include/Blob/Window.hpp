@@ -13,13 +13,13 @@
 #include <chrono>
 #include <ostream>
 
-namespace Blob {
+namespace Blob::Core {
 
-class Window : public WindowCore, public ProjectionTransform {
+class Window : public WindowCore, public Maths::ProjectionTransform {
 private:
     ImGUI imgui;
 
-    Blob::Camera &camera;
+    Camera &camera;
 
     // time counting
     std::chrono::high_resolution_clock::time_point lastFrameTime;
