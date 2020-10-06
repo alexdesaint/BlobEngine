@@ -4,10 +4,8 @@
 #include <glm/mat4x4.hpp>
 
 namespace Blob::Maths {
-class Window;
 
 class ViewTransform : public glm::mat4 {
-    friend Window;
 
 public:
     glm::vec3 cameraPosition; /// Camera position in World Space
