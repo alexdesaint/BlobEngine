@@ -10,32 +10,32 @@ Graphical engine made for learning purpose.
 
 ## glTF 2.0 loader
 
-![compact](doc/Blob::glTF2_gv.svg)
+![compact](doc/Blob::glTF2.svg)
 
 ## Basics shapes
 
-![compact](doc/Blob::Shapes_gv.svg)
+![compact](doc/Blob::Shapes.svg)
 
 ## Core
 
-![compact](doc/Blob::Core_gv.svg)
+![compact](doc/Blob::Core.svg)
 
 ## Material
 
-![compact](doc/Blob::Material_gv.svg)
+![compact](doc/Blob::Material.svg)
 
 ## OpenGL wrapper
 
-![compact](doc/Blob::GL_gv.svg)
+![compact](doc/Blob::GL.svg)
 
 ## Maths
 
-![compact](doc/Blob::Maths_gv.svg)
+![compact](doc/Blob::Maths.svg)
 
 ## 2D collisions
 
-![compact](doc/Blob::Collision_gv.svg)
+![compact](doc/Blob::Collision.svg)
 
 ## Utils
 
-![compact](doc/Blob::Reader_gv.svg)
+![compact](doc/Blob::Reader.svg)
