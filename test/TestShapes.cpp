@@ -1,7 +1,8 @@
+#include <Blob/Reader/FileReader.hpp>
+#include <array>
+#include <iomanip>
 #include <iostream>
 #include <vector>
-#include <Blob/Reader/FileReader.hpp>
-#include <iomanip>
 
 #include <glm/glm.hpp>
 
