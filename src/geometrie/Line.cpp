@@ -50,4 +50,13 @@ double Line::Length() {
 double Line::getOrientation() {
     return std::atan2(pointB.y - pointA.y, pointB.x - pointA.x);
 }
+bool Line::overlap(const Rectangle &r) {
+    return false;
+}
+bool Line::overlap(const Circle &r) {
+    return false;
+}
+bool Line::overlap(const Line &r) {
+    return false;
+}
 } // namespace Blob

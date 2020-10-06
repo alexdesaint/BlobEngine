@@ -12,17 +12,19 @@
 
 namespace Blob::Collision {
 
-    uint64_t CollisionDetector::hashCoor(Vec2f pos) {
-        return (0xFFFFFFFF & (uint64_t) (uint32_t) (pos.x)) | ((uint64_t) (uint32_t) (pos.y) << 32);
-    }
+using namespace Maths;
 
-    Vec2i CollisionDetector::unhashCoor(uint64_t pos) {
-        uint32_t x = 0xFFFFFFFF & pos;
-        uint32_t y = 0xFFFFFFFF & (pos >> 32);
-        return {(int32_t) x, (int32_t) y};
-    }
+uint64_t CollisionDetector::hashCoor(Vec2f pos) {
+    return (0xFFFFFFFF & (uint64_t)(uint32_t)(pos.x)) | ((uint64_t)(uint32_t)(pos.y) << 32);
+}
 
-    uint64_t CollisionDetector::hashCoor(Vec2i pos) {
+Vec2i CollisionDetector::unhashCoor(uint64_t pos) {
+    uint32_t x = 0xFFFFFFFF & pos;
+    uint32_t y = 0xFFFFFFFF & (pos >> 32);
+    return {(int32_t) x, (int32_t) y};
+}
+
+uint64_t CollisionDetector::hashCoor(Vec2i pos) {
         return (0xFFFFFFFF & (uint32_t) pos.x) | ((uint64_t) pos.y << 32);
     }
 
@@ -37,7 +39,7 @@ namespace Blob::Collision {
                 if (it->second.find(o) == it->second.end())
                     it->second.insert(o);
                 else
-                    throw Exception("Insertion in Spacial Hash but element already exist");
+                    throw Core::Exception("Insertion in Spacial Hash but element already exist");
             }
         }
     }
@@ -48,23 +50,22 @@ namespace Blob::Collision {
             auto d = CollisionDetector::spacialHash[hash].erase(o);
 
             if (d != 1)
-                throw Exception("Remove in Spacial Hash but no element");
+                throw Core::Exception("Remove in Spacial Hash but no element");
 
             if (CollisionDetector::spacialHash[hash].empty())
                 CollisionDetector::spacialHash.erase(hash);
         }
     }
 
-    //Object
-    std::list<Object *> Object::getImtemsHere(Blob::Vec2f pos) {
+    // Object
+    std::list<Object *> Object::getImtemsHere(Maths::Vec2f pos) {
         auto hash = CollisionDetector::hashCoor(pos);
 
         auto it = CollisionDetector::spacialHash.find(hash);
         if (it == CollisionDetector::spacialHash.end())
             return std::list<Object *>();
         else
-            return std::list<Object *>(CollisionDetector::spacialHash[hash].begin(),
-                                       CollisionDetector::spacialHash[hash].end());
+            return std::list<Object *>(CollisionDetector::spacialHash[hash].begin(), CollisionDetector::spacialHash[hash].end());
     }
 
     int Object::getObjectType() const {
@@ -347,7 +348,7 @@ namespace Blob::Collision {
     void CollisionDetector::checkCollision(Blob::Collision::RectDynamic &object) {
         object.preCollisionUpdate();
 
-        Vec2f frameMove = object.speed * Blob::Window::timeFlow;
+        Vec2f frameMove = object.speed * Core::Window::timeFlow;
 
         Vec2f oldPos = object.position;
 
@@ -377,7 +378,7 @@ namespace Blob::Collision {
 
         addToSpacialHash(object.rasterize(), &object);
 
-        object.speed = (object.position - oldPos) / Blob::Window::timeFlow;
+        object.speed = (object.position - oldPos) / Core::Window::timeFlow;
 
         object.postCollisionUpdate();
     }

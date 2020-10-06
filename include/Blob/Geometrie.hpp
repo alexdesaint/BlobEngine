@@ -149,14 +149,14 @@ typedef Vec2<float> Vec2f;
 // typedef Vec2<double> Vec2d;
 
 class Rectangle;
-// class Circle;
-// class Line;
+class Circle;
+class Line;
 
 class Form {
 protected:
-    // virtual bool overlap(const Rectangle &rect) = 0;
-    // virtual bool overlap(const Circle &rect) = 0;
-    // virtual bool overlap(const Line &rect) = 0;
+    virtual bool overlap(const Rectangle &rect) = 0;
+    virtual bool overlap(const Circle &rect) = 0;
+    virtual bool overlap(const Line &rect) = 0;
 };
 
 class Circle : virtual public Form {
@@ -167,6 +167,10 @@ public:
     Circle() : rayon(0) {}
 
     Circle(Point2f position, float rayon) : rayon(rayon), position(position) {}
+
+    bool overlap(const Rectangle &r) final;
+    bool overlap(const Circle &r) final;
+    bool overlap(const Line &r) final;
 };
 
 class Line : virtual public Form {
@@ -189,6 +193,10 @@ public:
     Point2f closestPointTo(Point2f point);
 
     Point2f getIntersectionPoint(Line B);
+
+    bool overlap(const Rectangle &r) final;
+    bool overlap(const Circle &r) final;
+    bool overlap(const Line &r) final;
 
     float getGradient() {
         //(yb - ya)/(xb - xa)
@@ -214,7 +222,9 @@ public:
 
     [[nodiscard]] bool overlapBigger(const Rectangle &r) const;
 
-    bool overlap(const Rectangle &r);// final;
+    bool overlap(const Rectangle &r) final;
+    bool overlap(const Circle &r) final;
+    bool overlap(const Line &r) final;
 
     std::list<Vec2i> rasterize();
 
@@ -226,4 +236,4 @@ public:
 
     void setSize(const Vec2f &size);*/
 };
-}; // namespace Blob
+}; // namespace Blob::Maths

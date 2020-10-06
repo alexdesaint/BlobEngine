@@ -18,10 +18,6 @@ bool Rectangle::overlapBigger(const Rectangle &r) const {
             (position.y + ydiff <= r.position.y + rydiff) && (position.y + ydiff >= r.position.y - rydiff));
 }
 
-bool Rectangle::overlap(const Rectangle &r) {
-    return r.overlapBigger(*this) || overlapBigger(r);
-}
-
 std::list<Vec2i> Rectangle::rasterize() {
     std::list<Vec2i> points;
     int startx = (int) (position.x - size.x / 2);
@@ -41,6 +37,16 @@ std::array<Vec2f, 4> Rectangle::getPoints() {
     return {position + size / 2, position - size / 2, position + size.rotate() / 2, position - size.rotate() / 2};
 }
 
+bool Rectangle::overlap(const Rectangle &r) {
+    return r.overlapBigger(*this) || overlapBigger(r);
+}
+bool Rectangle::overlap(const Circle &r) {
+    return false;
+}
+bool Rectangle::overlap(const Line &r) {
+    return false;
+}
+
 /*const Point2f &Rectangle::getPosition() const {
     return position;
 }
@@ -57,4 +63,4 @@ void Rectangle::setSize(const Vec2f &size) {
     Rectangle::size = size;
 }*/
 
-} // namespace Blob
+} // namespace Blob::Maths

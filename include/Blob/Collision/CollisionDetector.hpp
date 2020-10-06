@@ -17,8 +17,9 @@ namespace Blob::Collision {
      * Object is a virtual class
      * An object have a type to define him and can be hit
      */
-    class Object : virtual public Form {
+    class Object : virtual public Maths::Form {
         friend CollisionDetector;
+
     private:
         int objectType;
 
@@ -39,7 +40,7 @@ namespace Blob::Collision {
 
         virtual void hit(int objectType, Object &object) {}
 
-        std::list<Object *> getImtemsHere(Vec2f pos);
+        std::list<Object *> getImtemsHere(Maths::Vec2f pos);
 
     public:
         int getObjectType() const;
@@ -51,7 +52,7 @@ namespace Blob::Collision {
         Reaction reaction = STOP;
 
     protected:
-        Vec2f speed{};
+        Maths::Vec2f speed{};
 
         explicit DynamicObject(int objectType) : Object(objectType) {}
 
@@ -98,7 +99,7 @@ namespace Blob::Collision {
     private:
         std::list<CircleStatic *>::iterator elementIt{};
     protected:
-        Circle mainCircle{};
+        Maths::Circle mainCircle{};
 
         void enableCollision();
 
@@ -118,7 +119,7 @@ namespace Blob::Collision {
     private:
         std::list<CircleDynamic *>::iterator elementIt{};
     protected:
-        Circle mainCircle{};
+        Maths::Circle mainCircle{};
 
         void enableCollision();
 
@@ -133,19 +134,19 @@ namespace Blob::Collision {
         }
     };
 
-    class RectStatic : public Object, public Rectangle {
+    class RectStatic : public Object, public Maths::Rectangle {
         friend CollisionDetector;
+
     private:
         std::list<RectStatic *>::iterator elementIt{};
+
     protected:
         void enableCollision();
 
         void disableCollision();
 
     public:
-        explicit RectStatic(Vec2f position, Vec2f size, const int objectType) :
-                Rectangle(position, size),
-                Object(objectType) {
+        explicit RectStatic(Maths::Vec2f position, Maths::Vec2f size, const int objectType) : Rectangle(position, size), Object(objectType) {
             enableCollision();
         }
 
@@ -154,20 +155,19 @@ namespace Blob::Collision {
         }
     };
 
-    class RectDynamic : public DynamicObject, public Rectangle {
+    class RectDynamic : public DynamicObject, public Maths::Rectangle {
         friend CollisionDetector;
+
     private:
         std::list<RectDynamic *>::iterator elementIt{};
-    protected:
 
+    protected:
         void enableCollision();
 
         void disableCollision();
 
     public:
-        explicit RectDynamic(Vec2f position, Vec2f size, const int objectType) :
-                Rectangle(position, size),
-                DynamicObject(objectType) {
+        explicit RectDynamic(Maths::Vec2f position, Maths::Vec2f size, const int objectType) : Rectangle(position, size), DynamicObject(objectType) {
             enableCollision();
         }
 
@@ -181,7 +181,7 @@ namespace Blob::Collision {
     private:
         std::list<LineStatic *>::iterator elementIt{};
     protected:
-        std::deque<Point2f> lines{};
+        std::deque<Maths::Point2f> lines{};
 
         void enableCollision();
 
@@ -215,23 +215,22 @@ namespace Blob::Collision {
 
         bool timeStoped = false;
 
-        static uint64_t hashCoor(Vec2f pos);
+        static uint64_t hashCoor(Maths::Vec2f pos);
 
-        static Vec2i unhashCoor(uint64_t pos);
+        static Maths::Vec2i unhashCoor(uint64_t pos);
 
-        static uint64_t hashCoor(Vec2i pos);
+        static uint64_t hashCoor(Maths::Vec2i pos);
 
-        static void addToSpacialHash(std::list<Vec2i> pos, Object *o);
+        static void addToSpacialHash(std::list<Maths::Vec2i> pos, Object *o);
 
-        static void removeFromSpacialHash(std::list<Vec2i> pos, Object *o);
+        static void removeFromSpacialHash(std::list<Maths::Vec2i> pos, Object *o);
 
-        static bool targetOverlap(RectDynamic &object, Rectangle &r, const std::unordered_set<Object *> &targets,
+        static bool targetOverlap(RectDynamic &object, Maths::Rectangle &r, const std::unordered_set<Object *> &targets,
                                   std::unordered_map<Object *, Reaction> &hittedObjects);
 
-        static void
-        computeLocalCollision(RectDynamic &object, const std::unordered_set<Object *> &targets, Blob::Vec2f frameMove);
+        static void computeLocalCollision(RectDynamic &object, const std::unordered_set<Object *> &targets, Maths::Vec2f frameMove);
 
-        static std::list<int64_t> getPath(Vec2i pos, Vec2i dest);
+        static std::list<int64_t> getPath(Maths::Vec2i pos, Maths::Vec2i dest);
 
     public:
 
