@@ -19,7 +19,7 @@ file(GLOB IMGUIFILES "imgui/*.cpp")
 add_library(imgui ${IMGUIFILES})
 target_compile_definitions(imgui INTERFACE IMGUI_USER_CONFIG=<imconfigUser.h> INTERFACE IMGUI_DISABLE_INCLUDE_IMCONFIG_H)
 set_target_properties(imgui PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(imgui Blob::Geometrie)
+target_link_libraries(imgui Blob::Maths)
 target_include_directories(imgui PUBLIC imgui/ imguiConfig/)
 
 # libs
@@ -28,10 +28,16 @@ target_include_directories(libs INTERFACE stb/ include/)
 target_compile_definitions(libs INTERFACE TINYGLTF_USE_CPP14)
 
 #json
-file(DOWNLOAD https://raw.githubusercontent.com/nlohmann/json/master/single_include/nlohmann/json.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp SHOW_PROGRESS)
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp)
+    file(DOWNLOAD https://raw.githubusercontent.com/nlohmann/json/master/single_include/nlohmann/json.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp SHOW_PROGRESS)
+endif ()
 
 #entt
-file(DOWNLOAD https://raw.githubusercontent.com/skypjack/entt/master/single_include/entt/entt.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/entt/entt.hpp SHOW_PROGRESS)
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/include/entt/entt.hpp)
+    file(DOWNLOAD https://raw.githubusercontent.com/skypjack/entt/master/single_include/entt/entt.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/entt/entt.hpp SHOW_PROGRESS)
+endif ()
 
 #tinygltf
-file(DOWNLOAD https://raw.githubusercontent.com/syoyo/tinygltf/master/tiny_gltf.h ${CMAKE_CURRENT_SOURCE_DIR}/include/tiny_gltf.h SHOW_PROGRESS)
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/include/tiny_gltf.h)
+    file(DOWNLOAD https://raw.githubusercontent.com/syoyo/tinygltf/master/tiny_gltf.h ${CMAKE_CURRENT_SOURCE_DIR}/include/tiny_gltf.h SHOW_PROGRESS)
+endif ()

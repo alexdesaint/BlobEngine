@@ -1,8 +1,7 @@
 #pragma once
 
-#include <Blob/ViewTransform.hpp>
+#include <Blob/Maths.inl>
 
 namespace Blob::Core {
-    class Camera : public Maths::ViewTransform {
-	};
-}
+class Camera : public Maths::ViewTransform {};
+} // namespace Blob::Core

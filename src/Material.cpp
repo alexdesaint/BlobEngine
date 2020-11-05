@@ -19,12 +19,12 @@ namespace Blob::Material {
     int DefaultMaterial::projection = -1;
 
     void
-    DefaultMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const glm::mat4 &mt) const {
+    DefaultMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
         GL::Core::setCullFace(false);
 
-        GL::Core::setMat4(&pt[0].x, projection);
-        GL::Core::setMat4(&vt[0].x, view);
-        GL::Core::setMat4(&mt[0].x, model);
+        Blob::GL::Core::setUniform(pt, projection);
+        Blob::GL::Core::setUniform(vt, view);
+        Blob::GL::Core::setUniform(mt, model);
 
         GL::Core::setCullFace(true);
     }
@@ -144,7 +144,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
     return nom / max(denom, 0.001); // prevent divide by zero for roughness=0.0 and NdotH=1.0
 }
 // ----------------------------------------------------------------------------
-float GeometrySchlickGGX(float NdotV, float roughness)
+float MathsSchlickGGX(float NdotV, float roughness)
 {
     float r = (roughness + 1.0);
     float k = (r*r) / 8.0;
@@ -155,12 +155,12 @@ float GeometrySchlickGGX(float NdotV, float roughness)
     return nom / denom;
 }
 // ----------------------------------------------------------------------------
-float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+float MathsSmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
     float NdotV = max(dot(N, V), 0.0);
     float NdotL = max(dot(N, L), 0.0);
-    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+    float ggx2 = MathsSchlickGGX(NdotV, roughness);
+    float ggx1 = MathsSchlickGGX(NdotL, roughness);
 
     return ggx1 * ggx2;
 }
@@ -205,24 +205,23 @@ vec3 saturate(vec3 x)
 
     SingleColorMaterial::SingleColorMaterial() : Material(*shaderProgram) {}
 
-    SingleColorMaterial::SingleColorMaterial(Color albedo) : Material(*shaderProgram), albedo(albedo) {}
+    SingleColorMaterial::SingleColorMaterial(Color::RGB albedo) : Material(*shaderProgram), albedo(albedo) {}
 
-    void SingleColorMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt,
-                                            const glm::mat4 &mt) const {
-        Blob::GL::Core::setMat4(&pt[0].x, projection);
-        Blob::GL::Core::setMat4(&vt[0].x, view);
-        Blob::GL::Core::setMat4(&mt[0].x, model);
+    void SingleColorMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+        Blob::GL::Core::setUniform(pt, projection);
+        Blob::GL::Core::setUniform(vt, view);
+        Blob::GL::Core::setUniform(mt, model);
 
-        Blob::GL::Core::setVec3(&albedo.R, albedoPos);
-        Blob::GL::Core::setFloat(metallic, metallicPos);
-        Blob::GL::Core::setFloat(roughness, roughnessPos);
-        Blob::GL::Core::setFloat(ao, aoPos);
-        Blob::GL::Core::setUint(options, optionsPos);
+        Blob::GL::Core::setUniform(albedo, albedoPos);
+        Blob::GL::Core::setUniform(metallic, metallicPos);
+        Blob::GL::Core::setUniform(roughness, roughnessPos);
+        Blob::GL::Core::setUniform(ao, aoPos);
+        Blob::GL::Core::setUniform(options, optionsPos);
 
-        Blob::GL::Core::setVec3(&light.position.x, lightPos.position);
-        Blob::GL::Core::setVec3(&light.color.R, lightPos.color);
+        Blob::GL::Core::setUniform(light.position, lightPos.position);
+        Blob::GL::Core::setUniform(light.color, lightPos.color);
 
-        Blob::GL::Core::setVec3(&vt.cameraPosition.x, camPos);
+        Blob::GL::Core::setUniform(vt.cameraPosition, camPos);
     }
 
     void SingleColorMaterial::init() {
@@ -275,7 +274,7 @@ void main()
 
     // Cook-Torrance BRDF
     float NDF = DistributionGGX(N, H, roughness);
-    float G   = GeometrySmith(N, V, L, roughness);
+    float G   = MathsSmith(N, V, L, roughness);
     vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
     vec3 nominator    = NDF * G * F;
@@ -438,24 +437,23 @@ void main()
     SingleTextureMaterial::SingleTextureMaterial(const Blob::GL::Texture &texture) : Material(*shaderProgram),
                                                                                      texture(texture) {}
 
-    void SingleTextureMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt,
-                                              const glm::mat4 &mt) const {
-        Blob::GL::Core::setMat4(&pt[0].x, projection);
-        Blob::GL::Core::setMat4(&vt[0].x, view);
-        Blob::GL::Core::setMat4(&mt[0].x, model);
+    void SingleTextureMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+        Blob::GL::Core::setUniform(pt, projection);
+        Blob::GL::Core::setUniform(vt, view);
+        Blob::GL::Core::setUniform(mt, model);
 
         Blob::GL::Core::setTexture(texture);
-        Blob::GL::Core::setVec2(texScale, textureScalePos);
+        Blob::GL::Core::setUniform(texScale, textureScalePos);
 
-        Blob::GL::Core::setFloat(metallic, metallicPos);
-        Blob::GL::Core::setFloat(roughness, roughnessPos);
-        Blob::GL::Core::setFloat(ao, aoPos);
-        Blob::GL::Core::setUint(options, optionsPos);
+        Blob::GL::Core::setUniform(metallic, metallicPos);
+        Blob::GL::Core::setUniform(roughness, roughnessPos);
+        Blob::GL::Core::setUniform(ao, aoPos);
+        Blob::GL::Core::setUniform(options, optionsPos);
 
-        Blob::GL::Core::setVec3(&light.position.x, lightPos.position);
-        Blob::GL::Core::setVec3(&light.color.R, lightPos.color);
+        Blob::GL::Core::setUniform(light.position, lightPos.position);
+        Blob::GL::Core::setUniform(light.color, lightPos.color);
 
-        Blob::GL::Core::setVec3(&vt.cameraPosition.x, camPos);
+        Blob::GL::Core::setUniform(vt.cameraPosition, camPos);
     }
 
     void SingleTextureMaterial::init() {
@@ -513,7 +511,7 @@ void main()
 
     // Cook-Torrance BRDF
     float NDF = DistributionGGX(N, H, roughness);
-    float G   = GeometrySmith(N, V, L, roughness);
+    float G   = MathsSmith(N, V, L, roughness);
     vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
     vec3 nominator    = NDF * G * F;

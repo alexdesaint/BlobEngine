@@ -7,12 +7,13 @@
 #include <Blob/GL/VertexBufferObject.hpp>
 #include <cstdio>
 #include <cstdlib>
-#include <glm/ext.hpp>
 
-#include <Blob/ModelTransform.hpp>
-#include <Blob/ProjectionTransform.hpp>
-#include <Blob/ViewTransform.hpp>
+#include <Blob/Geometry/ModelTransform.hpp>
+#include <Blob/Geometry/ProjectionTransform.hpp>
+#include <Blob/Geometry/ViewTransform.hpp>
 #include <iostream>
+
+using namespace Blob;
 
 static const struct {
     float x, y;
@@ -71,34 +72,32 @@ int main() {
 
     glfwMakeContextCurrent(window);
 
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {}
-
-    Blob::GL::Core::init((void *) glfwGetProcAddress, width, height);
+    GL::Context((void *) glfwGetProcAddress, width, height);
 
     glfwSwapInterval(1);
 
-    Blob::GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
+    GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
-    Blob::GL::ShaderProgram sp;
+    GL::ShaderProgram sp;
     sp.addVertexShader(vertex_shader_text);
     sp.addFragmentShader(fragment_shader_text);
     sp.linkShaders();
 
-    Blob::GL::VertexArrayObject vao;
+    GL::VertexArrayObject vao;
     vao.setBuffer(vbo, sizeof(vertices[0]));
     vao.setArray(2, sp.getAttribLocation("vPos"), GL_FLOAT, 0);
     vao.setArray(3, sp.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
 
-    Blob::Maths::ProjectionTransform pt(PI / 4, width, height, 0.1, 10);
-    Blob::Maths::ViewTransform vt;
-    Blob::Maths::ModelTransform mt;
+    Geometry::ProjectionTransform pt(PI / 4, width, height, 0.1, 10);
+    Geometry::ViewTransform vt;
+    Geometry::ModelTransform mt;
 
     int model = sp.getUniformLocation("model");
     int view = sp.getUniformLocation("view");
     int projection = sp.getUniformLocation("projection");
 
     // unsigned short indices[] = {2, 1, 0, 1, 2, 3};
-    unsigned short indices[] = {0, 1, 2, 1, 2, 3};
+    unsigned short indices[] = {0, 1, 2, 3, 2, 1};
 
     while (!glfwWindowShouldClose(window)) {
 
@@ -106,18 +105,18 @@ int main() {
 
         pt.setRatio(width, height);
 
-        Blob::GL::Core::setViewport(width, height);
+        GL::Core::setViewport(width, height);
 
-        Blob::GL::Core::clear();
+        GL::Core::clear();
 
-        mt.setRotation((float) glfwGetTime(), 0, 0, 1);
+        mt.setRotation((float) glfwGetTime(), {0, 0, 1});
 
-        Blob::GL::Core::setShader(sp);
-        Blob::GL::Core::setVAO(vao);
-        Blob::GL::Core::setMat4(&pt[0].x, projection);
-        Blob::GL::Core::setMat4(&vt[0].x, view);
-        Blob::GL::Core::setMat4(&mt[0].x, model);
-        Blob::GL::Core::drawIndex(indices, 6, GL_UNSIGNED_SHORT);
+        GL::Core::setShader(sp);
+        GL::Core::setVAO(vao);
+        Blob::GL::Core::setUniform((Geometry::Mat4) pt, projection);
+        Blob::GL::Core::setUniform((Geometry::Mat4) vt, view);
+        Blob::GL::Core::setUniform((Geometry::Mat4) mt, model);
+        GL::Core::drawIndex(indices, 6, GL_UNSIGNED_SHORT);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

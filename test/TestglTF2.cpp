@@ -6,18 +6,9 @@
 #include <Blob/Time.hpp>
 #include <iostream>
 
-/*
-#include <nlohmann/json.hpp>
-#define TINYGLTF_NO_INCLUDE_JSON
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <tiny_gltf.h>
- */
-
 using namespace Blob;
 
-void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob::Maths::Vec2f cameraRange = {1, 100}) {
+void test(const std::string &path, const Geometry::Vec3<> &position = {0, 1, -3}, const Geometry::Vec2<> &cameraRange = {1, 100}) {
     try {
         std::cout << "test : " << path << std::endl;
 
@@ -31,7 +22,7 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
 
         Core::Scene &mainScene = sm.scenes.front();
 
-        camera.setPosition(x, y, z);
+        camera.setPosition(position);
 
         window.setRange(cameraRange.x, cameraRange.y);
 
@@ -61,8 +52,8 @@ int main(int argc, char *argv[]) {
     //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/BoxTextured/glTF/BoxTextured.gltf");
     //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/Duck/glTF/Duck.gltf");
     //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf");
-    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf", 1000, 0, 0, {100, 2000});
-    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf", 1000, 0, 0, {100, 2000});
+    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf", {1000, 0, 0}, {100, 2000});
+    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf", {1000, 0, 0}, {100, 2000});
 
     return 0;
 }

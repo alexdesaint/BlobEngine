@@ -6,7 +6,7 @@ class test_class;
 #include <Blob/Collision/CollisionDetector.hpp>
 
 #include <Blob/Controls.hpp>
-#include <Blob/Geometrie.hpp>
+#include <Blob/Maths.inl>
 #include <Blob/Shape.hpp>
 #include <Blob/Shapes.hpp>
 #include <Blob/Window.hpp>
@@ -22,18 +22,18 @@ public:
     CollisionDetector collisionDetector;
 
     test_class() {
-        Maths::Vec2f p1(-3.4, -2.9), p2(3, -2), p3(3, 2), p4(-3, 2);
+        Maths::Vec2<> p1(-3.4, -2.9), p2(3, -2), p3(3, 2), p4(-3, 2);
 
-        if (p1.cast<int>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p1)))
+        if (p1.cast<int64_t>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p1)))
             cout << "ERROR : " << p1 << " --hash--unhash-> " << CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p1)) << endl;
 
-        if (p2.cast<int>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p2)))
+        if (p2.cast<int64_t>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p2)))
             cout << "ERROR : " << p1 << " --hash--unhash-> " << CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p2)) << endl;
 
-        if (p3.cast<int>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p3)))
+        if (p3.cast<int64_t>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p3)))
             cout << "ERROR : " << p1 << " --hash--unhash-> " << CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p3)) << endl;
 
-        if (p4.cast<int>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p4)))
+        if (p4.cast<int64_t>() != CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p4)))
             cout << "ERROR : " << p1 << " --hash--unhash-> " << CollisionDetector::unhashCoor(CollisionDetector::hashCoor(p4)) << endl;
         /*
                 for(auto &p : CollisionDetector::getPath(p1, p2))
@@ -87,15 +87,15 @@ public:
 
         // test rasterize
         cout << "Rasterize" << endl;
-        for (auto i : Maths::Rectangle({2, 2}, {2, 2}).rasterize())
+        for (auto i : Geometry::Rectangle({2, 2}, {2, 2}).rasterize())
             cout << i << endl;
 
         cout << "Rasterize" << endl;
-        for (auto i : Maths::Rectangle({2, 2}, {1, 3}).rasterize())
+        for (auto i : Geometry::Rectangle({2, 2}, {1, 3}).rasterize())
             cout << i << endl;
 
         cout << "Rasterize" << endl;
-        for (auto i : Maths::Rectangle({2.5, 2.5}, {0.8, 0.8}).rasterize())
+        for (auto i : Geometry::Rectangle({2.5, 2.5}, {0.8, 0.8}).rasterize())
             cout << i << endl;
     }
 
@@ -110,49 +110,42 @@ public:
     }
 };
 
-class MainRect : public RectDynamic, public Shape {
+class MainRect : public RectDynamic, public Shape, private KeyboardEvents { // TODO: Object (add this to entt), Controllable, RectDynamic, Shape
 private:
     bool isHit = false;
 
     Material::SingleColorMaterial material;
     Shapes::Cube mesh;
 
-    void preCollisionUpdate() final {
-        isHit = false;
-        Maths::Vec2f Acceleration;
+    void keyboardUpdate(const Keyboard &keyboard) final {
+        Maths::Vec2<> Acceleration;
 
-        if (Controls::Keys::LEFT) {
+        if (keyboard.LEFT)
             Acceleration.y -= 1;
-        }
-        if (Controls::Keys::RIGHT) {
+        if (keyboard.RIGHT)
             Acceleration.y += 1;
-        }
-        if (Controls::Keys::UP) {
+        if (keyboard.UP)
             Acceleration.x -= 1;
-        }
-        if (Controls::Keys::DOWN) {
+        if (keyboard.DOWN)
             Acceleration.x += 1;
-        }
 
-        if (!Acceleration.isNull()) {
+        if (!Acceleration.isNull())
             speed = Acceleration.setLength(3);
-        } else
-            speed.reset();
+        else
+            speed = {0, 0};
     }
 
     void postCollisionUpdate() final {
-        if (isHit)
-            material.albedo = Material::Color::Red;
-        else
-            material.albedo = Material::Color::Blue;
-        Shape::setPosition(position, 0.5f);
+        if (isHit) {
+            material.albedo = Color::Red;
+            isHit = false;
+        } else
+            material.albedo = Color::Blue;
+        Shape::setPosition(position);
     }
 
 public:
-    MainRect(float x, float y, float r) : RectDynamic({x, y}, {r, r}, 1), Shape(mesh), mesh(material) {
-        setScale(r, r, r);
-        setPosition(x, y, 0.5f);
-    }
+    MainRect(float x, float y, float r) : RectDynamic({x, y}, {r, r}, 1), Shape(mesh, {x, y}, {r, r}), mesh(material) {}
 
     void hit(int objectType, Object &object) final {
         (void) (objectType);
@@ -162,12 +155,8 @@ public:
 };
 
 class Box : public RectStatic, public Shape {
-
 public:
-    Box(Mesh &mesh, float x, float y, float r = 1) : RectStatic({x, y}, {r, r}, 0), Shape(mesh) {
-        setScale(r, r, r);
-        setPosition(x, y, r / 2);
-    }
+    Box(Mesh &mesh, float x, float y, float r = 1) : RectStatic({x, y}, {r, r}, 0), Shape(mesh, {x, y}, {r, r}) {}
 };
 
 int main() {
@@ -182,8 +171,11 @@ int main() {
 
         MainRect mainRect(4.5f, 4.5f, 1);
 
-        Material::SingleColorMaterial boxMaterial;
+        Material::SingleColorMaterial boxMaterial, groundMaterial(Color::BurlyWood);
         Shapes::Cube boxMesh(boxMaterial);
+        Shapes::Plane plane(groundMaterial);
+
+        Shape ground(plane, {0, 0, -.5f}, {10, 10, 1});
 
         std::list<Box> rectanges;
 
@@ -194,20 +186,21 @@ int main() {
 
         rectanges.emplace_back(boxMesh, 3, 3, 0.8);
 
-        camera.setPosition(10, 0, 10);
+        rectanges.emplace_back(boxMesh, 1, 3, 0.2);
+
+        camera.setPosition({10, 0, 10});
 
         while (window.isOpen()) {
-            ImGui::Begin("Debug");
 
-            for (auto &rect : rectanges) {
+            for (auto &rect : rectanges)
                 window.draw(rect);
-            }
+
+            window.draw(ground);
 
             collisionDetector.update();
 
             window.draw(mainRect);
 
-            ImGui::End();
             window.display();
         }
     } catch (std::exception &e) { std::cout << e.what() << std::endl; }

@@ -1,9 +1,6 @@
-#ifndef BLOBENGINE_REACTION_HPP
-#define BLOBENGINE_REACTION_HPP
+#pragma once
 
 enum Reaction {
 	STOP,
 	IGNORE
 };
-
-#endif //BLOBENGINE_REACTION_HPP

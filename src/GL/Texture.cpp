@@ -85,7 +85,7 @@ unsigned int Texture::getTextureID() const {
     return texture;
 }
 
-Maths::Vec2f Texture::getTextureSize() const {
-    return {(float) width, (float) height};
+Maths::Vec2<int> Texture::getTextureSize() const {
+    return {width, height};
 }
 } // namespace Blob::GL

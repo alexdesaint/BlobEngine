@@ -4,10 +4,6 @@
 #include <Blob/GL/ShaderProgram.hpp>
 #include <Blob/GL/Texture.hpp>
 
-#include <Blob/ModelTransform.hpp>
-#include <Blob/ProjectionTransform.hpp>
-#include <Blob/ViewTransform.hpp>
-
 namespace Blob::Core {
 class Window;
 }
@@ -35,7 +31,7 @@ public:
     /// \param pt oui
     /// \param vt non
     /// \param mt pas toujours
-    virtual void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const glm::mat4 &mt) const = 0;
+    virtual void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const = 0;
 
     /// Constructor
     /// \param shaderProgram yes
@@ -61,7 +57,7 @@ class DefaultMaterial : public Material {
 private:
     static int model, view, projection;
 
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const glm::mat4 &mt) const final;
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
     static GL::ShaderProgram *shaderProgram;
@@ -81,8 +77,8 @@ struct LightPos {
 };
 
 struct Light {
-    glm::vec3 position = glm::vec3(1.2f, 1.0f, 2.0f);
-    ::Blob::Material::Color color = ::Blob::Material::Color(1.f, 1.f, 1.f);
+    Maths::Vec3<float> position = {1.2f, 1.0f, 2.0f};
+    Color::RGB color = {1.f, 1.f, 1.f};
 };
 
 class PBRMaterial {
@@ -107,7 +103,7 @@ private:
 
     static LightPos lightPos;
 
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const glm::mat4 &mt) const final;
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
     const struct {
@@ -117,7 +113,7 @@ public:
 
     static GL::ShaderProgram *shaderProgram;
 
-    Color albedo = Color(1.0f, 0.5f, 0.31f);
+    Color::RGB albedo = {1.0f, 0.5f, 0.31f};
     float metallic = 0;
     float roughness = 0;
     float ao = 1;
@@ -125,7 +121,7 @@ public:
 
     SingleColorMaterial();
 
-    SingleColorMaterial(Color albedo);
+    SingleColorMaterial(Color::RGB albedo);
 
     static void init();
 
@@ -148,7 +144,7 @@ private:
 
     static LightPos lightPos;
 
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const glm::mat4 &mt) const final;
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
     const struct {
@@ -163,7 +159,7 @@ public:
     float roughness = 0;
     float ao = 1;
     uint32_t options = 0xFFFFFFFF;
-    float texScale[2] = {1.f, 1.f};
+    Maths::Vec2<float> texScale = {1.f, 1.f};
 
     explicit SingleTextureMaterial(const Blob::GL::Texture &texture);
 

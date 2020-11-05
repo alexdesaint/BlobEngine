@@ -1,7 +1,6 @@
-#ifndef BLOBENGINE_TEXTURE_HPP
-#define BLOBENGINE_TEXTURE_HPP
+#pragma once
 
-#include <Blob/Geometrie.hpp>
+#include <Blob/Maths.inl>
 #include <string>
 
 namespace Blob::GL {
@@ -35,10 +34,8 @@ public:
 
     void setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height, bool nearest = false);
 
-    unsigned int getTextureID() const;
+    [[nodiscard]] unsigned int getTextureID() const;
 
-    Maths::Vec2f getTextureSize() const;
+    [[nodiscard]] Maths::Vec2<int> getTextureSize() const;
 };
 } // namespace Blob::GL
-
-#endif

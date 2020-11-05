@@ -11,7 +11,7 @@
  * add Texture test
  *
  * with normal and w/ normal
-*/
+ */
 
 using namespace std;
 using namespace Blob;
@@ -36,20 +36,22 @@ int main(int argc, char *argv[]) {
         OctagonalPrism opOrange(orange), opBlue(blue);
         Plane p(blue);
 
-        std::vector<Shape> shapes = {
-            {cubeOrange, 4, 0},
-            {cubeBlue, 4, 4},
-            {opOrange, 0, 4},
-            {opBlue, -4, 4},
-            {cubeDm, -4, 0},
-            {cubeBlue, -4, -4},
-            {opOrange, 0, -4},
-            {opBlue, 4, -4},
+        Shape s(cubeOrange, {4, 0});
 
-            {p, 0, 0, -1, 10, 10, 10},
+        std::vector<Shape> shapes = {
+            Shape(cubeOrange, {4, 0}),
+            Shape(cubeBlue, {4, 4, 0}),
+            Shape(opOrange, {0, 4, 0}),
+            Shape(opBlue, {-4, 4, 0}),
+            Shape(cubeDm, {-4, 0, 0}),
+            Shape(cubeBlue, {-4, -4, 0}),
+            Shape(opOrange, {0, -4, 0}),
+            Shape(opBlue, {4, -4, 0}),
+
+            Shape(p, {0, 0, -1}, {10, 10, 10}),
         };
 
-        camera.setPosition(10, 0, 10);
+        camera.setPosition({10, 0, 10});
 
         Time::TimePoint start = Time::now();
         while (window.isOpen()) {
@@ -64,7 +66,7 @@ int main(int argc, char *argv[]) {
             ImGui::SliderFloat("ao", &orange.ao, 0.0f, 1.0f);
 
             bool opt = (orange.options & orange.Options.Irradiance) != 0;
-            if(ImGui::Checkbox("Irradiance", &opt)) {
+            if (ImGui::Checkbox("Irradiance", &opt)) {
                 if (opt)
                     orange.options |= orange.Options.Irradiance;
                 else
@@ -72,7 +74,7 @@ int main(int argc, char *argv[]) {
             }
 
             opt = (orange.options & orange.Options.Radiance) != 0;
-            if(ImGui::Checkbox("Radiance", &opt)) {
+            if (ImGui::Checkbox("Radiance", &opt)) {
                 if (opt)
                     orange.options |= orange.Options.Radiance;
                 else
@@ -86,7 +88,7 @@ int main(int argc, char *argv[]) {
             ImGui::SliderFloat("Light Position Z", &SingleColorMaterial::light.position.z, -1.0f, 1.0f);
             ImGui::End();
 
-            for(const auto &s : shapes)
+            for (const auto &s : shapes)
                 window.draw(s);
 
             window.display();

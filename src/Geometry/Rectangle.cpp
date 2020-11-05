@@ -1,6 +1,6 @@
-#include <Blob/Geometrie.hpp>
+#include <Blob/Geometry/Forms.hpp>
 
-namespace Blob::Maths {
+namespace Blob::Geometry {
 bool Rectangle::overlapBigger(const Rectangle &r) const {
 
     float xdiff = size.x / 2;
@@ -18,12 +18,12 @@ bool Rectangle::overlapBigger(const Rectangle &r) const {
             (position.y + ydiff <= r.position.y + rydiff) && (position.y + ydiff >= r.position.y - rydiff));
 }
 
-std::list<Vec2i> Rectangle::rasterize() {
-    std::list<Vec2i> points;
-    int startx = (int) (position.x - size.x / 2);
-    int endx = (int) (position.x + size.x / 2);
-    int starty = (int) (position.y - size.y / 2);
-    int endy = (int) (position.y + size.y / 2);
+std::list<Maths::Vec2<int32_t>> Rectangle::rasterize() const {
+    std::list<Maths::Vec2<int32_t>> points;
+    auto startx = (int64_t) (position.x - size.x / 2);
+    auto endx = (int64_t) (position.x + size.x / 2);
+    auto starty = (int64_t) (position.y - size.y / 2);
+    auto endy = (int64_t) (position.y + size.y / 2);
 
     for (int i = startx; i <= endx; i++) {
         for (int j = starty; j <= endy; j++)
@@ -33,34 +33,24 @@ std::list<Vec2i> Rectangle::rasterize() {
     return points;
 }
 
-std::array<Vec2f, 4> Rectangle::getPoints() {
-    return {position + size / 2, position - size / 2, position + size.rotate() / 2, position - size.rotate() / 2};
+std::array<Maths::Vec2<>, 4> Rectangle::getPoints() const {
+    return {position + size / 2.0, position - size / 2, position + size.rotate() / 2, position - size.rotate() / 2};
 }
 
-bool Rectangle::overlap(const Rectangle &r) {
-    return r.overlapBigger(*this) || overlapBigger(r);
-}
-bool Rectangle::overlap(const Circle &r) {
-    return false;
-}
-bool Rectangle::overlap(const Line &r) {
-    return false;
+bool Rectangle::overlap(const Rectangle &rectangle) const {
+    return rectangle.overlapBigger(*this) || overlapBigger(rectangle);
 }
 
-/*const Point2f &Rectangle::getPosition() const {
-    return position;
+bool Rectangle::overlap(const Circle &circle) const {
+    return circle.overlap(*this);
 }
 
-const Vec2f &Rectangle::getSize() const {
-    return size;
+bool Rectangle::overlap(const Line &line) const {
+    return line.overlap(*this);
 }
 
-void Rectangle::setPosition(const Point2f &position) {
-    Rectangle::position = position;
+bool Rectangle::overlap(const Point &point) const {
+    return point.overlap(*this);
 }
-
-void Rectangle::setSize(const Vec2f &size) {
-    Rectangle::size = size;
-}*/
 
 } // namespace Blob::Maths

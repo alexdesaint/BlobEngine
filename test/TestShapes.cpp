@@ -1,10 +1,9 @@
+#include <Blob/Geometry/Vec3.hpp>
 #include <Blob/Reader/FileReader.hpp>
 #include <array>
 #include <iomanip>
 #include <iostream>
 #include <vector>
-
-#include <glm/glm.hpp>
 
 using namespace std;
 
@@ -88,20 +87,20 @@ void decodeNoT(const vector<uint8_t> &buffer, const int posNormalLen, const int 
     std::vector<array<uint16_t, 1>> indices = readSerie<uint16_t, 1>(buffer, indicesLen, offset);
 
     for (int i = 0; i < posNormalLen; i++) {
-        glm::vec3 tan, norm;
+        Blob::Geometry::Vec3 tan, norm;
         norm.x = normal[i][0];
         norm.y = normal[i][1];
         norm.z = normal[i][2];
 
-        glm::vec3 c1 = glm::cross(norm, glm::vec3(0.0, 0.0, 1.0));
-        glm::vec3 c2 = glm::cross(norm, glm::vec3(0.0, 1.0, 0.0));
+        Blob::Geometry::Vec3 c1 = norm.cross({0.0, 0.0, 1.0});
+        Blob::Geometry::Vec3 c2 = norm.cross({0.0, 1.0, 0.0});
 
-        if( glm::length(c1) > glm::length(c2) )
+        if( c1.length2() > c2.length2() )
             tan = c1;
         else
             tan = c2;
 
-        tan = glm::normalize(tan);
+        tan.normalize();
 
         tangent[i][0] = tan.x;
         tangent[i][1] = tan.y;

@@ -8,8 +8,6 @@
 // std
 #include <iostream>
 
-using namespace Blob;
-
 namespace Blob::GL {
 
 // TODO: ?????????????
@@ -72,16 +70,15 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
         std::cout << "Medium severity Error : " << errorName << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_HIGH:
-        std::cout << "High severity Error : " << errorName << std::endl << message << std::endl;
-        abort();
+        throw Blob::Core::Exception("OpenGL High severity Error : " + errorName + "\n" + message);
     default:
         std::cout << "Unknow Error severity : " << errorName << std::endl << message << std::endl;
         break;
     }
 }
 
-void Core::init(void *glfwGetProcAddress, unsigned int width, unsigned int height) {
-    std::cout << "init Core" << std::endl;
+Context::Context(void *glfwGetProcAddress, const Maths::Vec2<int> &size) {
+    std::cout << "init OpenGL" << std::endl;
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
         throw Blob::Core::Exception("Fail to load openGL");
 
@@ -109,12 +106,15 @@ void Core::init(void *glfwGetProcAddress, unsigned int width, unsigned int heigh
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // pour faire des lignes
     glClearColor(0.2, 0.2, 0.2, 1.0);
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, size.x, size.y);
 
     // alpha
     glEnable(GL_BLEND);
     glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+Context::~Context() {
+    std::cout << "destroy OpenGL" << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &s, const Core &a) {
@@ -129,14 +129,14 @@ void Core::clear() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void Core::setViewport(unsigned int width, unsigned int height) {
-    glViewport(0, 0, width, height);
+void Core::setViewport(const Maths::Vec2<int> &framebufferSize) {
+    glViewport(0, 0, framebufferSize.x, framebufferSize.y);
 }
 
-float Core::readPixel(Blob::Maths::Vec2f pos) {
+float Core::readPixel(Maths::Vec2<int> pos) {
     float z;
 
-    glReadPixels((int) pos.x, (int) pos.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
+    glReadPixels(pos.x, pos.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
 
     return z;
 }
@@ -178,27 +178,68 @@ void Core::setTexture(const Texture &texture) {
     glBindTexture(GL_TEXTURE_2D, texture.texture);
 }
 
-void Core::setMat4(const float *matrix, int position) {
-    glUniformMatrix4fv(position, 1, GL_FALSE, matrix);
+template<>
+void Core::setUniform<>(const float (&val)[4][4], int position) {
+    glUniformMatrix4fv(position, 1, GL_FALSE, &val[0][0]);
 }
 
-void Core::setVec2(const float *matrix, int position) {
-    glUniform2fv(position, 1, matrix);
+template<>
+void Core::setUniform<>(const float (&val)[16], int position) {
+    glUniformMatrix4fv(position, 1, GL_FALSE, &val[0]);
 }
 
-void Core::setVec3(const float *matrix, int position) {
-    glUniform3fv(position, 1, matrix);
+template<>
+void Core::setUniform<>(const Maths::Vec2<float> &val, int position) {
+    glUniform2fv(position, 1, &val.x);
 }
 
-void Core::setVec4(const float *matrix, int position) {
-    glUniform4fv(position, 1, matrix);
+template<>
+void Core::setUniform<>(const Maths::Vec3<float> &val, int position) {
+    glUniform3fv(position, 1, &val.x);
 }
 
-void Core::setFloat(float val, int position) {
+template<>
+void Core::setUniform<>(const Maths::Mat3 &val, int position) {
+    glUniformMatrix3fv(position, 1, GL_FALSE, &val.a11);
+}
+
+template<>
+void Core::setUniform<>(const Maths::Mat4 &val, int position) {
+    glUniformMatrix4fv(position, 1, GL_FALSE, &val.a11);
+}
+
+template<>
+void Core::setUniform<>(const Maths::ModelTransform &val, int position) {
+    glUniformMatrix4fv(position, 1, GL_FALSE, &val.a11);
+}
+
+template<>
+void Core::setUniform<>(const Maths::ViewTransform &val, int position) {
+    glUniformMatrix4fv(position, 1, GL_FALSE, &val.a11);
+}
+
+template<>
+void Core::setUniform<>(const Maths::ProjectionTransform &val, int position) {
+    glUniformMatrix4fv(position, 1, GL_FALSE, &val.a11);
+}
+
+template<>
+void Core::setUniform<>(const Color::RGB &c, int position) {
+    glUniform3fv(position, 1, &c.R);
+}
+
+template<>
+void Core::setUniform<>(const float &val, int position) {
     glUniform1f(position, val);
 }
 
-void Core::setUint(int32_t val, int position) {
+template<>
+void Core::setUniform<>(const int &val, int position) {
+    glUniform1i(position, val);
+}
+
+template<>
+void Core::setUniform<>(const unsigned int &val, int position) {
     glUniform1ui(position, val);
 }
 

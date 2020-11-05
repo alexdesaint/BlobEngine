@@ -7,7 +7,7 @@
 #include <Blob/GL/VertexArrayObject.hpp>
 #include <Blob/Material.hpp>
 
-#include <Blob/RenderOptions.hpp>
+#include <Blob/Core/RenderOptions.hpp>
 
 namespace Blob::Core {
 
@@ -31,8 +31,8 @@ public:
     void setMaterial(Material::Material &material);
 };
 
-template<> void Mesh::setIndices<>(uint8_t *indices, int32_t numOfIndices);
-template<> void Mesh::setIndices<>(uint16_t *indices, int32_t numOfIndices);
-template<> void Mesh::setIndices<>(uint32_t *indices, int32_t numOfIndices);
+template<> void Mesh::setIndices(uint8_t *indices, int32_t numOfIndices);
+template<> void Mesh::setIndices(uint16_t *indices, int32_t numOfIndices);
+template<> void Mesh::setIndices(uint32_t *indices, int32_t numOfIndices);
 
 } // namespace Blob
