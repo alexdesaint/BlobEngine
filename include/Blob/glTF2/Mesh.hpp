@@ -3,8 +3,8 @@
 #include <Blob/GL/VertexArrayObject.hpp>
 #include <Blob/Mesh.hpp>
 #include <Blob/glTF2/Accessor.hpp>
-#include <Blob/glTF2/BufferView.hpp>
 #include <Blob/glTF2/Buffer.hpp>
+#include <Blob/glTF2/BufferView.hpp>
 #include <Blob/glTF2/Material.hpp>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -18,7 +18,8 @@ public:
         friend Mesh;
 
     public:
-        class Attribute {
+        class Attribute : public GL::VertexArrayObject {
+        private:
         public:
             int POSITION = -1;
             int NORMAL = -1;
@@ -28,24 +29,26 @@ public:
             int COLOR_0 = -1;
             int JOINTS_0 = -1;
             int WEIGHTS_0 = -1;
-        }; ///< attributes : A dictionary object, where each key corresponds to
+            Attribute(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+                      std::vector<glTF2::BufferView> &bufferViews);
+
+            friend std::ostream &operator<<(std::ostream &s, const Attribute &a);
+        } attributes; ///< attributes : A dictionary object, where each key corresponds to
         ///< mesh attribute semantic and each value is the index of the accessor containing attribute's data.
         ///< see : https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#meshes
 
-        Attribute attributes;
-
         int indices = -1;  ///< The index of the accessor that contains the indices.
         int material = -1; ///< The index of the material to apply to this primitive when rendering.
+        /// TODO: Use this :
         int mode = 4;      ///< The type of primitives to render. default: 4
         // targets; ///< An array of Morph Targets, each Morph Target is a dictionary mapping attributes
         // (only POSITION, NORMAL, and TANGENT supported) to their deviations in the Morph Target.
 
         // Engine variable
-        GL::VertexArrayObject vao;
-        uint8_t attributeDescriptor = 0;
         std::vector<uint8_t> indicesArray;
 
-        Primitive();
+        Primitive(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+                  std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials);
 
         friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
     };
@@ -57,7 +60,8 @@ public:
 
     Mesh() = delete;
 
-    Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers, std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials);
+    Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+         std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials);
 
     friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
 

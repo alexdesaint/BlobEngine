@@ -6,7 +6,7 @@
 
 namespace Blob::glTF2 {
 
-class Buffer : public Blob::GL::VertexBufferObject {
+class Buffer : public GL::VertexBufferObject {
 public:
     std::string uri;   ///< The uri of the buffer.
     size_t byteLength; ///< The total byte length of the buffer view. Required

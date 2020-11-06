@@ -1,7 +1,7 @@
-#include <iostream>
-#include <vector>
 #include <Blob/Reader/FileReader.hpp>
 #include <iomanip>
+#include <iostream>
+#include <vector>
 
 #include <glm/glm.hpp>
 
@@ -19,7 +19,7 @@ std::vector<array<T, SIZE>> readSerie(const vector<uint8_t> &buffer, const int c
     int posIndex = 0;
     int localPosIndex = 0;
     for (int i = offset; i < (count * SIZE * sizeof(T) + offset); i += sizeof(T)) {
-        for(int j = 0; j < sizeof(T); j++)
+        for (int j = 0; j < sizeof(T); j++)
             u.b[j] = buffer[j + i];
         data[posIndex][localPosIndex] = u.f;
         localPosIndex++;
@@ -34,28 +34,24 @@ std::vector<array<T, SIZE>> readSerie(const vector<uint8_t> &buffer, const int c
     return data;
 }
 
-std::ostream & operator<<(std::ostream &os, array<float, 2> p) {
-    //os << "{" << std::setprecision(1) << std::fixed << p[0] << "f, " << p[1] << "f}";
+std::ostream &operator<<(std::ostream &os, array<float, 2> p) {
+    // os << "{" << std::setprecision(1) << std::fixed << p[0] << "f, " << p[1] << "f}";
     os << "{" << std::setprecision(2) << p[0] << ", " << p[1] << "}";
     return os;
 }
-std::ostream & operator<<(std::ostream &os, array<float, 3> p) {
-    //os << "{" << std::setprecision(1) << std::fixed << p[0] << "f, " << p[1] << "f, " << p[2] << "f}";
+std::ostream &operator<<(std::ostream &os, array<float, 3> p) {
+    // os << "{" << std::setprecision(1) << std::fixed << p[0] << "f, " << p[1] << "f, " << p[2] << "f}";
     os << "{" << std::setprecision(2) << p[0] << ", " << p[1] << ", " << p[2] << "}";
     return os;
 }
-std::ostream & operator<<(std::ostream &os, array<float, 4> p) {
-    //os << "{" << std::setprecision(1) << std::fixed << p[0] << "f, " << p[1] << "f, " << p[2] << "f, " << p[3] << "f}";
-    //os << "{" << std::setprecision(1) << std::fixed << p[0] << "f, " << p[1] << "f, " << p[2] << "f}";
+std::ostream &operator<<(std::ostream &os, array<float, 4> p) {
+    // os << "{" << std::setprecision(1) << std::fixed << p[0] << "f, " << p[1] << "f, " << p[2] << "f, " << p[3] << "f}";
+    // os << "{" << std::setprecision(1) << std::fixed << p[0] << "f, " << p[1] << "f, " << p[2] << "f}";
     os << "{" << std::setprecision(2) << p[0] << ", " << p[1] << ", " << p[2] << "}";
     return os;
 }
 
 void decode(const vector<uint8_t> &buffer, const int posNormalLen, const int indicesLen) {
-    union {
-        float f;
-        uint8_t b[4];
-    } u;
 
     int offset = 0;
     std::vector<array<float, 3>> pos = readSerie<float, 3>(buffer, posNormalLen, offset);
@@ -95,7 +91,7 @@ void decodeNoT(const vector<uint8_t> &buffer, const int posNormalLen, const int 
         glm::vec3 c1 = glm::cross(norm, glm::vec3(0.0, 0.0, 1.0));
         glm::vec3 c2 = glm::cross(norm, glm::vec3(0.0, 1.0, 0.0));
 
-        if( glm::length(c1) > glm::length(c2) )
+        if (glm::length(c1) > glm::length(c2))
             tan = c1;
         else
             tan = c2;
@@ -114,7 +110,7 @@ void decodeNoT(const vector<uint8_t> &buffer, const int posNormalLen, const int 
     cout << endl;
 }
 
-int main(){
+int main() {
     printf("Cube :\n");
     decode(Blob::Reader::FileReader::loadBinaryFile("data/models/cube.bin"), 24, 36);
 

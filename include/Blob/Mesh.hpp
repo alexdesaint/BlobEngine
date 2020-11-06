@@ -14,7 +14,7 @@ namespace Blob {
 class Mesh {
     friend class Window;
 private:
-    Material const *material = DefaultMaterial::defaultMaterial;
+    Material const *material = Material::defaultMaterial;
     GL::VertexArrayObject &vertexArrayObject;
 
 public:

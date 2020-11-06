@@ -123,8 +123,8 @@ namespace Blob::Shapes {
     VertexArrayObject *vaoOctagonalPrism;
 
     void init() {
-        DefaultMaterial::init();
         SingleColorMaterial::init();
+        Material::defaultMaterial = new SingleColorMaterial();
         SingleTextureMaterial::init();
         vbo = new VertexBufferObject((uint8_t *) data, sizeof(data));
         vaoCube = new VertexArrayObject();
@@ -151,7 +151,7 @@ namespace Blob::Shapes {
     }
 
     void destroy() {
-        DefaultMaterial::destroy();
+        delete Material::defaultMaterial;
         SingleColorMaterial::destroy();
         SingleTextureMaterial::destroy();
 

@@ -12,7 +12,7 @@ class Texture {
     friend Core;
 
 private:
-    unsigned int texture = -1; // the opengl texture
+    uint32_t texture = 0; // the opengl texture
 
     int height = 0, width = 0, bitPerPixel = 0; // images data
 
@@ -26,6 +26,8 @@ public:
     explicit Texture(const std::string &path, bool nearest = false);
 
     Texture(const Texture &) = delete;
+
+    Texture(Texture &&vbo) noexcept;
 
     ~Texture();
 

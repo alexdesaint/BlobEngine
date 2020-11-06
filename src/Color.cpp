@@ -2,7 +2,8 @@
 namespace Blob {
 
 std::ostream &operator<<(std::ostream &out, const Color &vec) {
-    out << "(" << vec.R << ", " << vec.G << ", " << vec.B << ", " << vec.A << ")" << std::endl;
+    //out << "(" << vec.R << ", " << vec.G << ", " << vec.B << ", " << vec.A << ")" << std::endl;
+    out << "R : " << vec.R << ", R : " << vec.G << ", B : " << vec.B << ", A : " << vec.A << std::endl;
     return out;
 }
 

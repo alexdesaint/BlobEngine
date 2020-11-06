@@ -1,22 +1,15 @@
+#include <Blob/glTF2/BasicFunctions.hpp>
 #include <Blob/glTF2/Image.hpp>
 
 using namespace std;
 
 namespace Blob::glTF2 {
     Image::Image(const nlohmann::json &j, const std::string &path) {
-        if (j.find("uri") != j.end()) {
-            j.at("uri").get_to(uri);
-            uri = path + uri;
-        }
-
-        if (j.find("mimeType") != j.end())
-            j.at("mimeType").get_to(mimeType);
-
-        if (j.find("bufferView") != j.end())
-            j.at("bufferView").get_to(bufferView);
-
-        if (j.find("name") != j.end())
-            j.at("name").get_to(name);
+        NotRequired(j, "uri", uri);
+        NotRequired(j, "name", name);
+        uri = path + uri;
+        NotRequired(j, "name", mimeType);
+        NotRequired(j, "name", bufferView);
     }
 
     std::ostream &operator<<(std::ostream &s, const Image &a) {

@@ -28,9 +28,7 @@ int main(int argc, char *argv[]) {
         blue.albedo = Color::DeepSkyBlue;
         orange.albedo = Color::Coral;
 
-        DefaultMaterial dm;
-
-        Cube cubeOrange(orange), cubeBlue(blue), cubeDm(dm);
+        Cube cubeOrange(orange), cubeBlue(blue), cubeDm;
         OctagonalPrism opOrange(orange), opBlue(blue);
         Plane p(blue);
 
@@ -58,8 +56,8 @@ int main(int argc, char *argv[]) {
             ImGui::Text("Material");
             ImGui::ColorEdit3("albedo", &orange.albedo.R);
             ImGui::SliderFloat("metallic", &orange.metallic, 0.0f, 1.0f);
-            ImGui::SliderFloat("roughness", &orange.roughness, 0.0f, 10.0f);
-            ImGui::SliderFloat("ao", &orange.ao, 0.0f, 1.0f);
+            ImGui::SliderFloat("roughness", &orange.roughness, 0.0f, 1.0f);
+            ImGui::SliderFloat("ao", &orange.ao, 0.0f, 1.f);
 
             bool opt = (orange.options & orange.Options.Irradiance) != 0;
             if(ImGui::Checkbox("Irradiance", &opt)) {

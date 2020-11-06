@@ -72,11 +72,17 @@ SceneManager::SceneManager(const std::string &file) {
 
     j.at("bufferViews").get_to(bufferViews);
 
-    // image
+    images.reserve(j["images"].size());
+    for (const json &js : j["images"])
+        images.emplace_back(js, path);
 
-    // samplers
+    samplers.reserve(j["samplers"].size());
+    for (const json &js : j["samplers"])
+        samplers.emplace_back(js);
 
-    // textures
+    textures.reserve(j["textures"].size());
+    for (const json &js : j["textures"])
+        textures.emplace_back(js, images, samplers);
 
     materials.reserve(j["materials"].size());
     for (const json &js : j["materials"])

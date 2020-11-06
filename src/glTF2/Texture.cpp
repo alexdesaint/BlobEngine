@@ -1,3 +1,4 @@
+#include <Blob/glTF2/BasicFunctions.hpp>
 #include <Blob/glTF2/Texture.hpp>
 
 using namespace std;
@@ -5,19 +6,13 @@ using namespace std;
 namespace Blob::glTF2 {
     Texture::Texture(const nlohmann::json &j, vector<Image> &images, vector<Sampler> &samplers) {
 
-        if (j.find("sampler") != j.end()) {
-            j.at("sampler").get_to(sampler);
-            //samplerIt = next(samplers.begin(), sampler);
+        NotRequired(j, "sampler", sampler);/// TODO: Create a Blob::Sampler class
+
+        if(NotRequired(j, "source", source)) {
+            setImage(images[source].uri);
         }
 
-        if (j.find("source") != j.end()) {
-            j.at("source").get_to(source);
-            //sourceIt = next(images.begin(), source);
-            //setImage(sourceIt->uri);
-        }
-
-        if (j.find("name") != j.end())
-            j.at("name").get_to(name);
+        NotRequired(j, "name", name);
     }
 
     std::ostream &operator<<(std::ostream &s, const Texture &a) {

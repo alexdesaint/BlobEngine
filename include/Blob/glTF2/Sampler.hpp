@@ -9,11 +9,13 @@ namespace Blob::glTF2 {
      */
     class Sampler {
     public:
-        int magFilter = 9728; ///< Magnification filter.
-        int minFilter = 9728; ///< Minification filter.
-        int wrapS = 10497; ///< s wrapping mode.
-        int wrapT = 10497; ///< t wrapping mode.
+        int magFilter; ///< Magnification filter.
+        int minFilter; ///< Minification filter.
+        int wrapS; ///< s wrapping mode.
+        int wrapT; ///< t wrapping mode.
         std::string name; ///< The user-defined name of this object.
+
+        Sampler();
 
         explicit Sampler(const nlohmann::json &j);
 

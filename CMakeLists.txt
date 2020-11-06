@@ -15,10 +15,18 @@ find_package(Doxygen)
 if (DOXYGEN_FOUND)
     set(DOXYGEN_GENERATE_HTML YES)
     set(DOXYGEN_GENERATE_MAN NO)
+
+    # grouping documentation
     set(DOXYGEN_DISTRIBUTE_GROUP_DOC YES)
-    set(DOXYGEN_FULL_PATH_NAMES YES)
+
+    # main page
     set(DOXYGEN_USE_MDFILE_AS_MAINPAGE README.md)
+
+    # for include
+    set(DOXYGEN_FULL_PATH_NAMES YES)
     set(DOXYGEN_STRIP_FROM_INC_PATH ${PROJECT_SOURCE_DIR}/include)
+
+    # UML
     #set(DOXYGEN_UML_LOOK YES)
     #set(DOXYGEN_EXTRACT_ALL YES)
 

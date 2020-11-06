@@ -13,6 +13,8 @@ namespace Blob::glTF2 {
  */
 class Texture : public GL::Texture {
 public:
+    Sampler defaultSampler;
+
     int sampler = -1; ///< The index of the sampler used by this texture. When undefined, a sampler with repeat
     ///< wrapping and auto filtering should be used.
 

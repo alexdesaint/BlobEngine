@@ -14,22 +14,22 @@ static const struct {
 } vertices[3] = {{-0.6f, -0.4f, 1.f, 0.f, 0.f}, {0.6f, -0.4f, 0.f, 1.f, 0.f}, {0.f, 0.6f, 0.f, 0.f, 1.f}};
 
 static std::string vertex_shader_text = "#version 110\n"
-                                        "uniform mat4 MVP;\n"
-                                        "attribute vec3 vCol;\n"
-                                        "attribute vec2 vPos;\n"
-                                        "varying vec3 color;\n"
-                                        "void main()\n"
-                                        "{\n"
-                                        "    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
-                                        "    color = vCol;\n"
-                                        "}\n";
+                                        "uniform mat4 MVP;"
+                                        "attribute vec3 vCol;"
+                                        "attribute vec2 vPos;"
+                                        "varying vec3 color;"
+                                        "void main()"
+                                        "{"
+                                        "    gl_Position = MVP * vec4(vPos, 0.0, 1.0);"
+                                        "    color = vCol;"
+                                        "}";
 
 static std::string fragment_shader_text = "#version 110\n"
-                                          "varying vec3 color;\n"
-                                          "void main()\n"
-                                          "{\n"
-                                          "    gl_FragColor = vec4(color, 1.0);\n"
-                                          "}\n";
+                                          "varying vec3 color;"
+                                          "void main()"
+                                          "{"
+                                          "    gl_FragColor = vec4(color, 1.0);"
+                                          "}";
 
 static void error_callback(int error, const char *description) {
     fprintf(stderr, "Error: %s\n", description);
@@ -71,12 +71,11 @@ int main() {
 
     Blob::GL::ShaderProgram &sp = Blob::GL::ShaderProgram::Shaders["basicShader2"];
 
-
     sp.addVertexShader(vertex_shader_text);
     sp.addFragmentShader(fragment_shader_text);
     sp.linkShaders();
 
-    if(sp.isValid())
+    if (sp.isValid())
         std::cout << "Valid !!!" << std::endl;
     else
         std::cout << "Not valid..." << std::endl;
