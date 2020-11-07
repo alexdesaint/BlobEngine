@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Blob/Geometrie.hpp>
-#include <Blob/Exception.hpp>
 #include <Blob/Collision/Reaction.hpp>
+#include <Blob/Exception.hpp>
+#include <Blob/Geometry/Forms.hpp>
 
 #include <deque>
 #include <list>
@@ -11,240 +11,131 @@
 
 namespace Blob::Collision {
 
-    class CollisionDetector;
+class CollisionDetector;
+
+template<class T, const int layer = 0>
+class Collider : public T {
+    friend CollisionDetector;
+
+private:
+    int _objectType_;
+    bool enable = false;
+
+    static std::unordered_map<int64_t, std::unordered_set<Collider<T> *>> spacialHash;
+
+protected:
+    union VecKey {
+        Maths::Vec2<int32_t> vec{};
+        uint64_t key;
+    };
+
+    virtual void hit(int objectType, Geometry::Form &object) {}
+
+public:
+    explicit Collider(int objectType) : _objectType_(objectType) {}
+
+    void setObjectType(int objectType) { _objectType_ = objectType; }
+
+    [[nodiscard]] int getObjectType() const { return _objectType_; };
+
+    void enableCollision() {
+        if (!enable) {
+            enable = true;
+            std::list<VecKey> pos = T::rasterize();
+
+            for (const auto &p : pos) {
+                auto it = spacialHash.find(p.key);
+                if (it == spacialHash.end())
+                    spacialHash[p.key] = {this};
+                else if (it->second.find(this) == it->second.end())
+                    it->second.insert(this);
+                else
+                    throw Core::Exception("Insertion in Spacial Hash but element already exist");
+            }
+        }
+    }
+
+    void disableCollision() {
+        if (enable) {
+            enable = false;
+            std::list<VecKey> pos = T::rasterize();
+
+            for (const auto &p : pos) {
+                auto d = spacialHash[p.key].erase(this);
+
+                if (d != 1)
+                    throw Core::Exception("Remove in Spacial Hash but no element");
+
+                if (spacialHash[p.key].empty())
+                    spacialHash.erase(p.key);
+            }
+        }
+    }
+
+    template<class U>
+    static bool targetOverlap(Collider<U> &object, std::unordered_set<Collider<T> *> &hittedObjects) {
+        bool ret = false;
+
+        std::list<Collider::VecKey> pos = object.rasterize();
+
+        for (const Collider::VecKey &p : pos) {
+
+            for (Collider<T> *target : spacialHash[p.key]) {
+                if (target->overlap(object)) {
+                    if (hittedObjects.find(target) == hittedObjects.end()) {
+                        hittedObjects.emplace(target);
+                    }
+
+                    ret = true;
+                }
+            }
+        }
+
+        return ret;
+    }
+};
+
+template<class T>
+class DynamicCollider : public Collider<T> {
+    friend CollisionDetector;
+
+private:
+    static std::unordered_set<DynamicCollider<T> *> colliders;
+
+protected:
+    void hit(int objectType, Geometry::Form &object) override { speed = 0; } // Bounce ?
 
     /**
-     * Object is a virtual class
-     * An object have a type to define him and can be hit
+     * This method is called right after the collision is computed
      */
-    class Object : virtual public Form {
-        friend CollisionDetector;
-    private:
-        int objectType;
+    virtual void postCollisionUpdate() {}
 
-    protected:
-        bool enable = false;
+public:
+    Maths::Vec2<> speed{};
 
-        /**
-         * To set the type of the object
-         * The type is used to define the child class of this Object.
-         * Typic
-         * @param objectType
-         */
-        void setObjectType(int objectType) {
-            Object::objectType = objectType;
-        }
+    explicit DynamicCollider(int objectType) : Collider<T>(objectType) {}
+};
 
-        explicit Object(int objectType) : objectType(objectType) {}
-
-        virtual void hit(int objectType, Object &object) {}
-
-        std::list<Object *> getImtemsHere(Vec2f pos);
-
-    public:
-        int getObjectType() const;
-    };
-
-    class DynamicObject : public Object {
-        friend CollisionDetector;
-    private:
-        Reaction reaction = STOP;
-
-    protected:
-        Vec2f speed{};
-
-        explicit DynamicObject(int objectType) : Object(objectType) {}
-
-        /**
-         * Set the reaction when you hit an object.
-         * Can bet set in 'hit' to set the reaction of the current collision or in the constructor if you know you will
-         * only use one reaction type.
-         *
-         * The default value is 'STOP'
-         *
-         * @param reaction
-         */
-        void setReaction(Reaction reaction) {
-            this->reaction = reaction;
-        }
-
-        /**
-         * This method is used to stop the dynamic object from moving.
-         * it will be called each time the collision detector move the target.
-         * For example, you can implement this method to return false when the object have reach the destination.
-         *
-         * @return return true to keep moving or false to stop
-         */
-        virtual bool keepMoving() {
-            return true;
-        };
-
-        /**
-         * This method is called right before the collision is computed.
-         * It's the perfect moment to set the final speed
-         */
-        virtual void preCollisionUpdate() {}
-
-        /**
-         * This method is called right after the collision is computed
-         * It can be used to check is you had a collision during this move.
-         * For example if 'hit' has not been called between 'preCollisionUpdate' and 'postCollisionUpdate'.
-         */
-        virtual void postCollisionUpdate() {}
-    };
-
-    class CircleStatic : public Object {
-        friend CollisionDetector;
-    private:
-        std::list<CircleStatic *>::iterator elementIt{};
-    protected:
-        Circle mainCircle{};
-
-        void enableCollision();
-
-        void disableCollision();
-
-        explicit CircleStatic(const int objectType) : Object(objectType) {
-            enableCollision();
-        }
-
-        ~CircleStatic() {
-            disableCollision();
-        }
-    };
-
-    class CircleDynamic : public DynamicObject {
-        friend CollisionDetector;
-    private:
-        std::list<CircleDynamic *>::iterator elementIt{};
-    protected:
-        Circle mainCircle{};
-
-        void enableCollision();
-
-        void disableCollision();
-
-        explicit CircleDynamic(const int objectType) : DynamicObject(objectType) {
-            enableCollision();
-        }
-
-        ~CircleDynamic() {
-            disableCollision();
-        }
-    };
-
-    class RectStatic : public Object, public Rectangle {
-        friend CollisionDetector;
-    private:
-        std::list<RectStatic *>::iterator elementIt{};
-    protected:
-        void enableCollision();
-
-        void disableCollision();
-
-    public:
-        explicit RectStatic(Vec2f position, Vec2f size, const int objectType) :
-                Rectangle(position, size),
-                Object(objectType) {
-            enableCollision();
-        }
-
-        ~RectStatic() {
-            disableCollision();
-        }
-    };
-
-    class RectDynamic : public DynamicObject, public Rectangle {
-        friend CollisionDetector;
-    private:
-        std::list<RectDynamic *>::iterator elementIt{};
-    protected:
-
-        void enableCollision();
-
-        void disableCollision();
-
-    public:
-        explicit RectDynamic(Vec2f position, Vec2f size, const int objectType) :
-                Rectangle(position, size),
-                DynamicObject(objectType) {
-            enableCollision();
-        }
-
-        ~RectDynamic() {
-            disableCollision();
-        }
-    };
-
-    class LineStatic : public Object {
-        friend CollisionDetector;
-    private:
-        std::list<LineStatic *>::iterator elementIt{};
-    protected:
-        std::deque<Point2f> lines{};
-
-        void enableCollision();
-
-        void disableCollision();
-
-        explicit LineStatic(const int objectType) : Object(objectType) {
-            enableCollision();
-        }
-
-        ~LineStatic() {
-            disableCollision();
-        }
-    };
-
-    class CollisionDetector {
-        friend CircleStatic;
-        friend CircleDynamic;
-        friend RectStatic;
-        friend RectDynamic;
-        friend LineStatic;
-        friend Object;
+class CollisionDetector {
 #ifdef TEST
-        friend test_class;
+    friend test_class;
 #endif
-    private:
+private:
+    static bool targetOverlap(DynamicCollider &object, const std::unordered_set<Collider *> &targets,
+                              std::unordered_map<Collider *, Reaction> &hittedObjects);
 
-        static std::unordered_map<int64_t, std::unordered_set<Object *>> spacialHash;
+    static void computeLocalCollision(DynamicCollider &object, const std::unordered_set<Collider *> &targets, Maths::Vec2<> frameMove);
 
-        static std::list<CircleDynamic *> circleDynamicList;
-        static std::list<RectDynamic *> rectDynamicList;
+    static std::list<int64_t> getPath(Maths::Vec2<int32_t> pos, Maths::Vec2<int32_t> dest);
 
-        bool timeStoped = false;
+public:
+    // StaticObject *getClosetObject(Circle &object, Vec2<> frameMove, Hit &hit);
 
-        static uint64_t hashCoor(Vec2f pos);
+    // void checkCollision(CircleDynamic &object);
 
-        static Vec2i unhashCoor(uint64_t pos);
+    template<typename T>
+    void checkCollision(DynamicCollider<T> &dynamicCollider, const Maths::Vec2<>& frameMove);
 
-        static uint64_t hashCoor(Vec2i pos);
-
-        static void addToSpacialHash(std::list<Vec2i> pos, Object *o);
-
-        static void removeFromSpacialHash(std::list<Vec2i> pos, Object *o);
-
-        static bool targetOverlap(RectDynamic &object, Rectangle &r, const std::unordered_set<Object *> &targets,
-                                  std::unordered_map<Object *, Reaction> &hittedObjects);
-
-        static void
-        computeLocalCollision(RectDynamic &object, const std::unordered_set<Object *> &targets, Blob::Vec2f frameMove);
-
-        static std::list<int64_t> getPath(Vec2i pos, Vec2i dest);
-
-    public:
-
-        //StaticObject *getClosetObject(Circle &object, Vec2f frameMove, Hit &hit);
-
-        //void checkCollision(CircleDynamic &object);
-
-        void checkCollision(RectDynamic &object);
-
-        void update();
-
-        void pause();
-
-        void unpause();
-    };
-}
+    void update();
+};
+} // namespace Blob::Collision

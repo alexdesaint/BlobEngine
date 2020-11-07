@@ -165,7 +165,7 @@ std::ostream &operator<<(std::ostream &s, const Mesh::Primitive::Attribute &a) {
 
 Mesh::Primitive::Primitive(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
                            std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials)
-    : attributes(j["attributes"], accessors, buffers, bufferViews), Blob::Mesh(attributes) {
+    : attributes(j["attributes"], accessors, buffers, bufferViews), Core::Mesh(attributes) {
 
     NotRequired(j, "mode", mode);
 
@@ -219,7 +219,7 @@ Mesh::Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std
     NotRequired(j, "name", name);
 
     if (primitives.size() != 1)
-        throw Exception("Mesh with multiple primitives not supported yet");
+        throw Core::Exception("Mesh with multiple primitives not supported yet");
 }
 
 std::ostream &operator<<(std::ostream &s, const Mesh &a) {

@@ -3,9 +3,9 @@
 #include <Blob/Mesh.hpp>
 #include <list>
 
-namespace Blob {
+namespace Blob::Core {
 
-class Shape : public ModelTransform {
+class Shape : public Maths::ModelTransform {
     friend Window;
 
 private:
@@ -14,10 +14,29 @@ private:
     Shape *parent = nullptr;
 
 public:
-    Shape(Mesh &r, float LocationX = 0.f, float LocationY = 0.f, float LocationZ = 0.f, float ScaleX = 1.f, float ScaleY = 1.f, float ScaleZ = 1.f,
-          float RotationX = 0.f, float RotationY = 0.f, float RotationZ = 0.f);
-    Shape(float LocationX = 0.f, float LocationY = 0.f, float LocationZ = 0.f, float ScaleX = 1.f, float ScaleY = 1.f, float ScaleZ = 1.f,
-          float RotationX = 0.f, float RotationY = 0.f, float RotationZ = 0.f);
+    Shape() = default;
+
+    explicit Shape(Mesh &r);
+
+    Shape(Mesh &r, const Maths::Vec3<float> &Location);
+
+    Shape(Mesh &r, const Maths::Vec2<float> &Location);
+
+    Shape(Mesh &r, const Maths::Vec3<float> &Location, const Maths::Vec3<float> &Scale);
+
+    Shape(Mesh &r, const Maths::Vec2<float> &Location, const Maths::Vec2<float> &Scale);
+
+    Shape(Mesh &r, const Maths::Vec3<float> &Location, const Maths::Vec3<float> &Scale, const Maths::Vec3<float> &Rotation);
+
+    explicit Shape(const Maths::Vec3<float> &Location);
+
+    explicit Shape(const Maths::Vec2<float> &Location);
+
+    Shape(const Maths::Vec3<float> &Location, const Maths::Vec3<float> &Scale);
+
+    Shape(const Maths::Vec2<float> &Location, const Maths::Vec2<float> &Scale);
+
+    Shape(const Maths::Vec3<float> &Location, const Maths::Vec3<float> &Scale, const Maths::Vec3<float> &Rotation);
 
     void setMesh(Mesh &r);
     void setMesh(Mesh *r);
@@ -32,4 +51,4 @@ public:
 
     friend std::ostream &operator<<(std::ostream &s, const Shape &a);
 };
-} // namespace Blob
+} // namespace Blob::Core

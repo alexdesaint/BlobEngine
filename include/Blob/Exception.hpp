@@ -4,7 +4,7 @@
 #include <exception>
 #include <string>
 
-namespace Blob {
+namespace Blob::Core {
     class Exception : public std::exception {
     private:
         const std::string errorMsg;

@@ -1,25 +1,67 @@
 #include <Blob/Shape.hpp>
 #include <algorithm>
 
-namespace Blob {
+namespace Blob::Core {
 
-Shape::Shape(Mesh &r, float LocationX, float LocationY, float LocationZ, float ScaleX, float ScaleY, float ScaleZ, float RotationX, float RotationY,
-             float RotationZ) {
+Shape::Shape(Mesh &r) {
     mesh = &r;
-    setPosition(LocationX, LocationY, LocationZ);
-    setScale(ScaleX, ScaleY, ScaleZ);
-    setRotation(RotationX, 1, 0, 0);
-    setRotation(RotationY, 0, 1, 0);
-    setRotation(RotationZ, 0, 0, 1);
 }
 
-Shape::Shape(float LocationX, float LocationY, float LocationZ, float ScaleX, float ScaleY, float ScaleZ, float RotationX, float RotationY,
-             float RotationZ) {
-    setPosition(LocationX, LocationY, LocationZ);
-    setScale(ScaleX, ScaleY, ScaleZ);
-    setRotation(RotationX, 1, 0, 0);
-    setRotation(RotationY, 0, 1, 0);
-    setRotation(RotationZ, 0, 0, 1);
+Shape::Shape(Mesh &r, const Maths::Vec3<float> &location) {
+    mesh = &r;
+    setPosition(location);
+}
+
+Shape::Shape(const Maths::Vec3<float> &location) {
+    setPosition(location);
+}
+
+Shape::Shape(Mesh &r, const Maths::Vec2<float> &location) {
+    mesh = &r;
+    setPosition(location);
+}
+
+Shape::Shape(const Maths::Vec2<float> &location) {
+    setPosition(location);
+}
+
+Shape::Shape(Mesh &r, const Maths::Vec3<float> &location, const Maths::Vec3<float> &scale) {
+    mesh = &r;
+    setPosition(location);
+    setScale(scale);
+}
+
+Shape::Shape(Mesh &r, const Maths::Vec2<float> &location, const Maths::Vec2<float> &scale) {
+    mesh = &r;
+    setPosition(location);
+    setScale(scale);
+}
+
+Shape::Shape(const Maths::Vec3<float> &location, const Maths::Vec3<float> &scale) {
+    setPosition(location);
+    setScale(scale);
+}
+
+Shape::Shape(const Maths::Vec2<float> &location, const Maths::Vec2<float> &scale) {
+    setPosition(location);
+    setScale(scale);
+}
+
+Shape::Shape(Mesh &r, const Maths::Vec3<float> &location, const Maths::Vec3<float> &scale, const Maths::Vec3<float> &rotation) {
+    mesh = &r;
+    setPosition(location);
+    setScale(scale);
+    setRotation(rotation.x, {1, 0, 0});
+    setRotation(rotation.y, {0, 1, 0});
+    setRotation(rotation.z, {0, 0, 1});
+}
+
+Shape::Shape(const Maths::Vec3<float> &location, const Maths::Vec3<float> &scale, const Maths::Vec3<float> &rotation) {
+    setPosition(location);
+    setScale(scale);
+    setRotation(rotation.x, {1, 0, 0});
+    setRotation(rotation.y, {0, 1, 0});
+    setRotation(rotation.z, {0, 0, 1});
 }
 
 void Shape::setMesh(Mesh &r) {
@@ -63,6 +105,8 @@ void Shape::removeChild(Shape *r) {
 std::ostream &operator<<(std::ostream &s, const Shape &a) {
     s << "Shape : {" << std::endl;
 
+    s << (Maths::ModelTransform) a << std::endl;
+
     s << a.mesh << std::endl;
 
     for (const auto &r : a.shapes)
@@ -71,4 +115,4 @@ std::ostream &operator<<(std::ostream &s, const Shape &a) {
     s << "}" << std::endl;
     return s;
 }
-} // namespace Blob
+} // namespace Blob::Core

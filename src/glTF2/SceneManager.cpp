@@ -184,7 +184,7 @@ void SceneManager::createVBO(std::string path) {
     cout << "size : " << size << endl;
 
     if (buffers.size() != 1)
-        throw Blob::Exception("Multiple buffer not supported");
+        throw Core::Exception("Multiple buffer not supported");
 
     Reader::FileReader fileReader(path + buffers[0].uri);
 

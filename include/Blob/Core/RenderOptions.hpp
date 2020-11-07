@@ -1,9 +1,10 @@
 #pragma once
 
-#include <Blob/Geometrie.hpp>
+#include <unitypes.h>
 
-namespace Blob {
-struct RenderOptions {
+namespace Blob::Core {
+class RenderOptions {
+public:
     // IndicesOptions
     bool indexed = false;
 
@@ -14,5 +15,13 @@ struct RenderOptions {
 
     // direct draw options
     int32_t elementOffset = 0, numOfElements = 0;
+/*
+public:
+    template<typename T>
+    RenderOptions(T *indices, int32_t numOfIndices);
+
+    explicit RenderOptions(int32_t numOfElements, int32_t elementOffset = 0);
+    */
 };
+
 } // namespace Blob

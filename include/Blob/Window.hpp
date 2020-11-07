@@ -2,47 +2,55 @@
 
 // BlobEngine
 #include <Blob/Camera.hpp>
-#include <Blob/ImGUI.hpp>
+#include <Blob/Controls.hpp>
+#include <Blob/GL/Core.hpp>
+#include <Blob/GLFW.hpp>
+#include <Blob/ImGui.hpp>
 #include <Blob/Mesh.hpp>
-#include <Blob/ProjectionTransform.hpp>
 #include <Blob/Scene.hpp>
 #include <Blob/Shape.hpp>
-#include <Blob/WindowCore.hpp>
 
 // std
 #include <chrono>
 #include <ostream>
 
-namespace Blob {
+namespace Blob::Core {
 
-class Window : public WindowCore, public ProjectionTransform {
+class Window : public GLFW::Window, public GL::Context, public Maths::ProjectionTransform {
 private:
-    ImGUI imgui;
+    ImGui::Context imgui;
 
-    Blob::Camera &camera;
+    Camera &camera;
 
     // time counting
     std::chrono::high_resolution_clock::time_point lastFrameTime;
     std::chrono::duration<float> fpsCouner{0};
 
+    void windowResized() final;
+
+    void framebufferResized() final;
+
+    void characterInput(unsigned int c) final;
+
+    Keyboard keyboard;
+    bool keyboardUpdated = false;
+    void keyboardUpdate(int key, bool pressed) final;
 public:
     static float timeFlow;
 
-    explicit Window(Camera &camera, bool fullScreen = false, unsigned int w = 640, unsigned int h = 480);
+    explicit Window(Camera &camera, bool fullScreen = false, Maths::Vec2<int> size = {640, 480});
 
     ~Window();
 
-    void draw(const Mesh &mesh, glm::mat4 sceneModel = glm::mat4(1)) const;
-    void draw(const Shape &shape, glm::mat4 sceneModel = glm::mat4(1))  const;
+    void draw(const Mesh &mesh, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
+    void draw(const Shape &shape, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
     void draw(const Scene &scene) const;
 
     void setCamera(Camera &camera);
 
     float display();
 
-    std::array<float, 3> getWorldPosition();
-
-    void resize(unsigned int width, unsigned int height) final;
+    Maths::Vec3<float> getWorldPosition();
 };
 
-} // namespace Blob
+} // namespace Blob::Core

@@ -92,7 +92,8 @@ namespace ImGui
 }
 */
 
-#include <Blob/Geometrie.hpp>
+#include <Blob/Maths.inl>
+#include <Blob/Exception.hpp>
 namespace Blob {
 	//class Vec2f;
 
@@ -101,10 +102,16 @@ namespace Blob {
 	}
 }
 #define IM_VEC2_CLASS_EXTRA                                                 \
-        ImVec2(const Blob::Vec2f& f) { x = f.x; y = f.y; }                       \
-        operator Blob::Vec2f() const { return Blob::Vec2f(x,y); }
+        ImVec2(const Blob::Maths::Vec2<float>& f) { x = f.x; y = f.y; }                       \
+        operator Blob::Maths::Vec2<float>() const { return Blob::Maths::Vec2<float>(x,y); }
+/*
+#define IM_ASSERT(expr)							\
+     (static_cast <bool> (expr)						\
+      ? void (0)							\
+      : throw ::Blob::Core::Exception (std::string(#expr) + std::string(__FILE__) + std::to_string(__LINE__)))
+*/
 
-//#include <Blob/GL/Texture.hpp>
+#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 
 #define ImTextureID textureID
 

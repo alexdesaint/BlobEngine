@@ -49,7 +49,7 @@ void Texture::loadBMP(const std::string &path, bool nearest) {
     unsigned char *rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
 
     if (rgb == nullptr)
-        throw Exception("Fail to load Texture : " + path);
+        throw Blob::Core::Exception("Fail to load Texture : " + path);
 
     glTextureStorage2D(texture, 1, GL_RGB8, width, height);
     glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, rgb);
@@ -89,7 +89,7 @@ void Texture::setImage(const std::string &path) {
     unsigned char *rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
 
     if (rgb == nullptr)
-        throw Exception("Fail to load Texture : " + path);
+        throw Blob::Core::Exception("Fail to load Texture : " + path);
 
     glTextureStorage2D(texture, 1, GL_RGB8, width, height);
     glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, rgb);
@@ -101,7 +101,7 @@ unsigned int Texture::getTextureID() const {
     return texture;
 }
 
-Vec2f Texture::getTextureSize() const {
-    return {(float) width, (float) height};
+Maths::Vec2<int> Texture::getTextureSize() const {
+    return {width, height};
 }
 } // namespace Blob::GL

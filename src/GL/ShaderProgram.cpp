@@ -83,7 +83,7 @@ void Blob::GL::ShaderProgram::addVertexShader(const std::string &src) {
 
         // In this simple program, we'll just leave
 
-        throw Exception(infoLog.data());
+        throw Blob::Core::Exception(infoLog.data());
     }
 
     GLint maxLength = 0;
@@ -126,7 +126,7 @@ void Blob::GL::ShaderProgram::addFragmentShader(const std::string &src) {
 
         // In this simple program, we'll just leave
 
-        throw Exception(infoLog.data());
+        throw Blob::Core::Exception(infoLog.data());
     }
 
     GLint maxLength = 0;
@@ -171,7 +171,7 @@ void Blob::GL::ShaderProgram::linkShaders() {
         std::vector<GLchar> infoLog(maxLength);
         glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 
-        throw Exception(infoLog.data());
+        throw Blob::Core::Exception(infoLog.data());
     }
 
     linked = true;
@@ -216,13 +216,13 @@ void Blob::GL::ShaderProgram::addVertexShaderFile(const std::string &path) {
 uint32_t Blob::GL::ShaderProgram::getUniformLocation(const char *name) const {
     int r = glGetUniformLocation(program, name);
     if (r < 0)
-        throw Exception(std::string("ShaderProgram error : Unknown UniformLocation name ") + name);
+        throw Blob::Core::Exception(std::string("ShaderProgram error : Unknown UniformLocation name ") + name);
     return static_cast<uint32_t>(r);
 }
 
 uint32_t Blob::GL::ShaderProgram::getAttribLocation(const char *name) const {
     int r = glGetAttribLocation(program, name);
     if (r < 0)
-        throw Exception(std::string("ShaderProgram error : Unknown Attrib Location name ") + name);
+        throw Blob::Core::Exception(std::string("ShaderProgram error : Unknown Attrib Location name ") + name);
     return static_cast<uint32_t>(r);
 }

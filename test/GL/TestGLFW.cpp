@@ -1,141 +1,105 @@
-#include <glad/glad.h>
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-//#include <GLFW>
+#include <Blob/GLFW.hpp>
 
-#include <cstdio>
-#include <cstdlib>
-#include <glm/ext.hpp>
-#include <glm/mat4x4.hpp>
+#include <Blob/GL/Core.hpp>
 
-static const struct
-{
+#include <Blob/Exception.hpp>
+#include <Blob/Geometry/ModelTransform.hpp>
+#include <Blob/Geometry/ProjectionTransform.hpp>
+#include <Blob/Geometry/ViewTransform.hpp>
+#include <iostream>
+
+using namespace Blob;
+using namespace GLFW;
+
+static const struct {
     float x, y;
     float r, g, b;
-} vertices[3] =
-    {
-        { -0.6f, -0.4f, 1.f, 0.f, 0.f },
-        {  0.6f, -0.4f, 0.f, 1.f, 0.f },
-        {   0.f,  0.6f, 0.f, 0.f, 1.f }
-    };
+} vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f}, {0.5f, -0.5f, 0.f, 1.f, 1.f}, {-0.5f, 0.5f, 1.f, 0.f, 1.f}, {0.5f, 0.5f, 0.f, 0.f, 1.f}};
 
-static const char* vertex_shader_text =
-    "#version 110\n"
-    "uniform mat4 MVP;\n"
-    "attribute vec3 vCol;\n"
-    "attribute vec2 vPos;\n"
-    "varying vec3 color;\n"
-    "void main()\n"
-    "{\n"
-    "    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
-    "    color = vCol;\n"
-    "}\n";
+static const char *vertex_shader_text = R"=====(
+#version 450
 
-static const char* fragment_shader_text =
-    "#version 110\n"
-    "varying vec3 color;\n"
-    "void main()\n"
-    "{\n"
-    "    gl_FragColor = vec4(color, 1.0);\n"
-    "}\n";
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
-static void error_callback(int error, const char* description)
-{
-    fprintf(stderr, "Error: %s\n", description);
+attribute vec3 vCol;
+attribute vec2 vPos;
+
+varying vec3 color;
+
+void main() {
+    gl_Position = projection * view * model * vec4(vPos, 0.0, 1.0);
+    color = vCol;
 }
+)=====";
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+static const char *fragment_shader_text = R"=====(
+#version 450
+
+varying vec3 color;
+out vec4 FragColor;
+void main()  {
+    FragColor = vec4(color, 1.0);
 }
+)=====";
+int main() {
+    int width = 680, height = 480;
+    Window window(false, {width, height}, GL::Context::GLmajor, GL::Context::GLminor);
+    auto glContext = GL::Context((void *) Window::getProcAddress, {width, height});
 
-int main(int, char **)
-{
-    GLFWwindow* window;
-    GLuint vertex_buffer, vertex_shader, fragment_shader, program;
-    GLint mvp_location, vpos_location, vcol_location;
+    try {
+        GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
-    glfwSetErrorCallback(error_callback);
+        GL::ShaderProgram sp;
+        sp.addVertexShader(vertex_shader_text);
+        sp.addFragmentShader(fragment_shader_text);
+        sp.linkShaders();
 
-    if (!glfwInit())
-        exit(EXIT_FAILURE);
+        GL::VertexArrayObject vao;
+        vao.setBuffer(vbo, sizeof(vertices[0]));
+        vao.setArray<float>(2, sp.getAttribLocation("vPos"), 0);
+        vao.setArray<float>(3, sp.getAttribLocation("vCol"), sizeof(float) * 2);
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        Geometry::ProjectionTransform pt(PI / 4, {width, height}, 0.1, 10);
+        Geometry::ViewTransform vt;
+        Geometry::ModelTransform mt;
 
-    window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
+        int model = sp.getUniformLocation("model");
+        int view = sp.getUniformLocation("view");
+        int projection = sp.getUniformLocation("projection");
 
-    glfwSetKeyCallback(window, key_callback);
+        unsigned short indices[] = {0, 1, 2, 3, 2, 1};
 
-    glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)){
+        while (window.isOpen()) {
+            auto fbs = window.getFrameBufferSize();
 
-    }
-    glfwSwapInterval(1);
+            if (fbs != Maths::Vec2<int>(width, height)) {
+                width = fbs.x;
+                height = fbs.y;
+                GL::Core::setViewport({width, height});
+            }
 
-    // NOTE: OpenGL error checks have been omitted for brevity
+            pt.setRatio({width, height});
 
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+            GL::Core::setViewport({width, height});
 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
-    glCompileShader(vertex_shader);
+            GL::Core::clear();
 
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
-    glCompileShader(fragment_shader);
+            float mod = fmod((float) Window::getTime(), 1);
+            mt.setRotation((float) Window::getTime(), {0, 0, 1});
+            // mt.setPosition({0, mod, 0});
+            // mt.setScale({2, 1, 1});
+            Blob::GL::Core::setShader(sp);
+            Blob::GL::Core::setVAO(vao);
+            Blob::GL::Core::setUniform((Maths::Mat4) pt, projection);
+            Blob::GL::Core::setUniform((Maths::Mat4) vt, view);
+            Blob::GL::Core::setUniform((Maths::Mat4) mt, model);
+            Blob::GL::Core::drawIndex<unsigned short>(indices, 6);
 
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+            window.swapBuffers();
+            Window::updateInputs();
+        }
 
-    mvp_location = glGetUniformLocation(program, "MVP");
-    vpos_location = glGetAttribLocation(program, "vPos");
-    vcol_location = glGetAttribLocation(program, "vCol");
-
-    glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
-                          sizeof(vertices[0]), (void*) 0);
-    glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(vertices[0]), (void*) (sizeof(float) * 2));
-
-    while (!glfwWindowShouldClose(window))
-    {
-        float ratio;
-        int width, height;
-
-        glm::mat4 m(1), p;
-
-        glfwGetFramebufferSize(window, &width, &height);
-        ratio = width / (float) height;
-
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glm::rotate(m, (float) glfwGetTime() * 1000, glm::vec3(0, 0, 1));
-
-        p = glm::ortho(-1.f, 1.f, 1.f, -1.f, -ratio, ratio);
-
-        glUseProgram(program);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(m * p));
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-
-    glfwDestroyWindow(window);
-
-    glfwTerminate();
-    exit(EXIT_SUCCESS);
+    } catch (Blob::Core::Exception &ex) { std::cout << ex.what(); }
 }

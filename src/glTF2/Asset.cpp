@@ -14,7 +14,7 @@ void from_json(const nlohmann::json &j, Asset &a) {
     j.at("version").get_to(a.version);
 
     if (a.version != "2.0")
-        throw Exception(string("glTF : can't this glTF version : ") + a.version + ". Version needed is 2.0");
+        throw Core::Exception(string("glTF : can't this glTF version : ") + a.version + ". Version needed is 2.0");
 }
 
 } // namespace Blob::glTF2

@@ -7,7 +7,7 @@
 
 namespace Blob::glTF2 {
 
-class Node : public Blob::Shape {
+class Node : public Core::Shape {
 private:
     int camera = -1; ///< The index of the camera referenced by this node.
 

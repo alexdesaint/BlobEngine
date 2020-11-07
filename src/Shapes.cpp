@@ -1,5 +1,4 @@
 #include <Blob/Shapes.hpp>
-#include <glm/gtc/type_ptr.inl>
 #include <iostream>
 
 using namespace Blob::GL;
@@ -15,44 +14,41 @@ namespace Blob::Shapes {
         float TEXCOORD_0[3];
     };
 
-#define SHAPES_WIDTH 1.f
+//#define SIZE 1.f
+#define SIZE 0.5f
 
     const Data data[] = {
-            // x = devant
-            // y = droite
-            // z = haut
-
             // CUBE
-            {{1, -1, 1}, {0, -0, 1}, {0, 1, 0}, {0.25, 0.25}},
-            {{1, 1, 1}, {0, -0, 1}, {0, 1, 0}, {0.5, 0.25}},
-            {{-1, 1, 1}, {0, -0, 1}, {0, 1, 0}, {0.5, 0}},
-            {{-1, -1, 1}, {0, -0, 1}, {0, 1, 0}, {0.25, 0}},
-            {{-1, -1, 1}, {0, -1, 0}, {1, 0, 1.2e-07}, {0, 0.25}},
-            {{-1, -1, -1}, {0, -1, 0}, {1, 0, 1.2e-07}, {0, 0.5}},
-            {{1, -1, -1}, {0, -1, 0}, {1, 0, 1.2e-07}, {0.25, 0.5}},
-            {{1, -1, 1}, {0, -1, 0}, {1, 0, 1.2e-07}, {0.25, 0.25}},
-            {{-1, 1, 1}, {-1, -0, 0}, {0, -1, 2.4e-07}, {0.75, 0.25}},
-            {{-1, 1, -1}, {-1, -0, 0}, {0, -1, 2.4e-07}, {0.75, 0.5}},
-            {{-1, -1, -1}, {-1, -0, 0}, {0, -1, 2.4e-07}, {1, 0.5}},
-            {{-1, -1, 1}, {-1, -0, 0}, {0, -1, 2.4e-07}, {1, 0.25}},
-            {{-1, -1, -1}, {0, 0, -1}, {0, 1, 0}, {0.25, 0.75}},
-            {{-1, 1, -1}, {0, 0, -1}, {0, 1, 0}, {0.5, 0.75}},
-            {{1, 1, -1}, {0, 0, -1}, {0, 1, 0}, {0.5, 0.5}},
-            {{1, -1, -1}, {0, 0, -1}, {0, 1, 0}, {0.25, 0.5}},
-            {{1, -1, 1}, {1, -0, 0}, {0, 1, 0}, {0.25, 0.25}},
-            {{1, -1, -1}, {1, -0, 0}, {0, 1, 0}, {0.25, 0.5}},
-            {{1, 1, -1}, {1, -0, 0}, {0, 1, 0}, {0.5, 0.5}},
-            {{1, 1, 1}, {1, -0, 0}, {0, 1, 0}, {0.5, 0.25}},
-            {{1, 1, 1}, {0, 1, 0}, {-1, 0, 0}, {0.5, 0.25}},
-            {{1, 1, -1}, {0, 1, 0}, {-1, 0, 0}, {0.5, 0.5}},
-            {{-1, 1, -1}, {0, 1, 0}, {-1, 0, 0}, {0.75, 0.5}},
-            {{-1, 1, 1}, {0, 1, 0}, {-1, 0, 0}, {0.75, 0.25}},
+            {{SIZE, -SIZE, SIZE}, {0, -0, 1}, {0, 1, 0}, {0.25, 0.25}},
+            {{SIZE, SIZE, SIZE}, {0, -0, 1}, {0, 1, 0}, {0.5, 0.25}},
+            {{-SIZE, SIZE, SIZE}, {0, -0, 1}, {0, 1, 0}, {0.5, 0}},
+            {{-SIZE, -SIZE, SIZE}, {0, -0, 1}, {0, 1, 0}, {0.25, 0}},
+            {{-SIZE, -SIZE, SIZE}, {0, -1, 0}, {1, 0, 0}, {0, 0.25}},
+            {{-SIZE, -SIZE, -SIZE}, {0, -1, 0}, {1, 0, 0}, {0, 0.5}},
+            {{SIZE, -SIZE, -SIZE}, {0, -1, 0}, {1, 0, 0}, {0.25, 0.5}},
+            {{SIZE, -SIZE, SIZE}, {0, -1, 0}, {1, 0, 0}, {0.25, 0.25}},
+            {{-SIZE, SIZE, SIZE}, {-1, -0, 0}, {0, -1, 0}, {0.75, 0.25}},
+            {{-SIZE, SIZE, -SIZE}, {-1, -0, 0}, {0, -1, 0}, {0.75, 0.5}},
+            {{-SIZE, -SIZE, -SIZE}, {-1, -0, 0}, {0, -1, 0}, {1, 0.5}},
+            {{-SIZE, -SIZE, SIZE}, {-1, -0, 0}, {0, -1, 0}, {1, 0.25}},
+            {{-SIZE, -SIZE, -SIZE}, {0, 0, -1}, {0, 1, 0}, {0.25, 0.75}},
+            {{-SIZE, SIZE, -SIZE}, {0, 0, -1}, {0, 1, 0}, {0.5, 0.75}},
+            {{SIZE, SIZE, -SIZE}, {0, 0, -1}, {0, 1, 0}, {0.5, 0.5}},
+            {{SIZE, -SIZE, -SIZE}, {0, 0, -1}, {0, 1, 0}, {0.25, 0.5}},
+            {{SIZE, -SIZE, SIZE}, {1, -0, 0}, {0, 1, 0}, {0.25, 0.25}},
+            {{SIZE, -SIZE, -SIZE}, {1, -0, 0}, {0, 1, 0}, {0.25, 0.5}},
+            {{SIZE, SIZE, -SIZE}, {1, -0, 0}, {0, 1, 0}, {0.5, 0.5}},
+            {{SIZE, SIZE, SIZE}, {1, -0, 0}, {0, 1, 0}, {0.5, 0.25}},
+            {{SIZE, SIZE, SIZE}, {0, 1, 0}, {-1, 0, 0}, {0.5, 0.25}},
+            {{SIZE, SIZE, -SIZE}, {0, 1, 0}, {-1, 0, 0}, {0.5, 0.5}},
+            {{-SIZE, SIZE, -SIZE}, {0, 1, 0}, {-1, 0, 0}, {0.75, 0.5}},
+            {{-SIZE, SIZE, SIZE}, {0, 1, 0}, {-1, 0, 0}, {0.75, 0.25}},
 
             // PLANE
-            {{1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
-            {{1.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-            {{-1.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-            {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+            {{SIZE, -SIZE, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
+            {{SIZE, SIZE, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+            {{-SIZE, SIZE, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+            {{-SIZE, -SIZE, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
 
             // OCTAGONAL PRISM
             {{0.7f, 0.7f, 1.0f}, {0.4f, 0.9f, 0.0f}, {0.9f, -0.4f, 0.0f}, {0.9f, 0.0f}},
@@ -123,9 +119,11 @@ namespace Blob::Shapes {
     VertexArrayObject *vaoOctagonalPrism;
 
     void init() {
-        SingleColorMaterial::init();
-        Material::defaultMaterial = new SingleColorMaterial();
-        SingleTextureMaterial::init();
+        Material::DefaultMaterial::init();
+        //Material::defaultMaterial = new SingleColorMaterial();
+        Material::SingleColorMaterial::init();
+        Material::SingleTextureMaterial::init();
+
         vbo = new VertexBufferObject((uint8_t *) data, sizeof(data));
         vaoCube = new VertexArrayObject();
 
@@ -151,9 +149,9 @@ namespace Blob::Shapes {
     }
 
     void destroy() {
-        delete Material::defaultMaterial;
-        SingleColorMaterial::destroy();
-        SingleTextureMaterial::destroy();
+        Material::DefaultMaterial::destroy();
+        Material::SingleColorMaterial::destroy();
+        Material::SingleTextureMaterial::destroy();
 
         delete vbo;
         delete vaoCube;
@@ -161,15 +159,15 @@ namespace Blob::Shapes {
         delete vaoOctagonalPrism;
     }
 
-    Cube::Cube(const Material &material) : Mesh(*vaoCube, material) {
+    Cube::Cube(const Material::Material &material) : Mesh(*vaoCube, material) {
         setIndices(cubeIndices, sizeof(cubeIndices) / sizeof(*cubeIndices));
     }
 
-    Plane::Plane(const Material &material) : Mesh(*vaoPlane, material) {
+    Plane::Plane(const Material::Material &material) : Mesh(*vaoPlane, material) {
         setIndices(planeIndices, sizeof(planeIndices) / sizeof(*planeIndices));
     }
 
-    OctagonalPrism::OctagonalPrism(const Material &material) : Mesh(*vaoOctagonalPrism, material) {
+    OctagonalPrism::OctagonalPrism(const Material::Material &material) : Mesh(*vaoOctagonalPrism, material) {
         setIndices(octagonalPrismIndices, sizeof(octagonalPrismIndices) / sizeof(*octagonalPrismIndices));
     }
 } // namespace Blob::Shapes

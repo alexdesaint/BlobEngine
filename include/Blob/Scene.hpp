@@ -3,7 +3,7 @@
 #include <Blob/Camera.hpp>
 #include <Blob/Shape.hpp>
 
-namespace Blob {
+namespace Blob::Core {
 
 class Scene {
     friend Window;

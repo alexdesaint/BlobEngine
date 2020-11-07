@@ -1,20 +1,99 @@
-#include <Blob/Exception.hpp>
 #include <Blob/Material.hpp>
+#include <Blob/Exception.hpp>
 
 #include <Blob/GL/Core.hpp>
 #include <iostream>
 
-namespace Blob {
+namespace Blob::Material {
 
-Material::Material(const GL::ShaderProgram &shaderProgram) : shaderProgramPrivate(shaderProgram) {}
+    Material::Material(const GL::ShaderProgram &shaderProgram) : shaderProgramPrivate(shaderProgram) {}
 
-Material *Material::defaultMaterial;
+/********************* DefaultMaterial *********************/
 
-using namespace GL;
+    GL::ShaderProgram *DefaultMaterial::shaderProgram;
+
+    DefaultMaterial *DefaultMaterial::defaultMaterial;
+
+    int DefaultMaterial::model = -1;
+    int DefaultMaterial::view = -1;
+    int DefaultMaterial::projection = -1;
+
+    void
+    DefaultMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+        GL::Core::setCullFace(false);
+
+        Blob::GL::Core::setUniform(pt, projection);
+        Blob::GL::Core::setUniform(vt, view);
+        Blob::GL::Core::setUniform(mt, model);
+
+        GL::Core::setCullFace(true);
+    }
+
+    DefaultMaterial::DefaultMaterial() : Material(*shaderProgram) {}
+
+    void DefaultMaterial::init() {
+        std::cout << "init DefaultMaterial" << std::endl;
+        shaderProgram = new GL::ShaderProgram(R"=====(
+#version 450
+
+layout(location = 0) in vec3 POSITION;
+layout(location = 1) in vec3 NORMAL;
+
+out vec3 FragPos;
+out vec3 FragNormal;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main()
+{
+    FragPos = vec3(model * vec4(POSITION, 1.0));
+    FragNormal = mat3(transpose(inverse(model))) * NORMAL;
+
+    gl_Position = projection * view * vec4(FragPos, 1.0);
+}
+	)=====", R"=====(
+#version 450
+
+out vec4 FragColor;
+
+in vec3 FragPos;
+in vec3 FragNormal;
+
+void main()
+{
+    vec3 lightPos = vec3(4.0, 4.0, 0.0);
+    vec3 lightColor = vec3(1.0, 1.0, 1.0);
+    vec4 objectColor = vec4(1, 1, 1, 1.0);
+    //
+    float ambientStrength = 0.2;
+    vec3 ambient = ambientStrength * lightColor;
+
+    // diffuse
+    vec3 norm = normalize(FragNormal);
+    vec3 lightDir = normalize(vec3(1.0, -1.0, 2.0));
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor;
+
+    FragColor = vec4(ambient + diffuse, 1.0) * objectColor;
+}
+	)=====");
+        model = shaderProgram->getUniformLocation("model");
+        view = shaderProgram->getUniformLocation("view");
+        projection = shaderProgram->getUniformLocation("projection");
+
+        defaultMaterial = new DefaultMaterial();
+    }
+
+    void DefaultMaterial::destroy() {
+        delete defaultMaterial;
+        delete shaderProgram;
+    }
 
 /********************* PBR code *********************/
 
-static const std::string PBRvertex = R"=====(
+    static const std::string PBRvertex = R"=====(
 #version 450
 
 layout (location = 0) in vec3 POSITION;
@@ -40,7 +119,7 @@ void main() {
     TexCoord = TEXCOORD_0;
     gl_Position = projection * view * vec4(WorldPos, 1.0);
 })=====";
-static const std::string PBRpixelHead = R"=====(
+    static const std::string PBRpixelHead = R"=====(
 #version 450
 out vec4 FragColor;
 
@@ -48,12 +127,45 @@ in vec3 WorldPos;
 in vec3 Normal;
 in vec2 TexCoord;
 )=====";
-static const std::string PBRfunctions = R"=====(
+    static const std::string PBRfunctions = R"=====(
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
-// GGX/Towbridge-Reitz normal distribution function.
-// Uses Disney's reparametrization of alpha = roughness^2.
-float ndfGGX(float cosLh, float roughness)
+float DistributionGGX(vec3 N, vec3 H, float roughness)
+{
+    float a = roughness*roughness;
+    float a2 = a*a;
+    float NdotH = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH*NdotH;
+
+    float nom   = a2;
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
+
+    return nom / max(denom, 0.001); // prevent divide by zero for roughness=0.0 and NdotH=1.0
+}
+// ----------------------------------------------------------------------------
+float MathsSchlickGGX(float NdotV, float roughness)
+{
+    float r = (roughness + 1.0);
+    float k = (r*r) / 8.0;
+
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return nom / denom;
+}
+// ----------------------------------------------------------------------------
+float MathsSmith(vec3 N, vec3 V, vec3 L, float roughness)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx2 = MathsSchlickGGX(NdotV, roughness);
+    float ggx1 = MathsSchlickGGX(NdotL, roughness);
+
+    return ggx1 * ggx2;
+}
+// ----------------------------------------------------------------------------
+vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
 	float alpha   = roughness * roughness;
 	float alphaSq = alpha * alpha;
@@ -83,47 +195,47 @@ vec3 fresnelSchlick(vec3 F0, float cosTheta)
 })=====";
 
 /********************* PBRMaterial *********************/
-Light PBRMaterial::light;
+    Light PBRMaterial::light;
 /********************* SingleColorMaterialPBR *********************/
 
-GL::ShaderProgram *SingleColorMaterial::shaderProgram;
+    GL::ShaderProgram *SingleColorMaterial::shaderProgram;
 
-int SingleColorMaterial::model = -1;
-int SingleColorMaterial::view = -1;
-int SingleColorMaterial::projection = -1;
+    int SingleColorMaterial::model = -1;
+    int SingleColorMaterial::view = -1;
+    int SingleColorMaterial::projection = -1;
 
-int SingleColorMaterial::albedoPos = -1;
-int SingleColorMaterial::metallicPos = -1;
-int SingleColorMaterial::roughnessPos = -1;
-int SingleColorMaterial::aoPos = -1;
-int SingleColorMaterial::camPos = -1;
-int SingleColorMaterial::optionsPos = -1;
-LightPos SingleColorMaterial::lightPos;
+    int SingleColorMaterial::albedoPos = -1;
+    int SingleColorMaterial::metallicPos = -1;
+    int SingleColorMaterial::roughnessPos = -1;
+    int SingleColorMaterial::aoPos = -1;
+    int SingleColorMaterial::camPos = -1;
+    int SingleColorMaterial::optionsPos = -1;
+    LightPos SingleColorMaterial::lightPos;
 
-SingleColorMaterial::SingleColorMaterial() : Material(*shaderProgram) {}
+    SingleColorMaterial::SingleColorMaterial() : Material(*shaderProgram) {}
 
-SingleColorMaterial::SingleColorMaterial(Color albedo) : Material(*shaderProgram), albedo(albedo) {}
+    SingleColorMaterial::SingleColorMaterial(Color::RGB albedo) : Material(*shaderProgram), albedo(albedo) {}
 
-void SingleColorMaterial::applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const glm::mat4 &mt) const {
-    Blob::GL::Core::setMat4(&pt[0].x, projection);
-    Blob::GL::Core::setMat4(&vt[0].x, view);
-    Blob::GL::Core::setMat4(&mt[0].x, model);
+    void SingleColorMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+        Blob::GL::Core::setUniform(pt, projection);
+        Blob::GL::Core::setUniform(vt, view);
+        Blob::GL::Core::setUniform(mt, model);
 
-    Blob::GL::Core::setVec3(&albedo.R, albedoPos);
-    Blob::GL::Core::setFloat(metallic, metallicPos);
-    Blob::GL::Core::setFloat(roughness, roughnessPos);
-    Blob::GL::Core::setFloat(ao, aoPos);
-    Blob::GL::Core::setUint(options, optionsPos);
+        Blob::GL::Core::setUniform(albedo, albedoPos);
+        Blob::GL::Core::setUniform(metallic, metallicPos);
+        Blob::GL::Core::setUniform(roughness, roughnessPos);
+        Blob::GL::Core::setUniform(ao, aoPos);
+        Blob::GL::Core::setUniform(options, optionsPos);
 
-    Blob::GL::Core::setVec3(&light.position.x, lightPos.position);
-    Blob::GL::Core::setVec3(&light.color.R, lightPos.color);
+        Blob::GL::Core::setUniform(light.position, lightPos.position);
+        Blob::GL::Core::setUniform(light.color, lightPos.color);
 
-    Blob::GL::Core::setVec3(&vt.cameraPosition.x, camPos);
-}
+        Blob::GL::Core::setUniform(vt.cameraPosition, camPos);
+    }
 
-void SingleColorMaterial::init() {
-    std::cout << "init SingleColorMaterial" << std::endl;
-    shaderProgram = new ShaderProgram(PBRvertex, PBRpixelHead + PBRfunctions +
+    void SingleColorMaterial::init() {
+        std::cout << "init SingleColorMaterial" << std::endl;
+        shaderProgram = new GL::ShaderProgram(PBRvertex, PBRpixelHead + PBRfunctions +
                                                      R"=====(
 // material parameters
 uniform vec3 albedo;
@@ -166,7 +278,7 @@ vec3 N = normalize(Normal);
 
     // Cook-Torrance BRDF
     float NDF = DistributionGGX(N, H, roughness);
-    float G   = GeometrySmith(N, V, L, roughness);
+    float G   = MathsSmith(N, V, L, roughness);
     vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
     vec3 nominator    = NDF * G * F;
@@ -211,80 +323,82 @@ vec3 N = normalize(Normal);
 
     FragColor = vec4(color, 1.0);
 })=====");
-    model = shaderProgram->getUniformLocation("model");
-    view = shaderProgram->getUniformLocation("view");
-    projection = shaderProgram->getUniformLocation("projection");
+        model = shaderProgram->getUniformLocation("model");
+        view = shaderProgram->getUniformLocation("view");
+        projection = shaderProgram->getUniformLocation("projection");
 
-    try {
-        albedoPos = shaderProgram->getUniformLocation("albedo");
-    } catch (Exception) {}
-    try {
-        metallicPos = shaderProgram->getUniformLocation("metallic");
-    } catch (Exception) {}
-    try {
-        roughnessPos = shaderProgram->getUniformLocation("roughness");
-    } catch (Exception) {}
-    try {
-        aoPos = shaderProgram->getUniformLocation("ao");
-    } catch (Exception) {}
-    try {
-        lightPos.position = shaderProgram->getUniformLocation("lightPositions");
-    } catch (Exception) {}
-    try {
-        lightPos.color = shaderProgram->getUniformLocation("lightColors");
-    } catch (Exception) {}
-    try {
-        camPos = shaderProgram->getUniformLocation("camPos");
-    } catch (Exception) {}
-    try {
-        optionsPos = shaderProgram->getUniformLocation("options");
-    } catch (Exception) {}
-}
+        try {
+            albedoPos = shaderProgram->getUniformLocation("albedo");
+        } catch (Core::Exception) {}
+        try {
+            metallicPos = shaderProgram->getUniformLocation("metallic");
+        } catch (Core::Exception) {}
+        try {
+            roughnessPos = shaderProgram->getUniformLocation("roughness");
+        } catch (Core::Exception) {}
+        try {
+            aoPos = shaderProgram->getUniformLocation("ao");
+        } catch (Core::Exception) {}
+        try {
+            lightPos.position = shaderProgram->getUniformLocation("lightPositions");
+        } catch (Core::Exception) {}
+        try {
+            lightPos.color = shaderProgram->getUniformLocation("lightColors");
+        } catch (Core::Exception) {}
+        try {
+            camPos = shaderProgram->getUniformLocation("camPos");
+        } catch (Core::Exception) {}
+        try {
+            optionsPos = shaderProgram->getUniformLocation("options");
+        } catch (Core::Exception) {}
+    }
 
-void SingleColorMaterial::destroy() {
-    delete shaderProgram;
-}
+    void SingleColorMaterial::destroy() {
+        delete shaderProgram;
+    }
 
 /********************* SingleTextureMaterialPBR *********************/
 
-GL::ShaderProgram *SingleTextureMaterial::shaderProgram;
 
-int SingleTextureMaterial::model = -1;
-int SingleTextureMaterial::view = -1;
-int SingleTextureMaterial::projection = -1;
+    GL::ShaderProgram *SingleTextureMaterial::shaderProgram;
 
-int SingleTextureMaterial::textureScalePos = -1;
-int SingleTextureMaterial::metallicPos = -1;
-int SingleTextureMaterial::roughnessPos = -1;
-int SingleTextureMaterial::aoPos = -1;
-int SingleTextureMaterial::camPos = -1;
-int SingleTextureMaterial::optionsPos = -1;
-LightPos SingleTextureMaterial::lightPos;
+    int SingleTextureMaterial::model = -1;
+    int SingleTextureMaterial::view = -1;
+    int SingleTextureMaterial::projection = -1;
 
-SingleTextureMaterial::SingleTextureMaterial(const Blob::GL::Texture &texture) : Material(*shaderProgram), texture(texture) {}
+    int SingleTextureMaterial::textureScalePos = -1;
+    int SingleTextureMaterial::metallicPos = -1;
+    int SingleTextureMaterial::roughnessPos = -1;
+    int SingleTextureMaterial::aoPos = -1;
+    int SingleTextureMaterial::camPos = -1;
+    int SingleTextureMaterial::optionsPos = -1;
+    LightPos SingleTextureMaterial::lightPos;
 
-void SingleTextureMaterial::applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const glm::mat4 &mt) const {
-    Blob::GL::Core::setMat4(&pt[0].x, projection);
-    Blob::GL::Core::setMat4(&vt[0].x, view);
-    Blob::GL::Core::setMat4(&mt[0].x, model);
+    SingleTextureMaterial::SingleTextureMaterial(const Blob::GL::Texture &texture) : Material(*shaderProgram),
+                                                                                     texture(texture) {}
 
-    Blob::GL::Core::setTexture(texture);
-    Blob::GL::Core::setVec2(texScale, textureScalePos);
+    void SingleTextureMaterial::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+        Blob::GL::Core::setUniform(pt, projection);
+        Blob::GL::Core::setUniform(vt, view);
+        Blob::GL::Core::setUniform(mt, model);
 
-    Blob::GL::Core::setFloat(metallic, metallicPos);
-    Blob::GL::Core::setFloat(roughness, roughnessPos);
-    Blob::GL::Core::setFloat(ao, aoPos);
-    Blob::GL::Core::setUint(options, optionsPos);
+        Blob::GL::Core::setTexture(texture);
+        Blob::GL::Core::setUniform(texScale, textureScalePos);
 
-    Blob::GL::Core::setVec3(&light.position.x, lightPos.position);
-    Blob::GL::Core::setVec3(&light.color.R, lightPos.color);
+        Blob::GL::Core::setUniform(metallic, metallicPos);
+        Blob::GL::Core::setUniform(roughness, roughnessPos);
+        Blob::GL::Core::setUniform(ao, aoPos);
+        Blob::GL::Core::setUniform(options, optionsPos);
 
-    Blob::GL::Core::setVec3(&vt.cameraPosition.x, camPos);
-}
+        Blob::GL::Core::setUniform(light.position, lightPos.position);
+        Blob::GL::Core::setUniform(light.color, lightPos.color);
 
-void SingleTextureMaterial::init() {
-    std::cout << "init SingleTextureMaterial" << std::endl;
-    shaderProgram = new ShaderProgram(PBRvertex, PBRpixelHead + PBRfunctions +
+        Blob::GL::Core::setUniform(vt.cameraPosition, camPos);
+    }
+
+    void SingleTextureMaterial::init() {
+        std::cout << "init SingleTextureMaterial" << std::endl;
+        shaderProgram = new GL::ShaderProgram(PBRvertex, PBRpixelHead + PBRfunctions +
                                                      R"=====(
 // texture
 uniform vec2 texScale;
@@ -334,7 +448,7 @@ void main()
 
     // Cook-Torrance BRDF
     float NDF = DistributionGGX(N, H, roughness);
-    float G   = GeometrySmith(N, V, L, roughness);
+    float G   = MathsSmith(N, V, L, roughness);
     vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
     vec3 nominator    = NDF * G * F;
@@ -379,37 +493,37 @@ void main()
 
     FragColor = vec4(color, 1.0);
 })=====");
-    model = shaderProgram->getUniformLocation("model");
-    view = shaderProgram->getUniformLocation("view");
-    projection = shaderProgram->getUniformLocation("projection");
+        model = shaderProgram->getUniformLocation("model");
+        view = shaderProgram->getUniformLocation("view");
+        projection = shaderProgram->getUniformLocation("projection");
 
-    try {
-        textureScalePos = shaderProgram->getUniformLocation("texScale");
-    } catch (Exception) {}
-    try {
-        metallicPos = shaderProgram->getUniformLocation("metallic");
-    } catch (Exception) {}
-    try {
-        roughnessPos = shaderProgram->getUniformLocation("roughness");
-    } catch (Exception) {}
-    try {
-        aoPos = shaderProgram->getUniformLocation("ao");
-    } catch (Exception) {}
-    try {
-        lightPos.position = shaderProgram->getUniformLocation("lightPositions");
-    } catch (Exception) {}
-    try {
-        lightPos.color = shaderProgram->getUniformLocation("lightColors");
-    } catch (Exception) {}
-    try {
-        camPos = shaderProgram->getUniformLocation("camPos");
-    } catch (Exception) {}
-    try {
-        optionsPos = shaderProgram->getUniformLocation("options");
-    } catch (Exception) {}
-}
+        try {
+            textureScalePos = shaderProgram->getUniformLocation("texScale");
+        } catch (Core::Exception) {}
+        try {
+            metallicPos = shaderProgram->getUniformLocation("metallic");
+        } catch (Core::Exception) {}
+        try {
+            roughnessPos = shaderProgram->getUniformLocation("roughness");
+        } catch (Core::Exception) {}
+        try {
+            aoPos = shaderProgram->getUniformLocation("ao");
+        } catch (Core::Exception) {}
+        try {
+            lightPos.position = shaderProgram->getUniformLocation("lightPositions");
+        } catch (Core::Exception) {}
+        try {
+            lightPos.color = shaderProgram->getUniformLocation("lightColors");
+        } catch (Core::Exception) {}
+        try {
+            camPos = shaderProgram->getUniformLocation("camPos");
+        } catch (Core::Exception) {}
+        try {
+            optionsPos = shaderProgram->getUniformLocation("options");
+        } catch (Core::Exception) {}
+    }
 
-void SingleTextureMaterial::destroy() {
-    delete shaderProgram;
+    void SingleTextureMaterial::destroy() {
+        delete shaderProgram;
+    }
 }
-} // namespace Blob

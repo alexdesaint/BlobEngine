@@ -7,22 +7,23 @@
 #include <Blob/GL/VertexBufferObject.hpp>
 #include <cstdio>
 #include <cstdlib>
-#include <glm/ext.hpp>
 
 // TRANSFORM INVOCATION !!!
-#include <Blob/ModelTransform.hpp>
-#include <Blob/ProjectionTransform.hpp>
-#include <Blob/ViewTransform.hpp>
+#include <Blob/Geometry/ModelTransform.hpp>
+#include <Blob/Geometry/ProjectionTransform.hpp>
+#include <Blob/Geometry/ViewTransform.hpp>
 #include <Blob/Window.hpp>
-#include <iostream>
 #include <imgui.h>
+#include <iostream>
+
+using namespace Blob;
 
 static const struct {
     float x, y;
     float r, g, b;
 } vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f}, {0.5f, -0.5f, 0.f, 1.f, 1.f}, {-0.5f, 0.5f, 1.f, 0.f, 1.f}, {0.5f, 0.5f, 0.f, 0.f, 1.f}};
 
-static const char *vertex_shader_text = R"=====(
+static const std::string vertex_shader_text = R"=====(
 #version 450
 
 uniform mat4 model;
@@ -40,20 +41,22 @@ void main() {
 }
 )=====";
 
-static const char *fragment_shader_text = "#version 450\n"
-                                          "varying vec3 color;\n"
-                                          "void main()\n"
-                                          "{\n"
-                                          "    gl_FragColor = vec4(color, 1.0);\n"
-                                          "}\n";
+static const std::string fragment_shader_text = R"=====(
+#version 450
 
+varying vec3 color;
+out vec4 FragColor;
+void main()  {
+    FragColor = vec4(color, 1.0);
+}
+)=====";
 
-class SimpleMaterial : public Blob::Material {
+class SimpleMaterial : public Blob::Material::Material {
 private:
-    void applyMaterial(const Blob::ProjectionTransform &pt, const Blob::ViewTransform &vt, const glm::mat4 &mt) const final {
-        Blob::GL::Core::setMat4(&pt[0].x, projection);
-        Blob::GL::Core::setMat4(&vt[0].x, view);
-        Blob::GL::Core::setMat4(&mt[0].x, model);
+    void applyMaterial(const Geometry::ProjectionTransform &pt, const Geometry::ViewTransform &vt, const Maths::Mat4 &mt) const final {
+        Blob::GL::Core::setUniform((Maths::Mat4) pt, projection);
+        Blob::GL::Core::setUniform((Maths::Mat4) vt, view);
+        Blob::GL::Core::setUniform(mt, model);
     }
 
 public:
@@ -71,9 +74,9 @@ int SimpleMaterial::view;
 int SimpleMaterial::projection;
 
 int main() {
-    Blob::Camera camera;
+    Core::Camera camera;
 
-    Blob::Window window(camera);
+    Core::Window window(camera);
 
     Blob::GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
@@ -91,7 +94,7 @@ int main() {
     vao.setArray(2, sp.getAttribLocation("vPos"), GL_FLOAT, 0);
     vao.setArray(3, sp.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
 
-    Blob::RenderOptions ro;
+    Core::RenderOptions ro;
     ro.indexed = true;
     unsigned short indices[] = {2, 1, 0, 1, 2, 3};
     ro.indices = indices;
@@ -100,7 +103,7 @@ int main() {
 
     SimpleMaterial material(sp);
 
-    Blob::Mesh renderable(vao, material);
+    Core::Mesh renderable(vao, material);
     renderable.renderOptions = ro;
 
     bool show_demo_window = true;

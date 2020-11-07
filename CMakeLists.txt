@@ -1,14 +1,31 @@
 cmake_minimum_required(VERSION 3.9)
 
-set(CMAKE_CXX_STANDARD 17)
-
 project(BlobEngine LANGUAGES CXX C)
 
+set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BLOBTEST "Build the tests" ON)
 option(BLOBVK "Build Vulkan" OFF)
 option(BUILD_DOC "Build documentation" ON)
+
+set(OpenGL_GL_PREFERENCE "GLVND")
+find_package(OpenGL REQUIRED)
+if (NOT OPENGL_FOUND)
+    message(ERROR "OpenGL not found")
+endif ()
+include_directories(${OPENGL_INCLUDE_DIR})
+
+if (BLOBVK)
+    find_package(Vulkan REQUIRED)
+    if (NOT Vulkan_FOUND)
+        message(ERROR "Vulkan not found")
+    endif ()
+    include_directories(${VULKAN_INCLUDE_DIR})
+endif ()
 
 # check if Doxygen is installed
 find_package(Doxygen)
@@ -41,24 +58,9 @@ else (DOXYGEN_FOUND)
     message("Doxygen need to be installed to generate the doxygen documentation")
 endif (DOXYGEN_FOUND)
 
-set(OpenGL_GL_PREFERENCE "GLVND")
-find_package(OpenGL REQUIRED)
-if (NOT OPENGL_FOUND)
-    message(ERROR "OpenGL not found")
-endif ()
-include_directories(${OPENGL_INCLUDE_DIR})
-
-if (BLOBVK)
-    find_package(Vulkan REQUIRED)
-    if (NOT Vulkan_FOUND)
-        message(ERROR "Vulkan not found")
-    endif ()
-    include_directories(${VULKAN_INCLUDE_DIR})
-endif ()
-
 add_subdirectory(libs)
 add_subdirectory(src)
 
-if (BLOBTEST)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     add_subdirectory(test)
 endif ()

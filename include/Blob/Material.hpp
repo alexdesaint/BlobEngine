@@ -4,13 +4,10 @@
 #include <Blob/GL/ShaderProgram.hpp>
 #include <Blob/GL/Texture.hpp>
 
-#include <Blob/ModelTransform.hpp>
-#include <Blob/ProjectionTransform.hpp>
-#include <Blob/ViewTransform.hpp>
-
-namespace Blob {
-
+namespace Blob::Core {
 class Window;
+}
+namespace Blob::Material {
 
 /// A combinason of shader, color, texture or array to defines the optical properties of an object.
 /**
@@ -22,22 +19,56 @@ class Window;
  * *gras* **pas gras**
  */
 class Material {
-    friend Window;
+    friend Blob::Core::Window;
+
 private:
+    /// TODO: add Shader Storage Buffer Object for local light sources
+
     const GL::ShaderProgram &shaderProgramPrivate;
 
 public:
-    static Material *defaultMaterial;
-
     /// This function will be called before the draw
     /// \param pt oui
     /// \param vt non
     /// \param mt pas toujours
-    virtual void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const glm::mat4 &mt) const = 0;
+    virtual void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const = 0;
+
     /// Constructor
     /// \param shaderProgram yes
     explicit Material(const GL::ShaderProgram &shaderProgram);
-    virtual ~Material() = default;
+};
+
+/*
+ * Basic Shaders :
+ * Material_POSITION
+ * Material_POSITION_NORMAL
+ * Material_POSITION_NORMAL_TEXCOORD_0
+ * Material_POSITION_NORMAL_COLOR_0
+ * Material_POSITION_TEXCOORD_0
+ * Material_POSITION_COLOR_0
+ */
+
+/// TODO: add simple texture material
+/// TODO: remove the DefaultMaterial and set the defaultMaterial to a SingleColorMaterial instance
+/// TODO: build material shader from the same const string functions
+/// TODO: Create a PBR
+
+class DefaultMaterial : public Material {
+private:
+    static int model, view, projection;
+
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+
+public:
+    static GL::ShaderProgram *shaderProgram;
+
+    static DefaultMaterial *defaultMaterial;
+
+    DefaultMaterial();
+
+    static void init();
+
+    static void destroy();
 };
 
 struct LightPos {
@@ -46,8 +77,8 @@ struct LightPos {
 };
 
 struct Light {
-    glm::vec3 position = glm::vec3(1.2f, 1.0f, 2.0f);
-    Color color = Color(1.f, 1.f, 1.f);
+    Maths::Vec3<float> position = {1.2f, 1.0f, 2.0f};
+    Color::RGB color = {1.f, 1.f, 1.f};
 };
 
 class PBRMaterial {
@@ -78,7 +109,7 @@ private:
 
     static LightPos lightPos;
 
-    void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const glm::mat4 &mt) const final;
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
     const struct {
@@ -88,12 +119,12 @@ public:
 
     static GL::ShaderProgram *shaderProgram;
 
-    Color albedo = Color(1.0f, 0.5f, 0.31f);
+    Color::RGB albedo = {1.0f, 0.5f, 0.31f};
     uint32_t options = 0xFFFFFFFF;
 
     SingleColorMaterial();
 
-    explicit SingleColorMaterial(Color albedo);
+    explicit SingleColorMaterial(Color::RGB albedo);
 
     static void init();
 
@@ -116,7 +147,7 @@ private:
 
     static LightPos lightPos;
 
-    void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const glm::mat4 &mt) const final;
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
     const struct {
@@ -128,13 +159,13 @@ public:
 
     const Blob::GL::Texture &texture;
     uint32_t options = 0xFFFFFFFF;
-    float texScale[2] = {1.f, 1.f};
+    Maths::Vec2<float> texScale = {1.f, 1.f};
 
     explicit SingleTextureMaterial(const Blob::GL::Texture &texture);
 
     static void init();
 
-    static void destroy();
-};
+        static void destroy();
+    };
 
 } // namespace Blob

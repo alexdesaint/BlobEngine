@@ -1,21 +1,33 @@
 #include <Blob/Window.hpp>
 
 // Blob
-#include <Blob/Controls.hpp>
 #include <Blob/Exception.hpp>
-#include <Blob/GL/Core.hpp>
 #include <Blob/Shapes.hpp>
 #include <imgui.h>
 #include <iostream>
 
-namespace Blob {
+namespace Blob::Core {
 
-Window::Window(Camera &camera, bool fullScreen, unsigned int w, unsigned int h)
-    : WindowCore(fullScreen, w, h), camera(camera), ProjectionTransform(PI / 4, w, h, 1, 100) {
-    imgui.setWindowSize(w, h);
+Window::Window(Camera &camera, bool fullScreen, Maths::Vec2<int> size)
+    : GLFW::Window(fullScreen, size, GLmajor, GLminor), camera(camera), GL::Context((void *) getProcAddress, framebufferSize),
+      ProjectionTransform(PI / 4, size, 1, 100), imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()), keyboard(*keys) {
+    imgui.createRender();
+
+    ImGuiIO &io = ImGui::GetIO();
+    cursorPosition = (Maths::Vec2<float> *) &io.MousePos;
+    mouseButton = &io.MouseDown;
+    scrollOffsetW = &io.MouseWheel;
+    scrollOffsetH = &io.MouseWheelH;
+    keyCtrl = &io.KeyCtrl;
+    keyShift = &io.KeyShift;
+    keyAlt = &io.KeyAlt;
+    keySuper = &io.KeySuper;
+    keys = &io.KeysDown;
+
+    new (&keyboard) Keyboard(io.KeysDown);
+
     Shapes::init();
     lastFrameTime = std::chrono::high_resolution_clock::now();
-    ImGui::NewFrame();
 }
 
 Window::~Window() {
@@ -27,44 +39,50 @@ Window::~Window() {
 float Window::timeFlow = 0;
 
 float Window::display() {
-
+    imgui.updateMouseCursor(*this);
     imgui.draw();
+
     swapBuffers();
     GL::Core::clear();
+    updateInputs();
+
     ImGui::NewFrame();
+
+    if(keyboardUpdated) {
+        keyboardUpdated = false;
+        for(auto &k : KeyboardEvents::keyUpdates)
+            k->keyboardUpdate(keyboard);
+    }
 
     auto now = std::chrono::high_resolution_clock::now();
     std::chrono::duration<float> diff = now - lastFrameTime;
     ImGui::GetIO().DeltaTime = diff.count();
+    timeFlow = diff.count();
     fpsCouner = fpsCouner + diff;
     lastFrameTime = now;
 
-    Controls::update();
-
-    timeFlow = diff.count();
     return timeFlow;
 }
 
-void Window::resize(unsigned int width, unsigned int height) {
-    setRatio(width, height);
-    imgui.setWindowSize(width, height);
-
-    Blob::GL::Core::setViewport(width, height);
-
-    WindowCore::resize(width, height);
-
-    ImGuiIO &io = ImGui::GetIO();
-    io.DisplayFramebufferScale = getFrameBufferSize() / getSize();
-    io.DisplaySize = getSize();
+void Window::windowResized() {
+    imgui.setWindowSize(windowSize.cast<float>(), framebufferSize.cast<float>());
 }
 
-std::array<float, 3> Window::getWorldPosition() {
-    ImGuiIO &io = ImGui::GetIO();
+void Window::framebufferResized() {
+    setRatio(framebufferSize);
+    imgui.setWindowSize(windowSize.cast<float>(), framebufferSize.cast<float>());
 
-    Vec2f mousePos = io.MousePos;
-    mousePos = mousePos / getSize() * 2;
-    mousePos.x = mousePos.x - 1;
-    mousePos.y = 1 - mousePos.y;
+    Blob::GL::Core::setViewport(framebufferSize);
+}
+
+void Window::characterInput(unsigned int c) {
+    imgui.addInputCharacter(c);
+}
+
+Maths::Vec3<float> Window::getWorldPosition() {
+    Maths::Vec2<float> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
+    mousePos.x = mousePos.x / size.x * 2 - 1;
+    mousePos.y = 1 - mousePos.y / size.y * 2;
 
     /*//Look at test
     glm::vec4 posCamera(50, 50, 15, 1);
@@ -81,23 +99,23 @@ std::array<float, 3> Window::getWorldPosition() {
     //
     */
 
-    float z = GL::Core::readPixel(Vec2f(0, -width) + io.MousePos);
+    float z = GL::Core::readPixel((Maths::Vec2<float>(0, -size.y) + mousePos).cast<int>());
 
     z = (z * 2) - 1;
 
-    glm::vec4 pos(mousePos.x, mousePos.y, z, 1);
+    Maths::Vec4<float> pos(mousePos.x, mousePos.y, z);
 
-    pos = glm::inverse(*this * camera) * pos;
+    pos = (*this * camera).inverse() * pos;
     pos = pos / pos.w;
 
-    return {pos.x, pos.y, pos.z};
+    return (Maths::Vec3<float>) pos;
 }
 
 void Window::setCamera(Camera &camera_) {
     camera = camera_;
 }
 
-void Window::draw(const Mesh &mesh, glm::mat4 sceneModel) const {
+void Window::draw(const Mesh &mesh, const Maths::Mat4 &sceneModel) const {
     Blob::GL::Core::setShader(mesh.material->shaderProgramPrivate);
     Blob::GL::Core::setVAO(mesh.vertexArrayObject);
 
@@ -106,8 +124,8 @@ void Window::draw(const Mesh &mesh, glm::mat4 sceneModel) const {
     Blob::GL::Core::drawIndex(mesh.renderOptions.indices, mesh.renderOptions.numOfIndices, mesh.renderOptions.indicesType);
 }
 
-void Window::draw(const Shape &shape, glm::mat4 sceneModel) const {
-    glm::mat4 modelMatrix = sceneModel * shape;
+void Window::draw(const Shape &shape, const Maths::Mat4 &sceneModel) const {
+    Maths::Mat4 modelMatrix = sceneModel * shape;
 
     /*std::cout << "mat :" << std::endl << modelMatrix;
 
@@ -134,4 +152,8 @@ void Window::draw(const Scene &scene) const {
         draw(*r);
 }
 
-} // namespace Blob
+void Window::keyboardUpdate(int key, bool pressed) {
+    keyboardUpdated = true;
+}
+
+} // namespace Blob::Core

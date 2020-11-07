@@ -10,7 +10,8 @@
 
 using namespace std;
 using namespace Blob;
-using namespace Blob::Shapes;
+using namespace Core;
+using namespace Shapes;
 using namespace GL;
 
 int main(int argc, char *argv[]) {
@@ -20,19 +21,16 @@ int main(int argc, char *argv[]) {
 
         Window window(camera, false);
 
-        SingleColorMaterial blue, orange;
-        blue.albedo = Color::DeepSkyBlue;
-        orange.albedo = Color::Coral;
+        Material::SingleColorMaterial blue, orange;
+        blue.albedo = Material::Color::DeepSkyBlue;
+        orange.albedo = Material::Color::Coral;
 
         Cube cubeOrange(orange), cubeBlue(blue);
         OctagonalPrism opOrange(orange), opBlue(blue);
         Plane p(blue);
 
         std::vector<Shape> shapes = {
-            {cubeOrange, 4, 0},
-            {cubeBlue, 4, 4},
-            {opOrange, 0, 4},
-            {opBlue, -4, 4},
+            {cubeOrange, 4, 0},        {cubeBlue, 4, 4},   {opOrange, 0, 4},  {opBlue, -4, 4},
             {cubeOrange, -4, 0},
             {cubeBlue, -4, -4},
             {opOrange, 0, -4},
@@ -64,7 +62,7 @@ int main(int argc, char *argv[]) {
             }
 
             opt = (orange.options & orange.Options.Radiance) != 0;
-            if(ImGui::Checkbox("Radiance", &opt)) {
+            if (ImGui::Checkbox("Radiance", &opt)) {
                 if (opt)
                     orange.options |= orange.Options.Radiance;
                 else
@@ -72,15 +70,15 @@ int main(int argc, char *argv[]) {
             }
 
             ImGui::Text("Light");
-            ImGui::ColorEdit3("Light color", &Blob::SingleColorMaterial::light.color.R);
-            ImGui::SliderFloat("Light Position X", &Blob::SingleColorMaterial::light.position.x, -1.0f, 1.0f);
-            ImGui::SliderFloat("Light Position Y", &Blob::SingleColorMaterial::light.position.y, -1.0f, 1.0f);
-            ImGui::SliderFloat("Light Position Z", &Blob::SingleColorMaterial::light.position.z, -1.0f, 1.0f);
+            ImGui::ColorEdit3("Light color", &Material::SingleColorMaterial::light.color.R);
+            ImGui::SliderFloat("Light Position X", &Material::SingleColorMaterial::light.position.x, -1.0f, 1.0f);
+            ImGui::SliderFloat("Light Position Y", &Material::SingleColorMaterial::light.position.y, -1.0f, 1.0f);
+            ImGui::SliderFloat("Light Position Z", &Material::SingleColorMaterial::light.position.z, -1.0f, 1.0f);
             ImGui::End();
 
             shapes[0].setRotation(angle, 1.f, 0.f, 0.f);
 
-            for(const auto &s : shapes)
+            for (const auto &s : shapes)
                 window.draw(s);
 
             window.display();

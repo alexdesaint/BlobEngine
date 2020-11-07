@@ -6,8 +6,8 @@
 #include <nlohmann/json.hpp>
 
 namespace Blob::glTF2 {
-class Material {
-public:
+class Material : public ::Blob::Material::SingleColorMaterial {
+    public:
 
     Blob::Material *material = nullptr;
 
@@ -79,7 +79,7 @@ public:
 
     textureInfo emissiveTexture; ///< The emissive map texture.
 
-    Color emissiveFactor = Color(0.f, 0.f, 0.f, 1.f); ///< The emissive color of the material. default: [0,0,0]
+    Color::RGB emissiveFactor = Color(0.f, 0.f, 0.f, 1.f); ///< The emissive color of the material. default: [0,0,0]
     std::string alphaMode = "OPAQUE";                 ///< The alpha rendering mode of the material. default: "OPAQUE"
     float alphaCutoff = 0.5;                          ///< The alpha cutoff value of the material. default: 0.5
     bool doubleSided = false;                         ///< Specifies whether the material is double sided. default: false

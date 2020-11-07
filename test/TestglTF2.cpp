@@ -8,21 +8,21 @@
 
 using namespace Blob;
 
-void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob::Vec2f cameraRange = {1, 100}) {
+void test(const std::string &path, const Geometry::Vec3<> &position = {0, 1, -3}, const Geometry::Vec2<> &cameraRange = {1, 100}) {
     try {
         std::cout << "test : " << path << std::endl;
 
-        Camera camera;
+        Core::Camera camera;
 
-        Window window(camera);
+        Core::Window window(camera);
 
         glTF2::SceneManager sm(path);
 
         std::cout << sm;
 
-        Scene &mainScene = sm.scenes.front();
+        Core::Scene &mainScene = sm.scenes.front();
 
-        camera.setPosition(x, y, z);
+        camera.setPosition(position);
 
         window.setRange(cameraRange.x, cameraRange.y);
 
@@ -36,24 +36,24 @@ void test(const std::string &path, float x = 0, float y = 1, float z = -3, Blob:
             window.display();
         }
 
-    } catch (Exception &exception) { std::cout << exception.what() << std::endl; }
+    } catch (Core::Exception &exception) { std::cout << exception.what() << std::endl; }
 }
 
 int main(int argc, char *argv[]) {
     //    test("data/models/cube.gltf");
     //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf");
-    //test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
+    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/Triangle/glTF/Triangle.gltf");
     //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/SimpleMeshes/glTF/SimpleMeshes.gltf");
 
     // More complex models
 
-    //test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
-    //test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/BoxInterleaved/glTF/BoxInterleaved.gltf");
-    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/BoxTextured/glTF/BoxTextured.gltf");
+    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/Box/glTF/Box.gltf");
+    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/BoxInterleaved/glTF/BoxInterleaved.gltf");
+    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/BoxTextured/glTF/BoxTextured.gltf");
     //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/Duck/glTF/Duck.gltf");
     //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf");
-    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf", 1000, 0, 0, {100, 2000});
-    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf", 1000, 0, 0, {100, 2000});
+    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/TextureCoordinateTest/glTF/TextureCoordinateTest.gltf", {1000, 0, 0}, {100, 2000});
+    //    test("/home/patapouf/gitClone/glTF-Sample-Models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf", {1000, 0, 0}, {100, 2000});
 
     return 0;
 }
