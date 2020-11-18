@@ -63,7 +63,7 @@ struct Keys {
     static const unsigned int TAB;
     static const unsigned int BACKSPACE;
     static const unsigned int INSERT;
-    static const unsigned int DELETE;
+    static const unsigned int DEL;
     static const unsigned int RIGHT;
     static const unsigned int LEFT;
     static const unsigned int DOWN;
