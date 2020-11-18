@@ -4,16 +4,18 @@
 #else
 #include <x86intrin.h>
 #endif
+#define GLM_FORCE_INLINE
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <iomanip>
 #include <iostream>
 #include <nmmintrin.h>
 #include <vector>
 #include <xmmintrin.h>
 
-//
-#include <glm/ext/matrix_clip_space.inl>
-#include <glm/ext/matrix_transform.inl>
+
+//#include <glm/ext/matrix_clip_space.inl>
+//#include <glm/ext/matrix_transform.inl>
 
 using namespace Blob::Maths;
 
