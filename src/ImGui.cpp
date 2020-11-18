@@ -35,7 +35,7 @@ Context::Context(const GLFW::Window &window, const Maths::Vec2<float> &windowSiz
     io.KeyMap[ImGuiKey_Home] = GLFW::Keys::HOME;           // GLFW_KEY_HOME + 1;
     io.KeyMap[ImGuiKey_End] = GLFW::Keys::END;             // GLFW_KEY_END + 1;
     io.KeyMap[ImGuiKey_Insert] = GLFW::Keys::INSERT;       // GLFW_KEY_INSERT + 1;
-    io.KeyMap[ImGuiKey_Delete] = GLFW::Keys::DELETE;       // GLFW_KEY_DELETE + 1;
+    io.KeyMap[ImGuiKey_Delete] = GLFW::Keys::DEL;       // GLFW_KEY_DELETE + 1;
     io.KeyMap[ImGuiKey_Backspace] = GLFW::Keys::BACKSPACE; // GLFW_KEY_BACKSPACE + 1;
     io.KeyMap[ImGuiKey_Space] = GLFW::Keys::SPACE;         // GLFW_KEY_SPACE + 1;
     io.KeyMap[ImGuiKey_Enter] = GLFW::Keys::ENTER;         // GLFW_KEY_ENTER + 1;

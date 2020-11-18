@@ -27,7 +27,7 @@ Keyboard::Keyboard(bool (&keys)[512])
       Z(GLFW::Keys::Z, keys), LEFT_BRACKET(GLFW::Keys::LEFT_BRACKET, keys), BACKSLASH(GLFW::Keys::BACKSLASH, keys),
       RIGHT_BRACKET(GLFW::Keys::RIGHT_BRACKET, keys), GRAVE_ACCENT(GLFW::Keys::GRAVE_ACCENT, keys), WORLD_1(GLFW::Keys::WORLD_1, keys),
       WORLD_2(GLFW::Keys::WORLD_2, keys), ESCAPE(GLFW::Keys::ESCAPE, keys), ENTER(GLFW::Keys::ENTER, keys), TAB(GLFW::Keys::TAB, keys),
-      BACKSPACE(GLFW::Keys::BACKSPACE, keys), INSERT(GLFW::Keys::INSERT, keys), DELETE(GLFW::Keys::DELETE, keys), RIGHT(GLFW::Keys::RIGHT, keys),
+      BACKSPACE(GLFW::Keys::BACKSPACE, keys), INSERT(GLFW::Keys::INSERT, keys), DELETE(GLFW::Keys::DEL, keys), RIGHT(GLFW::Keys::RIGHT, keys),
       LEFT(GLFW::Keys::LEFT, keys), DOWN(GLFW::Keys::DOWN, keys), UP(GLFW::Keys::UP, keys), PAGE_UP(GLFW::Keys::PAGE_UP, keys),
       PAGE_DOWN(GLFW::Keys::PAGE_DOWN, keys), HOME(GLFW::Keys::HOME, keys), END(GLFW::Keys::END, keys), CAPS_LOCK(GLFW::Keys::CAPS_LOCK, keys),
       SCROLL_LOCK(GLFW::Keys::SCROLL_LOCK, keys), NUM_LOCK(GLFW::Keys::NUM_LOCK, keys), PRINT_SCREEN(GLFW::Keys::PRINT_SCREEN, keys),
