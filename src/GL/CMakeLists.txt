@@ -9,5 +9,5 @@ add_library(BlobGL STATIC
         Types.cpp)
 
 target_link_libraries(BlobGL glad ${OPENGL_gl_LIBRARY} glfw libs)
-target_include_directories(BlobGL PUBLIC ../../include)
+target_include_directories(BlobGL PUBLIC ${INCLUDE_FOLDER})
 add_library(Blob::GL ALIAS BlobGL)

@@ -58,6 +58,7 @@ else (DOXYGEN_FOUND)
     message("Doxygen need to be installed to generate the doxygen documentation")
 endif (DOXYGEN_FOUND)
 
+set(INCLUDE_FOLDER ${PROJECT_SOURCE_DIR}/include)
 add_subdirectory(libs)
 add_subdirectory(src)
 
