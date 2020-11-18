@@ -3,10 +3,12 @@
 #include <GLFW/glfw3.h>
 
 #include <Blob/GL/Shader.hpp>
+#include <Blob/Maths.inl>
 #include <cstdio>
 #include <cstdlib>
-#include <glm/ext.hpp>
 #include <iostream>
+
+using namespace Blob;
 
 static const struct {
     float x, y;
@@ -94,7 +96,8 @@ int main() {
         float ratio;
         int width, height;
 
-        glm::mat4 m(1), p;
+        // Maths::Mat4 m(1), p;
+        Maths::ProjectionTransform p;
 
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float) height;
@@ -102,12 +105,16 @@ int main() {
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        m = glm::rotate(m, (float) glfwGetTime(), glm::vec3(0, 0, 1));
+        Maths::ModelTransform m;
+        m.rotate((float) glfwGetTime(), {0, 0, 1});
+        // m = glm::rotate(m, (float) glfwGetTime(), glm::vec3(0, 0, 1));
 
-        p = glm::ortho(-1.f, 1.f, 1.f, -1.f, -ratio, ratio);
+        p.setOrthoProjection(-1.f, 1.f, 1.f, -1.f, -ratio, ratio);
+        // p = glm::ortho(-1.f, 1.f, 1.f, -1.f, -ratio, ratio);
 
+        Maths::Mat4 mvp = m * p;
         glUseProgram(sp.program);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(m * p));
+        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, &mvp.a11);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);

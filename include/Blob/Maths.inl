@@ -881,9 +881,11 @@ public:
 
 class ProjectionTransform : public Mat4 {
 private:
-    float cameraAngle, ratio;
+    float cameraAngle = PI/4, ratio = 1.f;
 
 public:
+    ProjectionTransform() = default;
+
     ProjectionTransform(float cameraAngle, const Vec2<int> &size, float closeRange, float longRange)
         : Mat4(0), cameraAngle(cameraAngle), ratio(size.x / (float) size.y) {
         setRange(closeRange, longRange);
@@ -934,31 +936,31 @@ public:
         }
     }
 
-    /*    void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
-            // a11 = 1.f;
-            a12 = 0.f;
-            a13 = 0.f;
-            a14 = 0.f;
-            a21 = 0.f;
-            // a22 = 1.f;
-            a23 = 0.f;
-            a24 = 0.f;
-            a31 = 0.f;
-            a32 = 0.f;
-            // a33 = 1.f;
-            a34 = 0.f;
-            // a41 = 0.f;
-            // a42 = 0.f;
-            // a43 = 0.f;
-            a44 = 1.f;
+    void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
+        // a11 = 1.f;
+        a12 = 0.f;
+        a13 = 0.f;
+        a14 = 0.f;
+        a21 = 0.f;
+        // a22 = 1.f;
+        a23 = 0.f;
+        a24 = 0.f;
+        a31 = 0.f;
+        a32 = 0.f;
+        // a33 = 1.f;
+        a34 = 0.f;
+        // a41 = 0.f;
+        // a42 = 0.f;
+        // a43 = 0.f;
+        a44 = 1.f;
 
-            a11 = 2.f / (right - left);
-            a22 = 2.f / (top - bottom);
-            a33 = -2.f / (zFar - zNear);
-            a41 = -(right + left) / (right - left);
-            a42 = -(top + bottom) / (top - bottom);
-            a43 = -(zFar + zNear) / (zFar - zNear);
-        }*/
+        a11 = 2.f / (right - left);
+        a22 = 2.f / (top - bottom);
+        a33 = -2.f / (zFar - zNear);
+        a41 = -(right + left) / (right - left);
+        a42 = -(top + bottom) / (top - bottom);
+        a43 = -(zFar + zNear) / (zFar - zNear);
+    }
 
     friend std::ostream &operator<<(std::ostream &out, const ProjectionTransform &vec) {
         out << "cameraAngle: " << vec.cameraAngle << std::endl;
