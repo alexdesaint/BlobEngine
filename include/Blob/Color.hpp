@@ -16,19 +16,19 @@ public:
     // float A = 1.f;
     ///@}
 
-    RGB() noexcept = default;
+    constexpr RGB() noexcept = default;
 
-    RGB(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 0) noexcept : R(R / 255.f), G(G / 255.f), B(B / 255.f) {}
+    constexpr RGB(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 0) noexcept : R(R / 255.f), G(G / 255.f), B(B / 255.f) {}
 
     /// Hex Color Code Constructor
     /// \param RGB Hexadecimal color representation
-    explicit RGB(uint32_t RGB) noexcept : R(((RGB >> 16) & 0xFF) / 255.f), G(((RGB >> 8) & 0xFF) / 255.f), B((RGB & 0xFF) / 255.f) {}
+    constexpr explicit RGB(uint32_t RGB) noexcept : R(((RGB >> 16) & 0xFF) / 255.f), G(((RGB >> 8) & 0xFF) / 255.f), B((RGB & 0xFF) / 255.f) {}
 
     /// Float Color Constructor. Values range is from 0.f to 1.f.
     /// \param R Red channel
     /// \param G Green channel
     /// \param B Blue channel
-    RGB(float R, float G, float B, float A = 0) noexcept : R(R), G(G), B(B) {}
+    constexpr RGB(float R, float G, float B, float A = 0) noexcept : R(R), G(G), B(B) {}
 
     friend std::ostream &operator<<(std::ostream &out, const RGB &vec);
 };

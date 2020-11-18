@@ -130,19 +130,19 @@ public:
     T x = 0, y = 0, z = 0;
 
     // Constructors
-    Vec3() = default;
+    constexpr Vec3() noexcept : x(0), y(0), z(0) {}
 
-    explicit Vec3(T xyz) : x(xyz), y(xyz), z(xyz) {}
+    constexpr explicit Vec3(T xyz) noexcept : x(xyz), y(xyz), z(xyz) {}
 
-    Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
+    constexpr Vec3(T x, T y, T z) noexcept : x(x), y(y), z(z) {}
 
-    explicit Vec3(T xyz[3]) : x(xyz[0]), y(xyz[1]), z(xyz[2]) {}
+    constexpr explicit Vec3(T xyz[3]) noexcept : x(xyz[0]), y(xyz[1]), z(xyz[2]) {}
 
-    Vec3(const Vec2<T> &v, T u) : x(v.x), y(v.y), z(u) {}
+    constexpr Vec3(const Vec2<T> &v, T u) noexcept : x(v.x), y(v.y), z(u) {}
 
-    Vec3(const Vec3 &v) : x(v.x), y(v.y), z(v.z) {}
+    constexpr Vec3(const Vec3 &v) noexcept : x(v.x), y(v.y), z(v.z) {}
 
-    Vec3(const Vec3 &point1, const Vec3 &point2) {
+    constexpr Vec3(const Vec3 &point1, const Vec3 &point2) noexcept {
         x = point2.x - point1.x;
         y = point2.y - point1.y;
         z = point2.z - point1.z;
