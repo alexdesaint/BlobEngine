@@ -1,6 +1,7 @@
 #pragma once
 
-#include <unitypes.h>
+#include <cstdint>
+#include <cstddef>
 
 namespace Blob::Core {
 class RenderOptions {
