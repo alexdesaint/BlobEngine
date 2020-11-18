@@ -20,8 +20,6 @@ struct Light {
     Color::RGB color = {1.f, 1.f, 1.f};
     float power = 1000.f;
     float radius = 0.1f;
-
-    constexpr Light() noexcept : position(0.f, 0.f, 2.0f), color(1.f, 1.f, 1.f), power(1000.f), radius(0.1f) {};
 };
 
 class PBR {

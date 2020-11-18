@@ -130,108 +130,108 @@ public:
     T x = 0, y = 0, z = 0;
 
     // Constructors
-    constexpr Vec3() noexcept : x(0), y(0), z(0) {}
+    constexpr inline Vec3() noexcept : x(0), y(0), z(0) {}
 
-    constexpr explicit Vec3(T xyz) noexcept : x(xyz), y(xyz), z(xyz) {}
+    constexpr inline explicit Vec3(T xyz) noexcept : x(xyz), y(xyz), z(xyz) {}
 
-    constexpr Vec3(T x, T y, T z) noexcept : x(x), y(y), z(z) {}
+    constexpr inline Vec3(T x, T y, T z) noexcept : x(x), y(y), z(z) {}
 
-    constexpr explicit Vec3(T xyz[3]) noexcept : x(xyz[0]), y(xyz[1]), z(xyz[2]) {}
+    constexpr inline explicit Vec3(T xyz[3]) noexcept : x(xyz[0]), y(xyz[1]), z(xyz[2]) {}
 
-    constexpr Vec3(const Vec2<T> &v, T u) noexcept : x(v.x), y(v.y), z(u) {}
+    constexpr inline Vec3(const Vec2<T> &v, T u) noexcept : x(v.x), y(v.y), z(u) {}
 
-    constexpr Vec3(const Vec3 &v) noexcept : x(v.x), y(v.y), z(v.z) {}
+    constexpr inline Vec3(const Vec3 &v) noexcept : x(v.x), y(v.y), z(v.z) {}
 
-    constexpr Vec3(const Vec3 &point1, const Vec3 &point2) noexcept {
+    constexpr inline Vec3(const Vec3 &point1, const Vec3 &point2) noexcept {
         x = point2.x - point1.x;
         y = point2.y - point1.y;
         z = point2.z - point1.z;
     }
 
     // operator with Vec3
-    bool operator==(const Vec3 &v) const { return x == v.x && y == v.y && z == v.z; }
+    inline constexpr bool operator==(const Vec3 &v) const noexcept { return x == v.x && y == v.y && z == v.z; }
 
-    bool operator!=(const Vec3 &v) const { return x != v.x || y != v.y || z != v.z; }
+    inline constexpr bool operator!=(const Vec3 &v) const noexcept { return x != v.x || y != v.y || z != v.z; }
 
-    Vec3 operator-(const Vec3 &v) const { return {x - v.x, y - v.y, z - v.z}; }
+    inline constexpr Vec3 operator-(const Vec3 &v) const noexcept { return {x - v.x, y - v.y, z - v.z}; }
 
-    Vec3 operator+(const Vec3 &v) const { return {x + v.x, y + v.y, z + v.z}; }
+    inline constexpr Vec3 operator+(const Vec3 &v) const noexcept { return {x + v.x, y + v.y, z + v.z}; }
 
-    Vec3 operator*(const Vec3 &v) const { return {x * v.x, y * v.y, z * v.z}; }
+    inline constexpr Vec3 operator*(const Vec3 &v) const noexcept { return {x * v.x, y * v.y, z * v.z}; }
 
-    Vec3 operator/(const Vec3 &v) const { return {x / v.x, y / v.y, z / v.z}; }
+    inline constexpr Vec3 operator/(const Vec3 &v) const noexcept { return {x / v.x, y / v.y, z / v.z}; }
 
-    void operator+=(const Vec3 &v) {
+    inline constexpr void operator+=(const Vec3 &v) noexcept {
         x += v.x;
         y += v.y;
         z += v.z;
     }
 
-    void operator-=(const Vec3 &v) {
+    inline constexpr void operator-=(const Vec3 &v) noexcept {
         x -= v.x;
         y -= v.y;
         z -= v.z;
     }
 
-    void operator*=(const Vec3 &v) {
+    inline constexpr void operator*=(const Vec3 &v) noexcept {
         x *= v.x;
         y *= v.y;
         z *= v.z;
     }
 
-    void operator/=(const Vec3 &v) {
+    inline constexpr void operator/=(const Vec3 &v) noexcept {
         x /= v.x;
         y /= v.y;
         z /= v.z;
     }
 
-    Vec3 &operator=(const Vec3 &v) {
+    inline constexpr Vec3 &operator=(const Vec3 &v) noexcept {
         x = v.x;
         y = v.y;
         z = v.z;
         return *this;
     }
 
-    Vec3 &operator=(const Vec2<T> &v) {
+    inline constexpr Vec3 &operator=(const Vec2<T> &v) noexcept {
         x = v.x;
         y = v.y;
         return *this;
     }
 
     // operator with T
-    Vec3 operator+(const T &a) const { return {a + x, a + y, a + z}; }
+    inline constexpr Vec3 operator+(const T &a) const noexcept { return {a + x, a + y, a + z}; }
 
-    Vec3 operator-(const T &a) const { return {x - a, y - a, a - z}; }
+    inline constexpr Vec3 operator-(const T &a) const noexcept { return {x - a, y - a, a - z}; }
 
-    Vec3 operator*(const T &a) const { return {a * x, a * y, a * z}; }
+    inline constexpr Vec3 operator*(const T &a) const noexcept { return {a * x, a * y, a * z}; }
 
-    Vec3 operator/(const T &a) const { return {x / a, y / a, z / a}; }
+    inline constexpr Vec3 operator/(const T &a) const noexcept { return {x / a, y / a, z / a}; }
 
-    void operator+=(const T &a) {
+    inline constexpr void operator+=(const T &a) noexcept {
         x += a;
         y += a;
         z += a;
     }
 
-    void operator-=(const T &a) {
+    inline constexpr void operator-=(const T &a) noexcept {
         x -= a;
         y -= a;
         z -= a;
     }
 
-    void operator*=(const T &a) {
+    inline constexpr void operator*=(const T &a) noexcept {
         x *= a;
         y *= a;
         z *= a;
     }
 
-    void operator/=(const T &a) {
+    inline constexpr void operator/=(const T &a) noexcept {
         x /= a;
         y /= a;
         z /= a;
     }
 
-    Vec3 &operator=(const T &a) {
+    inline constexpr Vec3 &operator=(const T &a) noexcept {
         x = a;
         y = a;
         z = a;
@@ -239,29 +239,29 @@ public:
     }
 
     // Functions
-    [[nodiscard]] T length2() const { return x * x + y * y + z * z; }
+    [[nodiscard]] inline T length2() const noexcept { return x * x + y * y + z * z; }
 
-    [[nodiscard]] double length() const { return std::sqrt(x * x + y * y + z * z); };
+    [[nodiscard]] inline double length() const noexcept { return std::sqrt(x * x + y * y + z * z); };
 
-    [[nodiscard]] T scalar(const Vec3 &B) const { return x * B.x + y * B.y + z * B.z; }
+    [[nodiscard]] inline T scalar(const Vec3 &B) const noexcept { return x * B.x + y * B.y + z * B.z; }
 
-    [[nodiscard]] T dot(const Vec3 &B) const { return x * B.x + y * B.y + z * B.z; }
+    [[nodiscard]] inline T dot(const Vec3 &B) const noexcept { return x * B.x + y * B.y + z * B.z; }
 
-    [[nodiscard]] Vec3 cross(const Vec3 &B) const { return {y * B.z - B.y * z, z * B.x - B.z * x, x * B.y - B.x * y}; }
+    [[nodiscard]] inline Vec3 cross(const Vec3 &B) const noexcept { return {y * B.z - B.y * z, z * B.x - B.z * x, x * B.y - B.x * y}; }
 
-    Vec3 normalize() const {
+    [[nodiscard]] inline Vec3 normalize() const noexcept {
         float t = 1.f / (std::sqrt(x * x + y * y + z * z));
         return {x * t, y * t, z * t};
     }
 
-    [[nodiscard]] Vec3<T> getNormal() const { return operator/(std::sqrt(x * x + y * y + z * z)); }
+    [[nodiscard]] inline Vec3<T> getNormal() const noexcept { return operator/(std::sqrt(x * x + y * y + z * z)); }
 
-    Vec3<T> setLength(double newLength) { return operator=(operator/=(std::sqrt(x * x + y * y + z * z)) * newLength); }
+    inline Vec3<T> setLength(double newLength) noexcept { return operator=(operator/=(std::sqrt(x * x + y * y + z * z)) * newLength); }
 
-    [[nodiscard]] bool isNull() const { return (x == 0) && (y == 0) && (z == 0); }
+    [[nodiscard]] inline bool isNull() const noexcept { return (x == 0) && (y == 0) && (z == 0); }
 
     template<typename U>
-    Vec3<U> cast() const {
+    inline Vec3<U> cast() const noexcept {
         return {(U) x, (U) y, (U) z};
     }
 
