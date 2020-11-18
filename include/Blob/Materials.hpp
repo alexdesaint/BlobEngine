@@ -21,7 +21,7 @@ struct Light {
     float power = 1000.f;
     float radius = 0.1f;
 
-    Light() noexcept = default;
+    constexpr Light() noexcept = default;
 };
 
 class PBR {
