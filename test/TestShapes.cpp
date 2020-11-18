@@ -1,13 +1,11 @@
+#include <Blob/AssetManager.hpp>
+#include <Blob/Core/Window.hpp>
 #include <Blob/Maths.inl>
-#include <Blob/Reader/FileReader.hpp>
-#include <array>
-#include <iomanip>
-#include <iostream>
-#include <vector>
 
 using namespace std;
+using namespace Blob;
 
-template<typename T, int SIZE>
+/*template<typename T, int SIZE>
 std::vector<array<T, SIZE>> readSerie(const vector<uint8_t> &buffer, const int count, int &offset) {
     union {
         T f;
@@ -91,7 +89,7 @@ void decodeNoT(const vector<uint8_t> &buffer, const int posNormalLen, const int 
         Blob::Maths::Vec3 c1 = norm.cross({0.0, 0.0, 1.0});
         Blob::Maths::Vec3 c2 = norm.cross({0.0, 1.0, 0.0});
 
-        if( c1.length2() > c2.length2() )
+        if (c1.length2() > c2.length2())
             tan = c1;
         else
             tan = c2;
@@ -108,17 +106,66 @@ void decodeNoT(const vector<uint8_t> &buffer, const int posNormalLen, const int 
         cout << indices[i][0] << ", ";
     }
     cout << endl;
-}
+}*/
+
+class Test : private Core::KeyboardEvents {
+private:
+    Maths::Vec2<> speed, anglePos;
+
+    void keyboardUpdate(const Core::Keyboard &keyboard) final {
+        static const float maxSpeed = 1;
+
+        speed = Maths::Vec2<>();
+
+        if (keyboard.LEFT)
+            speed.x = -maxSpeed;
+        if (keyboard.RIGHT)
+            speed.x = maxSpeed;
+        if (keyboard.UP)
+            speed.y = -maxSpeed;
+        if (keyboard.DOWN)
+            speed.y = maxSpeed;
+    }
+
+public:
+    Test() {
+        try {
+            Maths::Vec3<> pos{0, 0, 10};
+            Materials::PBR::light.position = {10, 10, 10};
+
+            Core::Camera camera;
+
+            Core::Window window(camera);
+
+            AssetManager a;
+
+            Shapes::Cube cube;
+            Shapes::Plane plane;
+            Shapes::OctagonalPrism octagonalPrism;
+
+            Core::Shape shape0{cube, {2, 0, 0}};
+            Core::Shape shape1{plane};
+            Core::Shape shape2{octagonalPrism, {-2, 0, 0}};
+
+            Core::Scene scene{{&shape0, &shape1, &shape2}};
+
+            window.setInfinitRange(0.1);
+
+            float flow = 0;
+            while (window.isOpen()) {
+                anglePos += speed * flow;
+                camera.setPosition(Maths::Vec3<>(std::cos(anglePos.x), std::sin(anglePos.x), std::cos(anglePos.y)) * 10);
+                window.draw(scene);
+
+                flow = window.display();
+            }
+
+        } catch (Core::Exception &exception) { std::cout << exception.what() << std::endl; }
+    }
+};
 
 int main() {
-    printf("Cube :\n");
-    decode(Blob::Reader::FileReader::loadBinaryFile("data/models/cube.bin"), 24, 36);
-
-    printf("Plane :\n");
-    decode(Blob::Reader::FileReader::loadBinaryFile("data/models/plane.bin"), 4, 6);
-
-    printf("OctagonalPrism :\n");
-    decodeNoT(Blob::Reader::FileReader::loadBinaryFile("data/models/OctagonalPrism.bin"), 48, 84);
+    Test test;
 
     return 0;
 }

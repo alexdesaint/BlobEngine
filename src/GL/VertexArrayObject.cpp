@@ -1,4 +1,3 @@
-#include <Blob/Exception.hpp>
 #include <Blob/GL/VertexArrayObject.hpp>
 #include <glad/glad.h>
 
@@ -17,21 +16,17 @@ VertexArrayObject::~VertexArrayObject() {
     glDeleteVertexArrays(1, &vertexArrayObject);
 }
 
-GLuint VertexArrayObject::getVertexArrayObject() const {
-    return vertexArrayObject;
-}
-
-void VertexArrayObject::setBuffer(const VertexBufferObject &vbo, GLsizei stride, GLuint dataOffset, uint32_t pos) {
+void VertexArrayObject::setBuffer(const VertexBufferObject &vbo, GLsizei stride, GLuint dataOffset, uint32_t pos) const {
 
     // ajoute le buffer au VAO et donne la taille des vecteurs
-    glVertexArrayVertexBuffer(vertexArrayObject, pos, vbo.getVertexBufferObject(), dataOffset, stride);
+    glVertexArrayVertexBuffer(vertexArrayObject, pos, vbo.vertexBufferObject, dataOffset, stride);
 }
 
-void VertexArrayObject::setIndicesBuffer(const VertexBufferObject &vbo) {
-    glVertexArrayElementBuffer(vertexArrayObject, vbo.getVertexBufferObject());
+void VertexArrayObject::setIndicesBuffer(const VertexBufferObject &vbo) const {
+    glVertexArrayElementBuffer(vertexArrayObject, vbo.vertexBufferObject);
 }
 
-void VertexArrayObject::setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType, GLuint relativeOffset, bool normalized, uint32_t pos) {
+void VertexArrayObject::setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType, GLuint relativeOffset, bool normalized, uint32_t pos) const {
 
     // Enable or disable a generic vertex attribute array
     glEnableVertexArrayAttrib(vertexArrayObject, outPosition);

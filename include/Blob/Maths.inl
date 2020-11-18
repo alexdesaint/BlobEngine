@@ -102,7 +102,9 @@ public:
 
     inline Vec2 setLength(T newLength) { return *this = *this / std::sqrt(x * x + y * y) * newLength; }
 
-    [[nodiscard]] inline Vec2 rotate() const { return {-y, x}; }
+    [[nodiscard]] inline Vec2 rotate() const { return {y, -x}; }
+
+    [[nodiscard]] inline Vec2 negate() const { return {-x, -y}; }
 
     [[nodiscard]] inline double getOrientation() const { return std::atan2(y, x); }
 
@@ -133,6 +135,10 @@ public:
     explicit Vec3(T xyz) : x(xyz), y(xyz), z(xyz) {}
 
     Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
+
+    explicit Vec3(T xyz[3]) : x(xyz[0]), y(xyz[1]), z(xyz[2]) {}
+
+    Vec3(const Vec2<T> &v, T u) : x(v.x), y(v.y), z(u) {}
 
     Vec3(const Vec3 &v) : x(v.x), y(v.y), z(v.z) {}
 
@@ -275,6 +281,8 @@ public:
     Vec4() = default;
 
     explicit Vec4(T xyzw) : x(xyzw), y(xyzw), z(xyzw), w(xyzw) {}
+
+    explicit Vec4(T xyzw[4]) : x(xyzw[0]), y(xyzw[1]), z(xyzw[2]), w(xyzw[3]) {}
 
     Vec4(T x, T y, T z, T w = 1) : x(x), y(y), z(z), w(w) {}
 
@@ -459,6 +467,10 @@ public:
 
     Mat4() noexcept = default;
 
+    explicit Mat4(float val)
+        : a11(val), a12(val), a13(val), a14(val), a21(val), a22(val), a23(val), a24(val), a31(val), a32(val), a33(val), a34(val), a41(val), a42(val),
+          a43(val), a44(val) {}
+
     Mat4(const Vec4<float> &a1, const Vec4<float> &a2, const Vec4<float> &a3, const Vec4<float> &a4)
         : a11(a1.x), a12(a1.y), a13(a1.z), a14(a1.w), a21(a2.x), a22(a2.y), a23(a2.z), a24(a2.w), a31(a3.x), a32(a3.y), a33(a3.z), a34(a3.w),
           a41(a4.x), a42(a4.y), a43(a4.z), a44(a4.w) {}
@@ -467,6 +479,8 @@ public:
          float a41, float a42, float a43, float a44) noexcept
         : a11(a11), a12(a12), a13(a13), a14(a14), a21(a21), a22(a22), a23(a23), a24(a24), a31(a31), a32(a32), a33(a33), a34(a34), a41(a41), a42(a42),
           a43(a43), a44(a44) {}
+
+    Mat4(const Mat4 &mat) noexcept = default;
 
     explicit Mat4(const std::array<float, 16> &mat) noexcept
         : a11(mat[0]), a12(mat[1]), a13(mat[2]), a14(mat[3]), a21(mat[4]), a22(mat[5]), a23(mat[6]), a24(mat[7]), a31(mat[8]), a32(mat[9]),
@@ -599,10 +613,10 @@ public:
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Mat4 &m) {
-        os << m.a11 << ", " << m.a12 << ", " << m.a13 << ", " << m.a14 << std::endl;
-        os << m.a21 << ", " << m.a22 << ", " << m.a23 << ", " << m.a24 << std::endl;
-        os << m.a31 << ", " << m.a32 << ", " << m.a33 << ", " << m.a34 << std::endl;
-        os << m.a41 << ", " << m.a42 << ", " << m.a43 << ", " << m.a44 << std::endl;
+        os << m.a11 << ", " << m.a12 << ", " << m.a13 << ", " << m.a14 << ", "; // << std::endl;
+        os << m.a21 << ", " << m.a22 << ", " << m.a23 << ", " << m.a24 << ", "; // << std::endl;
+        os << m.a31 << ", " << m.a32 << ", " << m.a33 << ", " << m.a34 << ", "; // << std::endl;
+        os << m.a41 << ", " << m.a42 << ", " << m.a43 << ", " << m.a44;         // << std::endl;
         return os;
     }
 };
@@ -632,6 +646,10 @@ private:
     }
 
 public:
+    using Mat4::Mat4;
+
+    explicit ModelTransform(const Mat4 &mat4) : Mat4(mat4) {}
+
     void setPosition(const Vec3<float> &xyz) {
         a41 = xyz.x;
         a42 = xyz.y;
@@ -703,6 +721,67 @@ public:
         compute();
     }
 
+    void rotate(const Vec4<float> &quaternion) {
+        float sqx = quaternion.x * quaternion.x;
+        float sqy = quaternion.y * quaternion.y;
+        float sqz = quaternion.z * quaternion.z;
+        float sqw = quaternion.w * quaternion.w;
+
+        Mat3 Rotate;
+        // invs (inverse square length) is only required if quaternion is not already normalised
+        float invs = 1 / (sqx + sqy + sqz + sqw);
+        Rotate.a11 = (sqx - sqy - sqz + sqw) * invs; // since sqw + sqx + sqy + sqz =1/invs*invs
+        Rotate.a22 = (-sqx + sqy - sqz + sqw) * invs;
+        Rotate.a33 = (-sqx - sqy + sqz + sqw) * invs;
+
+        float tmp1 = quaternion.x * quaternion.y;
+        float tmp2 = quaternion.z * quaternion.w;
+        Rotate.a21 = 2.f * (tmp1 + tmp2) * invs;
+        Rotate.a12 = 2.f * (tmp1 - tmp2) * invs;
+
+        tmp1 = quaternion.x * quaternion.z;
+        tmp2 = quaternion.y * quaternion.w;
+        Rotate.a31 = 2.f * (tmp1 - tmp2) * invs;
+        Rotate.a13 = 2.f * (tmp1 + tmp2) * invs;
+        tmp1 = quaternion.y * quaternion.z;
+        tmp2 = quaternion.x * quaternion.w;
+        Rotate.a32 = 2.f * (tmp1 + tmp2) * invs;
+        Rotate.a23 = 2.f * (tmp1 - tmp2) * invs;
+
+        rotation = rotation * Rotate;
+        compute();
+    }
+
+    void setRotation(const Vec4<float> &quaternion) {
+        float sqx = quaternion.x * quaternion.x;
+        float sqy = quaternion.y * quaternion.y;
+        float sqz = quaternion.z * quaternion.z;
+        float sqw = quaternion.w * quaternion.w;
+
+        // invs (inverse square length) is only required if quaternion is not already normalised
+        float invs = 1 / (sqx + sqy + sqz + sqw);
+
+        rotation.a11 = (sqx - sqy - sqz + sqw) * invs; // since sqw + sqx + sqy + sqz =1/invs*invs
+        rotation.a22 = (-sqx + sqy - sqz + sqw) * invs;
+        rotation.a33 = (-sqx - sqy + sqz + sqw) * invs;
+
+        float tmp1 = quaternion.x * quaternion.y;
+        float tmp2 = quaternion.z * quaternion.w;
+        rotation.a12 = 2.f * (tmp1 + tmp2) * invs;
+        rotation.a21 = 2.f * (tmp1 - tmp2) * invs;
+
+        tmp1 = quaternion.x * quaternion.z;
+        tmp2 = quaternion.y * quaternion.w;
+        rotation.a13 = 2.f * (tmp1 - tmp2) * invs;
+        rotation.a31 = 2.f * (tmp1 + tmp2) * invs;
+        tmp1 = quaternion.y * quaternion.z;
+        tmp2 = quaternion.x * quaternion.w;
+        rotation.a23 = 2.f * (tmp1 + tmp2) * invs;
+        rotation.a32 = 2.f * (tmp1 - tmp2) * invs;
+
+        compute();
+    }
+
     void setScale(float xyz) {
         scale = xyz;
         compute();
@@ -762,8 +841,24 @@ public:
 
     ViewTransform() : cameraPosition(1, 0, 1), cameraLookAt(0, 0, 0), cameraUp(0, 0, 1) { compute(); }
 
+    ViewTransform(const Vec3<float> &cameraPosition, const Vec3<float> &cameraLookAt, const Vec3<float> &cameraUp)
+        : cameraPosition(cameraPosition), cameraLookAt(cameraLookAt), cameraUp(cameraUp) {
+        compute();
+    }
+
     void setPosition(const Vec3<float> &pos) {
         cameraPosition = pos;
+        compute();
+    }
+
+    void move(const Vec3<float> &pos) {
+        cameraPosition += pos;
+        compute();
+    }
+
+    void move(const Vec3<float> &pos, float angle) {
+        cameraPosition += pos;
+        cameraLookAt = cameraPosition + Vec3<>(std::cos(angle), 0, std::sin(angle));
         compute();
     }
 
@@ -786,93 +881,93 @@ public:
 
 class ProjectionTransform : public Mat4 {
 private:
-    float cameraAngle, ratio, closeRange, longRange;
-
-    void compute() {
-        // a11 = 0.f;
-        a12 = 0.f;
-        a13 = 0.f;
-        a14 = 0.f;
-        a21 = 0.f;
-        // a22 = 0.f;
-        a23 = 0.f;
-        a24 = 0.f;
-        a31 = 0.f;
-        a32 = 0.f;
-        // a33 = 0.f;
-        // a34 = 0.f;
-        a41 = 0.f;
-        a42 = 0.f;
-        // a43 = 0.f;
-        a44 = 0.f;
-
-        const float tanHalfFovy = std::tan(cameraAngle / 2.f);
-
-        a11 = 1.f / (ratio * tanHalfFovy);
-        a22 = 1.f / (tanHalfFovy);
-        a33 = -(longRange + closeRange) / (longRange - closeRange);
-        a34 = -1.f;
-        a43 = -(2.f * longRange * closeRange) / (longRange - closeRange);
-    }
+    float cameraAngle, ratio;
 
 public:
     ProjectionTransform(float cameraAngle, const Vec2<int> &size, float closeRange, float longRange)
-        : cameraAngle(cameraAngle), ratio(size.x / (float) size.y), closeRange(closeRange), longRange(longRange) {
-        compute();
+        : Mat4(0), cameraAngle(cameraAngle), ratio(size.x / (float) size.y) {
+        setRange(closeRange, longRange);
+        setAngle(cameraAngle);
     }
 
-    void setRange(float _longRange, float _closeRrange) {
-        longRange = _longRange;
-        closeRange = _closeRrange;
+    ProjectionTransform(float cameraAngle, const Vec2<int> &size, float closeRange)
+        : Mat4(0), cameraAngle(cameraAngle), ratio(size.x / (float) size.y) {
+        setInfinitRange(closeRange);
+        setAngle(cameraAngle);
+    }
 
-        compute();
+    void setInfinitRange(float closeRange) {
+        a43 = closeRange;
+        a33 = 0;
+        a34 = -1.f;
+    }
+
+    void setRange(float closeRange, float longRange) {
+        a43 = -(longRange * closeRange) / (closeRange - longRange);
+        a33 = -((longRange) / (closeRange - longRange)) - 1;
+        a34 = -1.f;
     }
 
     void setAngle(float _cameraAngle) {
         cameraAngle = _cameraAngle;
-        compute();
+        const float tanHalfFovy = std::tan(cameraAngle / 2.f);
+
+        if (ratio > 1.f) {
+            a11 = 1.f / (tanHalfFovy);
+            a22 = (ratio / tanHalfFovy);
+        } else {
+            a11 = 1.f / (ratio * tanHalfFovy);
+            a22 = 1.f / (tanHalfFovy);
+        }
     }
 
     void setRatio(const Vec2<int> &size) {
         ratio = size.x / (float) size.y;
-        compute();
+        const float tanHalfFovy = std::tan(cameraAngle / 2.f);
+
+        if (ratio > 1.f) {
+            a11 = 1.f / (tanHalfFovy);
+            a22 = (ratio / tanHalfFovy);
+        } else {
+            a11 = 1.f / (ratio * tanHalfFovy);
+            a22 = 1.f / (tanHalfFovy);
+        }
     }
 
-    void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
+    /*    void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
+            // a11 = 1.f;
+            a12 = 0.f;
+            a13 = 0.f;
+            a14 = 0.f;
+            a21 = 0.f;
+            // a22 = 1.f;
+            a23 = 0.f;
+            a24 = 0.f;
+            a31 = 0.f;
+            a32 = 0.f;
+            // a33 = 1.f;
+            a34 = 0.f;
+            // a41 = 0.f;
+            // a42 = 0.f;
+            // a43 = 0.f;
+            a44 = 1.f;
 
-        // a11 = 1.f;
-        a12 = 0.f;
-        a13 = 0.f;
-        a14 = 0.f;
-        a21 = 0.f;
-        // a22 = 1.f;
-        a23 = 0.f;
-        a24 = 0.f;
-        a31 = 0.f;
-        a32 = 0.f;
-        // a33 = 1.f;
-        a34 = 0.f;
-        // a41 = 0.f;
-        // a42 = 0.f;
-        // a43 = 0.f;
-        a44 = 1.f;
-
-        a11 = 2.f / (right - left);
-        a22 = 2.f / (top - bottom);
-        a33 = -2.f / (zFar - zNear);
-        a41 = -(right + left) / (right - left);
-        a42 = -(top + bottom) / (top - bottom);
-        a43 = -(zFar + zNear) / (zFar - zNear);
-    }
+            a11 = 2.f / (right - left);
+            a22 = 2.f / (top - bottom);
+            a33 = -2.f / (zFar - zNear);
+            a41 = -(right + left) / (right - left);
+            a42 = -(top + bottom) / (top - bottom);
+            a43 = -(zFar + zNear) / (zFar - zNear);
+        }*/
 
     friend std::ostream &operator<<(std::ostream &out, const ProjectionTransform &vec) {
         out << "cameraAngle: " << vec.cameraAngle << std::endl;
 
         out << "ratio: " << vec.ratio << std::endl;
 
-        out << "closeRange: " << vec.closeRange << std::endl;
+        //        out << "closeRange: " << vec.closeRange << std::endl;
 
-        out << "longRange: " << vec.longRange << std::endl;
+        //        out << "longRange: " << vec.longRange << std::endl;
 
         out << "ProjectionTransform: " << std::endl << (Mat4) vec << std::endl;
 

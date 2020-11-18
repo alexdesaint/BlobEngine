@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Blob/Color.hpp>
-#include <Blob/Exception.hpp>
+#include <Blob/Core/Exception.hpp>
 #include <nlohmann/json.hpp>
 namespace Blob::glTF2 {
 template<typename T>

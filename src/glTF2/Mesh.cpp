@@ -1,4 +1,4 @@
-#include <Blob/GL/ShaderProgram.hpp>
+#include <Blob/GL/Shader.hpp>
 #include <Blob/glTF2/BasicFunctions.hpp>
 #include <Blob/glTF2/Mesh.hpp>
 #include <iomanip>
@@ -57,88 +57,67 @@ Mesh::Primitive::Attribute::Attribute(const nlohmann::json &j, std::vector<glTF2
     /// - check if the material have all the attributes needed
 
     Required(j, "POSITION", POSITION);
-    NotRequired(j, "NORMAL", NORMAL);
-    NotRequired(j, "TANGENT", TANGENT);
-    NotRequired(j, "TEXCOORD_0", TEXCOORD_0);
-    NotRequired(j, "TEXCOORD_1", TEXCOORD_1);
-    NotRequired(j, "COLOR_0", COLOR_0);
-    NotRequired(j, "JOINTS_0", JOINTS_0);
-    NotRequired(j, "WEIGHTS_0", WEIGHTS_0);
+    strideSize = accessors[POSITION].typeSize;
+    dataSize = accessors[POSITION].dataSize;
+    std::size_t count = accessors[POSITION].count;
+    types = 1;
 
-    BufferView &bv = bufferViews[accessors[POSITION].bufferView];
+    if (NotRequired(j, "NORMAL", NORMAL)) {
+        if (count != accessors[NORMAL].count)
+            NORMAL = -1; // TODO: print a warning
+        strideSize += accessors[NORMAL].typeSize;
+        dataSize += accessors[NORMAL].dataSize;
 
-    /// tests
-//    auto data = buffers[bv.buffer].getData(bv.byteLength, bv.byteOffset);
-//    auto pos = readSerie<float, 3>(data, (int) 24, (int) accessors[POSITION].byteOffset);
-//    auto normal = readSerie<float, 3>(data, (int) 24, (int) accessors[NORMAL].byteOffset);
-//    auto textcoor = readSerie<float, 2>(data, (int) 24, (int) accessors[TEXCOORD_0].byteOffset);
-//    for (int i = 0; i < 24; i++)
-//        cout << "{" << pos[i] << ", " << normal[i] << ", " << textcoor[i] << "}," << endl;
+        types |= 1 << 1;
+    }
+    if (NotRequired(j, "TANGENT", TANGENT)) {
+        if (count != accessors[TANGENT].count)
+            TANGENT = -1; // TODO: print a warning
+        strideSize += accessors[TANGENT].typeSize;
+        dataSize += accessors[TANGENT].dataSize;
 
-    setBuffer(buffers[bv.buffer], bv.byteStride);
+        types |= 1 << 2;
+    }
+    if (NotRequired(j, "TEXCOORD_0", TEXCOORD_0)) {
+        if (count != accessors[TEXCOORD_0].count)
+            TEXCOORD_0 = -1; // TODO: print a warning
+        strideSize += accessors[TEXCOORD_0].typeSize;
+        dataSize += accessors[TEXCOORD_0].dataSize;
 
-    setArray(accessors[POSITION].type,                       /// num of values per array
-             GL::ShaderProgram::AttributeLocation::POSITION, /// Shader position
-             accessors[POSITION].componentType,              /// Type
-             accessors[POSITION].byteOffset + bufferViews[accessors[POSITION].bufferView].byteOffset,                 /// Relative offset
-             accessors[POSITION].normalized                  /// Normalized
-    );
+        types |= 1 << 3;
+    }
+    if (NotRequired(j, "TEXCOORD_1", TEXCOORD_1)) {
+        if (count != accessors[TEXCOORD_1].count)
+            TEXCOORD_1 = -1; // TODO: print a warning
+        strideSize += accessors[TEXCOORD_1].typeSize;
+        dataSize += accessors[TEXCOORD_1].dataSize;
 
-    if (NORMAL != -1)
-        setArray(accessors[NORMAL].type,                       /// num of values per array
-                 GL::ShaderProgram::AttributeLocation::NORMAL, /// Shader position
-                 accessors[NORMAL].componentType,              /// Type
-                 accessors[NORMAL].byteOffset + bufferViews[accessors[NORMAL].bufferView].byteOffset,                 /// Relative offset
-                 accessors[NORMAL].normalized                  /// Normalized
-        );
+        types |= 1 << 4;
+    }
+    if (NotRequired(j, "COLOR_0", COLOR_0)) {
+        if (count != accessors[COLOR_0].count)
+            COLOR_0 = -1; // TODO: print a warning
+        strideSize += accessors[COLOR_0].typeSize;
+        dataSize += accessors[COLOR_0].dataSize;
 
-    if (TANGENT != -1)
-        setArray(accessors[TANGENT].type,                       /// num of values per array
-                 GL::ShaderProgram::AttributeLocation::TANGENT, /// Shader position
-                 accessors[TANGENT].componentType,              /// Type
-                 accessors[TANGENT].byteOffset + bufferViews[accessors[TANGENT].bufferView].byteOffset,                 /// Relative offset
-                 accessors[TANGENT].normalized                  /// Normalized
-        );
+        types |= 1 << 5;
+    }
+    if (NotRequired(j, "JOINTS_0", JOINTS_0)) {
+        if (count != accessors[JOINTS_0].count)
+            JOINTS_0 = -1; // TODO: print a warning
+        strideSize += accessors[JOINTS_0].typeSize;
+        dataSize += accessors[JOINTS_0].dataSize;
 
-    if (TEXCOORD_0 != -1)
-        setArray(accessors[TEXCOORD_0].type,                       /// num of values per array
-                 GL::ShaderProgram::AttributeLocation::TEXCOORD_0, /// Shader position
-                 accessors[TEXCOORD_0].componentType,              /// Type
-                 accessors[TEXCOORD_0].byteOffset + bufferViews[accessors[TEXCOORD_0].bufferView].byteOffset,                 /// Relative offset
-                 accessors[TEXCOORD_0].normalized                  /// Normalized
-        );
+        types |= 1 << 6;
+    }
+    if (NotRequired(j, "WEIGHTS_0", WEIGHTS_0)) {
+        if (count != accessors[WEIGHTS_0].count)
+            WEIGHTS_0 = -1; // TODO: print a warning
+        strideSize += accessors[WEIGHTS_0].typeSize;
+        dataSize += accessors[WEIGHTS_0].dataSize;
 
-    if (TEXCOORD_1 != -1)
-        setArray(accessors[TEXCOORD_1].type,                       /// num of values per array
-                 GL::ShaderProgram::AttributeLocation::TEXCOORD_1, /// Shader position
-                 accessors[TEXCOORD_1].componentType,              /// Type
-                 accessors[TEXCOORD_1].byteOffset + bufferViews[accessors[POSITION].bufferView].byteOffset,                 /// Relative offset
-                 accessors[TEXCOORD_1].normalized                  /// Normalized
-        );
-
-    if (COLOR_0 != -1)
-        setArray(accessors[COLOR_0].type,                       /// num of values per array
-                 GL::ShaderProgram::AttributeLocation::COLOR_0, /// Shader position
-                 accessors[COLOR_0].componentType,              /// Type
-                 accessors[COLOR_0].byteOffset + bufferViews[accessors[TEXCOORD_1].bufferView].byteOffset,                 /// Relative offset
-                 accessors[COLOR_0].normalized                  /// Normalized
-        );
-
-    if (JOINTS_0 != -1)
-        setArray(accessors[JOINTS_0].type,                       /// num of values per array
-                 GL::ShaderProgram::AttributeLocation::JOINTS_0, /// Shader position
-                 accessors[JOINTS_0].componentType,              /// Type
-                 accessors[JOINTS_0].byteOffset + bufferViews[accessors[JOINTS_0].bufferView].byteOffset,                 /// Relative offset
-                 accessors[JOINTS_0].normalized                  /// Normalized
-        );
-
-    if (WEIGHTS_0 != -1)
-        setArray(accessors[WEIGHTS_0].type,                       /// num of values per array
-                 GL::ShaderProgram::AttributeLocation::WEIGHTS_0, /// Shader position
-                 accessors[WEIGHTS_0].componentType,              /// Type
-                 accessors[WEIGHTS_0].byteOffset + bufferViews[accessors[WEIGHTS_0].bufferView].byteOffset,                 /// Relative offset
-                 accessors[WEIGHTS_0].normalized                  /// Normalized
-        );
+        types |= 1 << 7;
+    }
 }
 
 std::ostream &operator<<(std::ostream &s, const Mesh::Primitive::Attribute &a) {
@@ -164,30 +143,27 @@ std::ostream &operator<<(std::ostream &s, const Mesh::Primitive::Attribute &a) {
 }
 
 Mesh::Primitive::Primitive(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
-                           std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials)
-    : attributes(j["attributes"], accessors, buffers, bufferViews), Core::Mesh(attributes) {
+                           std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial, std::vector<Texture> &textures)
+    : attributes(j["attributes"], accessors, buffers, bufferViews) {
 
     NotRequired(j, "mode", mode);
+
+    if (NotRequired(j, "material", material)) {
+        if(!materials[material].material)
+            materials[material].make(attributes.types, textures);
+        primitive = std::make_unique<Core::Primitive>(attributes, *materials[material].material, renderOptions);
+    } else
+        primitive = std::make_unique<Core::Primitive>(attributes, defautMaterial, renderOptions);
 
     if (NotRequired(j, "indices", indices)) {
         Accessor &a = accessors[indices];
         BufferView &bv = bufferViews[a.bufferView];
         Buffer &b = buffers[bv.buffer];
 
-        indicesArray = b.getData(bv.byteLength, bv.byteOffset);
+        indicesArray = b.getData(a.dataSize, bv.byteOffset + a.byteOffset);
 
-        setIndices(indicesArray.data(), a.count, a.componentType);
-        /// Some random tests
-
-        //        auto data = buffers[bv.buffer].getData(bv.byteLength, bv.byteOffset);
-        //        auto indices = readSerie<float, 1>(indicesArray, (int) bv.byteLength, (int) accessors[attributes.POSITION].byteOffset);
-        //        auto pos = readSerie<float, 3>(data, (int) bv.byteLength, (int) accessors[attributes.POSITION].byteOffset);
-        //        for(auto &p : pos)
-        //            cout << "{" << std::setprecision(2) << p[0] << ", " << p[1] << ", " << p[2] << "}" << endl;
+        renderOptions.setIndices(indicesArray.data(), a.count, a.componentType);
     }
-
-    if (NotRequired(j, "material", material) && materials[material].material != nullptr)
-        setMaterial(*materials[material].material);
 }
 
 std::ostream &operator<<(std::ostream &s, const Mesh::Primitive &a) {
@@ -209,17 +185,17 @@ std::ostream &operator<<(std::ostream &s, const Mesh::Primitive &a) {
 }
 
 Mesh::Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
-           std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials) {
+           std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial, std::vector<Texture> &textures) {
 
     primitives.reserve(j["primitives"].size());
     for (const auto &js : j["primitives"])
-        primitives.emplace_back(js, accessors, buffers, bufferViews, materials);
+        primitives.emplace_back(js, accessors, buffers, bufferViews, materials, defautMaterial, textures);
+
+    for (Primitive &p : primitives)
+        addPrimitive(*p.primitive);
 
     NotRequired(j, "weights", weights);
     NotRequired(j, "name", name);
-
-    if (primitives.size() != 1)
-        throw Core::Exception("Mesh with multiple primitives not supported yet");
 }
 
 std::ostream &operator<<(std::ostream &s, const Mesh &a) {

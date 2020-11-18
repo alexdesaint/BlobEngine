@@ -93,7 +93,7 @@ namespace ImGui
 */
 
 #include <Blob/Maths.inl>
-#include <Blob/Exception.hpp>
+#include <Blob/Core/Exception.hpp>
 namespace Blob {
 	//class Vec2f;
 

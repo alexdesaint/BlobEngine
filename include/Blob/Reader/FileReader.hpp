@@ -22,7 +22,7 @@ public:
 
     std::string getString(int length);
 
-    static std::vector<uint8_t > loadBinaryFile(const std::string& filename);
+    static std::vector<uint8_t> loadBinaryFile(const std::string &filename);
 
     template<typename T>
     T readNextBytes() {
@@ -49,6 +49,10 @@ public:
     static std::string getFileExtention(const std::string &file) { return file.substr(file.find_last_of('.') + 1); }
 
     static std::string getFilePath(const std::string &file) { return file.substr(0, file.find_last_of("/\\") + 1); }
+
+    static std::string getFileName(const std::string &file) {
+        auto b = file.find_last_of("/\\") + 1;
+        return file.substr(b, file.find_last_of('.') - b); }
 };
 } // namespace Blob::Reader
 

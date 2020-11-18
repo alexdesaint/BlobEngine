@@ -2,7 +2,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace Blob::Material;
+using namespace Blob;
 
 int main() {
     cout << "Test Color" << endl;

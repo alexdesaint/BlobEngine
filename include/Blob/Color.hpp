@@ -18,22 +18,46 @@ public:
 
     RGB() noexcept = default;
 
-    RGB(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 0) noexcept : R(R / 255.f), G(G / 255.f), B(B / 255.f) /*, A(A/255.f)*/ {}
+    RGB(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 0) noexcept : R(R / 255.f), G(G / 255.f), B(B / 255.f) {}
 
     /// Hex Color Code Constructor
     /// \param RGB Hexadecimal color representation
-    RGB(uint32_t RGB) noexcept : R(((RGB >> 16) & 0xFF) / 255.f), G(((RGB >> 8) & 0xFF) / 255.f), B((RGB & 0xFF) / 255.f) /*, A(1.f)*/ {}
+    explicit RGB(uint32_t RGB) noexcept : R(((RGB >> 16) & 0xFF) / 255.f), G(((RGB >> 8) & 0xFF) / 255.f), B((RGB & 0xFF) / 255.f) {}
+
+    /// Float Color Constructor. Values range is from 0.f to 1.f.
+    /// \param R Red channel
+    /// \param G Green channel
+    /// \param B Blue channel
+    RGB(float R, float G, float B, float A = 0) noexcept : R(R), G(G), B(B) {}
+
+    friend std::ostream &operator<<(std::ostream &out, const RGB &vec);
+};
+
+class RGBA {
+public:
+    ///@{
+    /// @name Color channels
+    float R = 0;
+    float G = 0;
+    float B = 0;
+    float A = 1.f;
+    ///@}
+
+    RGBA() noexcept = default;
+
+    RGBA(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 0) noexcept : R(R / 255.f), G(G / 255.f), B(B / 255.f), A(A / 255.f) {}
 
     /// Float Color Constructor. Values range is from 0.f to 1.f.
     /// \param R Red channel
     /// \param G Green channel
     /// \param B Blue channel
     /// \param A Alpha channel (transparency)
-    RGB(float R, float G, float B, float A = 0) noexcept : R(R), G(G), B(B) /*, A(A)*/ {}
+    RGBA(float R, float G, float B, float A = 0) noexcept : R(R), G(G), B(B), A(A) {}
 
-    friend std::ostream &operator<<(std::ostream &out, const RGB &vec);
+    operator RGB() { return {R, G, B}; }
+
+    friend std::ostream &operator<<(std::ostream &out, const RGBA &vec);
 };
-
 /** @name X11 Colors
  *  Source : http://cng.seas.rochester.edu/CNG/docs/x11color.html
  */

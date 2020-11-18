@@ -1,14 +1,14 @@
-#include <Blob/GL/Core.hpp>
-#include <Blob/GL/ShaderProgram.hpp>
+#include <Blob/GL/Shader.hpp>
 #include <Blob/GL/VertexBufferObject.hpp>
+#include <Blob/GL/Window.hpp>
 
-#include <Blob/Exception.hpp>
-#include <Blob/Geometry/ProjectionTransform.hpp>
-#include <Blob/Geometry/ViewTransform.hpp>
-#include <Blob/Window.hpp>
+#include <Blob/Core/Exception.hpp>
+#include <Blob/Core/Window.hpp>
 #include <iostream>
 
 using namespace Blob;
+using namespace Blob::Core;
+using namespace Blob::Maths;
 
 static const struct {
     float x, y;
@@ -43,20 +43,21 @@ void main()  {
 }
 )=====";
 
-class SimpleMaterial : public Material::Material {
+class SimpleMaterial : public Core::Material {
 private:
-    void applyMaterial(const Geometry::ProjectionTransform &pt, const Geometry::ViewTransform &vt, const Geometry::Mat4 &mt) const final {
-        GL::Core::setUniform((Geometry::Mat4) pt, projection);
-        GL::Core::setUniform((Geometry::Mat4) vt, view);
-        GL::Core::setUniform(mt, model);
+    void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const Mat4 &mt) const final {
+        setShader(sp);
+        setUniform(pt, projection);
+        setUniform(vt, view);
+        setUniform(mt, model);
     }
-
+    const GL::Shader &sp;
 public:
     static int model;
     static int view;
     static int projection;
 
-    explicit SimpleMaterial(const GL::ShaderProgram &sp) : Material(sp) {}
+    explicit SimpleMaterial(const GL::Shader &sp) : sp(sp) {}
 };
 
 int SimpleMaterial::model;
@@ -71,7 +72,7 @@ int main() {
     try {
         GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
-        GL::ShaderProgram sp;
+        GL::Shader sp;
         sp.addVertexShader(vertex_shader_text);
         sp.addFragmentShader(fragment_shader_text);
         sp.linkShaders();
@@ -88,10 +89,12 @@ int main() {
         unsigned short indices[] = {0, 1, 2, 3, 2, 1};
         SimpleMaterial material(sp);
 
-        Core::Mesh renderable(vao, material);
-        renderable.setIndices(indices, 6);
-
-        Core::Shape shape(renderable);
+        RenderOptions ro;
+        ro.setIndices(indices, 6);
+        Core::Primitive primitive(vao, material, ro);
+        Core::Mesh mesh;
+        mesh.addPrimitive(primitive);
+        Core::Shape shape(mesh);
 
         while (window.isOpen()) {
 

@@ -2,17 +2,18 @@
 
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include <Blob/GL/Texture.hpp>
 
 namespace Blob::glTF2 {
     /**
      * Texture sampler properties for filtering and wrapping modes.
      */
-    class Sampler {
+class Sampler : public GL::Sampler {
     public:
-        int magFilter; ///< Magnification filter.
-        int minFilter; ///< Minification filter.
-        int wrapS; ///< s wrapping mode.
-        int wrapT; ///< t wrapping mode.
+        //int magFilter; ///< Magnification filter.
+        //int minFilter; ///< Minification filter.
+        //int wrapS; ///< s wrapping mode.
+        //int wrapT; ///< t wrapping mode.
         std::string name; ///< The user-defined name of this object.
 
         Sampler();

@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include <Blob/Scene.hpp>
+#include <Blob/Core/Scene.hpp>
 #include <Blob/glTF2/Node.hpp>
 
 namespace Blob::glTF2 {

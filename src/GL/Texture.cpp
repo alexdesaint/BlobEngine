@@ -1,4 +1,4 @@
-#include <Blob/Exception.hpp>
+#include <Blob/Core/Exception.hpp>
 #include <Blob/GL/Texture.hpp>
 
 #include <glad/glad.h>
@@ -9,6 +9,7 @@
 /// TODO: Move the image loading part in Blob::Texture
 
 namespace Blob::GL {
+
 
 void Texture::init() {
     if (textureLoaded)
@@ -23,8 +24,8 @@ Texture::~Texture() {
         glDeleteTextures(1, &texture);
 }
 
-Texture::Texture(const std::string &path, bool nearest) {
-    loadBMP(path, nearest);
+Texture::Texture(const std::string &path) {
+    loadBMP(path);
 }
 
 Texture::Texture(Texture &&vbo) noexcept {
@@ -43,7 +44,14 @@ Texture::Texture(Texture &&vbo) noexcept {
     vbo.textureLoaded = false;
 }
 
-void Texture::loadBMP(const std::string &path, bool nearest) {
+void Texture::applySampler(const Sampler &sampler) {
+    glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, sampler.minFilter);
+    glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, sampler.magFilter);
+    glTextureParameteri(texture, GL_TEXTURE_WRAP_S, sampler.wrapS);
+    glTextureParameteri(texture, GL_TEXTURE_WRAP_T, sampler.wrapT);
+}
+
+void Texture::loadBMP(const std::string &path) {
     init();
 
     unsigned char *rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
@@ -53,18 +61,11 @@ void Texture::loadBMP(const std::string &path, bool nearest) {
 
     glTextureStorage2D(texture, 1, GL_RGB8, width, height);
     glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, rgb);
-    if (nearest) {
-        glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    } else {
-        glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
 
     stbi_image_free(rgb);
 }
 
-void Texture::setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height, bool nearest) {
+void Texture::setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height) {
     init();
 
     this->width = width;
@@ -72,13 +73,6 @@ void Texture::setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int he
 
     glTextureStorage2D(texture, 1, GL_RGBA8, width, height);
     glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-    if (nearest) {
-        glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    } else {
-        glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
 
     textureLoaded = true;
 }
@@ -104,4 +98,5 @@ unsigned int Texture::getTextureID() const {
 Maths::Vec2<int> Texture::getTextureSize() const {
     return {width, height};
 }
+
 } // namespace Blob::GL

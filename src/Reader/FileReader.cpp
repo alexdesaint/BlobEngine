@@ -1,6 +1,6 @@
 #include <Blob/Reader/FileReader.hpp>
 
-#include <Blob/Exception.hpp>
+#include <Blob/Core/Exception.hpp>
 #include <sstream>
 #include <iostream>
 #include <vector>

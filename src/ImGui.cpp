@@ -1,5 +1,5 @@
-#include <Blob/Exception.hpp>
-#include <Blob/GL/Core.hpp>
+#include <Blob/Core/Exception.hpp>
+#include <Blob/GL/Window.hpp>
 #include <Blob/GLFW.hpp>
 #include <Blob/ImGui.hpp>
 #include <imgui.h>
@@ -112,7 +112,7 @@ void Context::buildFont() {
         throw Core::Exception("imgui Fonts not build");
 }
 
-void Context::draw() {
+void Context::draw(const Blob::GL::Window &window) {
     ImGui::Render();
     ImDrawData *drawData = ImGui::GetDrawData();
 
@@ -136,11 +136,11 @@ void Context::draw() {
 
     unsigned int offset = 0;
 
-    GL::Core::setVAO(vertexArrayObject);
-    GL::Core::setShader(shader);
-    GL::Core::setScissorTest(true);
-    GL::Core::setCullFace(false);
-    GL::Core::setDepthTest(false);
+    window.setVAO(vertexArrayObject);
+    setShader(shader);
+    setScissorTest(true);
+    setCullFace(false);
+    setDepthTest(false);
 
     for (int n = 0; n < drawData->CmdListsCount; n++) {
         ImDrawList *cmd_list = drawData->CmdLists[n];
@@ -153,21 +153,21 @@ void Context::draw() {
         for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
             const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
 
-            GL::Core::setScissor((int) pcmd->ClipRect.x, (int) (fb_height - pcmd->ClipRect.w), (int) (pcmd->ClipRect.z - pcmd->ClipRect.x),
+            setScissor((int) pcmd->ClipRect.x, (int) (fb_height - pcmd->ClipRect.w), (int) (pcmd->ClipRect.z - pcmd->ClipRect.x),
                                  (int) (pcmd->ClipRect.w - pcmd->ClipRect.y));
 
-            GL::Core::setTexture(*((GL::Texture *) pcmd->TextureId));
-            GL::Core::setUniform(projectionMatrix, projectionPosition);
+            setTexture(*((GL::Texture *) pcmd->TextureId));
+            setUniform(projectionMatrix, projectionPosition);
 
-            GL::Core::drawIndex<unsigned short>(cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size);
+            window.drawIndex<unsigned short>(cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size);
 
             idx_buffer_offset += pcmd->ElemCount;
         }
     }
 
-    GL::Core::setScissorTest(false);
-    GL::Core::setCullFace(true);
-    GL::Core::setDepthTest(true);
+    setScissorTest(false);
+    setCullFace(true);
+    setDepthTest(true);
 }
 
 void Context::setWindowSize(const Maths::Vec2<float> &windowSize, const Maths::Vec2<float> &framebufferSize) {

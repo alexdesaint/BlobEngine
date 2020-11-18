@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Blob/GL/VertexArrayObject.hpp>
-#include <Blob/Mesh.hpp>
+#include <Blob/Core/Mesh.hpp>
 #include <Blob/glTF2/Accessor.hpp>
 #include <Blob/glTF2/Buffer.hpp>
 #include <Blob/glTF2/BufferView.hpp>
@@ -12,9 +11,9 @@
 
 namespace Blob::glTF2 {
 
-class Mesh {
+class Mesh : public Core::Mesh {
 public:
-    class Primitive : public Core::Mesh {
+    class Primitive {
         friend Mesh;
 
     public:
@@ -29,6 +28,12 @@ public:
             int COLOR_0 = -1;
             int JOINTS_0 = -1;
             int WEIGHTS_0 = -1;
+
+            // Engine variable
+            size_t strideSize;
+            size_t dataSize;
+            uint8_t types = 0;
+
             Attribute(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
                       std::vector<glTF2::BufferView> &bufferViews);
 
@@ -40,15 +45,18 @@ public:
         int indices = -1;  ///< The index of the accessor that contains the indices.
         int material = -1; ///< The index of the material to apply to this primitive when rendering.
         /// TODO: Use this :
-        int mode = 4;      ///< The type of primitives to render. default: 4
+        int mode = 4; ///< The type of primitives to render. default: 4
         // targets; ///< An array of Morph Targets, each Morph Target is a dictionary mapping attributes
         // (only POSITION, NORMAL, and TANGENT supported) to their deviations in the Morph Target.
 
         // Engine variable
         std::vector<uint8_t> indicesArray;
+        Core::RenderOptions renderOptions;
+        std::unique_ptr<Core::Primitive> primitive;
 
         Primitive(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
-                  std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials);
+                  std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial,
+                  std::vector<Texture> &textures);
 
         friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
     };
@@ -58,10 +66,8 @@ public:
     std::vector<int> weights; ///< Array of weights to be applied to the Morph Targets.
     std::string name;         ///< The user-defined name of this object.
 
-    Mesh() = delete;
-
     Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
-         std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials);
+         std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial, std::vector<Texture> &textures);
 
     friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
 

@@ -5,13 +5,13 @@
 using namespace std;
 
 namespace Blob::glTF2 {
-Sampler::Sampler() : magFilter(GL_NEAREST), minFilter(GL_NEAREST), wrapS(GL_REPEAT), wrapT(GL_REPEAT) {}
+Sampler::Sampler() {}
 
-Sampler::Sampler(const nlohmann::json &j) : magFilter(GL_NEAREST), minFilter(GL_NEAREST), wrapS(GL_REPEAT), wrapT(GL_REPEAT) {
-    NotRequired(j, "name", magFilter);
-    NotRequired(j, "name", minFilter);
-    NotRequired(j, "name", wrapS);
-    NotRequired(j, "name", wrapT);
+Sampler::Sampler(const nlohmann::json &j) {
+    NotRequired(j, "magFilter", magFilter);
+    NotRequired(j, "minFilter", minFilter);
+    NotRequired(j, "wrapS", wrapS);
+    NotRequired(j, "wrapT", wrapT);
     NotRequired(j, "name", name);
 }
 
@@ -31,9 +31,13 @@ string getName(int num) {
         return "GL_LINEAR_MIPMAP_LINEAR";
     case GL_CLAMP_TO_EDGE:
         return "GL_CLAMP_TO_EDGE";
+    case GL_CLAMP_TO_BORDER:
+        return "GL_CLAMP_TO_EDGE";
     case GL_MIRRORED_REPEAT:
         return "GL_MIRRORED_REPEAT";
     case GL_REPEAT:
+        return "GL_REPEAT";
+    case GL_MIRROR_CLAMP_TO_EDGE:
         return "GL_REPEAT";
     default:
         return "UNKNOW";

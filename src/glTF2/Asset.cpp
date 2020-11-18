@@ -1,4 +1,4 @@
-#include <Blob/Exception.hpp>
+#include <Blob/Core/Exception.hpp>
 #include <Blob/glTF2/Asset.hpp>
 
 using namespace std;

@@ -8,7 +8,7 @@ VertexBufferObject::VertexBufferObject() {
     glCreateBuffers(1, &vertexBufferObject);
 }
 
-VertexBufferObject::VertexBufferObject(GLubyte *data, GLsizeiptr dataSize) {
+VertexBufferObject::VertexBufferObject(const GLubyte *data, GLsizeiptr dataSize) {
     glCreateBuffers(1, &vertexBufferObject);
     setData(data, dataSize);
 }
@@ -23,7 +23,7 @@ VertexBufferObject::~VertexBufferObject() {
     glDeleteBuffers(1, &vertexBufferObject);
 }
 
-void VertexBufferObject::setData(GLubyte *data, GLsizeiptr ds, bool dynamic) {
+void VertexBufferObject::setData(const GLubyte *data, GLsizeiptr ds, bool dynamic) {
     dataSize = ds;
 
     if (dynamic)
@@ -36,7 +36,4 @@ void VertexBufferObject::setSubData(uint8_t *data, int64_t dataSize, int64_t off
     glNamedBufferSubData(vertexBufferObject, offset, dataSize, data);
 }
 
-uint32_t VertexBufferObject::getVertexBufferObject() const {
-    return vertexBufferObject;
-}
 } // namespace Blob::GL

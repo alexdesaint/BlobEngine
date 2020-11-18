@@ -1,16 +1,13 @@
 #pragma once
 
-#include <Blob/Material.hpp>
+#include <Blob/Core/Material.hpp>
 #include <Blob/glTF2/Texture.hpp>
 #include <iostream>
 #include <nlohmann/json.hpp>
 
 namespace Blob::glTF2 {
-class Material : public ::Blob::Material::SingleColorMaterial {
-    public:
-
-    Blob::Material *material = nullptr;
-
+class Material {
+public:
     /**
      * Reference to a texture.
      */
@@ -23,7 +20,7 @@ class Material : public ::Blob::Material::SingleColorMaterial {
 
         textureInfo() = default;
 
-        textureInfo(const nlohmann::json &j, std::vector<Texture> &textures);
+        explicit textureInfo(const nlohmann::json &j);
 
         friend std::ostream &operator<<(std::ostream &s, const textureInfo &a);
     };
@@ -35,22 +32,18 @@ class Material : public ::Blob::Material::SingleColorMaterial {
      * Rendering (PBR) methodology. When not specified, all the default values of pbrMetallicRoughness apply.
      */
     struct PbrMetallicRoughness {
-        enum ColorType {
-            SINGLE_COLOR,
-            TEXTURE,
-            COLOR_ARRAY
-        } colorType = ColorType::SINGLE_COLOR;
         bool set = false; ///< if this data is set with Json constructor
 
-        Color baseColorFactor = Color(1.f, 1.f, 1.f, 1.f); ///< The material's base color factor.
-        textureInfo baseColorTexture;                      ///< The base color texture.
-        float metallicFactor = 1;                          ///< The metalness of the material.
-        float roughnessFactor = 1;                         ///< The roughness of the material.
-        textureInfo metallicRoughnessTexture;              ///< The metallic-roughness texture.
+        bool baseColorFactorSet = false;
+        Color::RGBA baseColorFactor{1.f, 1.f, 1.f, 1.f}; ///< The material's base color factor.
+        textureInfo baseColorTexture;                    ///< The base color texture.
+        float metallicFactor = 1;                        ///< The metalness of the material.
+        float roughnessFactor = 1;                       ///< The roughness of the material.
+        textureInfo metallicRoughnessTexture;            ///< The metallic-roughness texture.
 
         PbrMetallicRoughness() = default;
 
-        explicit PbrMetallicRoughness(const nlohmann::json &j, std::vector<Texture> &textures);
+        explicit PbrMetallicRoughness(const nlohmann::json &j);
 
         friend std::ostream &operator<<(std::ostream &s, const PbrMetallicRoughness &a);
     } pbrMetallicRoughness;
@@ -63,7 +56,7 @@ class Material : public ::Blob::Material::SingleColorMaterial {
 
         normalTextureInfo() = default;
 
-        normalTextureInfo(const nlohmann::json &j, std::vector<Texture> &textures);
+        explicit normalTextureInfo(const nlohmann::json &j);
     } normalTexture;
 
     /**
@@ -74,19 +67,21 @@ class Material : public ::Blob::Material::SingleColorMaterial {
 
         occlusionTextureInfo() = default;
 
-        explicit occlusionTextureInfo(const nlohmann::json &j, std::vector<Texture> &textures);
+        explicit occlusionTextureInfo(const nlohmann::json &j);
     } occlusionTexture;
 
     textureInfo emissiveTexture; ///< The emissive map texture.
 
-    Color::RGB emissiveFactor = Color(0.f, 0.f, 0.f, 1.f); ///< The emissive color of the material. default: [0,0,0]
-    std::string alphaMode = "OPAQUE";                 ///< The alpha rendering mode of the material. default: "OPAQUE"
-    float alphaCutoff = 0.5;                          ///< The alpha cutoff value of the material. default: 0.5
-    bool doubleSided = false;                         ///< Specifies whether the material is double sided. default: false
+    Color::RGBA emissiveFactor{0.f, 0.f, 0.f, 1.f}; ///< The emissive color of the material. default: [0,0,0]
+    std::string alphaMode = "OPAQUE";               ///< The alpha rendering mode of the material. default: "OPAQUE"
+    float alphaCutoff = 0.5;                        ///< The alpha cutoff value of the material. default: 0.5
+    bool doubleSided = false;                       ///< Specifies whether the material is double sided. default: false
 
-    Material(const nlohmann::json &j, std::vector<Texture> &textures);
+    // engine
+    std::unique_ptr<Core::Material> material;
+    void make(uint8_t options, std::vector<Texture> &textures);
 
-    ~Material();
+    explicit Material(const nlohmann::json &j);
 
     friend std::ostream &operator<<(std::ostream &s, const Material &a);
 };

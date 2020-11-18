@@ -2,7 +2,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <Blob/GL/ShaderProgram.hpp>
+#include <Blob/GL/Shader.hpp>
 #include <cstdio>
 #include <cstdlib>
 #include <glm/ext.hpp>
@@ -69,7 +69,7 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    Blob::GL::ShaderProgram &sp = Blob::GL::ShaderProgram::Shaders["basicShader2"];
+    Blob::GL::Shader sp;
 
     sp.addVertexShader(vertex_shader_text);
     sp.addFragmentShader(fragment_shader_text);
@@ -106,15 +106,13 @@ int main() {
 
         p = glm::ortho(-1.f, 1.f, 1.f, -1.f, -ratio, ratio);
 
-        glUseProgram(sp.getProgram());
+        glUseProgram(sp.program);
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(m * p));
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
-    Blob::GL::ShaderProgram::Shaders.clear();
 
     glfwDestroyWindow(window);
 

@@ -5,11 +5,11 @@ using namespace std;
 
 namespace Blob::glTF2 {
     Image::Image(const nlohmann::json &j, const std::string &path) {
-        NotRequired(j, "uri", uri);
+        if(NotRequired(j, "uri", uri))
+            uri = path + uri;
         NotRequired(j, "name", name);
-        uri = path + uri;
-        NotRequired(j, "name", mimeType);
-        NotRequired(j, "name", bufferView);
+        NotRequired(j, "mimeType", mimeType);
+        NotRequired(j, "bufferView", bufferView);
     }
 
     std::ostream &operator<<(std::ostream &s, const Image &a) {

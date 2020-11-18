@@ -17,9 +17,9 @@ public:
     std::string name;       ///< The user-defined name of this object.
     Target target = NotSet; ///< The target that the WebGL buffer should be bound to.
 
+    explicit BufferView(const nlohmann::json &j);
+
     friend std::ostream &operator<<(std::ostream &s, const BufferView &a);
 };
-
-void from_json(const nlohmann::json &j, BufferView &a);
 
 } // namespace Blob::glTF2

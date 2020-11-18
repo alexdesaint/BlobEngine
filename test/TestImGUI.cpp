@@ -2,21 +2,19 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <Blob/GL/Core.hpp>
-#include <Blob/GL/ShaderProgram.hpp>
+#include <Blob/GL/Shader.hpp>
 #include <Blob/GL/VertexBufferObject.hpp>
+#include <Blob/GL/Window.hpp>
 #include <cstdio>
 #include <cstdlib>
 
-// TRANSFORM INVOCATION !!!
-#include <Blob/Geometry/ModelTransform.hpp>
-#include <Blob/Geometry/ProjectionTransform.hpp>
-#include <Blob/Geometry/ViewTransform.hpp>
-#include <Blob/Window.hpp>
+#include <Blob/Core/Window.hpp>
 #include <imgui.h>
 #include <iostream>
 
 using namespace Blob;
+using namespace Blob::Core;
+using namespace Blob::Maths;
 
 static const struct {
     float x, y;
@@ -51,20 +49,23 @@ void main()  {
 }
 )=====";
 
-class SimpleMaterial : public Blob::Material::Material {
+class SimpleMaterial : public Material {
 private:
-    void applyMaterial(const Geometry::ProjectionTransform &pt, const Geometry::ViewTransform &vt, const Maths::Mat4 &mt) const final {
-        Blob::GL::Core::setUniform((Maths::Mat4) pt, projection);
-        Blob::GL::Core::setUniform((Maths::Mat4) vt, view);
-        Blob::GL::Core::setUniform(mt, model);
+    void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const Mat4 &mt) const final {
+        setShader(sp);
+        setUniform(pt, projection);
+        setUniform(vt, view);
+        setUniform(mt, model);
     }
+
+    const Blob::GL::Shader &sp;
 
 public:
     static int model;
     static int view;
     static int projection;
 
-    explicit SimpleMaterial(const Blob::GL::ShaderProgram &sp) : Material(sp) {
+    explicit SimpleMaterial(const Blob::GL::Shader &sp) : sp(sp) {
 
     }
 };
@@ -80,7 +81,7 @@ int main() {
 
     Blob::GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
-    Blob::GL::ShaderProgram sp;
+    Blob::GL::Shader sp;
     sp.addVertexShader(vertex_shader_text);
     sp.addFragmentShader(fragment_shader_text);
     sp.linkShaders();
@@ -103,8 +104,7 @@ int main() {
 
     SimpleMaterial material(sp);
 
-    Core::Mesh renderable(vao, material);
-    renderable.renderOptions = ro;
+    Core::Primitive primitive(vao, material, ro);
 
     bool show_demo_window = true;
     bool show_another_window = false;
@@ -113,7 +113,7 @@ int main() {
     while (window.isOpen()) {
 
         //renderable.setRotation((float) glfwGetTime(), 0, 0, 1);
-        window.draw(renderable);
+        window.draw(primitive);
         //ImGui::NewFrame();
 
         if (show_demo_window)

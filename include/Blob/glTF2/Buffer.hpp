@@ -6,7 +6,7 @@
 
 namespace Blob::glTF2 {
 
-class Buffer : public Core::Buffer {
+class Buffer /*: public Core::Buffer*/ {
 public:
     std::string uri;   ///< The uri of the buffer.
     size_t byteLength; ///< The total byte length of the buffer view. Required
@@ -17,6 +17,6 @@ public:
 
     friend std::ostream &operator<<(std::ostream &s, const Buffer &a);
 
-    std::vector<uint8_t> getData(size_t size, size_t offset) const;
+    [[nodiscard]] std::vector<uint8_t> getData(size_t size, size_t offset) const;
 };
 } // namespace Blob::glTF2

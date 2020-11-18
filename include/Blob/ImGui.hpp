@@ -1,18 +1,20 @@
 #pragma once
 
+#include <Blob/GL/Material.hpp>
+#include <Blob/GL/Shader.hpp>
 #include <Blob/GL/Texture.hpp>
 #include <Blob/GL/VertexArrayObject.hpp>
-#include <Blob/GL/ShaderProgram.hpp>
+#include <Blob/GL/Window.hpp>
 
 namespace ImGui {
-class Context {
+class Context : private Blob::GL::Material {
 private:
     Blob::GL::Texture fontTexture;
     Blob::GL::VertexBufferObject vertexBufferObject;
     Blob::GL::VertexArrayObject vertexArrayObject;
     float projectionMatrix[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, -1, 1, 0, 1};
     float id[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-    Blob::GL::ShaderProgram shader;
+    Blob::GL::Shader shader;
 
     int projectionPosition = -1;
 
@@ -27,7 +29,7 @@ public:
 
     void createRender();
 
-    void draw();
+    void draw(const Blob::GL::Window &window);
 
     void setWindowSize(const Blob::Maths::Vec2<float>& windowSize, const Blob::Maths::Vec2<float>& framebufferSize);
 

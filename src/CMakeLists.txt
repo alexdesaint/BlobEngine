@@ -2,8 +2,6 @@ add_subdirectory(GL)
 if (BLOBVK)
     add_subdirectory(VK)
 endif ()
-add_subdirectory(collision)
-add_subdirectory(Geometry)
 add_subdirectory(glTF2)
 add_subdirectory(Reader)
 add_subdirectory(Core)
@@ -12,20 +10,46 @@ add_library(BlobMaths INTERFACE)
 add_library(Blob::Maths ALIAS BlobMaths)
 target_include_directories(BlobMaths INTERFACE ../include)
 
-add_library(BlobGLFW STATIC GLFW.cpp Controls.cpp)
+add_library(BlobGLFW STATIC GLFW.cpp)
 target_link_libraries(BlobGLFW glfw glad)
 target_include_directories(BlobGLFW PUBLIC ../include)
 add_library(Blob::GLFW ALIAS BlobGLFW)
 
-add_library(Blob STATIC
-		Time.cpp
-		Material.cpp
-		Mesh.cpp
-		Window.cpp
-		Color.cpp
-        ImGui.cpp
-		Shape.cpp
-		Scene.cpp
-		Shapes.cpp)
-target_include_directories(Blob PUBLIC ../include)
-target_link_libraries(Blob imgui Blob::GLFW Blob::GL Blob::FileReader Blob::Core::RenderOptions)
+add_library(BlobTime STATIC Time.cpp)
+# target_link_libraries(BlobTime glfw glad)
+target_include_directories(BlobTime PUBLIC ../include)
+add_library(Blob::Time ALIAS BlobTime)
+
+add_library(BlobColor STATIC Color.cpp)
+# target_link_libraries(BlobColor glfw glad)
+target_include_directories(BlobColor PUBLIC ../include)
+add_library(Blob::Color ALIAS BlobColor)
+
+add_library(BlobImGui STATIC ImGui.cpp)
+target_link_libraries(BlobImGui imgui)
+target_include_directories(BlobImGui PUBLIC ../include)
+add_library(Blob::ImGui ALIAS BlobImGui)
+
+add_library(BlobShaders STATIC Shaders.cpp)
+target_link_libraries(BlobShaders Blob::Core)
+target_include_directories(BlobShaders PUBLIC ../include)
+add_library(Blob::Shaders ALIAS BlobShaders)
+
+add_library(BlobMaterials STATIC Materials.cpp)
+target_link_libraries(BlobMaterials Blob::Shaders Blob::Color)
+target_include_directories(BlobMaterials PUBLIC ../include)
+add_library(Blob::Materials ALIAS BlobMaterials)
+
+add_library(BlobShapes STATIC Shapes.cpp)
+target_link_libraries(BlobShapes Blob::Materials)
+target_include_directories(BlobShapes PUBLIC ../include)
+add_library(Blob::Shapes ALIAS BlobShapes)
+
+add_library(BlobAssetManager STATIC AssetManager.cpp)
+target_link_libraries(BlobAssetManager Blob::Shapes)
+target_include_directories(BlobAssetManager PUBLIC ../include)
+add_library(Blob::AssetManager ALIAS BlobAssetManager)
+
+add_library(Blob INTERFACE)
+target_include_directories(Blob INTERFACE ../include)
+target_link_libraries(Blob INTERFACE Blob::Core Blob::AssetManager)

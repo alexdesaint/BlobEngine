@@ -17,12 +17,12 @@ Buffer::Buffer(const nlohmann::json &j, const std::string &path) {
     if (fileReader.getSize() != byteLength)
         throw Core::Exception("GLTF: Wrong buffer description");
 
-    vector<uint8_t> bytes(byteLength);
+/*    vector<uint8_t> bytes(byteLength);
 
     for (size_t i = 0; i < byteLength; i++)
         bytes[i] = fileReader.readNextByte();
 
-    setData(bytes.data(), byteLength);
+    setData(bytes.data(), byteLength);*/
 }
 
 ostream &operator<<(ostream &s, const Buffer &a) {
@@ -30,12 +30,13 @@ ostream &operator<<(ostream &s, const Buffer &a) {
 
     s << "    " << a.uri << endl << "    byteLength : " << a.byteLength << endl << "    data : " << endl;
 
-    Reader::FileReader fileReader(a.uri);
-    s << fileReader;
+//    Reader::FileReader fileReader(a.uri);
+//    s << fileReader;
 
     s << "  }" << endl;
     return s;
 }
+
 std::vector<uint8_t> Buffer::getData(size_t size, size_t offset) const {
     std::vector<uint8_t> ret(size);
 

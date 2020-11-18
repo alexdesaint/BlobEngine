@@ -1,5 +1,4 @@
-#ifndef BLOBENGINE_TIME_HPP
-#define BLOBENGINE_TIME_HPP
+#pragma once
 
 #include <chrono>
 
@@ -36,4 +35,3 @@ float getTime() {
 }
  */
 } // namespace Blob::Time
-#endif // BLOBENGINE_TIME_HPP

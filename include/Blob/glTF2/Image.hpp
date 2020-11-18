@@ -14,7 +14,7 @@ namespace Blob::glTF2 {
 
         std::string mimeType; ///< The image's MIME type.
 
-        int bufferView; ///< The index of the bufferView that contains the image. Use this instead of the image's uri
+        int bufferView = -1; ///< The index of the bufferView that contains the image. Use this instead of the image's uri
         ///< property.
 
         std::string name; ///< The user-defined name of this object.

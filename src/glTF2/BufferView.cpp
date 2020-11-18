@@ -7,15 +7,6 @@ using namespace std;
 
 namespace Blob::glTF2 {
 
-void from_json(const nlohmann::json &j, BufferView &a) {
-    Required(j, "buffer", a.buffer);
-    Required(j, "byteLength", a.byteLength);
-    NotRequired(j, "byteOffset", a.byteOffset);
-    NotRequired(j, "target", a.target);
-    NotRequired(j, "byteStride", a.byteStride);
-    NotRequired(j, "name", a.name);
-}
-
 std::ostream &operator<<(std::ostream &s, const BufferView &i) {
     s << "  BufferView {" << endl;
 
@@ -27,5 +18,13 @@ std::ostream &operator<<(std::ostream &s, const BufferView &i) {
 
     s << "  }" << endl;
     return s;
+}
+BufferView::BufferView(const nlohmann::json &j) {
+    Required(j, "buffer", buffer);
+    Required(j, "byteLength", byteLength);
+    NotRequired(j, "byteOffset", byteOffset);
+    NotRequired(j, "target", target);
+    NotRequired(j, "byteStride", byteStride);
+    NotRequired(j, "name", name);
 }
 } // namespace Blob::glTF2

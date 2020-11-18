@@ -4,51 +4,76 @@ title BlobEngine
 namespace Blob {
 
     namespace GL {
-        class Core {
-        }
-
-        'Core <.. Blob.Window
-        Core <.. Blob.Window
-        VAO <--* Blob.Mesh
-        Indices <--* Blob.Mesh
-        Texture <.. Blob.Material
-        Shader <--* Blob.Material
-        VBO <-right- VAO
-        VBO <-left- Indices
-    }
-    interface Material
-    Material <-- Mesh
-    Material <|-- SingleColorMaterial
-
-    Mesh <-- Shape
-    Shape -up-> Shape
-    Shape <-- Scene
-
-    Scene <-- Window
-    Camera <-- Scene
-    Light <-- Scene
-
-    ProjectionTransform <|-- Window
-
-    WindowCore <|-- Window
-
-    class Window {
-      + draw()
+        class Material {}
+        class VAO {}
+        class VBO {}
+        class Shader {}
+        class Window {}
+        class Texture {}
     }
 
-    ModelTransform <|-- Shape
+    namespace Core {
+        class Buffer {}
+        class Camera {}
+        class Exception {}
+        interface Material {}
+        class Mesh {}
+        class Primitive {}
+        class RenderOptions {}
+        class Scene {}
+        class Shader {}
+        class Node {}
+        class Texture {}
+        class Window {}
 
-    ViewTransform <|-- Camera
-    WindowCore .up.> Controls
-    Window .up.> Shapes
-    ImGUI <--* Window
+        class Indices {}
+        class Attribute {}
 
-    class Color {
-        +r : float
-        +g : float
-        +b : float
-        +a : float
+        Shader <--* Material
+        Buffer <.. Attribute
+        RenderOptions <-r-* Primitive
+        Attribute <--* Primitive
+        Indices <--* Primitive
+        Material <-- Primitive
+        Primitive <-r- Mesh
+        Mesh <-r- Node
+        Node <-- Node
+        Node <-r- Scene
+        Scene <-- Window
+
+        Camera <-- Scene
     }
+
+    .Blob.GL.Material <|-- .Blob.Core.Material
+    .Blob.GL.VBO <|-- .Blob.Core.Indices
+    .Blob.GL.VBO <|-- .Blob.Core.Buffer
+    .Blob.GL.VAO <|-- .Blob.Core.Attribute
+    .Blob.GL.Shader <|-- .Blob.Core.Shader
+    .Blob.GL.Window <|-- .Blob.Core.Window
+    .Blob.GL.Texture <|-- .Blob.Core.Texture
+
+    namespace Maths {
+        class ProjectionTransform {}
+        class ModelTransform {}
+        class ViewTransform {}
+    }
+
+    .Blob.Maths.ProjectionTransform <|-- .Blob.Core.Window
+    .Blob.Maths.ModelTransform <|-- .Blob.Core.Shape
+    .Blob.Maths.ViewTransform <|-- .Blob.Core.Camera
+
+    namespace ImGui {
+        class Instance {}
+    }
+
+    .Blob.ImGui.Instance <--* .Blob.Core.Window
+
+    namespace GLFW {
+        class Keys {}
+        class Window {}
+    }
+
+    .Blob.GLFW.Window <|-- .Blob.Core.Window
 }
 @enduml
 @startuml

@@ -5,12 +5,11 @@
 namespace Blob::GL {
 
 class VertexArrayObject {
+    friend class Window;
 private:
     uint32_t vertexArrayObject = 0;
 
 public:
-    uint32_t getVertexArrayObject() const;
-
     VertexArrayObject();
 
     VertexArrayObject(const VertexArrayObject &) = delete;
@@ -19,12 +18,12 @@ public:
 
     ~VertexArrayObject();
 
-    void setBuffer(const VertexBufferObject &vbo, int32_t stride, uint32_t dataOffset = 0, uint32_t pos = 0);
+    void setBuffer(const VertexBufferObject &vbo, int32_t stride, uint32_t dataOffset = 0, uint32_t pos = 0) const;
 
-    void setIndicesBuffer(const VertexBufferObject &vbo);
+    void setIndicesBuffer(const VertexBufferObject &vbo)const;
 
     void setArray(uint32_t numValuePerArray, uint32_t outPosition, uint32_t dataType, uint32_t relativeOffset, bool normalized = false,
-                  uint32_t pos = 0);
+                  uint32_t pos = 0) const;
 
     template<typename T>
     void setArray(uint32_t numValuePerArray, uint32_t outPosition, uint32_t relativeOffset, bool normalized = false, uint32_t pos = 0);

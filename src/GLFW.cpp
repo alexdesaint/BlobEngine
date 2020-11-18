@@ -7,8 +7,8 @@
 #include <GLFW/glfw3.h>
 
 // Blob
-#include <Blob/Controls.hpp>
-#include <Blob/Exception.hpp>
+//#include <Blob/Controls.hpp>
+#include <Blob/Core/Exception.hpp>
 
 // std
 #include <iostream>

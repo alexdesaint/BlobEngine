@@ -1,6 +1,6 @@
+#include <Blob/GL/Types.hpp>
 #include <Blob/glTF2/Accessor.hpp>
 #include <Blob/glTF2/BasicFunctions.hpp>
-#include <glad/glad.h>
 
 using namespace std;
 
@@ -37,6 +37,9 @@ Accessor::Accessor(const nlohmann::json &j) {
     Required(j, "type", typeStr);
     type = strToType(typeStr.c_str());
 
+    typeSize = GL::getTypeSize(componentType) * type;
+    dataSize = typeSize * count;
+
     NotRequired(j, "min", min);
     NotRequired(j, "max", max);
     NotRequired(j, "name", name);
@@ -60,17 +63,7 @@ std::ostream &operator<<(std::ostream &s, const Accessor &d) {
 
     s << "    byteOffset : " << d.byteOffset << endl;
 
-    switch (d.componentType) {
-    case GL_FLOAT:
-        s << "    componentType : float" << endl;
-        break;
-    case GL_UNSIGNED_SHORT:
-        s << "    componentType : unsigned short" << endl;
-        break;
-    default:
-        s << "    componentType " << d.componentType << " not implemented" << endl;
-        break;
-    }
+    s << "    componentType " << d.componentType << " not implemented" << endl;
 
     s << "    normalized : " << d.normalized << endl;
 
@@ -118,39 +111,4 @@ std::ostream &operator<<(std::ostream &s, const Accessor &d) {
     return s;
 }
 
-uint32_t getGlTypeSize(GLenum dataType) {
-    GLuint typeSize;
-
-    switch (dataType) {
-    case GL_BYTE:
-        typeSize = sizeof(GLbyte);
-        break;
-    case GL_UNSIGNED_BYTE:
-        typeSize = sizeof(GLubyte);
-        break;
-    case GL_SHORT:
-        typeSize = sizeof(GLshort);
-        break;
-    case GL_UNSIGNED_SHORT:
-        typeSize = sizeof(GLushort);
-        break;
-    case GL_INT:
-        typeSize = sizeof(GLint);
-        break;
-    case GL_UNSIGNED_INT:
-        typeSize = sizeof(GLuint);
-        break;
-    case GL_FLOAT:
-        typeSize = sizeof(GLfloat);
-        break;
-    default:
-        throw Core::Exception("incorrect Type of data");
-    }
-
-    return typeSize;
-}
-
-uint32_t Accessor::getSize() const {
-    return getGlTypeSize(componentType) * type * count;
-}
 } // namespace Blob::glTF2

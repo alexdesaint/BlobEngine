@@ -20,9 +20,11 @@ public:
     // Sparse sparse;               ///< Sparse storage of attributes that deviate from their initialization value.
     std::string name;            ///< The user-defined name of this object.
 
-    explicit Accessor(const nlohmann::json &j);
+    // Engine variable
+    size_t typeSize = 0;
+    size_t dataSize = 0;
 
-    [[nodiscard]] uint32_t getSize() const;
+    explicit Accessor(const nlohmann::json &j);
 
     friend std::ostream &operator<<(std::ostream &s, const Accessor &a);
 };

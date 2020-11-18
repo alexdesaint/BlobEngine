@@ -2,18 +2,17 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <Blob/GL/Core.hpp>
-#include <Blob/GL/ShaderProgram.hpp>
+#include <Blob/GL/Shader.hpp>
 #include <Blob/GL/VertexBufferObject.hpp>
+#include <Blob/GL/Window.hpp>
+#include <Blob/GL/Material.hpp>
 #include <cstdio>
 #include <cstdlib>
 
-#include <Blob/Geometry/ModelTransform.hpp>
-#include <Blob/Geometry/ProjectionTransform.hpp>
-#include <Blob/Geometry/ViewTransform.hpp>
 #include <iostream>
 
 using namespace Blob;
+using namespace Blob::GL;
 
 static const struct {
     float x, y;
@@ -62,23 +61,24 @@ int main() {
     if (!glfwInit())
         exit(EXIT_FAILURE);
 
-    GLFWwindow *window = glfwCreateWindow(width, height, "Test Blob Core", NULL, NULL);
-    if (!window) {
+    GLFWwindow *glfWwindow = glfwCreateWindow(width, height, "Test Blob GL", NULL, NULL);
+    if (!glfWwindow) {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
 
-    glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(glfWwindow, key_callback);
 
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(glfWwindow);
 
-    GL::Context((void *) glfwGetProcAddress, width, height);
+    Window window{(void *) glfwGetProcAddress, {width, height}};
+    Material material;
 
     glfwSwapInterval(1);
 
     GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
-    GL::ShaderProgram sp;
+    GL::Shader sp;
     sp.addVertexShader(vertex_shader_text);
     sp.addFragmentShader(fragment_shader_text);
     sp.linkShaders();
@@ -88,9 +88,9 @@ int main() {
     vao.setArray(2, sp.getAttribLocation("vPos"), GL_FLOAT, 0);
     vao.setArray(3, sp.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
 
-    Geometry::ProjectionTransform pt(PI / 4, width, height, 0.1, 10);
-    Geometry::ViewTransform vt;
-    Geometry::ModelTransform mt;
+    Maths::ProjectionTransform pt(PI / 4, {width, height}, 0.1, 10);
+    Maths::ViewTransform vt;
+    Maths::ModelTransform mt;
 
     int model = sp.getUniformLocation("model");
     int view = sp.getUniformLocation("view");
@@ -99,30 +99,30 @@ int main() {
     // unsigned short indices[] = {2, 1, 0, 1, 2, 3};
     unsigned short indices[] = {0, 1, 2, 3, 2, 1};
 
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(glfWwindow)) {
 
-        glfwGetFramebufferSize(window, &width, &height);
+        glfwGetFramebufferSize(glfWwindow, &width, &height);
 
-        pt.setRatio(width, height);
+        pt.setRatio({width, height});
 
-        GL::Core::setViewport(width, height);
+        window.setViewport({width, height});
 
-        GL::Core::clear();
+        window.clear();
 
         mt.setRotation((float) glfwGetTime(), {0, 0, 1});
 
-        GL::Core::setShader(sp);
-        GL::Core::setVAO(vao);
-        Blob::GL::Core::setUniform((Geometry::Mat4) pt, projection);
-        Blob::GL::Core::setUniform((Geometry::Mat4) vt, view);
-        Blob::GL::Core::setUniform((Geometry::Mat4) mt, model);
-        GL::Core::drawIndex(indices, 6, GL_UNSIGNED_SHORT);
+        material.setShader(sp);
+        window.setVAO(vao);
+        material.setUniform(pt, projection);
+        material.setUniform(vt, view);
+        material.setUniform(mt, model);
+        window.drawIndex(indices, 6, GL_UNSIGNED_SHORT);
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(glfWwindow);
         glfwPollEvents();
     }
 
-    glfwDestroyWindow(window);
+    glfwDestroyWindow(glfWwindow);
 
     glfwTerminate();
     exit(EXIT_SUCCESS);
