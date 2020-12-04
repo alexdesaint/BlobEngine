@@ -3,7 +3,7 @@
 
 namespace Blob::Core {
 
-Buffer::Buffer(const std::string& file) {
+Buffer::Buffer(const std::string &file) {
     Reader::FileReader fileReader(file);
     dataSize = fileReader.getSize();
 
@@ -12,7 +12,7 @@ Buffer::Buffer(const std::string& file) {
     for (size_t i = 0; i < dataSize; i++)
         bytes[i] = fileReader.readNextByte();
 
-    setData(bytes.data(), dataSize);
+    setData(bytes);
 }
 
-}
+} // namespace Blob::Core

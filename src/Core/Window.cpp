@@ -7,7 +7,7 @@
 namespace Blob::Core {
 
 Window::Window(Camera &camera, bool fullScreen, Maths::Vec2<int> size)
-    : GLFW::Window(fullScreen, size, GLmajor, GLminor), camera(camera), GL::Window((void *) getProcAddress, framebufferSize),
+    : GLFW::Window(fullScreen, size, GLmajor, GLminor), camera(&camera), GL::Window((void *) getProcAddress, framebufferSize),
       ProjectionTransform(PI / 4, size, 0.1, 1000), imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()), keyboard(*keys) {
     imgui.createRender();
 
@@ -28,7 +28,7 @@ Window::Window(Camera &camera, bool fullScreen, Maths::Vec2<int> size)
 }
 
 Window::~Window() {
-    imgui.draw(*this);
+    // imgui.draw(*this);
 }
 
 float Window::timeFlow = 0;
@@ -42,12 +42,6 @@ float Window::display() {
     updateInputs();
 
     ImGui::NewFrame();
-
-    if(keyboardUpdated) {
-        keyboardUpdated = false;
-        for(auto &k : KeyboardEvents::keyUpdates)
-            k->keyboardUpdate(keyboard);
-    }
 
     auto now = std::chrono::high_resolution_clock::now();
     Time::Duration diff = now - lastFrameTime;
@@ -64,7 +58,7 @@ void Window::windowResized() {
 }
 
 void Window::framebufferResized() {
-    setRatio(framebufferSize);
+    setRatio(framebufferSize.x / ((float) framebufferSize.y));
     imgui.setWindowSize(windowSize.cast<float>(), framebufferSize.cast<float>());
 
     setViewport(framebufferSize);
@@ -100,22 +94,25 @@ Maths::Vec3<float> Window::getWorldPosition() {
 
     Maths::Vec4<float> pos(mousePos.x, mousePos.y, z);
 
-    pos = (*this * camera).inverse() * pos;
+    pos = (*this * *camera).inverse() * pos;
     pos = pos / pos.w;
 
     return (Maths::Vec3<float>) pos;
 }
 
 void Window::setCamera(Camera &camera_) {
-    camera = camera_;
+    camera = &camera_;
 }
 
 void Window::draw(const Primitive &primitive, const Maths::Mat4 &sceneModel) const {
     setVAO(primitive.vertexArrayObject);
 
-    primitive.material.applyMaterial(*this, camera, sceneModel);
+    primitive.material->applyMaterial(*this, *camera, sceneModel);
 
-    drawIndex(primitive.renderOptions.indices, primitive.renderOptions.numOfIndices, primitive.renderOptions.indicesType);
+    if (primitive.renderOptions->indexed)
+        drawIndex(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType);
+    else
+        drawArrays(primitive.renderOptions->numOfElements, primitive.renderOptions->elementOffset);
 }
 
 void Window::draw(const Mesh &mesh, const Maths::Mat4 &sceneModel) const {
@@ -136,15 +133,55 @@ void Window::draw(const Shape &shape, const Maths::Mat4 &sceneModel) const {
 void Window::draw(const Scene &scene, const Maths::Mat4 &sceneModel) const {
     for (auto r : scene.shapes)
         draw(*r, sceneModel);
+    for (auto r : scene.shapes)
+        drawTransparent(*r, sceneModel);
 }
 
 void Window::draw(const Scene &scene) const {
     for (auto r : scene.shapes)
         draw(*r);
+    for (auto r : scene.shapes)
+        drawTransparent(*r);
+}
+
+void Window::drawTransparent(const Mesh &mesh, const Maths::Mat4 &sceneModel) const {
+    for (auto r : mesh.transparentPrimitives)
+        draw(*r, sceneModel);
+}
+
+void Window::drawTransparent(const Shape &shape, const Maths::Mat4 &sceneModel) const {
+    Maths::Mat4 modelMatrix = shape * sceneModel;
+
+    if (shape.mesh != nullptr)
+        drawTransparent(*shape.mesh, modelMatrix);
+
+    for (auto r : shape.shapes)
+        drawTransparent(*r, modelMatrix);
 }
 
 void Window::keyboardUpdate(int key, bool pressed) {
-    keyboardUpdated = true;
+    for (auto &k : KeyboardEvents::subscribers)
+        k->keyboardUpdate(keyboard);
 }
+void Window::mouseButtonUpdate(int button, bool pressed) {
+    for (auto &k : MouseEvents::subscribers)
+        k->mouseButtonUpdate(button, pressed);
+};
+void Window::cursorPositionUpdate(double xpos, double ypos) {
+    for (auto &k : MouseEvents::subscribers)
+        k->cursorPosUpdate(xpos, ypos);
+};
+void Window::scrollUpdate(double xoffset, double yoffset) {
+    for (auto &k : MouseEvents::subscribers)
+        k->scrollUpdate(xoffset, yoffset);
+};
+
+void Window::disableMouseCursor() {
+    imgui.disableMouseCursor();
+    setCursorState(CURSOR_DISABLED);
+}
+void Window::enableMouseCursor() {
+    imgui.enableMouseCursor();
+    setCursorState(CURSOR_NORMAL);}
 
 } // namespace Blob::Core

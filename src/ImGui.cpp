@@ -17,7 +17,6 @@ Context::Context(const GLFW::Window &window, const Maths::Vec2<float> &windowSiz
 
     ImGuiIO &io = ImGui::GetIO();
     io.BackendRendererName = "BlobEngine"; // We are not upscaling the FrameBuffer
-    io.DisplayFramebufferScale = {1, 1};   // getFrameBufferSize() / getSize();
 
     // Controlls
     // Setup back-end capabilities flags
@@ -35,7 +34,7 @@ Context::Context(const GLFW::Window &window, const Maths::Vec2<float> &windowSiz
     io.KeyMap[ImGuiKey_Home] = GLFW::Keys::HOME;           // GLFW_KEY_HOME + 1;
     io.KeyMap[ImGuiKey_End] = GLFW::Keys::END;             // GLFW_KEY_END + 1;
     io.KeyMap[ImGuiKey_Insert] = GLFW::Keys::INSERT;       // GLFW_KEY_INSERT + 1;
-    io.KeyMap[ImGuiKey_Delete] = GLFW::Keys::DEL;       // GLFW_KEY_DELETE + 1;
+    io.KeyMap[ImGuiKey_Delete] = GLFW::Keys::DEL;          // GLFW_KEY_DELETE + 1;
     io.KeyMap[ImGuiKey_Backspace] = GLFW::Keys::BACKSPACE; // GLFW_KEY_BACKSPACE + 1;
     io.KeyMap[ImGuiKey_Space] = GLFW::Keys::SPACE;         // GLFW_KEY_SPACE + 1;
     io.KeyMap[ImGuiKey_Enter] = GLFW::Keys::ENTER;         // GLFW_KEY_ENTER + 1;
@@ -154,7 +153,7 @@ void Context::draw(const Blob::GL::Window &window) {
             const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
 
             setScissor((int) pcmd->ClipRect.x, (int) (fb_height - pcmd->ClipRect.w), (int) (pcmd->ClipRect.z - pcmd->ClipRect.x),
-                                 (int) (pcmd->ClipRect.w - pcmd->ClipRect.y));
+                       (int) (pcmd->ClipRect.w - pcmd->ClipRect.y));
 
             setTexture(*((GL::Texture *) pcmd->TextureId));
             setUniform(projectionMatrix, projectionPosition);
@@ -188,17 +187,37 @@ void Context::setClipboardText(void *user_data, const char *text) {
     ((GLFW::Window *) user_data)->setClipboardText(text);
 }
 
+void Context::enableMouseCursor() {
+    ImGuiIO &io = ImGui::GetIO();
+    io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+}
+
+void Context::disableMouseCursor() {
+    ImGuiIO &io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+}
+
+void Context::enableGamepad() {
+    ImGuiIO &io = ImGui::GetIO();
+    io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
+}
+
+void Context::disableGamepad() {
+    ImGuiIO &io = ImGui::GetIO();
+    io.BackendFlags &= ~ImGuiBackendFlags_HasGamepad;
+}
+
 void Context::updateMouseCursor(GLFW::Window &window) {
     ImGuiIO &io = ImGui::GetIO();
-    if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange))
+    if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) || (io.ConfigFlags & ImGuiConfigFlags_NoMouse))
         return;
 
     ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
     if (imgui_cursor == ImGuiMouseCursor_None || io.MouseDrawCursor)
-        window.hideMouseCursor(true);
+        window.setCursorState(Blob::GLFW::Window::CURSOR_HIDDEN);
     else {
         window.setMouseCursor((GLFW::MouseCursor) imgui_cursor);
-        window.hideMouseCursor(false);
+        window.setCursorState(Blob::GLFW::Window::CURSOR_NORMAL);
     }
 }
 
@@ -208,4 +227,4 @@ void Context::addInputCharacter(unsigned short c) {
     io.AddInputCharacter(c);
 }
 
-}; // namespace Blob::Core
+}; // namespace ImGui

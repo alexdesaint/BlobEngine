@@ -87,7 +87,7 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
 }
 
 Window::Window(void *glfwGetProcAddress, const Maths::Vec2<int> &size) {
-    std::cout << "init OpenGL" << std::endl;
+    //std::cout << "init OpenGL" << std::endl;
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
         throw Blob::Core::Exception("Fail to load openGL");
 
@@ -96,6 +96,7 @@ Window::Window(void *glfwGetProcAddress, const Maths::Vec2<int> &size) {
                                     std::to_string(GLVersion.minor) + " instead of " + std::to_string(GLmajor) + "\n" + std::to_string(GLminor) +
                                     ". System version : " + (char *) glGetString(GL_VERSION));
 
+    std::cout << "init OpenGL " << GLVersion.major << "." << GLVersion.minor << std::endl;
     // Enable the debug callback
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -112,13 +113,13 @@ Window::Window(void *glfwGetProcAddress, const Maths::Vec2<int> &size) {
     glDisable(GL_SCISSOR_TEST);
 
     // for Reverse Depth
-//    glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-//    glClearDepth(0.0f);
-//    glDepthFunc(GL_LESS);
+    //    glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+    //    glClearDepth(0.0f);
     //
     glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-    glClearDepth(0.0f);
-    glDepthFunc(GL_GREATER);
+    glClearDepth(1.0f);
+    //glDepthFunc(GL_GREATER);
+    glDepthFunc(GL_LESS);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -127,9 +128,9 @@ Window::Window(void *glfwGetProcAddress, const Maths::Vec2<int> &size) {
     glViewport(0, 0, size.x, size.y);
 
     // alpha
-    //    glEnable(GL_BLEND);
-    //    glBlendEquation(GL_FUNC_ADD);
-    //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendEquation(GL_FUNC_ADD);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 Window::~Window() {
     std::cout << "destroy OpenGL" << std::endl;
@@ -161,6 +162,14 @@ float Window::readPixel(const Maths::Vec2<int> &pos) const {
 
 void Window::setVAO(const VertexArrayObject &vao) const {
     glBindVertexArray(vao.vertexArrayObject);
+}
+
+void Window::setVAO(const VertexArrayObject *vao) const {
+    glBindVertexArray(vao->vertexArrayObject);
+}
+
+void Window::drawArrays(int32_t count, uint32_t offset) const {
+    glDrawArrays(GL_TRIANGLES, offset, count);
 }
 
 void Window::drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType) const {

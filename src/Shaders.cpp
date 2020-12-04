@@ -16,6 +16,7 @@ layout(location = 2) uniform mat4 projection;
 
 void main() {
     gl_Position =  projection * view * model * vec4(POSITION, 1.0);
+    gl_Position /= gl_Position.w;
 })=====");
     addFragmentShader(R"=====(#version 450
 layout(location=0) out vec4 color;
@@ -30,6 +31,110 @@ void main()
 }
 
 void SingleColor::destroy() {
+    GL::Shader::destroy();
+}
+
+SingleTexture SingleTexture::instance;
+
+void SingleTexture::build() {
+    addVertexShader(R"=====(
+#version 450
+
+layout(location = 0) in vec3 POSITION;
+layout(location = 3) in vec2 texCoord;
+
+layout(location = 0) uniform mat4 model;
+layout(location = 1) uniform mat4 view;
+layout(location = 2) uniform mat4 projection;
+
+layout(location = 1) out vec2 texCoord_;
+
+void main() {
+    texCoord_ = texCoord;
+    gl_Position =  projection * view * model * vec4(POSITION, 1.0);
+})=====");
+    addFragmentShader(R"=====(#version 450
+layout(location=0) out vec4 color;
+
+layout(location = 1) in vec2 texCoord;
+uniform sampler2D Texture;
+layout(location = 3) uniform vec2 texScale;
+
+void main()
+{
+    vec3 albedo = texture(Texture, texCoord * texScale).rgb;
+    color = vec4(albedo, 1.0);
+})=====");
+    linkShaders();
+}
+
+void SingleTexture::destroy() {
+    GL::Shader::destroy();
+}
+
+/********************* Utils *********************/
+
+PerFaceNormal PerFaceNormal::instance;
+
+void PerFaceNormal::build() {
+    addVertexShader(R"=====(
+#version 450
+
+layout(location = 0) in vec3 POSITION;
+layout(location = 1) in vec3 NORMAL;
+
+layout(location = 2) out vec3 normal;
+
+void main() {
+    normal = NORMAL;
+    gl_Position =  vec4(POSITION, 1.0);
+})=====");
+    addGeometryShader(R"=====(
+#version 450
+layout(triangles) in;
+layout(line_strip, max_vertices=2) out;
+
+layout(location = 2) in vec3 NORMAL[];
+
+layout(location = 0) uniform mat4 model;
+layout(location = 1) uniform mat4 view;
+layout(location = 2) uniform mat4 projection;
+layout(location = 4) uniform float length;
+
+void main()
+{
+    vec4 P = vec4(0);
+    vec3 N = vec3(0);
+
+    for(int i=0; i<gl_in.length(); i++) {
+        P += gl_in[i].gl_Position;
+        N += NORMAL[i];
+    }
+    P /= gl_in.length();
+    N /= gl_in.length();
+
+    gl_Position = projection * view * model * P;
+    EmitVertex();
+
+    gl_Position = projection * view * model * (P + vec4(N, 0) * length);
+    EmitVertex();
+
+    EndPrimitive();
+})=====");
+    addFragmentShader(R"=====(
+#version 450
+layout(location=0) out vec4 color;
+
+layout(location = 3) uniform vec3 albedo;
+
+void main()
+{
+    color = vec4(albedo, 1.0);
+})=====");
+    linkShaders();
+}
+
+void PerFaceNormal::destroy() {
     GL::Shader::destroy();
 }
 
@@ -64,7 +169,7 @@ void main() {
     normal = normalize(mat3(transpose(inverse(model))) * NORMAL);
     tangent = TANGENT;
     binormal = cross(NORMAL, TANGENT);
-COLOR_0_ = COLOR_0;
+    COLOR_0_ = COLOR_0;
 
     gl_Position =  projection * view * model * vec4(POSITION, 1.0);
 })=====";
@@ -217,7 +322,6 @@ layout(location = 9) uniform vec3 lightColor;
 layout(location = 10) uniform float lightRadius;
 layout(location = 11) uniform float lightPower;
 
-
 void main()
 {
     vec3 albedo = texture(Texture, texCoord * texScale).rgb;
@@ -250,7 +354,6 @@ layout(location = 9) uniform vec3 lightColor;
 layout(location = 10) uniform float lightRadius;
 layout(location = 11) uniform float lightPower;
 
-
 void main()
 {
     vec3 limunance = COLOR_0 * lightAttenuation(lightPower, lightPosition, position, normal);
@@ -264,4 +367,116 @@ void PBRColorArray::destroy() {
     GL::Shader::destroy();
 }
 
+PBRWater PBRWater::instance;
+
+void PBRWater::build() {
+    addVertexShader(R"=====(
+#version 450
+#define PI 3.1415926535897932384626433832795
+
+layout(location = 0) in vec3 POSITION;
+
+layout(location = 0) out vec3 position;
+
+layout(location = 12) uniform float timeStep;
+
+void main() {
+    vec4 p = vec4(POSITION, 1.0);
+    p.z = p.z/5;
+    p.z += cos(p.x * PI + timeStep) * sin(p.y * PI + timeStep)/4;
+    gl_Position =  p;
+})=====");
+    addGeometryShader(R"=====(
+#version 450
+layout(triangles) in;
+layout(triangle_strip, max_vertices=3) out;
+
+layout(location = 0) uniform mat4 model;
+layout(location = 0) out vec3 position;
+layout(location = 2) out vec3 normal;
+
+layout(location = 1) uniform mat4 view;
+layout(location = 2) uniform mat4 projection;
+
+void main()
+{
+    vec3 a = ( gl_in[1].gl_Position - gl_in[0].gl_Position ).xyz;
+    vec3 b = ( gl_in[2].gl_Position - gl_in[0].gl_Position ).xyz;
+    vec3 N = normalize(mat3(transpose(inverse(model))) * cross(b, a));
+
+    for( int i=0; i<gl_in.length( ); ++i )
+    {
+        position = gl_in[i].gl_Position.xyz;
+        gl_Position = projection * view * model * gl_in[i].gl_Position;
+        normal = N;
+        EmitVertex();
+    }
+
+    EndPrimitive();
+})=====");
+    // Per point normal
+/*    addGeometryShader(R"=====(
+#version 450
+layout(triangles) in;
+
+// Three lines will be generated: 6 vertices
+layout(line_strip, max_vertices=6) out;
+
+layout(location = 0) out vec3 position;
+layout(location = 2) out vec3 normal;
+
+layout(location = 1) uniform mat4 view;
+layout(location = 2) uniform mat4 projection;
+
+void main()
+{
+    float normal_length = 1;
+
+    vec3 a = ( gl_in[1].gl_Position - gl_in[0].gl_Position ).xyz;
+    vec3 b = ( gl_in[2].gl_Position - gl_in[0].gl_Position ).xyz;
+    vec3 N = normalize( cross( b, a ) );
+
+  for(int i=0; i<gl_in.length(); i++)
+  {
+        vec4 P = gl_in[i].gl_Position;
+
+        position = P.xyz;
+        gl_Position = projection * view * P;
+        normal = N;
+        EmitVertex();
+
+        position = P.xyz + N * 0.1;
+        gl_Position = projection * view * (P + vec4(N, 0));
+        normal = N;
+        EmitVertex();
+
+        EndPrimitive();
+  }
+})=====");*/
+    addFragmentShader(PBRpixelHead + PBRfunctions + R"=====(
+// material parameters
+layout(location = 3) uniform vec4 albedo;
+layout(location = 4) uniform float metallic;
+layout(location = 5) uniform float roughness;
+layout(location = 6) uniform float ao;
+
+layout(location = 7) uniform vec3 eyePosition;
+layout(location = 8) uniform vec3 lightPosition;
+layout(location = 9) uniform vec3 lightColor;
+layout(location = 10) uniform float lightRadius;
+layout(location = 11) uniform float lightPower;
+
+// Main
+
+void main()
+{
+    vec3 limunance = albedo.xyz * (lightAttenuation(lightPower, lightPosition, position, -normal)+ao);
+//limunance = albedo;
+    color = vec4(limunance, albedo.w);
+})=====");
+    linkShaders();
+}
+void PBRWater::destroy() {
+    GL::Shader::destroy();
+}
 } // namespace Blob::Shaders

@@ -9,4 +9,7 @@ void Scene::addShape(const Shape &r) {
 void Scene::removeShape(const Shape &r) {
     shapes.remove(&r);
 }
+void Scene::removeAll() {
+    shapes.clear();
+}
 } // namespace Blob

@@ -22,6 +22,11 @@ struct Sampler {
     FILTER minFilter = NEAREST_MIPMAP_LINEAR;
     WRAP wrapS = REPEAT;
     WRAP wrapT = REPEAT;
+
+    Sampler() = default;
+    Sampler(FILTER magFilter, FILTER minFilter) : magFilter(magFilter), minFilter(minFilter) {}
+    Sampler(WRAP wrapS, WRAP wrapT) : wrapS(wrapS), wrapT(wrapT) {}
+    Sampler(FILTER magFilter, FILTER minFilter, WRAP wrapS, WRAP wrapT) : magFilter(magFilter), minFilter(minFilter), wrapS(wrapS), wrapT(wrapT) {}
 };
 
 class Texture {
@@ -30,16 +35,13 @@ class Texture {
 private:
     uint32_t texture = 0; // the opengl texture
 
+protected:
     int height = 0, width = 0, bitPerPixel = 0; // images data
 
-    bool depth = false, textureLoaded = false;
-
-    void init();
+    bool depth = false;
 
 public:
     Texture() = default;
-
-    explicit Texture(const std::string &path);
 
     Texture(const Texture &) = delete;
 
@@ -49,9 +51,7 @@ public:
 
     void applySampler(const Sampler &sampler);
 
-    void loadBMP(const std::string &path);
-
-    void setImage(const std::string &path);
+    void setRGB32data(uint8_t *pixels, unsigned int width, unsigned int height);
 
     void setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height);
 

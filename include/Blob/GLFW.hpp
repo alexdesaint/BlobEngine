@@ -177,36 +177,38 @@ protected:
 
     void *cursors[MouseCursor::COUNT];
 
-    // Controllers
-    static bool joystickConnected[16];
-    static const char *joystickName[16];
-    static int joystickButtonsCount[16];
-    static const unsigned char *joystickButtons[16];
-    static int joystickAxesCount[16];
-    static const float *joystickAxes[16];
 
     virtual void windowResized() {}
 
     virtual void framebufferResized() {}
 
+    /// Keyboard
     virtual void characterInput(unsigned int c) {}
-
     virtual void keyboardUpdate(int key, bool pressed) {};
 
+    /// Mouse
     virtual void mouseButtonUpdate(int button, bool pressed) {};
-
     virtual void cursorPositionUpdate(double xpos, double ypos) {};
-
     virtual void scrollUpdate(double xoffset, double yoffset) {};
 
     // virtual void joystick_callback(int joy, int event) {};
-
 public:
     // Window info
     const Maths::Vec2<int> &windowSize = windowSizeData;
     const Maths::Vec2<int> &framebufferSize = framebufferSizeData;
     const Maths::Vec2<float> &contentScale = contentScaleData;
     const bool &fullScreen = fullScreenData;
+
+    // Controllers
+    static const size_t joystickCount;
+    static bool joystickConnected[];
+    static const char *joystickName[];
+    static int joystickButtonsCount[];
+    static const unsigned char *joystickButtons[];
+    static int joystickAxesCount[];
+    static const float *joystickAxes[];
+
+    static double totalTimeFlow;
 
     Window(bool fullScreen, const Maths::Vec2<int> &windowSize, int GLmajor, int GLminor);
 
@@ -234,7 +236,12 @@ public:
 
     static double getTime();
 
-    void hideMouseCursor(bool hide);
+    enum CursorState{
+        CURSOR_HIDDEN,
+        CURSOR_NORMAL,
+        CURSOR_DISABLED
+    };
+    void setCursorState(CursorState cursorState);
 
     void setMouseCursor(MouseCursor mouseCursor);
 };

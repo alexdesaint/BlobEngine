@@ -14,103 +14,105 @@ public:
     T x = 0, y = 0;
 
     // Constructors
-    inline Vec2() = default;
+    constexpr inline Vec2() noexcept = default;
 
-    inline Vec2(T x, T y) : x(x), y(y) {}
+    constexpr inline Vec2(T x, T y) noexcept : x(x), y(y) {}
 
-    inline explicit Vec2(T xy) : x(xy), y(xy) {}
+    constexpr inline explicit Vec2(T xy) noexcept : x(xy), y(xy) {}
 
-    inline Vec2(const Vec2 &v) : x(v.x), y(v.y) {}
+    constexpr inline Vec2(const Vec2 &v) noexcept : x(v.x), y(v.y) {}
 
-    inline Vec2(const Vec2 &point1, const Vec2 &point2) {
+    constexpr inline Vec2(const Vec2 &point1, const Vec2 &point2) noexcept {
         x = point2.x - point1.x;
         y = point2.y - point1.y;
     }
 
     // operator with Vec2
-    inline bool operator==(const Vec2 &v) const { return x == v.x && y == v.y; }
+    constexpr inline bool operator==(const Vec2 &v) const { return x == v.x && y == v.y; }
 
-    inline bool operator!=(const Vec2 &v) const { return x != v.x || y != v.y; }
+    constexpr inline bool operator!=(const Vec2 &v) const { return x != v.x || y != v.y; }
 
-    inline Vec2 operator-(const Vec2 &v) const { return {x - v.x, y - v.y}; }
+    constexpr inline Vec2 operator-(const Vec2 &v) const { return {x - v.x, y - v.y}; }
 
-    inline Vec2 operator+(const Vec2 &v) const { return {x + v.x, y + v.y}; }
+    constexpr inline Vec2 operator+(const Vec2 &v) const { return {x + v.x, y + v.y}; }
 
-    inline void operator+=(const Vec2 &v) {
+    constexpr inline Vec2 operator*(const Vec2 &v) const { return {x * v.x, y * v.y}; }
+
+    constexpr inline void operator+=(const Vec2 &v) {
         x += v.x;
         y += v.y;
     }
 
-    inline void operator-=(const Vec2 &v) {
+    constexpr inline void operator-=(const Vec2 &v) {
         x -= v.x;
         y -= v.y;
     }
 
-    inline Vec2 &operator=(const Vec2 &v) {
+    constexpr inline Vec2 &operator=(const Vec2 &v) {
         x = v.x;
         y = v.y;
         return *this;
     }
 
     // operator with T
-    inline Vec2 operator+(T a) const { return {a + x, a + y}; }
+    constexpr inline Vec2 operator+(T a) const { return {a + x, a + y}; }
 
-    inline Vec2 operator-(T a) const { return {x - a, y - a}; }
+    constexpr inline Vec2 operator-(T a) const { return {x - a, y - a}; }
 
-    inline Vec2 operator*(T a) const { return {a * x, a * y}; }
+    constexpr inline Vec2 operator*(T a) const { return {a * x, a * y}; }
 
-    inline Vec2 operator/(T a) const { return {x / a, y / a}; }
+    constexpr inline Vec2 operator/(T a) const { return {x / a, y / a}; }
 
-    inline void operator+=(T a) {
+    constexpr inline void operator+=(T a) {
         x += a;
         y += a;
     }
 
-    inline void operator-=(T a) {
+    constexpr inline void operator-=(T a) {
         x -= a;
         y -= a;
     }
 
-    inline void operator*=(T a) {
+    constexpr inline void operator*=(T a) {
         x *= a;
         y *= a;
     }
 
-    inline void operator/=(T a) {
+    constexpr inline void operator/=(T a) {
         x /= a;
         y /= a;
     }
 
-    inline Vec2 &operator=(const T a) {
+    constexpr inline Vec2 &operator=(const T a) {
         x = a;
         y = a;
         return *this;
     }
 
     // Functions
-    [[nodiscard]] inline T length2() const { return x * x + y * y; }
+    [[nodiscard]] constexpr inline T length2() const { return x * x + y * y; }
 
-    [[nodiscard]] inline T length() const { return std::sqrt(x * x + y * y); };
+    [[nodiscard]] constexpr inline T length() const { return std::sqrt(x * x + y * y); };
 
-    // [[nodiscard]] inline T scalar(const Vec2 &B) const { return x * B.x + y * B.y; }
+    // [[nodiscard]] constexpr inline T scalar(const Vec2 &B) const { return x * B.x + y * B.y; }
 
-    [[nodiscard]] inline T dot(const Vec2 &B) const { return x * B.x + y * B.y; }
+    [[nodiscard]] constexpr inline T dot(const Vec2 &B) const { return x * B.x + y * B.y; }
 
-    // [[nodiscard]] inline Vec2 cross(const Vec2 &B) const { return {y, -x}; }
+    // [[nodiscard]] constexpr inline Vec2 cross(const Vec2 &B) const { return {y, -x}; }
 
-    [[nodiscard]] inline Vec2 normalize() const { return operator/(std::sqrt(x * x + y * y)); }
+    [[nodiscard]] constexpr inline Vec2 normalize() const { return operator/(std::sqrt(x * x + y * y)); }
 
     inline Vec2 setLength(T newLength) { return *this = *this / std::sqrt(x * x + y * y) * newLength; }
 
-    [[nodiscard]] inline Vec2 rotate() const { return {y, -x}; }
+    [[nodiscard]] constexpr inline Vec2 rotate() const { return {y, -x}; }
 
-    [[nodiscard]] inline Vec2 negate() const { return {-x, -y}; }
+    [[nodiscard]] constexpr inline Vec2 negate() const { return {-x, -y}; }
 
-    [[nodiscard]] inline double getOrientation() const { return std::atan2(y, x); }
+    [[nodiscard]] constexpr inline double getOrientation() const { return std::atan2(y, x); }
 
-    [[nodiscard]] inline double getOrientationDeg() const { return std::atan2(y, x) * 180 / PI; }
+    [[nodiscard]] constexpr inline double getOrientationDeg() const { return std::atan2(y, x) * 180 / PI; }
 
-    [[nodiscard]] inline bool isNull() const { return ((x == 0) && (y == 0)); }
+    [[nodiscard]] constexpr inline bool isNull() const { return ((x == 0) && (y == 0)); }
 
     template<typename U>
     inline Vec2<U> cast() const {
@@ -524,10 +526,10 @@ public:
 
     Vec4<float> operator*(const Vec4<float> &val) const {
         return {
-            a11 * val.x + a12 * val.y + a13 * val.z + a14 * val.w,
-            a21 * val.x + a22 * val.y + a23 * val.z + a24 * val.w,
-            a31 * val.x + a32 * val.y + a33 * val.z + a34 * val.w,
-            a41 * val.x + a42 * val.y + a43 * val.z + a44 * val.w,
+            a11 * val.x + a21 * val.y + a31 * val.z + a41 * val.w,
+            a12 * val.x + a22 * val.y + a32 * val.z + a42 * val.w,
+            a13 * val.x + a23 * val.y + a33 * val.z + a43 * val.w,
+            a14 * val.x + a24 * val.y + a34 * val.z + a44 * val.w,
         };
     }
 
@@ -613,10 +615,10 @@ public:
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Mat4 &m) {
-        os << m.a11 << ", " << m.a12 << ", " << m.a13 << ", " << m.a14 << ", "; // << std::endl;
-        os << m.a21 << ", " << m.a22 << ", " << m.a23 << ", " << m.a24 << ", "; // << std::endl;
-        os << m.a31 << ", " << m.a32 << ", " << m.a33 << ", " << m.a34 << ", "; // << std::endl;
-        os << m.a41 << ", " << m.a42 << ", " << m.a43 << ", " << m.a44;         // << std::endl;
+        os << m.a11 << ", " << m.a21 << ", " << m.a31 << ", " << m.a41 << ", " << std::endl;
+        os << m.a12 << ", " << m.a22 << ", " << m.a32 << ", " << m.a42 << ", " << std::endl;
+        os << m.a13 << ", " << m.a23 << ", " << m.a33 << ", " << m.a43 << ", " << std::endl;
+        os << m.a14 << ", " << m.a24 << ", " << m.a34 << ", " << m.a44 << std::endl;
         return os;
     }
 };
@@ -654,12 +656,6 @@ public:
         a41 = xyz.x;
         a42 = xyz.y;
         a43 = xyz.z;
-    }
-
-    void setPosition(const Vec2<float> &xy, float z) {
-        a41 = xy.x;
-        a42 = xy.y;
-        a43 = z;
     }
 
     void setPosition(const Vec2<float> &xy) {
@@ -816,22 +812,22 @@ public:
 class ViewTransform : public Mat4 {
 private:
     void compute() {
-        const Vec3<float> f((cameraLookAt - cameraPosition).getNormal());
-        const Vec3<float> s(f.cross(cameraUp).getNormal());
-        const Vec3<float> u(s.cross(f));
+        const Vec3<float> forward = (cameraLookAt - cameraPosition).getNormal();
+        const Vec3<float> right = forward.cross(cameraUp).getNormal();
+        const Vec3<float> up = right.cross(forward).getNormal();
 
-        a11 = s.x;
-        a21 = s.y;
-        a31 = s.z;
-        a12 = u.x;
-        a22 = u.y;
-        a32 = u.z;
-        a13 = -f.x;
-        a23 = -f.y;
-        a33 = -f.z;
-        a41 = -s.dot(cameraPosition);
-        a42 = -u.dot(cameraPosition);
-        a43 = f.dot(cameraPosition);
+        a11 = right.x;
+        a21 = right.y;
+        a31 = right.z;
+        a12 = up.x;
+        a22 = up.y;
+        a32 = up.z;
+        a13 = -forward.x;
+        a23 = -forward.y;
+        a33 = -forward.z;
+        a41 = -right.dot(cameraPosition);
+        a42 = -up.dot(cameraPosition);
+        a43 = forward.dot(cameraPosition);
     }
 
 public:
@@ -867,12 +863,16 @@ public:
         compute();
     }
 
+    void setCameraUp(const Vec3<float> &up) {
+        cameraUp = up;
+        compute();
+    }
+
     friend std::ostream &operator<<(std::ostream &out, const ViewTransform &vec) {
         out << "cameraPosition: " << vec.cameraPosition << std::endl;
         out << "cameraLookAt: " << vec.cameraLookAt << std::endl;
         out << "cameraUp: " << vec.cameraUp << std::endl;
 
-        out << "ViewTransform: " << std::endl;
         out << "ViewTransform: " << std::endl << (Mat4) vec << std::endl;
 
         return out;
@@ -881,7 +881,8 @@ public:
 
 class ProjectionTransform : public Mat4 {
 private:
-    float cameraAngle = PI/4, ratio = 1.f;
+    float cameraAngle = PI / 4, ratio = 1.f, closeRange, longRange;
+    bool ortho = false;
 
 public:
     ProjectionTransform() = default;
@@ -898,68 +899,74 @@ public:
         setAngle(cameraAngle);
     }
 
-    void setInfinitRange(float closeRange) {
-        a43 = closeRange;
-        a33 = 0;
+    void setInfinitRange(float _closeRange) {
+        /// TODO: send Warning
+
+        closeRange = _closeRange;
+
+        a43 = -closeRange;
+        a33 = -1.f;
         a34 = -1.f;
     }
 
-    void setRange(float closeRange, float longRange) {
-        a43 = -(longRange * closeRange) / (closeRange - longRange);
-        a33 = -((longRange) / (closeRange - longRange)) - 1;
-        a34 = -1.f;
+    void setRange(float _closeRange, float _longRange) {
+        closeRange = _closeRange;
+        longRange = _longRange;
+
+        if (ortho) {
+            a43 = closeRange / (closeRange - longRange);
+            a33 = 1 / (closeRange - longRange);
+            a34 = 0;
+        } else {
+            a43 = (longRange * closeRange) / (closeRange - longRange);
+            a33 = longRange / (closeRange - longRange);
+            a34 = -1.f;
+        }
     }
 
     void setAngle(float _cameraAngle) {
+        ortho = false;
         cameraAngle = _cameraAngle;
-        const float tanHalfFovy = std::tan(cameraAngle / 2.f);
+        a11 = a22 = a33 = a44 = 1.f;
+        a12 = a13 = a14 = 0.f;
+        a21 = a23 = a24 = 0.f;
+        a31 = a32 = a34 = 0.f;
+        a41 = a42 = a43 = 0.f;
 
-        if (ratio > 1.f) {
-            a11 = 1.f / (tanHalfFovy);
-            a22 = (ratio / tanHalfFovy);
+        const float tanHalfFovy = std::tan(cameraAngle / 2.f);
+        a11 = 1.f / (ratio * tanHalfFovy);
+        a22 = 1.f / (tanHalfFovy);
+    }
+
+    void setRatio(float _ratio) {
+        ratio = _ratio;
+
+        if (ortho) {
+            a11 = 1.f / (cameraAngle * ratio); // 2 / width
+            a22 = 1.f / cameraAngle;           // 2 / height
         } else {
+            const float tanHalfFovy = std::tan(cameraAngle / 2.f);
             a11 = 1.f / (ratio * tanHalfFovy);
             a22 = 1.f / (tanHalfFovy);
         }
     }
 
-    void setRatio(const Vec2<int> &size) {
-        ratio = size.x / (float) size.y;
-        const float tanHalfFovy = std::tan(cameraAngle / 2.f);
+    void setOrthoProjection(float height) {
+        cameraAngle = height;
+        ortho = true;
+        a11 = a22 = a33 = a44 = 1.f;
+        a12 = a13 = a14 = 0.f;
+        a21 = a23 = a24 = 0.f;
+        a31 = a32 = a34 = 0.f;
+        a41 = a42 = a43 = 0.f;
 
-        if (ratio > 1.f) {
-            a11 = 1.f / (tanHalfFovy);
-            a22 = (ratio / tanHalfFovy);
-        } else {
-            a11 = 1.f / (ratio * tanHalfFovy);
-            a22 = 1.f / (tanHalfFovy);
-        }
-    }
+        a11 = 1.f / (cameraAngle * ratio); // 2 / width
+        a22 = 1.f / cameraAngle;           // 2 / height
 
-    void setOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
-        // a11 = 1.f;
-        a12 = 0.f;
-        a13 = 0.f;
-        a14 = 0.f;
-        a21 = 0.f;
-        // a22 = 1.f;
-        a23 = 0.f;
-        a24 = 0.f;
-        a31 = 0.f;
-        a32 = 0.f;
-        // a33 = 1.f;
-        a34 = 0.f;
-        // a41 = 0.f;
-        // a42 = 0.f;
-        // a43 = 0.f;
-        a44 = 1.f;
+        a43 = closeRange / (closeRange - longRange);
+        a33 = 1 / (closeRange - longRange);
+        a34 = 0;
 
-        a11 = 2.f / (right - left);
-        a22 = 2.f / (top - bottom);
-        a33 = -2.f / (zFar - zNear);
-        a41 = -(right + left) / (right - left);
-        a42 = -(top + bottom) / (top - bottom);
-        a43 = -(zFar + zNear) / (zFar - zNear);
     }
 
     friend std::ostream &operator<<(std::ostream &out, const ProjectionTransform &vec) {

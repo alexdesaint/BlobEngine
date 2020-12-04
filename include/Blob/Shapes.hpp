@@ -29,13 +29,12 @@ private:
         Blob::Core::RenderOptions renderOptions0;
         Blob::GL::VertexArrayObject attribute0;
 
-        explicit CubeAttributes(const Blob::Core::Buffer &buffer) {
+        explicit CubeAttributes(const Blob::Core::Buffer &buffer) : renderOptions0(indicesArray0.data(), 36, 5123) {
             attribute0.setBuffer(buffer, 48, 0);
             attribute0.setArray(3, 0, 5126, 0, 0);
             attribute0.setArray(3, 1, 5126, 12, 0);
             attribute0.setArray(4, 2, 5126, 24, 0);
             attribute0.setArray(2, 3, 5126, 40, 0);
-            renderOptions0.setIndices(indicesArray0.data(), 36, 5123);
         }
     } cubeAttributes{buffer};
 
@@ -44,13 +43,12 @@ private:
         Blob::Core::RenderOptions renderOptions0;
         Blob::GL::VertexArrayObject attribute0;
 
-        explicit PlaneAttributes(const Blob::Core::Buffer &buffer) {
+        explicit PlaneAttributes(const Blob::Core::Buffer &buffer) : renderOptions0(indicesArray0.data(), 6, 5123) {
             attribute0.setBuffer(buffer, 48, 1152);
             attribute0.setArray(3, 0, 5126, 0, 0);
             attribute0.setArray(3, 1, 5126, 12, 0);
             attribute0.setArray(4, 2, 5126, 24, 0);
             attribute0.setArray(2, 3, 5126, 40, 0);
-            renderOptions0.setIndices(indicesArray0.data(), 6, 5123);
         }
     } planeAttributes{buffer};
 
@@ -59,8 +57,7 @@ private:
         Blob::Core::RenderOptions renderOptions0;
         Blob::GL::VertexArrayObject attribute0;
 
-        explicit OctagonalPrismAttributes(const Blob::Core::Buffer &buffer) {
-            renderOptions0.setIndices(indicesArray0.data(), 84, 5123);
+        explicit OctagonalPrismAttributes(const Blob::Core::Buffer &buffer) : renderOptions0(indicesArray0.data(), 84, 5123) {
             attribute0.setBuffer(buffer, 32, 1344);
             attribute0.setArray(3, 0, 5126, 0, 0);
             attribute0.setArray(3, 1, 5126, 12, 0);
@@ -69,27 +66,33 @@ private:
     } octagonalPrismAttributes{buffer};
 
 public:
-    struct Cube : public Core::Mesh {
+    struct Cube : public Core::Shape {
         Blob::Core::Primitive primitive0;
+        Blob::Core::Mesh mesh;
         explicit Cube(const Blob::Core::Material &material = instance->materials.defaultM)
-            : primitive0(instance->cubeAttributes.attribute0, material, instance->cubeAttributes.renderOptions0) {
-            addPrimitive(primitive0);
+            : primitive0(&instance->cubeAttributes.attribute0, &material, &instance->cubeAttributes.renderOptions0) {
+            mesh.addPrimitive(primitive0);
+            setMesh(mesh);
         }
     };
 
-    struct Plane : public Core::Mesh {
+    struct Plane : public Core::Shape {
         Blob::Core::Primitive primitive0;
+        Blob::Core::Mesh mesh;
         explicit Plane(const Blob::Core::Material &material = instance->materials.defaultM)
-            : primitive0(instance->planeAttributes.attribute0, material, instance->planeAttributes.renderOptions0) {
-            addPrimitive(primitive0);
+            : primitive0(&instance->planeAttributes.attribute0, &material, &instance->planeAttributes.renderOptions0) {
+            mesh.addPrimitive(primitive0);
+            setMesh(mesh);
         }
     };
 
-    struct OctagonalPrism : public Core::Mesh {
+    struct OctagonalPrism : public Core::Shape {
         Blob::Core::Primitive primitive0;
+        Blob::Core::Mesh mesh;
         explicit OctagonalPrism(const Blob::Core::Material &material = instance->materials.defaultM)
-            : primitive0(instance->octagonalPrismAttributes.attribute0, material, instance->octagonalPrismAttributes.renderOptions0) {
-            addPrimitive(primitive0);
+            : primitive0(&instance->octagonalPrismAttributes.attribute0, &material, &instance->octagonalPrismAttributes.renderOptions0) {
+            mesh.addPrimitive(primitive0);
+            setMesh(mesh);
         }
     };
 
@@ -97,7 +100,7 @@ public:
         if (instance != nullptr)
             throw Blob::Core::Exception("Shapes already loaded");
         instance = this;
-        buffer.setData(data.data(), data.size());
+        buffer.setData(data);
     }
 
     ~Shapes() { instance = nullptr; }

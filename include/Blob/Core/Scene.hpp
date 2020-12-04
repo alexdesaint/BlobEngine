@@ -20,5 +20,7 @@ public:
     void addShape(const Shape &r);
 
     void removeShape(const Shape &r);
+
+    void removeAll();
 };
 } // namespace Blob

@@ -12,10 +12,12 @@ private:
     // TODO: Use Smart pointer or remove on destructor
     Mesh *mesh = nullptr;
     std::list<Shape *> shapes;
-    Shape *parent = nullptr;
+    //Shape *parent = nullptr;
 
 public:
     Shape() = default;
+    Shape(const Shape &) = delete;
+    Shape(Shape &&) = delete;
 
     explicit Shape(Mesh &r);
 

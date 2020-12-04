@@ -49,8 +49,8 @@ Keyboard::Keyboard(bool (&keys)[512])
       RIGHT_SHIFT(GLFW::Keys::RIGHT_SHIFT, keys), RIGHT_CONTROL(GLFW::Keys::RIGHT_CONTROL, keys), RIGHT_ALT(GLFW::Keys::RIGHT_ALT, keys),
       RIGHT_SUPER(GLFW::Keys::RIGHT_SUPER, keys), MENU(GLFW::Keys::MENU, keys) {}
 
-
-std::list<KeyboardEvents *> KeyboardEvents::keyUpdates;
+std::list<KeyboardEvents *> KeyboardEvents::subscribers;
+std::list<MouseEvents *> MouseEvents::subscribers;
 
 /*
 void Controller::controllerOut() const {
@@ -68,4 +68,8 @@ void Controller::controllerOut() const {
     ImGui::End();
 }
 */
+Controller::Controller(size_t num)
+    : name(GLFW::Window::joystickName[num]), connected(GLFW::Window::joystickConnected[num]), buttonsCount(GLFW::Window::joystickButtonsCount[num]),
+      buttons(GLFW::Window::joystickButtons[num]), joystickAxesCount(GLFW::Window::joystickAxesCount[num]),
+      joystickAxes(GLFW::Window::joystickAxes[num]) {}
 } // namespace Blob::Core

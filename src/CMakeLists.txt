@@ -26,7 +26,7 @@ target_include_directories(BlobColor PUBLIC ${INCLUDE_FOLDER})
 add_library(Blob::Color ALIAS BlobColor)
 
 add_library(BlobImGui STATIC ImGui.cpp)
-target_link_libraries(BlobImGui imgui)
+target_link_libraries(BlobImGui imgui Blob::GL)
 target_include_directories(BlobImGui PUBLIC ${INCLUDE_FOLDER})
 add_library(Blob::ImGui ALIAS BlobImGui)
 

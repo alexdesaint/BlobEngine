@@ -35,6 +35,11 @@ public:
 
     void addInputCharacter(unsigned short c);
 
+    void disableMouseCursor();
+    void enableMouseCursor();
+    void enableGamepad();
+    void disableGamepad();
+
     void updateMouseCursor(Blob::GLFW::Window &window);
 };
 } // namespace Blob

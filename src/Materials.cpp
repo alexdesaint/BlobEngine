@@ -1,3 +1,4 @@
+#include <Blob/Core/Window.hpp>
 #include <Blob/Materials.hpp>
 
 #include <Blob/Shaders.hpp>
@@ -7,15 +8,44 @@ namespace Blob::Materials {
 SingleColor::SingleColor(Color::RGB albedo) : albedo(albedo) {}
 
 void SingleColor::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    setCullFace(false);
-
     setShader(Shaders::SingleColor::instance);
 
     setUniform(pt, Shaders::SingleColor::projection);
     setUniform(vt, Shaders::SingleColor::view);
     setUniform(mt, Shaders::SingleColor::model);
 
-    setUniform(Color::GreenYellow, Shaders::SingleColor::albedo);
+    setUniform(albedo, Shaders::SingleColor::albedo);
+}
+
+SingleTexture::SingleTexture(const Core::Texture *texture) : texture(texture) {}
+
+void SingleTexture::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+    setShader(Shaders::SingleTexture::instance);
+
+    setUniform(pt, Shaders::SingleTexture::projection);
+    setUniform(vt, Shaders::SingleTexture::view);
+    setUniform(mt, Shaders::SingleTexture::model);
+
+    setUniform(texScale, Shaders::SingleTexture::textureScale);
+    setTexture(texture);
+}
+void SingleTexture::setTexture1(const Core::Texture *texture) {
+    SingleTexture::texture = texture;
+}
+
+/********************* Utils *********************/
+
+PerFaceNormal::PerFaceNormal(Color::RGB albedo) : albedo(albedo) {}
+
+void PerFaceNormal::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+    setShader(Shaders::PerFaceNormal::instance);
+
+    setUniform(pt, Shaders::PerFaceNormal::projection);
+    setUniform(vt, Shaders::PerFaceNormal::view);
+    setUniform(mt, Shaders::PerFaceNormal::model);
+
+    setUniform(albedo, Shaders::PerFaceNormal::albedo);
+    setUniform(length, Shaders::PerFaceNormal::length);
 }
 
 /********************* PBR *********************/
@@ -88,5 +118,28 @@ void PBRColorArray::applyMaterial(const Maths::ProjectionTransform &pt, const Ma
 
     setUniform(vt.cameraPosition, Shaders::PBRSingleTexture::cameraPosition);
 }
+
+void PBRWater::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+    setShader(Shaders::PBRWater::instance);
+
+    setUniform(pt, Shaders::PBRWater::projection);
+    setUniform(vt, Shaders::PBRWater::view);
+    setUniform(mt, Shaders::PBRWater::model);
+
+    setUniform(albedo, Shaders::PBRWater::albedo);
+    setUniform(metallic, Shaders::PBRWater::metallic);
+    setUniform(roughness, Shaders::PBRWater::roughness);
+    setUniform(ao, Shaders::PBRWater::ao);
+
+    setUniform(light.position, Shaders::PBRWater::lightPosition);
+    setUniform(light.color, Shaders::PBRWater::lightColor);
+    setUniform(light.power, Shaders::PBRWater::lightPower);
+    setUniform(light.radius, Shaders::PBRWater::lightRadius);
+    setUniform((float) Core::Window::totalTimeFlow, Shaders::PBRWater::timeStep);
+
+    setUniform(vt.cameraPosition, Shaders::PBRWater::cameraPosition);
+}
+
+PBRWater::PBRWater(Color::RGBA albedo) : albedo(albedo) {}
 
 } // namespace Blob::Materials

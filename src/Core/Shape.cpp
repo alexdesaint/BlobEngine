@@ -78,12 +78,12 @@ void Shape::setMesh(Mesh *r) {
 
 void Shape::addChild(Shape *r) {
     shapes.emplace_back(r);
-    r->parent = this;
+    //r->parent = this;
 }
 
 void Shape::addChild(Shape &r) {
     shapes.emplace_back(&r);
-    r.parent = this;
+    //r.parent = this;
 }
 
 void Shape::removeMesh() {
@@ -93,7 +93,7 @@ void Shape::removeMesh() {
 void Shape::removeChild(Shape &r) {
     auto it = std::find(shapes.begin(), shapes.end(), &r);
     if (it != shapes.end()) {
-        r.parent = nullptr;
+        //r.parent = nullptr;
         shapes.erase(it);
     }
 }
@@ -101,7 +101,7 @@ void Shape::removeChild(Shape &r) {
 void Shape::removeChild(Shape *r) {
     auto it = std::find(shapes.begin(), shapes.end(), r);
     if (it != shapes.end()) {
-        r->parent = nullptr;
+        //r->parent = nullptr;
         shapes.erase(it);
     }
 }

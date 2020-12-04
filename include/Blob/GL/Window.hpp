@@ -18,6 +18,8 @@ public:
     ~Window();
 
     void setVAO(const VertexArrayObject &vao) const;
+    void setVAO(const VertexArrayObject *vao) const;
+    void drawArrays(int32_t count, uint32_t offset = 0) const;
     void drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType) const;
     template<typename T>
     void drawIndex(const void *indices, int32_t numOfIndices) const;

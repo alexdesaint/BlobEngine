@@ -147,13 +147,14 @@ class Window;
 
 class KeyboardEvents {
     friend Window;
+
 private:
-    static std::list<KeyboardEvents *> keyUpdates;
+    static std::list<KeyboardEvents *> subscribers;
 
 protected:
-    KeyboardEvents() { keyUpdates.push_back(this); }
+    KeyboardEvents() { subscribers.push_back(this); }
 
-    ~KeyboardEvents() { keyUpdates.remove(this); }
+    ~KeyboardEvents() { subscribers.remove(this); }
 
     virtual void keyboardUpdate(const Keyboard &keyboard) = 0;
 
@@ -161,21 +162,44 @@ public:
     KeyboardEvents(const KeyboardEvents &) = delete;
 };
 
-class Controller {
+class MouseEvents {
+    friend Window;
+
+private:
+    static std::list<MouseEvents *> subscribers;
+
+protected:
+    MouseEvents() { subscribers.push_back(this); }
+
+    ~MouseEvents() { subscribers.remove(this); }
+
+    virtual void mouseButtonUpdate(int button, bool pressed) {}
+
+    virtual void cursorPosUpdate(double xpos, double ypos) {}
+
+    virtual void scrollUpdate(double xoffset, double yoffset) {}
+
 public:
-    std::string name;
-    bool connected = false;
-
-    int buttonsCount = 0;
-    const unsigned char *buttons = nullptr;
-
-    int joystickAxesCount = 0;
-    const float *joystickAxes = nullptr;
-
-    void controllerOut() const;
+    MouseEvents(const MouseEvents &) = delete;
+    MouseEvents(MouseEvents &&) = delete;
 };
 
-template <unsigned int N>
+class Controller {
+public:
+    const char *&name;
+    bool &connected;
+
+    int &buttonsCount;
+    const unsigned char *&buttons;
+
+    int &joystickAxesCount;
+    const float *&joystickAxes;
+
+    // void controllerOut() const;
+    Controller(size_t num);
+};
+
+template<unsigned int N>
 class ControllerEvents {
 private:
 protected:

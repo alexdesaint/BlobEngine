@@ -26,13 +26,3 @@ target_compile_definitions(libs INTERFACE TINYGLTF_USE_CPP14)
 if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp)
     file(DOWNLOAD https://raw.githubusercontent.com/nlohmann/json/master/single_include/nlohmann/json.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp SHOW_PROGRESS)
 endif ()
-
-#entt
-if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/include/entt/entt.hpp)
-    file(DOWNLOAD https://raw.githubusercontent.com/skypjack/entt/master/single_include/entt/entt.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/entt/entt.hpp SHOW_PROGRESS)
-endif ()
-
-#tinygltf
-if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/include/tiny_gltf.h)
-    file(DOWNLOAD https://raw.githubusercontent.com/syoyo/tinygltf/master/tiny_gltf.h ${CMAKE_CURRENT_SOURCE_DIR}/include/tiny_gltf.h SHOW_PROGRESS)
-endif ()

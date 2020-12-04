@@ -15,6 +15,32 @@ public:
     explicit SingleColor(Color::RGB albedo);
 };
 
+class SingleTexture : public Core::Material {
+private:
+    const Core::Texture *texture;
+
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+
+public:
+    Maths::Vec2<float> texScale = {1.f, 1.f};
+
+    explicit SingleTexture(const Core::Texture *texture);
+
+    void setTexture1(const Core::Texture *texture);
+};
+
+class PerFaceNormal  : public Core::Material {
+private:
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+
+public:
+    Color::RGB albedo = {1.0f, 0.5f, 0.31f};
+    float length = 1.f;
+
+    PerFaceNormal() = default;
+    explicit PerFaceNormal(Color::RGB albedo);
+};
+
 struct Light {
     Maths::Vec3<float> position = {0.f, 0.f, 2.0f};
     Color::RGB color = {1.f, 1.f, 1.f};
@@ -63,6 +89,17 @@ private:
 
 public:
     PBRColorArray() = default;
+};
+
+class PBRWater : public Core::Material, public PBR {
+private:
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+
+public:
+    Color::RGBA albedo = {0.f, 0.f, 1.f, 0.5f};
+
+    PBRWater() = default;
+    explicit PBRWater(Color::RGBA albedo);
 };
 
 } // namespace Blob::Materials

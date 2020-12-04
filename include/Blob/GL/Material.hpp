@@ -16,6 +16,7 @@ public:
     void setScissor(int x, int y, int width, int height) const;
     void setDepthTest(bool set) const;
     void setTexture(const Texture &texture) const;
+    void setTexture(const Texture *texture) const;
 
     template<typename T>
     void setUniform(const T &val, int position) const;
@@ -59,5 +60,8 @@ void Material::setUniform<>(const Maths::ProjectionTransform &val, int position)
 
 template<>
 void Material::setUniform<>(const Color::RGB &val, int position) const;
+
+template<>
+void Material::setUniform<>(const Color::RGBA &val, int position) const;
 
 } // namespace Blob::GL

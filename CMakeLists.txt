@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.9)
 
 project(BlobEngine LANGUAGES CXX C)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(BLOBTEST "Build the tests" ON)
+option(BLOBTEST "Build the tests" OFF)
 option(BLOBVK "Build Vulkan" OFF)
 option(BUILD_DOC "Build documentation" ON)
 
@@ -62,6 +62,6 @@ set(INCLUDE_FOLDER ${PROJECT_SOURCE_DIR}/include)
 add_subdirectory(libs)
 add_subdirectory(src)
 
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR BLOBTEST)
     add_subdirectory(test)
 endif ()

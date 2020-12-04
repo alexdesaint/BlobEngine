@@ -13,10 +13,6 @@
 #include <vector>
 #include <xmmintrin.h>
 
-
-//#include <glm/ext/matrix_clip_space.inl>
-//#include <glm/ext/matrix_transform.inl>
-
 using namespace Blob::Maths;
 
 class Mat4SSE {
@@ -436,7 +432,10 @@ std::ostream &operator<<(std::ostream &os, const glm::vec4 &dt) {
 }
 
 std::ostream &operator<<(std::ostream &os, const glm::mat4 &gm) {
-    os << gm[0] << std::endl << gm[1] << std::endl << gm[2] << std::endl << gm[3] << std::endl;
+    os << gm[0][0] << ", " << gm[1][0] << ", " << gm[2][0] << ", " << gm[3][0] << std::endl;
+    os << gm[0][1] << ", " << gm[1][1] << ", " << gm[2][1] << ", " << gm[3][1] << std::endl;
+    os << gm[0][2] << ", " << gm[1][2] << ", " << gm[2][2] << ", " << gm[3][2] << std::endl;
+    os << gm[0][3] << ", " << gm[1][3] << ", " << gm[2][3] << ", " << gm[3][3] << std::endl;
     return os;
 }
 
@@ -949,8 +948,8 @@ TEST
     std::cout << "|------------|-----------|-----------|-----------|-----------|" << std::endl;
 
     {
-        ViewTransform vt;
-        glm::mat4 glmMt = glm::lookAt(glm::vec3(1, 0, 1), {0, 0, 0}, {0, 0, 1});
+        ViewTransform vt({15, 78, 1}, {4, 9, 2}, {0, 0, 1});
+        glm::mat4 glmMt = glm::lookAt(glm::vec3(15, 78, 1), {4, 9, 2}, {0, 0, 1});
         eq(vt, glmMt);
     }
 
@@ -958,7 +957,7 @@ TEST
     std::cout << "|";
     std::cout << std::setw(13) << "Projection |";
     std::cout << std::setw(10) << sizeof(glm::mat4) << " |";
-    std::cout << std::setw(10) << sizeof(ViewTransform) << " |";
+    std::cout << std::setw(10) << sizeof(ProjectionTransform) << " |";
     std::cout << "           |";
     std::cout << "           |" << std::endl;
     std::cout << "|------------|-----------|-----------|-----------|-----------|" << std::endl;

@@ -137,12 +137,15 @@ const unsigned int Keys::RIGHT_ALT = GLFW_KEY_RIGHT_ALT + 1;
 const unsigned int Keys::RIGHT_SUPER = GLFW_KEY_RIGHT_SUPER + 1;
 const unsigned int Keys::MENU = GLFW_KEY_MENU + 1;
 
-bool Window::joystickConnected[GLFW_JOYSTICK_LAST + 1];
-const char *Window::joystickName[GLFW_JOYSTICK_LAST + 1];
-int Window::joystickButtonsCount[GLFW_JOYSTICK_LAST + 1];
-const unsigned char *Window::joystickButtons[GLFW_JOYSTICK_LAST + 1];
-int Window::joystickAxesCount[GLFW_JOYSTICK_LAST + 1];
-const float *Window::joystickAxes[GLFW_JOYSTICK_LAST + 1];
+const size_t Window::joystickCount = GLFW_JOYSTICK_LAST + 1;
+bool Window::joystickConnected[GLFW_JOYSTICK_LAST];
+const char *Window::joystickName[GLFW_JOYSTICK_LAST];
+int Window::joystickButtonsCount[GLFW_JOYSTICK_LAST];
+const unsigned char *Window::joystickButtons[GLFW_JOYSTICK_LAST];
+int Window::joystickAxesCount[GLFW_JOYSTICK_LAST];
+const float *Window::joystickAxes[GLFW_JOYSTICK_LAST];
+
+double Window::totalTimeFlow = 0;
 
 Window::Window(bool fullScreen, const Maths::Vec2<int> &windowSize, int GLmajor, int GLminor) {
     // The OpenGL window build
@@ -196,6 +199,8 @@ Window::Window(bool fullScreen, const Maths::Vec2<int> &windowSize, int GLmajor,
     glfwSwapInterval(1);
 
     // Cursor init
+    if (glfwRawMouseMotionSupported())
+        glfwSetInputMode((GLFWwindow *) window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     GLFWerrorfun prev_error_callback = glfwSetErrorCallback(nullptr);
     cursors[MouseCursor::Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
     cursors[MouseCursor::TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
@@ -212,6 +217,7 @@ Window::Window(bool fullScreen, const Maths::Vec2<int> &windowSize, int GLmajor,
     glfwSetCursorPosCallback((GLFWwindow *) window, (GLFWcursorposfun) cursorPosCallback);
 
     // Keyboard init
+    //glfwSetInputMode((GLFWwindow *) window, GLFW_STICKY_KEYS, GLFW_TRUE);
     glfwSetKeyCallback((GLFWwindow *) window, (GLFWkeyfun) keyCallback);
     glfwSetCharCallback((GLFWwindow *) window, (GLFWcharfun) charCallback);
 
@@ -221,6 +227,8 @@ Window::Window(bool fullScreen, const Maths::Vec2<int> &windowSize, int GLmajor,
     for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
         if (glfwJoystickPresent(i))
             joystick_callback(i, GLFW_CONNECTED);
+        joystickButtons[i] = glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
+        joystickAxes[i] = glfwGetJoystickAxes(i, &joystickAxesCount[i]);
     }
 }
 
@@ -359,6 +367,8 @@ void Window::updateInputs() {
         joystickButtons[i] = glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
         joystickAxes[i] = glfwGetJoystickAxes(i, &joystickAxesCount[i]);
     }
+
+    totalTimeFlow = glfwGetTime();
 }
 
 double Window::getTime() {
@@ -366,15 +376,21 @@ double Window::getTime() {
 }
 
 void Window::setMouseCursor(MouseCursor mouseCursor) {
-    // glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     glfwSetCursor((GLFWwindow *) window, (GLFWcursor *) cursors[mouseCursor]);
 }
 
-void Window::hideMouseCursor(bool hide) {
-    if (hide)
+void Window::setCursorState(CursorState cursorState) {
+    switch (cursorState) {
+    case CURSOR_HIDDEN:
         glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-    else
+        break;
+    case CURSOR_DISABLED:
+        glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        break;
+    default:
         glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        break;
+    }
 }
 
 void (*Window::getProcAddress(const char *procname))() {

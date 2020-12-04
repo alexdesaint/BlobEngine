@@ -39,5 +39,6 @@ public:
     std::unordered_map<std::string, Core::Scene> scenes;*/
 
     AssetManager();
+    ~AssetManager();
 };
 } // namespace Blob

@@ -14,7 +14,7 @@ class Shader {
 public:
     unsigned int program = 0;
 
-    unsigned int vertexShader = 0, fragmentShader = 0;
+    unsigned int vertexShader = 0, fragmentShader = 0, geometryShader = 0;
 
     Shader() noexcept = default;
     Shader(const Shader &) = delete; /// Copy constructors
@@ -24,6 +24,8 @@ public:
     void destroy() const;
 
     void addVertexShader(const std::string &src);
+
+    void addGeometryShader(const std::string &src);
 
     void addFragmentShader(const std::string &src);
 

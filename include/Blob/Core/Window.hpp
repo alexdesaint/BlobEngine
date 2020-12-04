@@ -17,11 +17,11 @@
 
 namespace Blob::Core {
 
-class Window : public GLFW::Window, private GL::Window, public Maths::ProjectionTransform {
+class Window : private GLFW::Window, private GL::Window, public Maths::ProjectionTransform {
 private:
     ImGui::Context imgui;
 
-    Camera &camera;
+    Camera *camera;
 
     // time counting
     Time::TimePoint lastFrameTime;
@@ -33,12 +33,19 @@ private:
 
     void characterInput(unsigned int c) final;
 
-    Keyboard keyboard;
-    bool keyboardUpdated = false;
     void keyboardUpdate(int key, bool pressed) final;
 
+    void mouseButtonUpdate(int button, bool pressed) final;
+    void cursorPositionUpdate(double xpos, double ypos) final ;
+    void scrollUpdate(double xoffset, double yoffset) final ;
+
 public:
+    Keyboard keyboard;
     static float timeFlow;
+    using GLFW::Window::totalTimeFlow;
+    using GLFW::Window::windowSize;
+    using GLFW::Window::isOpen;
+    using GLFW::Window::close;
 
     explicit Window(Camera &camera, bool fullScreen = false, Maths::Vec2<int> size = {640, 480});
 
@@ -47,10 +54,16 @@ public:
     void draw(const Primitive &primitive, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
     void draw(const Mesh &mesh, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
     void draw(const Shape &shape, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
+    void drawTransparent(const Mesh &mesh, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
+    void drawTransparent(const Shape &shape, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
     void draw(const Scene &scene, const Maths::Mat4 &sceneModel) const;
     void draw(const Scene &scene) const;
 
+
     void setCamera(Camera &camera);
+
+    void disableMouseCursor();
+    void enableMouseCursor();
 
     float display();
 

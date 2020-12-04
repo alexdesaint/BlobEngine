@@ -38,6 +38,9 @@ void Material::setDepthTest(bool set) const {
 void Material::setTexture(const Texture &texture) const {
     glBindTexture(GL_TEXTURE_2D, texture.texture);
 }
+void Material::setTexture(const Texture *texture) const {
+    glBindTexture(GL_TEXTURE_2D, texture->texture);
+}
 
 template<>
 void Material::setUniform<>(const float (&val)[4][4], int position) const {
@@ -87,6 +90,12 @@ void Material::setUniform<>(const Maths::ProjectionTransform &val, int position)
 template<>
 void Material::setUniform<>(const Color::RGB &val, int position) const {
     glUniform3fv(position, 1, &val.R);
+}
+
+
+template<>
+void Material::setUniform<>(const Color::RGBA &val, int position) const {
+    glUniform4fv(position, 1, &val.R);
 }
 
 template<>
