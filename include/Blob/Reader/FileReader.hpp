@@ -1,6 +1,4 @@
-#ifndef BLOBENGINE_FILEREADER_HPP
-#define BLOBENGINE_FILEREADER_HPP
-
+#pragma once
 #include <fstream>
 #include <string>
 #include <vector>
@@ -52,8 +50,7 @@ public:
 
     static std::string getFileName(const std::string &file) {
         auto b = file.find_last_of("/\\") + 1;
-        return file.substr(b, file.find_last_of('.') - b); }
+        return file.substr(b, file.find_last_of('.') - b);
+    }
 };
 } // namespace Blob::Reader
-
-#endif // BLOBENGINE_FILEREADER_HPP

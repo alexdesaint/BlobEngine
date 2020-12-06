@@ -7,6 +7,7 @@
 #include <Blob/Core/Scene.hpp>
 #include <Blob/Core/Shape.hpp>
 #include <Blob/GL/Window.hpp>
+#include <Blob/GL/FrameBuffer.hpp>
 #include <Blob/GLFW.hpp>
 #include <Blob/ImGui.hpp>
 #include <Blob/Time.hpp>
@@ -26,6 +27,10 @@ private:
     // time counting
     Time::TimePoint lastFrameTime;
     Time::Duration fpsCouner{0};
+
+    // GBuffer
+    GL::FrameBuffer gFrameBuffer;
+    GL::Texture gPosition, gNormal, gAlbedo;
 
     void windowResized() final;
 
@@ -47,7 +52,7 @@ public:
     using GLFW::Window::isOpen;
     using GLFW::Window::close;
 
-    explicit Window(Camera &camera, bool fullScreen = false, Maths::Vec2<int> size = {640, 480});
+    explicit Window(Camera &camera, bool fullScreen = false, Maths::Vec2<unsigned int> size = {640, 480});
 
     ~Window();
 

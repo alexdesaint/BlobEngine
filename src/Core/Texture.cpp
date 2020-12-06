@@ -8,21 +8,36 @@
 namespace Blob::Core {
 
 Texture::Texture(const std::string &path) {
-    setImage(path);
+    setRGBImage(path);
 }
 
 Texture::Texture(const std::string &path, GL::Sampler sampler) {
-    setImage(path);
+    setRGBImage(path);
     applySampler(sampler);
 }
 
-void Texture::setImage(const std::string &path) {
-    unsigned char *rgb = stbi_load(path.c_str(), &width, &height, &bitPerPixel, 3);
+void Texture::setRGBImage(const std::string &path) {
+    int bitPerPixel;
+    Maths::Vec2<int> s;
+    unsigned char *rgb = stbi_load(path.c_str(), &s.x, &s.y, &bitPerPixel, 3);
 
     if (rgb == nullptr)
         throw Blob::Core::Exception("Fail to load Texture : " + path);
 
-    setRGB32data(rgb, width, height);
+    setRGB8data(rgb, s.cast<unsigned int>());
+
+    stbi_image_free(rgb);
+}
+
+void Texture::setRGBAImage(const std::string &path) {
+    int bitPerPixel;;
+    Maths::Vec2<int> s;
+    unsigned char *rgb = stbi_load(path.c_str(), &s.x, &s.y, &bitPerPixel, 4);
+
+    if (rgb == nullptr)
+        throw Blob::Core::Exception("Fail to load Texture : " + path);
+
+    setRGBA8data(rgb, s.cast<unsigned int>());
 
     stbi_image_free(rgb);
 }

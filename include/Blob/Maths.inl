@@ -887,13 +887,13 @@ private:
 public:
     ProjectionTransform() = default;
 
-    ProjectionTransform(float cameraAngle, const Vec2<int> &size, float closeRange, float longRange)
+    ProjectionTransform(float cameraAngle, const Vec2<unsigned int> &size, float closeRange, float longRange)
         : Mat4(0), cameraAngle(cameraAngle), ratio(size.x / (float) size.y) {
         setRange(closeRange, longRange);
         setAngle(cameraAngle);
     }
 
-    ProjectionTransform(float cameraAngle, const Vec2<int> &size, float closeRange)
+    ProjectionTransform(float cameraAngle, const Vec2<unsigned int> &size, float closeRange)
         : Mat4(0), cameraAngle(cameraAngle), ratio(size.x / (float) size.y) {
         setInfinitRange(closeRange);
         setAngle(cameraAngle);

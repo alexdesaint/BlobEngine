@@ -147,7 +147,7 @@ const float *Window::joystickAxes[GLFW_JOYSTICK_LAST];
 
 double Window::totalTimeFlow = 0;
 
-Window::Window(bool fullScreen, const Maths::Vec2<int> &windowSize, int GLmajor, int GLminor) {
+Window::Window(bool fullScreen, const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor) {
     // The OpenGL window build
     std::cout << "init Window" << std::endl;
     glfwSetErrorCallback(errorCallback);
@@ -183,9 +183,9 @@ Window::Window(bool fullScreen, const Maths::Vec2<int> &windowSize, int GLmajor,
         // Framebuffer size
         int w, h;
         glfwGetFramebufferSize((GLFWwindow *) window, &w, &h);
-        framebufferSizeData = {w, h};
+        framebufferSizeData = {(unsigned int) w, (unsigned int) h};
         glfwGetWindowSize((GLFWwindow *) window, &w, &h);
-        windowSizeData = {w, h};
+        windowSizeData = {(unsigned int) w, (unsigned int) h};
         float fw, fh;
         glfwGetWindowContentScale((GLFWwindow *) window, &fw, &fh);
         contentScaleData = {fw, fh};
@@ -217,7 +217,7 @@ Window::Window(bool fullScreen, const Maths::Vec2<int> &windowSize, int GLmajor,
     glfwSetCursorPosCallback((GLFWwindow *) window, (GLFWcursorposfun) cursorPosCallback);
 
     // Keyboard init
-    //glfwSetInputMode((GLFWwindow *) window, GLFW_STICKY_KEYS, GLFW_TRUE);
+    // glfwSetInputMode((GLFWwindow *) window, GLFW_STICKY_KEYS, GLFW_TRUE);
     glfwSetKeyCallback((GLFWwindow *) window, (GLFWkeyfun) keyCallback);
     glfwSetCharCallback((GLFWwindow *) window, (GLFWcharfun) charCallback);
 

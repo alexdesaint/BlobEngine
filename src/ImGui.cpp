@@ -105,7 +105,7 @@ void Context::buildFont() {
     int w, h;
     ImGuiIO &io = ImGui::GetIO();
     io.Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);
-    fontTexture.setRGBA32data(pixels, w, h);
+    fontTexture.setRGBA8data(pixels, Maths::Vec2<int>{w, h}.cast<unsigned int>());
     io.Fonts->TexID = (ImTextureID) &fontTexture;
     if (!io.Fonts->IsBuilt())
         throw Core::Exception("imgui Fonts not build");

@@ -157,8 +157,8 @@ private:
     float scrollOffsetWData{false}, scrollOffsetHData{false};
 
     // Window info data
-    Maths::Vec2<int> windowSizeData;
-    Maths::Vec2<int> framebufferSizeData;
+    Maths::Vec2<unsigned int> windowSizeData;
+    Maths::Vec2<unsigned int> framebufferSizeData;
     Maths::Vec2<float> contentScaleData;
     bool fullScreenData;
 
@@ -194,8 +194,8 @@ protected:
     // virtual void joystick_callback(int joy, int event) {};
 public:
     // Window info
-    const Maths::Vec2<int> &windowSize = windowSizeData;
-    const Maths::Vec2<int> &framebufferSize = framebufferSizeData;
+    const Maths::Vec2<unsigned int> &windowSize = windowSizeData;
+    const Maths::Vec2<unsigned int> &framebufferSize = framebufferSizeData;
     const Maths::Vec2<float> &contentScale = contentScaleData;
     const bool &fullScreen = fullScreenData;
 
@@ -210,7 +210,7 @@ public:
 
     static double totalTimeFlow;
 
-    Window(bool fullScreen, const Maths::Vec2<int> &windowSize, int GLmajor, int GLminor);
+    Window(bool fullScreen, const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor);
 
     ~Window();
 

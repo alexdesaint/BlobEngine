@@ -6,7 +6,7 @@
 
 namespace Blob::Core {
 
-Window::Window(Camera &camera, bool fullScreen, Maths::Vec2<int> size)
+Window::Window(Camera &camera, bool fullScreen, Maths::Vec2<unsigned int> size)
     : GLFW::Window(fullScreen, size, GLmajor, GLminor), camera(&camera), GL::Window((void *) getProcAddress, framebufferSize),
       ProjectionTransform(PI / 4, size, 0.1, 1000), imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()), keyboard(*keys) {
     imgui.createRender();
@@ -23,6 +23,18 @@ Window::Window(Camera &camera, bool fullScreen, Maths::Vec2<int> size)
     keys = &io.KeysDown;
 
     new (&keyboard) Keyboard(io.KeysDown);
+
+    // Deferred Shading
+    gPosition.setRGBA16data(nullptr, framebufferSize);
+    gPosition.applySampler({GL::Sampler::FILTER::NEAREST, GL::Sampler::FILTER::NEAREST});
+    gFrameBuffer.attachTexture(gPosition, GL::FrameBuffer::COLOR_ATTACHMENT0);
+    gNormal.setRGBA16data(nullptr, framebufferSize);
+    gNormal.applySampler({GL::Sampler::FILTER::NEAREST, GL::Sampler::FILTER::NEAREST});
+    gFrameBuffer.attachTexture(gPosition, GL::FrameBuffer::COLOR_ATTACHMENT1);
+    gAlbedo.setRGBA16data(nullptr, framebufferSize);
+    gAlbedo.applySampler({GL::Sampler::FILTER::NEAREST, GL::Sampler::FILTER::NEAREST});
+    gFrameBuffer.attachTexture(gPosition, GL::FrameBuffer::COLOR_ATTACHMENT2);
+    gFrameBuffer.drawBuffer({GL::FrameBuffer::COLOR_ATTACHMENT0, GL::FrameBuffer::COLOR_ATTACHMENT1, GL::FrameBuffer::COLOR_ATTACHMENT2});
 
     lastFrameTime = std::chrono::high_resolution_clock::now();
 }
@@ -88,7 +100,7 @@ Maths::Vec3<float> Window::getWorldPosition() {
     //
     */
 
-    float z = readPixel((Maths::Vec2<float>(0, -size.y) + mousePos).cast<int>());
+    float z = readPixel((Maths::Vec2<float>(0, -size.y) + mousePos).cast<unsigned int>());
 
     z = (z * 2) - 1;
 
@@ -138,6 +150,8 @@ void Window::draw(const Scene &scene, const Maths::Mat4 &sceneModel) const {
 }
 
 void Window::draw(const Scene &scene) const {
+    //gFrameBuffer.bind();
+
     for (auto r : scene.shapes)
         draw(*r);
     for (auto r : scene.shapes)
@@ -180,8 +194,10 @@ void Window::disableMouseCursor() {
     imgui.disableMouseCursor();
     setCursorState(CURSOR_DISABLED);
 }
+
 void Window::enableMouseCursor() {
     imgui.enableMouseCursor();
-    setCursorState(CURSOR_NORMAL);}
+    setCursorState(CURSOR_NORMAL);
+}
 
 } // namespace Blob::Core

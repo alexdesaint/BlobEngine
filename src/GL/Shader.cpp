@@ -73,20 +73,24 @@ void Shader::addFragmentShader(const std::string &src) {
 void Shader::linkShaders() {
     try {
         program = glCreateProgram();
-        glAttachShader(program, vertexShader);
-        if(geometryShader != 0)
+        if (vertexShader != 0)
+            glAttachShader(program, vertexShader);
+        if (geometryShader != 0)
             glAttachShader(program, geometryShader);
-        glAttachShader(program, fragmentShader);
+        if (fragmentShader != 0)
+            glAttachShader(program, fragmentShader);
 
         glLinkProgram(program);
 
-        glDetachShader(program, vertexShader);
-        if(geometryShader != 0)
+        if (vertexShader != 0)
+            glDetachShader(program, vertexShader);
+        if (geometryShader != 0)
             glDetachShader(program, geometryShader);
-        glDetachShader(program, fragmentShader);
+        if (fragmentShader != 0)
+            glDetachShader(program, fragmentShader);
 
         GLint linked;
-        glGetProgramiv(program,  GL_LINK_STATUS, &linked);
+        glGetProgramiv(program, GL_LINK_STATUS, &linked);
         if (!linked) {
             GLint maxLength = 0;
             glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
@@ -100,13 +104,14 @@ void Shader::linkShaders() {
             glDeleteProgram(program);
             program = 0;
         }
-
     } catch (Blob::Core::Exception &exception) {
         std::cout << exception.what() << std::endl;
-        glDetachShader(program, vertexShader);
-        if(geometryShader != 0)
+        if (vertexShader != 0)
+            glDetachShader(program, vertexShader);
+        if (geometryShader != 0)
             glDetachShader(program, geometryShader);
-        glDetachShader(program, fragmentShader);
+        if (fragmentShader != 0)
+            glDetachShader(program, fragmentShader);
         glDeleteProgram(program);
         program = 0;
         return;

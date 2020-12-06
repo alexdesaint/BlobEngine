@@ -86,7 +86,7 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
     }
 }
 
-Window::Window(void *glfwGetProcAddress, const Maths::Vec2<int> &size) {
+Window::Window(void *glfwGetProcAddress, const Maths::Vec2<unsigned int> &size) {
     //std::cout << "init OpenGL" << std::endl;
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
         throw Blob::Core::Exception("Fail to load openGL");
@@ -113,12 +113,8 @@ Window::Window(void *glfwGetProcAddress, const Maths::Vec2<int> &size) {
     glDisable(GL_SCISSOR_TEST);
 
     // for Reverse Depth
-    //    glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-    //    glClearDepth(0.0f);
-    //
     glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
     glClearDepth(1.0f);
-    //glDepthFunc(GL_GREATER);
     glDepthFunc(GL_LESS);
 
     glEnable(GL_DEPTH_TEST);
@@ -148,11 +144,11 @@ void Window::clear() const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void Window::setViewport(const Maths::Vec2<int> &framebufferSize) const {
+void Window::setViewport(const Maths::Vec2<unsigned int> &framebufferSize) const {
     glViewport(0, 0, framebufferSize.x, framebufferSize.y);
 }
 
-float Window::readPixel(const Maths::Vec2<int> &pos) const {
+float Window::readPixel(const Maths::Vec2<unsigned int> &pos) const {
     float z;
 
     glReadPixels(pos.x, pos.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);

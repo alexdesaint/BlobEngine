@@ -1,6 +1,6 @@
 add_library(BlobGL STATIC
         Window.cpp
-		FrameBufferObject.cpp
+        FrameBuffer.cpp
         Shader.cpp
 		Texture.cpp
 		VertexArrayObject.cpp

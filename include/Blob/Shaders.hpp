@@ -55,6 +55,14 @@ public:
     void destroy();
 };
 
+class Deferred : public Core::Shader {
+public:
+    static Deferred instance;
+
+    void build();
+    void destroy();
+};
+
 /// PBR
 
 class PBRSingleColor : public Core::Shader {

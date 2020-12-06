@@ -5,8 +5,6 @@
 
 namespace Blob::GL {
 
-class Material;
-
 struct Sampler {
     enum FILTER {
         NEAREST = 0x2600,
@@ -30,15 +28,14 @@ struct Sampler {
 };
 
 class Texture {
-    friend Material;
+    friend class Material;
+    friend class FrameBuffer;
 
 private:
     uint32_t texture = 0; // the opengl texture
 
 protected:
-    int height = 0, width = 0, bitPerPixel = 0; // images data
-
-    bool depth = false;
+    Maths::Vec2<unsigned int> size;
 
 public:
     Texture() = default;
@@ -51,12 +48,12 @@ public:
 
     void applySampler(const Sampler &sampler);
 
-    void setRGB32data(uint8_t *pixels, unsigned int width, unsigned int height);
+    void setRGB8data(uint8_t *pixels, Maths::Vec2<unsigned int> size);
 
-    void setRGBA32data(uint8_t *pixels, unsigned int width, unsigned int height);
+    void setRGBA8data(uint8_t *pixels, Maths::Vec2<unsigned int> size);
 
-    [[nodiscard]] unsigned int getTextureID() const;
+    void setRGBA16data(uint8_t *pixels, Maths::Vec2<unsigned int> size);
 
-    [[nodiscard]] Maths::Vec2<int> getTextureSize() const;
+    [[nodiscard]] Maths::Vec2<unsigned int> getTextureSize() const;
 };
 } // namespace Blob::GL

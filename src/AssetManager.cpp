@@ -6,6 +6,7 @@ AssetManager::AssetManager() {
     Shaders::SingleTexture::instance.build();
 
     Shaders::PerFaceNormal::instance.build();
+    Shaders::Deferred::instance.build();
 
     Shaders::PBRSingleColor::instance.build();
     Shaders::PBRSingleTexture::instance.build();
@@ -18,6 +19,7 @@ AssetManager::~AssetManager() {
     Shaders::SingleTexture::instance.destroy();
 
     Shaders::PerFaceNormal::instance.destroy();
+    Shaders::Deferred::instance.destroy();
 
     Shaders::PBRSingleColor::instance.destroy();
     Shaders::PBRSingleTexture::instance.destroy();
