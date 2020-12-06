@@ -86,22 +86,22 @@ SceneManager::SceneManager(const std::string &file) : file(file) {
     for (const json &js : j["materials"])
         materials.emplace_back(js);
 
-    accessors.reserve(j["accessors"].size());
+    //accessors.reserve(j["accessors"].size());
     for (const json &js : j["accessors"])
         accessors.emplace_back(js);
 
-    meshes.reserve(j["meshes"].size());
+    //meshes.reserve(j["meshes"].size());
     for (const json &js : j["meshes"])
         meshes.emplace_back(js, accessors, buffers, bufferViews, materials, defaultMaterial, textures);
 
-    nodes.reserve(j["nodes"].size());
+    //nodes.reserve(j["nodes"].size());
     for (const json &js : j["nodes"])
         nodes.emplace_back(js, meshes);
 
     for (auto &node : nodes)
         node.updateChild(nodes);
 
-    scenes.reserve(j["scenes"].size());
+    //scenes.reserve(j["scenes"].size());
     for (const json &js : j["scenes"])
         scenes.emplace_back(js, nodes);
 
@@ -223,7 +223,7 @@ void SceneManager::createVBO() {
         }
     }
 
-    buffer.setData(finalBuffer.data(), size);
+    buffer.setData(finalBuffer);
 }
 
 std::string SceneManager::getPrimitiveLine(int accessor, int position, unsigned int p, size_t &relativeOffset) const {

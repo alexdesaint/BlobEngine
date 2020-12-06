@@ -35,10 +35,10 @@ public:
     std::vector<glTF2::Material> materials;
 
     // model part
-    std::vector<glTF2::Accessor> accessors;
-    std::vector<glTF2::Mesh> meshes;
-    std::vector<glTF2::Node> nodes;
-    std::vector<glTF2::Scene> scenes;
+    std::deque<glTF2::Accessor> accessors;
+    std::deque<glTF2::Mesh> meshes;
+    std::deque<glTF2::Node> nodes;
+    std::deque<glTF2::Scene> scenes;
 
     //
     Core::Buffer buffer;

@@ -7,7 +7,7 @@
 #include <Blob/glTF2/Material.hpp>
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include <vector>
+#include <deque>
 
 namespace Blob::glTF2 {
 
@@ -34,7 +34,7 @@ public:
             size_t dataSize;
             uint8_t types = 0;
 
-            Attribute(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+            Attribute(const nlohmann::json &j, std::deque<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
                       std::vector<glTF2::BufferView> &bufferViews);
 
             friend std::ostream &operator<<(std::ostream &s, const Attribute &a);
@@ -54,19 +54,19 @@ public:
         Core::RenderOptions renderOptions;
         std::unique_ptr<Core::Primitive> primitive;
 
-        Primitive(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+        Primitive(const nlohmann::json &j, std::deque<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
                   std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial,
                   std::vector<Texture> &textures);
 
         friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
     };
 
-    std::vector<Primitive> primitives; ///< An array of primitives, each defining geometry to be rendered with a
+    std::deque<Primitive> primitives; ///< An array of primitives, each defining geometry to be rendered with a
     ///< material. Required
     std::vector<int> weights; ///< Array of weights to be applied to the Morph Targets.
     std::string name;         ///< The user-defined name of this object.
 
-    Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+    Mesh(const nlohmann::json &j, std::deque<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
          std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial, std::vector<Texture> &textures);
 
     friend std::ostream &operator<<(std::ostream &s, const Primitive &a);

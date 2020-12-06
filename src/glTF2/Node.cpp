@@ -5,7 +5,7 @@ using namespace std;
 
 namespace Blob::glTF2 {
 
-Node::Node(const nlohmann::json &j, std::vector<glTF2::Mesh> &meshes) {
+Node::Node(const nlohmann::json &j, std::deque<glTF2::Mesh> &meshes) {
     NotRequired(j, "camera", camera);
     NotRequired(j, "children", children);
     NotRequired(j, "skin", skin);
@@ -40,7 +40,7 @@ Node::Node(const nlohmann::json &j, std::vector<glTF2::Mesh> &meshes) {
     NotRequired(j, "name", name);
 }
 
-void Node::updateChild(std::vector<Node> &nodes) {
+void Node::updateChild(std::deque<Node> &nodes) {
     for (auto i : children)
         addChild(nodes[i]);
 }

@@ -23,9 +23,9 @@ public:
     std::string name; ///< The user-defined name of this object.
 
     friend std::ostream &operator<<(std::ostream &s, const Node &a);
-    Node(const nlohmann::json &j, std::vector<glTF2::Mesh> &meshes);
+    Node(const nlohmann::json &j, std::deque<glTF2::Mesh> &meshes);
 
-    void updateChild(std::vector<Node> &nodes);
+    void updateChild(std::deque<Node> &nodes);
 };
 
 } // namespace Blob::glTF2

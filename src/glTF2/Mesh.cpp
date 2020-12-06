@@ -49,7 +49,7 @@ std::ostream &operator<<(std::ostream &os, array<float, 4> p) {
 
 namespace Blob::glTF2 {
 
-Mesh::Primitive::Attribute::Attribute(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+Mesh::Primitive::Attribute::Attribute(const nlohmann::json &j, std::deque<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
                                       std::vector<glTF2::BufferView> &bufferViews) {
 
     /// TODO: Safety check
@@ -142,7 +142,7 @@ std::ostream &operator<<(std::ostream &s, const Mesh::Primitive::Attribute &a) {
     return s;
 }
 
-Mesh::Primitive::Primitive(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+Mesh::Primitive::Primitive(const nlohmann::json &j, std::deque<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
                            std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial, std::vector<Texture> &textures)
     : attributes(j["attributes"], accessors, buffers, bufferViews) {
 
@@ -151,9 +151,9 @@ Mesh::Primitive::Primitive(const nlohmann::json &j, std::vector<glTF2::Accessor>
     if (NotRequired(j, "material", material)) {
         if(!materials[material].material)
             materials[material].make(attributes.types, textures);
-        primitive = std::make_unique<Core::Primitive>(attributes, *materials[material].material, renderOptions);
+        primitive = std::make_unique<Core::Primitive>(&attributes, &*materials[material].material, &renderOptions);
     } else
-        primitive = std::make_unique<Core::Primitive>(attributes, defautMaterial, renderOptions);
+        primitive = std::make_unique<Core::Primitive>(&attributes, &defautMaterial, &renderOptions);
 
     if (NotRequired(j, "indices", indices)) {
         Accessor &a = accessors[indices];
@@ -184,10 +184,10 @@ std::ostream &operator<<(std::ostream &s, const Mesh::Primitive &a) {
     return s;
 }
 
-Mesh::Mesh(const nlohmann::json &j, std::vector<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
+Mesh::Mesh(const nlohmann::json &j, std::deque<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
            std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial, std::vector<Texture> &textures) {
 
-    primitives.reserve(j["primitives"].size());
+    //primitives.reserve(j["primitives"].size());
     for (const auto &js : j["primitives"])
         primitives.emplace_back(js, accessors, buffers, bufferViews, materials, defautMaterial, textures);
 

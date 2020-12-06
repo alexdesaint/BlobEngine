@@ -5,7 +5,7 @@ using namespace std;
 
 namespace Blob::glTF2 {
 
-Scene::Scene(const nlohmann::json &j, const std::vector<Node> &nodesVector) {
+Scene::Scene(const nlohmann::json &j, const std::deque<Node> &nodesVector) {
     NotRequired(j, "nodes", nodes);
     NotRequired(j, "name", name);
 

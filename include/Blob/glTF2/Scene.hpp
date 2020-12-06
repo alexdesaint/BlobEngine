@@ -12,7 +12,7 @@ public:
     std::vector<int> nodes;
     std::string name;
 
-    Scene(const nlohmann::json &j, const std::vector<Node> &nodesVector);
+    Scene(const nlohmann::json &j, const std::deque<Node> &nodesVector);
 
     friend std::ostream &operator<<(std::ostream &s, const Scene &a);
 };
