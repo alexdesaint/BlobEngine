@@ -1,8 +1,8 @@
 #include <Blob/GLFW.hpp>
 
-#include <Blob/GL/Window.hpp>
-#include <Blob/GL/Shader.hpp>
 #include <Blob/GL/Material.hpp>
+#include <Blob/GL/Shader.hpp>
+#include <Blob/GL/Window.hpp>
 
 #include <Blob/Core/Exception.hpp>
 #include <iostream>

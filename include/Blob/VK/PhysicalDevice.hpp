@@ -1,34 +1,35 @@
 #pragma once
 
-//vk
+// vk
 #include <vulkan/vulkan.h>
 
-//std
+// std
 #include <ostream>
 #include <vector>
 
-//Blob
+// Blob
 #include <Blob/VK/Instance.hpp>
 
 namespace Blob::VK {
 
-	class PhysicalDevice {
-	private:
-		//Physical device
-		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+class PhysicalDevice {
+private:
+    // Physical device
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
-		//Instance
-		Instance instance;
+    // Instance
+    Instance instance;
 
-		//find devices
-		std::vector<VkPhysicalDevice> devices;
-		void loadDevices();
+    // find devices
+    std::vector<VkPhysicalDevice> devices;
+    void loadDevices();
 
-		//print
-		friend std::ostream& operator<<(std::ostream &os, const PhysicalDevice& p);
-	public:
-		PhysicalDevice();
+    // print
+    friend std::ostream &operator<<(std::ostream &os, const PhysicalDevice &p);
 
-		VkPhysicalDevice getPhysicalDevice() const;
-	};
-}
+public:
+    PhysicalDevice();
+
+    VkPhysicalDevice getPhysicalDevice() const;
+};
+} // namespace Blob::VK

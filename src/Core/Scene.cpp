@@ -12,4 +12,4 @@ void Scene::removeShape(const Shape &r) {
 void Scene::removeAll() {
     shapes.clear();
 }
-} // namespace Blob
+} // namespace Blob::Core

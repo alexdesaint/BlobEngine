@@ -30,7 +30,8 @@ void Texture::setRGBImage(const std::string &path) {
 }
 
 void Texture::setRGBAImage(const std::string &path) {
-    int bitPerPixel;;
+    int bitPerPixel;
+    ;
     Maths::Vec2<int> s;
     unsigned char *rgb = stbi_load(path.c_str(), &s.x, &s.y, &bitPerPixel, 4);
 

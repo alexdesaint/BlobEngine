@@ -31,7 +31,7 @@ public:
 
     void draw(const Blob::GL::Window &window);
 
-    void setWindowSize(const Blob::Maths::Vec2<float>& windowSize, const Blob::Maths::Vec2<float>& framebufferSize);
+    void setWindowSize(const Blob::Maths::Vec2<float> &windowSize, const Blob::Maths::Vec2<float> &framebufferSize);
 
     void addInputCharacter(unsigned short c);
 
@@ -42,4 +42,4 @@ public:
 
     void updateMouseCursor(Blob::GLFW::Window &window);
 };
-} // namespace Blob
+} // namespace ImGui

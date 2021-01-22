@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Blob/GL/Shader.hpp>
 #include <Blob/Color.hpp>
+#include <Blob/GL/Shader.hpp>
 #include <Blob/GL/Texture.hpp>
 #include <Blob/Maths.inl>
 #include <ostream>

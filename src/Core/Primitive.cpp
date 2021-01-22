@@ -13,4 +13,4 @@ void Primitive::setVertexArrayObject(const GL::VertexArrayObject *vertexArrayObj
 void Primitive::setRenderOptions(const RenderOptions *renderOptions) {
     Primitive::renderOptions = renderOptions;
 }
-}
+} // namespace Blob::Core

@@ -16,7 +16,6 @@ layout(location = 2) uniform mat4 projection;
 
 void main() {
     gl_Position =  projection * view * model * vec4(POSITION, 1.0);
-    gl_Position /= gl_Position.w;
 })=====");
     addFragmentShader(R"=====(#version 450
 layout(location=0) out vec4 color;
@@ -455,44 +454,44 @@ void main()
     EndPrimitive();
 })=====");
     // Per point normal
-/*    addGeometryShader(R"=====(
-#version 450
-layout(triangles) in;
+    /*    addGeometryShader(R"=====(
+    #version 450
+    layout(triangles) in;
 
-// Three lines will be generated: 6 vertices
-layout(line_strip, max_vertices=6) out;
+    // Three lines will be generated: 6 vertices
+    layout(line_strip, max_vertices=6) out;
 
-layout(location = 0) out vec3 position;
-layout(location = 2) out vec3 normal;
+    layout(location = 0) out vec3 position;
+    layout(location = 2) out vec3 normal;
 
-layout(location = 1) uniform mat4 view;
-layout(location = 2) uniform mat4 projection;
+    layout(location = 1) uniform mat4 view;
+    layout(location = 2) uniform mat4 projection;
 
-void main()
-{
-    float normal_length = 1;
+    void main()
+    {
+        float normal_length = 1;
 
-    vec3 a = ( gl_in[1].gl_Position - gl_in[0].gl_Position ).xyz;
-    vec3 b = ( gl_in[2].gl_Position - gl_in[0].gl_Position ).xyz;
-    vec3 N = normalize( cross( b, a ) );
+        vec3 a = ( gl_in[1].gl_Position - gl_in[0].gl_Position ).xyz;
+        vec3 b = ( gl_in[2].gl_Position - gl_in[0].gl_Position ).xyz;
+        vec3 N = normalize( cross( b, a ) );
 
-  for(int i=0; i<gl_in.length(); i++)
-  {
-        vec4 P = gl_in[i].gl_Position;
+      for(int i=0; i<gl_in.length(); i++)
+      {
+            vec4 P = gl_in[i].gl_Position;
 
-        position = P.xyz;
-        gl_Position = projection * view * P;
-        normal = N;
-        EmitVertex();
+            position = P.xyz;
+            gl_Position = projection * view * P;
+            normal = N;
+            EmitVertex();
 
-        position = P.xyz + N * 0.1;
-        gl_Position = projection * view * (P + vec4(N, 0));
-        normal = N;
-        EmitVertex();
+            position = P.xyz + N * 0.1;
+            gl_Position = projection * view * (P + vec4(N, 0));
+            normal = N;
+            EmitVertex();
 
-        EndPrimitive();
-  }
-})=====");*/
+            EndPrimitive();
+      }
+    })=====");*/
     addFragmentShader(PBRpixelHead + PBRfunctions + R"=====(
 // material parameters
 layout(location = 3) uniform vec4 albedo;

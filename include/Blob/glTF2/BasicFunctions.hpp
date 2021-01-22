@@ -23,8 +23,8 @@ static bool NotRequired(const nlohmann::json &j, const std::string &name, T &s) 
     return false;
 }
 
-//template<>
-//static bool NotRequired<Blob::Color>(const nlohmann::json &j, const std::string &name, Blob::Color &s) {
+// template<>
+// static bool NotRequired<Blob::Color>(const nlohmann::json &j, const std::string &name, Blob::Color &s) {
 //    auto o = j.find(name);
 //    float a[4] = {1.f};
 //    if (o != j.end()) {

@@ -6,6 +6,7 @@ namespace Blob::GL {
 
 class VertexArrayObject {
     friend class Window;
+
 private:
     uint32_t vertexArrayObject = 0;
 
@@ -20,7 +21,7 @@ public:
 
     void setBuffer(const VertexBufferObject &vbo, int32_t stride, uint32_t dataOffset = 0, uint32_t pos = 0) const;
 
-    void setIndicesBuffer(const VertexBufferObject &vbo)const;
+    void setIndicesBuffer(const VertexBufferObject &vbo) const;
 
     void setArray(uint32_t numValuePerArray, uint32_t outPosition, uint32_t dataType, uint32_t relativeOffset, bool normalized = false,
                   uint32_t pos = 0) const;

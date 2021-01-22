@@ -180,7 +180,8 @@ void Context::setWindowSize(const Maths::Vec2<float> &windowSize, const Maths::V
 }
 
 const char *Context::getClipboardText(void *user_data) {
-    return ((GLFW::Window *) user_data)->getClipboardText().c_str();
+    static std::string clipboardText = ((GLFW::Window *) user_data)->getClipboardText();
+    return clipboardText.c_str();
 }
 
 void Context::setClipboardText(void *user_data, const char *text) {

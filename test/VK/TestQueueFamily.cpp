@@ -8,19 +8,19 @@ using namespace Blob;
 using namespace Blob::VK;
 
 int main() {
-	try {
-		Blob::VK::PhysicalDevice physicalDevice;
+    try {
+        Blob::VK::PhysicalDevice physicalDevice;
 
-		std::cout << physicalDevice;
+        std::cout << physicalDevice;
 
-		Blob::VK::QueueFamily queueFamily(physicalDevice);
+        Blob::VK::QueueFamily queueFamily(physicalDevice);
 
-		std::cout << queueFamily;
+        std::cout << queueFamily;
 
-	} catch (Exception &e) {
-		std::cout << e.what() << std::endl;
+    } catch (Exception &e) {
+        std::cout << e.what() << std::endl;
 
-		return 1;
-	}
-	return 0;
+        return 1;
+    }
+    return 0;
 }

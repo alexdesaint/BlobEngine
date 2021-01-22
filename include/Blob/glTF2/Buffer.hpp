@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Blob/Core/Buffer.hpp>
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include <Blob/Core/Buffer.hpp>
 
 namespace Blob::glTF2 {
 

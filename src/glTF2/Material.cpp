@@ -1,6 +1,6 @@
+#include <Blob/Materials.hpp>
 #include <Blob/glTF2/BasicFunctions.hpp>
 #include <Blob/glTF2/Material.hpp>
-#include <Blob/Materials.hpp>
 
 using namespace std;
 
@@ -49,7 +49,7 @@ std::ostream &operator<<(ostream &s, const Material::PbrMetallicRoughness &a) {
     if (a.baseColorTexture.set)
         s << a.baseColorTexture;
 
-    if(a.baseColorFactorSet)
+    if (a.baseColorFactorSet)
         s << "      baseColorFactor : " << a.baseColorFactor << endl;
 
     if (a.metallicRoughnessTexture.set)
@@ -98,11 +98,11 @@ Material::Material(const nlohmann::json &j) {
 }
 
 void Material::make(uint8_t options, std::vector<Texture> &textures) {
-    if(!((options >> 1) & 1)) // if no NORMAL
+    if (!((options >> 1) & 1)) // if no NORMAL
         material = make_unique<Materials::SingleColor>(pbrMetallicRoughness.baseColorFactor);
-    else if((options >> 5) & 1) // if COLOR_0
+    else if ((options >> 5) & 1) // if COLOR_0
         material = make_unique<Materials::PBRColorArray>();
-    else if(pbrMetallicRoughness.baseColorTexture.set && ((options >> 3) & 1)) // if texture
+    else if (pbrMetallicRoughness.baseColorTexture.set && ((options >> 3) & 1)) // if texture
         material = make_unique<Materials::PBRSingleTexture>(textures[pbrMetallicRoughness.baseColorTexture.index]);
     else
         material = make_unique<Materials::PBRSingleColor>(pbrMetallicRoughness.baseColorFactor);

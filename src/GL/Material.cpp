@@ -92,7 +92,6 @@ void Material::setUniform<>(const Color::RGB &val, int position) const {
     glUniform3fv(position, 1, &val.R);
 }
 
-
 template<>
 void Material::setUniform<>(const Color::RGBA &val, int position) const {
     glUniform4fv(position, 1, &val.R);

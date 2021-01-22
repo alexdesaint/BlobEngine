@@ -29,7 +29,7 @@ public:
     void setTexture1(const Core::Texture *texture);
 };
 
-class PerFaceNormal  : public Core::Material {
+class PerFaceNormal : public Core::Material {
 private:
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 

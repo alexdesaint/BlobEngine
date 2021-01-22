@@ -1,7 +1,5 @@
 #include <Blob/VK/Device.hpp>
 
 namespace Blob::VK {
-	Device::Device(Blob::VK::PhysicalDevice &physicalDevice) {
-
-	}
-}
+Device::Device(Blob::VK::PhysicalDevice &physicalDevice) {}
+} // namespace Blob::VK

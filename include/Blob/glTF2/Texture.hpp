@@ -1,11 +1,11 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <nlohmann/json.hpp>
 #include <Blob/Core/Texture.hpp>
 #include <Blob/glTF2/Image.hpp>
 #include <Blob/glTF2/Sampler.hpp>
+#include <iostream>
+#include <nlohmann/json.hpp>
+#include <vector>
 
 namespace Blob::glTF2 {
 /**

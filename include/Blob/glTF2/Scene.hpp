@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iostream>
-#include <nlohmann/json.hpp>
 #include <Blob/Core/Scene.hpp>
 #include <Blob/glTF2/Node.hpp>
+#include <iostream>
+#include <nlohmann/json.hpp>
 
 namespace Blob::glTF2 {
 

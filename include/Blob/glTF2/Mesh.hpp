@@ -5,9 +5,9 @@
 #include <Blob/glTF2/Buffer.hpp>
 #include <Blob/glTF2/BufferView.hpp>
 #include <Blob/glTF2/Material.hpp>
+#include <deque>
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include <deque>
 
 namespace Blob::glTF2 {
 
@@ -67,7 +67,8 @@ public:
     std::string name;         ///< The user-defined name of this object.
 
     Mesh(const nlohmann::json &j, std::deque<glTF2::Accessor> &accessors, std::vector<glTF2::Buffer> &buffers,
-         std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial, std::vector<Texture> &textures);
+         std::vector<glTF2::BufferView> &bufferViews, std::vector<glTF2::Material> &materials, const Core::Material &defautMaterial,
+         std::vector<Texture> &textures);
 
     friend std::ostream &operator<<(std::ostream &s, const Primitive &a);
 

@@ -2,10 +2,10 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#include <Blob/GL/Material.hpp>
 #include <Blob/GL/Shader.hpp>
 #include <Blob/GL/VertexBufferObject.hpp>
 #include <Blob/GL/Window.hpp>
-#include <Blob/GL/Material.hpp>
 #include <cstdio>
 #include <cstdlib>
 

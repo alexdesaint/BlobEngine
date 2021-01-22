@@ -1,54 +1,50 @@
 #pragma once
 
-//vk
+// vk
 #include <vulkan/vulkan.h>
 
-//std
+// std
 #include <ostream>
 #include <vector>
 
 namespace Blob::VK {
 
-	class Instance {
-	private:
-		VkInstance instance;
+class Instance {
+private:
+    VkInstance instance;
 
-		//Extentions
-		std::vector<VkExtensionProperties> extensions;
-		void loadExtentions();
+    // Extentions
+    std::vector<VkExtensionProperties> extensions;
+    void loadExtentions();
 
-		//validation layers
+    // validation layers
 #ifdef NDEBUG
-		const bool enableValidationLayers = false;
+    const bool enableValidationLayers = false;
 #else
-		const bool enableValidationLayers = true;
+    const bool enableValidationLayers = true;
 #endif
-		const std::vector<const char*> validationLayers = {
-				"VK_LAYER_LUNARG_standard_validation"
-		};
-		std::vector<VkLayerProperties> layers;
-		void loadLayers();
-		bool checkLayerSupport();
+    const std::vector<const char *> validationLayers = {"VK_LAYER_LUNARG_standard_validation"};
+    std::vector<VkLayerProperties> layers;
+    void loadLayers();
+    bool checkLayerSupport();
 
-		//print
-		friend std::ostream& operator<<(std::ostream &os, const Instance& p);
+    // print
+    friend std::ostream &operator<<(std::ostream &os, const Instance &p);
 
-		//Debug callback
-		VkDebugUtilsMessengerEXT debugMessenger;
-		void setDebugCallback();
-		void destroyDebugCallback();
-		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-				VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-				VkDebugUtilsMessageTypeFlagsEXT messageType,
-				const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-				void* pUserData);
-	public:
+    // Debug callback
+    VkDebugUtilsMessengerEXT debugMessenger;
+    void setDebugCallback();
+    void destroyDebugCallback();
+    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                        VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                        const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData, void *pUserData);
 
-		Instance();
-		~Instance();
+public:
+    Instance();
+    ~Instance();
 
-		VkInstance getInstance() const;
+    VkInstance getInstance() const;
 
-		const std::vector<VkExtensionProperties> &getExtensions() const;
-	};
-}
+    const std::vector<VkExtensionProperties> &getExtensions() const;
+};
+} // namespace Blob::VK

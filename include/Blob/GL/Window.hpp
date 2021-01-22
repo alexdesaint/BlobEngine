@@ -23,7 +23,7 @@ public:
     void drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType) const;
     template<typename T>
     void drawIndex(const void *indices, int32_t numOfIndices) const;
-    [[nodiscard]] float readPixel(const Maths::Vec2<unsigned int>& pos) const;
+    [[nodiscard]] float readPixel(const Maths::Vec2<int> &pos) const;
     void setViewport(const Maths::Vec2<unsigned int> &framebufferSize) const;
     void clear() const;
 

@@ -1,5 +1,5 @@
 #include <Blob/Time.hpp>
 
 namespace Blob::Time {
-	FunctionNow now = &std::chrono::high_resolution_clock::now;
+FunctionNow now = &std::chrono::high_resolution_clock::now;
 }

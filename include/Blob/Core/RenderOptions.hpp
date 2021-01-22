@@ -6,6 +6,7 @@
 namespace Blob::Core {
 class RenderOptions {
     friend class Window;
+
 private:
     // IndicesOptions
     bool indexed = false;

@@ -8,6 +8,7 @@ namespace Blob::Core {
 
 class Scene {
     friend Window;
+
 private:
     std::list<Shape const *> shapes;
     Camera camera;
@@ -23,4 +24,4 @@ public:
 
     void removeAll();
 };
-} // namespace Blob
+} // namespace Blob::Core
