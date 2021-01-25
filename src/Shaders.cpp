@@ -33,6 +33,37 @@ void SingleColor::destroy() {
     GL::Shader::destroy();
 }
 
+SingleColorTransparent SingleColorTransparent::instance;
+
+void SingleColorTransparent::build() {
+    addVertexShader(R"=====(
+#version 450
+
+layout(location = 0) in vec3 POSITION;
+
+layout(location = 0) uniform mat4 model;
+layout(location = 1) uniform mat4 view;
+layout(location = 2) uniform mat4 projection;
+
+void main() {
+    gl_Position =  projection * view * model * vec4(POSITION, 1.0);
+})=====");
+    addFragmentShader(R"=====(#version 450
+layout(location=0) out vec4 color;
+
+layout(location = 3) uniform vec4 albedo;
+
+void main()
+{
+    color = albedo;
+})=====");
+    linkShaders();
+}
+
+void SingleColorTransparent::destroy() {
+    GL::Shader::destroy();
+}
+
 SingleTexture SingleTexture::instance;
 
 void SingleTexture::build() {

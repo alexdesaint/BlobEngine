@@ -429,6 +429,47 @@ public:
     }
 };
 
+template<typename T>
+class Mat2 {
+public:
+    T a11 = 1, a12 = 0;
+    T a21 = 0, a22 = 1;
+
+    Mat2() noexcept = default;
+
+    Mat2(T a11, T a12, T a21, T a22) noexcept : a11(a11), a12(a12), a21(a21), a22(a22) {}
+
+    explicit Mat2(const std::array<T, 9> &mat) noexcept : a11(mat[0]), a12(mat[1]), a21(mat[2]), a22(mat[3]) {}
+
+    void load(const std::array<T, 4> &mat) {
+        a11 = mat[0];
+        a12 = mat[1];
+        a21 = mat[2];
+        a22 = mat[3];
+    }
+
+    Mat2 operator+(const Mat2 &v) const { return {a11 + v.a11, a12 + v.a12, a21 + v.a21, a22 + v.a22}; }
+
+    Mat2 operator-(const Mat2 &v) const { return {a11 - v.a11, a12 - v.a12, a21 - v.a21, a22 - v.a22}; }
+
+    Mat2 operator*(const Mat2 &v) const {
+        return {a11 * v.a11 + a12 * v.a21, a11 * v.a12 + a12 * v.a22, a21 * v.a11 + a22 * v.a21, a21 * v.a12 + a22 * v.a22};
+    }
+
+    Vec2<T> operator*(const Vec2<T> &v) const { return {a11 * v.x + a12 * v.y, a21 * v.x + a22 * v.y}; }
+
+    template<typename U>
+    Mat2<U> cast() const {
+        return {(U) a11, (U) a12, (U) a21, (U) a22};
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Mat2 &m) {
+        os << m.a11 << ", " << m.a12 << std::endl;
+        os << m.a21 << ", " << m.a22 << std::endl;
+        return os;
+    }
+};
+
 class Mat3 {
 public:
     float a11 = 1, a12 = 0, a13 = 0;
@@ -453,6 +494,14 @@ public:
         a31 = mat[6];
         a32 = mat[7];
         a33 = mat[8];
+    }
+
+    constexpr inline Mat3 &operator=(const Mat2<float> &v) {
+        a11 = v.a11;
+        a21 = v.a21;
+        a12 = v.a12;
+        a22 = v.a22;
+        return *this;
     }
 
     Mat3 operator+(const Mat3 &v) const {
@@ -750,6 +799,16 @@ public:
         a42 += xyz.y;
         a43 += xyz.z;
     }
+
+    void setRotation(const Mat3 &rotation) {
+        ModelTransform::rotation = rotation;
+        compute();
+    };
+
+    void setRotation(const Mat2<float> &rotation) {
+        ModelTransform::rotation = rotation;
+        compute();
+    };
 
     void setRotation(float angle, const Vec3<float> &xyz) {
         const float c = std::cos(angle);

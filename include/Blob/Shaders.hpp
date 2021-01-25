@@ -21,6 +21,21 @@ public:
     void destroy();
 };
 
+class SingleColorTransparent : public Core::Shader {
+private:
+public:
+    static SingleColorTransparent instance;
+
+    static const int model = 0;
+    static const int view = 1;
+    static const int projection = 2;
+
+    static const int albedo = 3;
+
+    void build();
+    void destroy();
+};
+
 class SingleTexture : public Core::Shader {
 private:
 public:

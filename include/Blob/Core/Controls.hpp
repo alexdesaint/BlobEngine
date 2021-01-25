@@ -153,7 +153,7 @@ public:
 
 class Window;
 
-class KeyboardEvents {
+class KeyboardEvents : GLFW {
     friend Window;
 
 private:
