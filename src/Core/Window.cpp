@@ -6,8 +6,8 @@
 
 namespace Blob::Core {
 
-Window::Window(Camera &camera, bool fullScreen, Maths::Vec2<unsigned int> size)
-    : GLFW::Window(fullScreen, size, GLmajor, GLminor), camera(&camera), GL::Window((void *) getProcAddress, framebufferSize),
+Window::Window(Camera &camera, Maths::Vec2<unsigned int> size)
+    : GL::Window(size, GLmajor, GLminor), camera(&camera),
       ProjectionTransform(PI / 4, size, 0.1, 1000), imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()), keyboard(*keys) {
     imgui.createRender();
 

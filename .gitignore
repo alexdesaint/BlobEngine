@@ -1,7 +1,6 @@
 .idea/
 bin/
 lib/
-libs/
 build/
 cmake-build-debug/
 cmake-build-release/

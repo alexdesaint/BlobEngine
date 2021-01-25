@@ -7,3 +7,9 @@
 [submodule "libs/imgui"]
 	path = libs/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "libs/Vulkan-Loader"]
+	path = libs/Vulkan-Loader
+	url = https://github.com/KhronosGroup/Vulkan-Loader.git
+[submodule "libs/Vulkan-Headers"]
+	path = libs/Vulkan-Headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers.git

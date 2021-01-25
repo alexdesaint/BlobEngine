@@ -8,6 +8,6 @@ add_library(BlobGL STATIC
 		Material.cpp
         Types.cpp)
 
-target_link_libraries(BlobGL glad ${OPENGL_gl_LIBRARY} glfw libs)
+target_link_libraries(BlobGL glad)
 target_include_directories(BlobGL PUBLIC ${INCLUDE_FOLDER})
 add_library(Blob::GL ALIAS BlobGL)

@@ -134,8 +134,6 @@ enum MouseCursor { Arrow = 0, TextInput, ResizeAll, ResizeNS, ResizeEW, ResizeNE
 
 class Window {
 private:
-    void *window = nullptr;
-
     // Window callback
     static void errorCallback(int error, const char *description);
     static void framebufferSizeCallback(void *window, int w, int h);
@@ -161,6 +159,8 @@ private:
     Maths::Vec2<unsigned int> framebufferSizeData;
     Maths::Vec2<float> contentScaleData;
     bool fullScreenData;
+
+    void initInputs();
 
 protected:
     // key control to update
@@ -193,6 +193,8 @@ protected:
 
     // virtual void joystick_callback(int joy, int event) {};
 public:
+    void *window = nullptr;
+
     // Window info
     const Maths::Vec2<unsigned int> &windowSize = windowSizeData;
     const Maths::Vec2<unsigned int> &framebufferSize = framebufferSizeData;
@@ -210,7 +212,8 @@ public:
 
     static double totalTimeFlow;
 
-    Window(bool fullScreen, const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor);
+    Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor);
+    Window(const Maths::Vec2<unsigned int> &windowSize);
 
     ~Window();
 

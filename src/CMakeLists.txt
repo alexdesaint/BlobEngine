@@ -1,7 +1,5 @@
 add_subdirectory(GL)
-if (BLOBVK)
-    add_subdirectory(VK)
-endif ()
+add_subdirectory(VK)
 add_subdirectory(glTF2)
 add_subdirectory(Reader)
 add_subdirectory(Core)

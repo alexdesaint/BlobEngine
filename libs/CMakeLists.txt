@@ -1,6 +1,10 @@
 #glad
 add_subdirectory(glad)
 
+#glad
+add_subdirectory(Vulkan-Headers)
+add_subdirectory(Vulkan-Loader)
+
 #glfw
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)

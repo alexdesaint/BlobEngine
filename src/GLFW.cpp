@@ -147,9 +147,9 @@ const float *Window::joystickAxes[GLFW_JOYSTICK_LAST];
 
 double Window::totalTimeFlow = 0;
 
-Window::Window(bool fullScreen, const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor) {
+Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor) {
     // The OpenGL window build
-    std::cout << "init Window" << std::endl;
+    std::cout << "init OpenGl Window" << std::endl;
     glfwSetErrorCallback(errorCallback);
 
     if (!glfwInit())
@@ -191,45 +191,28 @@ Window::Window(bool fullScreen, const Maths::Vec2<unsigned int> &windowSize, int
         contentScaleData = {fw, fh};
     }
 
-    // Callback init
-    glfwSetWindowUserPointer((GLFWwindow *) window, this);
-    glfwSetFramebufferSizeCallback((GLFWwindow *) window, (GLFWframebuffersizefun) framebufferSizeCallback);
-    glfwSetWindowSizeCallback((GLFWwindow *) window, (GLFWwindowsizefun) windowSizeCallback);
     glfwMakeContextCurrent((GLFWwindow *) window);
     glfwSwapInterval(1);
 
-    // Cursor init
-    if (glfwRawMouseMotionSupported())
-        glfwSetInputMode((GLFWwindow *) window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-    GLFWerrorfun prev_error_callback = glfwSetErrorCallback(nullptr);
-    cursors[MouseCursor::Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-    cursors[MouseCursor::TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
-    cursors[MouseCursor::ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
-    cursors[MouseCursor::ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
-    cursors[MouseCursor::Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
-    cursors[MouseCursor::ResizeAll] = glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
-    cursors[MouseCursor::ResizeNESW] = glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
-    cursors[MouseCursor::ResizeNWSE] = glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
-    cursors[MouseCursor::NotAllowed] = glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
-    glfwSetErrorCallback(prev_error_callback);
-    glfwSetMouseButtonCallback((GLFWwindow *) window, (GLFWmousebuttonfun) mouseButtonCallback);
-    glfwSetScrollCallback((GLFWwindow *) window, (GLFWscrollfun) scrollCallback);
-    glfwSetCursorPosCallback((GLFWwindow *) window, (GLFWcursorposfun) cursorPosCallback);
+    initInputs();
+}
 
-    // Keyboard init
-    // glfwSetInputMode((GLFWwindow *) window, GLFW_STICKY_KEYS, GLFW_TRUE);
-    glfwSetKeyCallback((GLFWwindow *) window, (GLFWkeyfun) keyCallback);
-    glfwSetCharCallback((GLFWwindow *) window, (GLFWcharfun) charCallback);
+Window::Window(const Maths::Vec2<unsigned int> &windowSize) {
+    std::cout << "init Vulkan Window" << std::endl;
+    glfwSetErrorCallback(errorCallback);
 
-    // Controller init
-    glfwSetJoystickCallback(joystick_callback);
+    if (!glfwInit())
+        throw Core::Exception("Can't init Window");
 
-    for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
-        if (glfwJoystickPresent(i))
-            joystick_callback(i, GLFW_CONNECTED);
-        joystickButtons[i] = glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
-        joystickAxes[i] = glfwGetJoystickAxes(i, &joystickAxesCount[i]);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    window = glfwCreateWindow(windowSize.x, windowSize.y, "My Title", NULL, NULL);
+
+    if (!window) {
+        glfwTerminate();
+        throw Blob::Core::Exception("Can't create window");
     }
+
+    initInputs();
 }
 
 void Window::errorCallback(int error, const char *description) {
@@ -392,6 +375,49 @@ void Window::setCursorState(CursorState cursorState) {
         break;
     }
 }
+void Window::initInputs() {
+    // Callback init
+    glfwSetWindowUserPointer((GLFWwindow *) window, this);
+    glfwSetFramebufferSizeCallback((GLFWwindow *) window, (GLFWframebuffersizefun) framebufferSizeCallback);
+    glfwSetWindowSizeCallback((GLFWwindow *) window, (GLFWwindowsizefun) windowSizeCallback);
+
+    // Cursor init
+    if (glfwRawMouseMotionSupported())
+        glfwSetInputMode((GLFWwindow *) window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    GLFWerrorfun prev_error_callback = glfwSetErrorCallback(nullptr);
+    cursors[MouseCursor::Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+    cursors[MouseCursor::TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+    cursors[MouseCursor::ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
+    cursors[MouseCursor::ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+    cursors[MouseCursor::Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+    cursors[MouseCursor::ResizeAll] = glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
+    cursors[MouseCursor::ResizeNESW] = glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
+    cursors[MouseCursor::ResizeNWSE] = glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
+    cursors[MouseCursor::NotAllowed] = glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
+    glfwSetErrorCallback(prev_error_callback);
+    glfwSetMouseButtonCallback((GLFWwindow *) window, (GLFWmousebuttonfun) mouseButtonCallback);
+    glfwSetScrollCallback((GLFWwindow *) window, (GLFWscrollfun) scrollCallback);
+    glfwSetCursorPosCallback((GLFWwindow *) window, (GLFWcursorposfun) cursorPosCallback);
+
+    // Keyboard init
+    // glfwSetInputMode((GLFWwindow *) window, GLFW_STICKY_KEYS, GLFW_TRUE);
+    glfwSetKeyCallback((GLFWwindow *) window, (GLFWkeyfun) keyCallback);
+    glfwSetCharCallback((GLFWwindow *) window, (GLFWcharfun) charCallback);
+
+    // Controller init
+    glfwSetJoystickCallback(joystick_callback);
+
+    for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
+        if (glfwJoystickPresent(i))
+            joystick_callback(i, GLFW_CONNECTED);
+        joystickButtons[i] = glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
+        joystickAxes[i] = glfwGetJoystickAxes(i, &joystickAxesCount[i]);
+    }
+}
+
+/*const char** Window::GetRequiredInstanceExtensions(unsigned int &count) {
+    return glfwGetRequiredInstanceExtensions(&count);
+}*/
 
 void (*Window::getProcAddress(const char *procname))() {
     return glfwGetProcAddress(procname);

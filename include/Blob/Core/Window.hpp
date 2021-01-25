@@ -8,7 +8,6 @@
 #include <Blob/Core/Shape.hpp>
 #include <Blob/GL/Window.hpp>
 #include <Blob/GL/FrameBuffer.hpp>
-#include <Blob/GLFW.hpp>
 #include <Blob/ImGui.hpp>
 #include <Blob/Time.hpp>
 
@@ -18,7 +17,7 @@
 
 namespace Blob::Core {
 
-class Window : private GLFW::Window, private GL::Window, public Maths::ProjectionTransform {
+class Window : private GL::Window, public Maths::ProjectionTransform {
 private:
     ImGui::Context imgui;
 
@@ -52,7 +51,7 @@ public:
     using GLFW::Window::isOpen;
     using GLFW::Window::close;
 
-    explicit Window(Camera &camera, bool fullScreen = false, Maths::Vec2<unsigned int> size = {640, 480});
+    explicit Window(Camera &camera, Maths::Vec2<unsigned int> size = {640, 480});
 
     ~Window();
 

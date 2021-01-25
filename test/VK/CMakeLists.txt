@@ -6,3 +6,6 @@ target_link_libraries(TestPhysicalDevice Blob::VK)
 
 add_executable(TestQueueFamily TestQueueFamily.cpp)
 target_link_libraries(TestQueueFamily Blob::VK)
+
+add_executable(TestVK TestVK.cpp)
+target_link_libraries(TestVK Blob::VK)

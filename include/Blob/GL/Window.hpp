@@ -2,19 +2,19 @@
 
 #include <Blob/GL/Texture.hpp>
 #include <Blob/GL/VertexArrayObject.hpp>
+#include <Blob/GLFW.hpp>
 #include <Blob/Maths.inl>
 #include <ostream>
 
 namespace Blob::GL {
 
-// TODO: Rename Window
-class Window {
+class Window : public GLFW::Window {
 private:
 public:
     static const int GLmajor = 4;
     static const int GLminor = 5;
 
-    Window(void *glfwGetProcAddress, const Maths::Vec2<unsigned int> &size);
+    Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor);
     ~Window();
 
     void setVAO(const VertexArrayObject &vao) const;
@@ -23,7 +23,7 @@ public:
     void drawIndex(const void *indices, int32_t numOfIndices, uint32_t indicesType) const;
     template<typename T>
     void drawIndex(const void *indices, int32_t numOfIndices) const;
-    [[nodiscard]] float readPixel(const Maths::Vec2<unsigned int>& pos) const;
+    [[nodiscard]] float readPixel(const Maths::Vec2<unsigned int> &pos) const;
     void setViewport(const Maths::Vec2<unsigned int> &framebufferSize) const;
     void clear() const;
 

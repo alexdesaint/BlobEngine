@@ -86,9 +86,9 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
     }
 }
 
-Window::Window(void *glfwGetProcAddress, const Maths::Vec2<unsigned int> &size) {
+Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor) : GLFW::Window(windowSize, GLmajor, GLminor){
     //std::cout << "init OpenGL" << std::endl;
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
+    if (!gladLoadGLLoader((GLADloadproc) GLFW::Window::getProcAddress))
         throw Blob::Core::Exception("Fail to load openGL");
 
     if (GLmajor != GLVersion.major || GLminor > GLVersion.minor)
@@ -121,7 +121,7 @@ Window::Window(void *glfwGetProcAddress, const Maths::Vec2<unsigned int> &size) 
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // pour faire des lignes
     glClearColor(0.27, 0.27, 0.27, 1.0);
-    glViewport(0, 0, size.x, size.y);
+    glViewport(0, 0, windowSize.x, windowSize.y);
 
     // alpha
     glEnable(GL_BLEND);
