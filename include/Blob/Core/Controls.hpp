@@ -9,10 +9,10 @@ namespace Blob::Core {
 
 class Key {
 public:
-    const unsigned int id;
+    const int id;
     const bool &pressed;
 
-    explicit Key(unsigned int id, bool (&keys)[512]) : id(id), pressed(keys[id]) {}
+    explicit Key(int id, bool (&keys)[512]) : id(id), pressed(keys[id]) {}
 
     operator bool() const { return pressed; }
 
@@ -153,7 +153,7 @@ public:
 
 class Window;
 
-class KeyboardEvents : GLFW {
+class KeyboardEvents {
     friend Window;
 
 private:
