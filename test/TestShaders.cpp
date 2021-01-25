@@ -1,6 +1,6 @@
+#include <Blob/AssetManager.hpp>
 #include <Blob/Core/Exception.hpp>
 #include <Blob/Core/Window.hpp>
-#include <Blob/AssetManager.hpp>
 #include <Blob/Time.hpp>
 #include <imgui.h>
 #include <iostream>

@@ -26,7 +26,8 @@ void VertexArrayObject::setIndicesBuffer(const VertexBufferObject &vbo) const {
     glVertexArrayElementBuffer(vertexArrayObject, vbo.vertexBufferObject);
 }
 
-void VertexArrayObject::setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType, GLuint relativeOffset, bool normalized, uint32_t pos) const {
+void VertexArrayObject::setArray(GLuint numValuePerArray, GLuint outPosition, GLenum dataType, GLuint relativeOffset, bool normalized,
+                                 uint32_t pos) const {
 
     // Enable or disable a generic vertex attribute array
     glEnableVertexArrayAttrib(vertexArrayObject, outPosition);

@@ -29,8 +29,22 @@ public:
     Mat4SSE() = default;
 
     Mat4SSE(const Vec4<float> &a1, const Vec4<float> &a2, const Vec4<float> &a3, const Vec4<float> &a4)
-        : a11(a1.x), a12(a1.y), a13(a1.z), a14(a1.w), a21(a2.x), a22(a2.y), a23(a2.z), a24(a2.w), a31(a3.x), a32(a3.y), a33(a3.z), a34(a3.w),
-          a41(a4.x), a42(a4.y), a43(a4.z), a44(a4.w) {}
+        : a11(a1.x)
+        , a12(a1.y)
+        , a13(a1.z)
+        , a14(a1.w)
+        , a21(a2.x)
+        , a22(a2.y)
+        , a23(a2.z)
+        , a24(a2.w)
+        , a31(a3.x)
+        , a32(a3.y)
+        , a33(a3.z)
+        , a34(a3.w)
+        , a41(a4.x)
+        , a42(a4.y)
+        , a43(a4.z)
+        , a44(a4.w) {}
 
     Mat4SSE(const __m128 &a1, const __m128 &a2, const __m128 &a3, const __m128 &a4) {
         _mm_storeu_ps(&a11, a1);
@@ -41,8 +55,22 @@ public:
 
     Mat4SSE(float a11, float a12, float a13, float a14, float a21, float a22, float a23, float a24, float a31, float a32, float a33, float a34,
             float a41, float a42, float a43, float a44) noexcept
-        : a11(a11), a12(a12), a13(a13), a14(a14), a21(a21), a22(a22), a23(a23), a24(a24), a31(a31), a32(a32), a33(a33), a34(a34), a41(a41), a42(a42),
-          a43(a43), a44(a44) {}
+        : a11(a11)
+        , a12(a12)
+        , a13(a13)
+        , a14(a14)
+        , a21(a21)
+        , a22(a22)
+        , a23(a23)
+        , a24(a24)
+        , a31(a31)
+        , a32(a32)
+        , a33(a33)
+        , a34(a34)
+        , a41(a41)
+        , a42(a42)
+        , a43(a43)
+        , a44(a44) {}
 
     Mat4SSE operator+(const Mat4SSE &v) const {
         Mat4SSE ret;
@@ -225,9 +253,17 @@ private:
 public:
     Vec4SSE() = default;
 
-    Vec4SSE(float x, float y, float z, float w = 1.f) : x(x), y(y), z(z), w(w) {}
+    Vec4SSE(float x, float y, float z, float w = 1.f)
+        : x(x)
+        , y(y)
+        , z(z)
+        , w(w) {}
 
-    explicit Vec4SSE(float xyzw) : x(xyzw), y(xyzw), z(xyzw), w(xyzw) {}
+    explicit Vec4SSE(float xyzw)
+        : x(xyzw)
+        , y(xyzw)
+        , z(xyzw)
+        , w(xyzw) {}
 
     Vec4SSE operator+(const Vec4SSE &v) const {
         __m128 a = _mm_loadu_ps(&x);
@@ -280,11 +316,14 @@ private:
 public:
     Vec4SSEE() = default;
 
-    Vec4SSEE(float x, float y, float z, float w = 1.f) : data{x, y, z, w} {}
+    Vec4SSEE(float x, float y, float z, float w = 1.f)
+        : data{x, y, z, w} {}
 
-    explicit Vec4SSEE(float xyzw) : data{xyzw, xyzw, xyzw, xyzw} {}
+    explicit Vec4SSEE(float xyzw)
+        : data{xyzw, xyzw, xyzw, xyzw} {}
 
-    explicit Vec4SSEE(__m128 data) : data(data) {}
+    explicit Vec4SSEE(__m128 data)
+        : data(data) {}
 
     Vec4SSEE operator+(const Vec4SSEE &v) const { return Vec4SSEE(_mm_add_ps(data, v.data)); }
 
@@ -314,11 +353,20 @@ private:
 public:
     Vec3SSE() = default;
 
-    explicit Vec3SSE(float xyz) : x(xyz), y(xyz), z(xyz) {}
+    explicit Vec3SSE(float xyz)
+        : x(xyz)
+        , y(xyz)
+        , z(xyz) {}
 
-    Vec3SSE(float x, float y, float z = 0) : x(x), y(y), z(z) {}
+    Vec3SSE(float x, float y, float z = 0)
+        : x(x)
+        , y(y)
+        , z(z) {}
 
-    Vec3SSE(const Vec3SSE &v) : x(v.x), y(v.y), z(v.z) {}
+    Vec3SSE(const Vec3SSE &v)
+        : x(v.x)
+        , y(v.y)
+        , z(v.z) {}
 
     Vec3SSE operator+(const Vec3SSE &v) const {
         __m128 a = _mm_loadu_ps(&x);
@@ -383,11 +431,14 @@ private:
 public:
     Vec3SSEE() = default;
 
-    Vec3SSEE(float x, float y, float z) : data{x, y, z, 1.f} {}
+    Vec3SSEE(float x, float y, float z)
+        : data{x, y, z, 1.f} {}
 
-    explicit Vec3SSEE(float xyz) : data{xyz, xyz, xyz, 1.f} {}
+    explicit Vec3SSEE(float xyz)
+        : data{xyz, xyz, xyz, 1.f} {}
 
-    explicit Vec3SSEE(__m128 data) : data(data) {}
+    explicit Vec3SSEE(__m128 data)
+        : data(data) {}
 
     Vec3SSEE operator+(const Vec3SSEE &v) const { return Vec3SSEE(_mm_add_ps(data, v.data)); }
 

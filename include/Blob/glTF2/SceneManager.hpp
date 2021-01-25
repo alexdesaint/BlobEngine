@@ -20,6 +20,7 @@ namespace Blob::glTF2 {
 class SceneManager : AssetManager {
 private:
     std::string file;
+
 public:
     // version check
     Asset asset;

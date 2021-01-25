@@ -65,9 +65,8 @@ public:
     static int view;
     static int projection;
 
-    explicit SimpleMaterial(const Blob::GL::Shader &sp) : sp(sp) {
-
-    }
+    explicit SimpleMaterial(const Blob::GL::Shader &sp)
+        : sp(sp) {}
 };
 
 int SimpleMaterial::model;
@@ -112,9 +111,9 @@ int main() {
 
     while (window.isOpen()) {
 
-        //renderable.setRotation((float) glfwGetTime(), 0, 0, 1);
+        // renderable.setRotation((float) glfwGetTime(), 0, 0, 1);
         window.draw(primitive);
-        //ImGui::NewFrame();
+        // ImGui::NewFrame();
 
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);

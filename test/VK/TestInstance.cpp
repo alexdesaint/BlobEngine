@@ -8,15 +8,15 @@ using namespace Blob;
 using namespace Blob::VK;
 
 int main() {
-	try {
-		Blob::VK::Instance instance;
+    try {
+        Blob::VK::Instance instance;
 
-		std::cout << instance;
+        std::cout << instance;
 
-	} catch (Exception &e) {
-		std::cout << e.what() << std::endl;
+    } catch (Exception &e) {
+        std::cout << e.what() << std::endl;
 
-		return 1;
-	}
-	return 0;
+        return 1;
+    }
+    return 0;
 }

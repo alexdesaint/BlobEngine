@@ -25,13 +25,13 @@ Node::Node(const nlohmann::json &j, std::deque<glTF2::Mesh> &meshes) {
     if (NotRequired(j, "mesh", mesh))
         setMesh(meshes[mesh]);
 
-    if(NotRequired(j, "matrix", matrix))
+    if (NotRequired(j, "matrix", matrix))
         load(matrix);
 
-    if(NotRequired(j, "rotation", rotation))
+    if (NotRequired(j, "rotation", rotation))
         setRotation(Maths::Vec4<float>(rotation));
 
-    if(NotRequired(j, "scale", scale))
+    if (NotRequired(j, "scale", scale))
         setScale(Maths::Vec3<float>(scale));
     if (NotRequired(j, "translation", translation))
         setPosition(Maths::Vec3<float>(translation));
@@ -64,8 +64,7 @@ std::ostream &operator<<(std::ostream &s, const Node &a) {
     if (a.mesh != -1)
         s << "    mesh : " << a.mesh << endl;
 
-
-    s << (Maths::ModelTransform)a << endl;
+    s << (Maths::ModelTransform) a << endl;
 
     if (!a.weights.empty()) {
         s << "    weights :";

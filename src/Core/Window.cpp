@@ -8,7 +8,9 @@ namespace Blob::Core {
 
 Window::Window(Camera &camera, Maths::Vec2<unsigned int> size)
     : GL::Window(size, GLmajor, GLminor), camera(&camera),
-      ProjectionTransform(PI / 4, size, 0.1, 1000), imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()), keyboard(*keys) {
+      ProjectionTransform(PI / 4, size, 0.1, 1000), imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()),
+    keyboard(*keys),
+    mouse(*cursorPosition, *scrollOffsetH, *scrollOffsetW, *mouseButton) {
     imgui.createRender();
 
     ImGuiIO &io = ImGui::GetIO();
@@ -22,7 +24,8 @@ Window::Window(Camera &camera, Maths::Vec2<unsigned int> size)
     keySuper = &io.KeySuper;
     keys = &io.KeysDown;
 
-    new (&keyboard) Keyboard(io.KeysDown);
+    new (&keyboard) Keyboard(*keys);
+    new (&mouse) Mouse(*cursorPosition, *scrollOffsetH, *scrollOffsetW, *mouseButton);
 
     // Deferred Shading
     gPosition.setRGBA16data(nullptr, framebufferSize);
@@ -81,35 +84,41 @@ void Window::characterInput(unsigned int c) {
 }
 
 Maths::Vec3<float> Window::getWorldPosition() {
-    Maths::Vec2<float> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
-    mousePos.x = mousePos.x / size.x * 2 - 1;
-    mousePos.y = 1 - mousePos.y / size.y * 2;
 
-    /*//Look at test
-    glm::vec4 posCamera(50, 50, 15, 1);
-
-    ImGui::Text("World pos : %.3f, %.3f, %.3f", posCamera.x, posCamera.y,
-    posCamera.z); posCamera = (projectionMatrix * viewMatrix) * posCamera;
-    ImGui::Text("camera pos : %.3f, %.3f, %.3f", posCamera.x, posCamera.y,
-    posCamera.z); posCamera = posCamera / posCamera.w; ImGui::Text("camera rerange
-    : %.3f, %.3f, %.3f", posCamera.x, posCamera.y, (posCamera.z + 1) / 2);
-    posCamera = glm::inverse(projectionMatrix * viewMatrix) * posCamera;
-    ImGui::Text("inverse : %.3f, %.3f, %.3f", posCamera.x, posCamera.y,
-    posCamera.z); posCamera = posCamera / posCamera.w; ImGui::Text("inverse
-    rerange : %.3f, %.3f, %.3f", posCamera.x, posCamera.y, posCamera.z);
     //
-    */
+    /*        ImGui::Begin("getWorldPosition");
+            Maths::Vec4<float> testPos(1, 1, 0, 1);
+            ImGui::Text("world :  %f %f %f %f", testPos.x, testPos.y, testPos.z, testPos.w);
+            testPos = camera->operator*(testPos);
+            ImGui::Text("Camera :  %f %f %f %f", testPos.x, testPos.y, testPos.z, testPos.w);
+            testPos = operator*(testPos);
+            testPos = testPos / testPos.w;
+            ImGui::Text("window :  %f %f %f %f", testPos.x, testPos.y, testPos.z, testPos.w);
+            testPos = (*camera * *this).inverse() * testPos;
+            ImGui::Text("testPos4 :  %f %f %f %f", testPos.x, testPos.y, testPos.z, testPos.w);
+            testPos = testPos / testPos.w;
+            ImGui::Text("testPos5 :  %f %f %f %f", testPos.x, testPos.y, testPos.z, testPos.w);
+            ImGui::End();*/
+    //
 
-    float z = readPixel((Maths::Vec2<float>(0, -size.y) + mousePos).cast<unsigned int>());
+    Maths::Vec2<float> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
+    mousePos.y = size.y - mousePos.y;
 
-    z = (z * 2) - 1;
+    Maths::Vec4<float> pos(mousePos / size * 2 - 1, readPixel(mousePos.cast<int>()) * 2 - 1);
 
-    Maths::Vec4<float> pos(mousePos.x, mousePos.y, z);
+    //
+    /*        ImGui::Begin("getWorldPosition");
+            ImGui::Text("Window :  %f %f %f %f", pos.x, pos.y, pos.z, pos.w);*/
+    //
 
-    pos = (*this * *camera).inverse() * pos;
-    pos = pos / pos.w;
+    pos = (*camera * *this).inverse() * pos;
 
-    return (Maths::Vec3<float>) pos;
+    //
+    /*        ImGui::Text("World :  %f %f %f %f", pos.x / pos.w, pos.y / pos.w, pos.z / pos.w, pos.w);
+            ImGui::End();*/
+    //
+
+    return pos / pos.w;
 }
 
 void Window::setCamera(Camera &camera_) {
@@ -150,7 +159,7 @@ void Window::draw(const Scene &scene, const Maths::Mat4 &sceneModel) const {
 }
 
 void Window::draw(const Scene &scene) const {
-    //gFrameBuffer.bind();
+    // gFrameBuffer.bind();
 
     for (auto r : scene.shapes)
         draw(*r);
@@ -175,16 +184,19 @@ void Window::drawTransparent(const Shape &shape, const Maths::Mat4 &sceneModel) 
 
 void Window::keyboardUpdate(int key, bool pressed) {
     for (auto &k : KeyboardEvents::subscribers)
-        k->keyboardUpdate(keyboard);
+        k->keyboardUpdate(keyboard[key]);
 }
+
 void Window::mouseButtonUpdate(int button, bool pressed) {
     for (auto &k : MouseEvents::subscribers)
         k->mouseButtonUpdate(button, pressed);
 };
+
 void Window::cursorPositionUpdate(double xpos, double ypos) {
     for (auto &k : MouseEvents::subscribers)
         k->cursorPosUpdate(xpos, ypos);
 };
+
 void Window::scrollUpdate(double xoffset, double yoffset) {
     for (auto &k : MouseEvents::subscribers)
         k->scrollUpdate(xoffset, yoffset);

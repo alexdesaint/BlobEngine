@@ -8,7 +8,6 @@ namespace Blob::Shaders {
 
 class SingleColor : public Core::Shader {
 private:
-
 public:
     static SingleColor instance;
 
@@ -22,9 +21,23 @@ public:
     void destroy();
 };
 
+class SingleColorTransparent : public Core::Shader {
+private:
+public:
+    static SingleColorTransparent instance;
+
+    static const int model = 0;
+    static const int view = 1;
+    static const int projection = 2;
+
+    static const int albedo = 3;
+
+    void build();
+    void destroy();
+};
+
 class SingleTexture : public Core::Shader {
 private:
-
 public:
     static SingleTexture instance;
 
@@ -67,7 +80,6 @@ public:
 
 class PBRSingleColor : public Core::Shader {
 private:
-
 public:
     static PBRSingleColor instance;
 
@@ -91,7 +103,6 @@ public:
 
 class PBRSingleTexture : public Core::Shader {
 private:
-
 public:
     static PBRSingleTexture instance;
 
@@ -115,7 +126,6 @@ public:
 
 class PBRColorArray : public Core::Shader {
 private:
-
 public:
     static PBRColorArray instance;
 
@@ -138,7 +148,6 @@ public:
 
 class PBRWater : public Core::Shader {
 private:
-
 public:
     static PBRWater instance;
 

@@ -18,7 +18,6 @@ class Window;
  */
 class Material : protected GL::Material {
 public:
-
     /// This function will be called before the draw
     /// \param pt oui
     /// \param vt non
@@ -29,4 +28,3 @@ public:
 };
 
 } // namespace Blob::Core
-

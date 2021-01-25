@@ -7,6 +7,7 @@ namespace Blob::GL {
 
 class VertexBufferObject {
     friend class VertexArrayObject;
+
 private:
     uint32_t vertexBufferObject = 0;
 

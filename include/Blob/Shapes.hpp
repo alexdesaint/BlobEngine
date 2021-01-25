@@ -69,8 +69,8 @@ public:
     struct Cube : public Core::Shape {
         Blob::Core::Primitive primitive0;
         Blob::Core::Mesh mesh;
-        explicit Cube(const Blob::Core::Material &material = instance->materials.defaultM)
-            : primitive0(&instance->cubeAttributes.attribute0, &material, &instance->cubeAttributes.renderOptions0) {
+        explicit Cube(const Blob::Core::Material &material = instance->materials.defaultM) :
+            primitive0(&instance->cubeAttributes.attribute0, &material, &instance->cubeAttributes.renderOptions0) {
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
@@ -79,8 +79,8 @@ public:
     struct Plane : public Core::Shape {
         Blob::Core::Primitive primitive0;
         Blob::Core::Mesh mesh;
-        explicit Plane(const Blob::Core::Material &material = instance->materials.defaultM)
-            : primitive0(&instance->planeAttributes.attribute0, &material, &instance->planeAttributes.renderOptions0) {
+        explicit Plane(const Blob::Core::Material &material = instance->materials.defaultM) :
+            primitive0(&instance->planeAttributes.attribute0, &material, &instance->planeAttributes.renderOptions0) {
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
@@ -89,8 +89,8 @@ public:
     struct OctagonalPrism : public Core::Shape {
         Blob::Core::Primitive primitive0;
         Blob::Core::Mesh mesh;
-        explicit OctagonalPrism(const Blob::Core::Material &material = instance->materials.defaultM)
-            : primitive0(&instance->octagonalPrismAttributes.attribute0, &material, &instance->octagonalPrismAttributes.renderOptions0) {
+        explicit OctagonalPrism(const Blob::Core::Material &material = instance->materials.defaultM) :
+            primitive0(&instance->octagonalPrismAttributes.attribute0, &material, &instance->octagonalPrismAttributes.renderOptions0) {
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }

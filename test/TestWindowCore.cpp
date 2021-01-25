@@ -52,12 +52,14 @@ private:
         setUniform(mt, model);
     }
     const GL::Shader &sp;
+
 public:
     static int model;
     static int view;
     static int projection;
 
-    explicit SimpleMaterial(const GL::Shader &sp) : sp(sp) {}
+    explicit SimpleMaterial(const GL::Shader &sp)
+        : sp(sp) {}
 };
 
 int SimpleMaterial::model;

@@ -126,7 +126,8 @@ struct Primitives {
             12, 0, 13, 0, 14, 0, 12, 0, 14, 0, 15, 0, 16, 0, 17, 0, 18, 0, 16, 0, 18, 0, 19, 0, 20, 0, 21, 0, 22, 0, 20, 0, 22, 0, 23, 0,
         };
         Blob::Core::RenderOptions renderOptions;
-        Mesh0(const Blob::Core::Buffer &buffer, const Materials &materials) : primitive0(attribute0, materials.defaultM, renderOptions) {
+        Mesh0(const Blob::Core::Buffer &buffer, const Materials &materials)
+            : primitive0(attribute0, materials.defaultM, renderOptions) {
             renderOptions.setIndices(indicesArray0.data(), 36, 5123);
             addPrimitive(primitive0);
             attribute0.setBuffer(buffer, 48, 0);
@@ -143,7 +144,8 @@ struct Primitives {
             0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0,
         };
         Blob::Core::RenderOptions renderOptions;
-        Mesh1(const Blob::Core::Buffer &buffer, const Materials &materials) : primitive0(attribute0, materials.defaultM, renderOptions) {
+        Mesh1(const Blob::Core::Buffer &buffer, const Materials &materials)
+            : primitive0(attribute0, materials.defaultM, renderOptions) {
             renderOptions.setIndices(indicesArray0.data(), 6, 5123);
             addPrimitive(primitive0);
             attribute0.setBuffer(buffer, 48, 1152);
@@ -164,7 +166,8 @@ struct Primitives {
             42, 0, 42, 0, 43, 0, 44, 0, 44, 0, 45, 0, 46, 0, 46, 0, 47, 0, 40, 0, 40, 0, 42, 0, 44, 0, 44, 0, 46, 0, 40, 0,
         };
         Blob::Core::RenderOptions renderOptions;
-        Mesh2(const Blob::Core::Buffer &buffer, const Materials &materials) : primitive0(attribute0, materials.defaultM, renderOptions) {
+        Mesh2(const Blob::Core::Buffer &buffer, const Materials &materials)
+            : primitive0(attribute0, materials.defaultM, renderOptions) {
             renderOptions.setIndices(indicesArray0.data(), 84, 5123);
             addPrimitive(primitive0);
             attribute0.setBuffer(buffer, 32, 1344);
@@ -187,7 +190,10 @@ struct Primitives {
         &shape3,
         &shape4,
     }};
-    Primitives() : mesh0(buffer, materials), mesh1(buffer, materials), mesh2(buffer, materials) {}
+    Primitives()
+        : mesh0(buffer, materials)
+        , mesh1(buffer, materials)
+        , mesh2(buffer, materials) {}
 };
 
 class test : private Core::KeyboardEvents {

@@ -7,127 +7,127 @@
 namespace Blob::GLFW {
 
 struct Keys {
-    static const unsigned int UNKNOWN;
-    static const unsigned int SPACE;
-    static const unsigned int APOSTROPHE;
-    static const unsigned int COMMA;
-    static const unsigned int MINUS;
-    static const unsigned int PERIOD;
-    static const unsigned int SLASH;
-    static const unsigned int Zero;
-    static const unsigned int One;
-    static const unsigned int Two;
-    static const unsigned int Three;
-    static const unsigned int Four;
-    static const unsigned int Five;
-    static const unsigned int Six;
-    static const unsigned int Seven;
-    static const unsigned int Eight;
-    static const unsigned int Nine;
-    static const unsigned int SEMICOLON;
-    static const unsigned int EQUAL;
-    static const unsigned int A;
-    static const unsigned int B;
-    static const unsigned int C;
-    static const unsigned int D;
-    static const unsigned int E;
-    static const unsigned int F;
-    static const unsigned int G;
-    static const unsigned int H;
-    static const unsigned int I;
-    static const unsigned int J;
-    static const unsigned int K;
-    static const unsigned int L;
-    static const unsigned int M;
-    static const unsigned int N;
-    static const unsigned int O;
-    static const unsigned int P;
-    static const unsigned int Q;
-    static const unsigned int R;
-    static const unsigned int S;
-    static const unsigned int T;
-    static const unsigned int U;
-    static const unsigned int V;
-    static const unsigned int W;
-    static const unsigned int X;
-    static const unsigned int Y;
-    static const unsigned int Z;
-    static const unsigned int LEFT_BRACKET;
-    static const unsigned int BACKSLASH;
-    static const unsigned int RIGHT_BRACKET;
-    static const unsigned int GRAVE_ACCENT;
-    static const unsigned int WORLD_1;
-    static const unsigned int WORLD_2;
-    static const unsigned int ESCAPE;
-    static const unsigned int ENTER;
-    static const unsigned int TAB;
-    static const unsigned int BACKSPACE;
-    static const unsigned int INSERT;
-    static const unsigned int DEL;
-    static const unsigned int RIGHT;
-    static const unsigned int LEFT;
-    static const unsigned int DOWN;
-    static const unsigned int UP;
-    static const unsigned int PAGE_UP;
-    static const unsigned int PAGE_DOWN;
-    static const unsigned int HOME;
-    static const unsigned int END;
-    static const unsigned int CAPS_LOCK;
-    static const unsigned int SCROLL_LOCK;
-    static const unsigned int NUM_LOCK;
-    static const unsigned int PRINT_SCREEN;
-    static const unsigned int PAUSE;
-    static const unsigned int F1;
-    static const unsigned int F2;
-    static const unsigned int F3;
-    static const unsigned int F4;
-    static const unsigned int F5;
-    static const unsigned int F6;
-    static const unsigned int F7;
-    static const unsigned int F8;
-    static const unsigned int F9;
-    static const unsigned int F10;
-    static const unsigned int F11;
-    static const unsigned int F12;
-    static const unsigned int F13;
-    static const unsigned int F14;
-    static const unsigned int F15;
-    static const unsigned int F16;
-    static const unsigned int F17;
-    static const unsigned int F18;
-    static const unsigned int F19;
-    static const unsigned int F20;
-    static const unsigned int F21;
-    static const unsigned int F22;
-    static const unsigned int F23;
-    static const unsigned int F24;
-    static const unsigned int F25;
-    static const unsigned int NumericKeypadZero;
-    static const unsigned int NumericKeypadOne;
-    static const unsigned int NumericKeypadTwo;
-    static const unsigned int NumericKeypadThree;
-    static const unsigned int NumericKeypadFour;
-    static const unsigned int NumericKeypadFive;
-    static const unsigned int NumericKeypadSix;
-    static const unsigned int NumericKeypadSeven;
-    static const unsigned int NumericKeypadEight;
-    static const unsigned int NumericKeypadNine;
-    static const unsigned int NumericKeypadDECIMAL;
-    static const unsigned int NumericKeypadDIVIDE;
-    static const unsigned int NumericKeypadMULTIPLY;
-    static const unsigned int NumericKeypadSUBTRACT;
-    static const unsigned int NumericKeypadADD;
-    static const unsigned int NumericKeypadENTER;
-    static const unsigned int NumericKeypadEQUAL;
-    static const unsigned int LEFT_SHIFT;
-    static const unsigned int LEFT_CONTROL;
-    static const unsigned int LEFT_ALT;
-    static const unsigned int LEFT_SUPER;
-    static const unsigned int RIGHT_SHIFT;
-    static const unsigned int RIGHT_CONTROL;
-    static const unsigned int RIGHT_ALT;
-    static const unsigned int RIGHT_SUPER;
-    static const unsigned int MENU;
+    static const int UNKNOWN;
+    static const int SPACE;
+    static const int APOSTROPHE;
+    static const int COMMA;
+    static const int MINUS;
+    static const int PERIOD;
+    static const int SLASH;
+    static const int Zero;
+    static const int One;
+    static const int Two;
+    static const int Three;
+    static const int Four;
+    static const int Five;
+    static const int Six;
+    static const int Seven;
+    static const int Eight;
+    static const int Nine;
+    static const int SEMICOLON;
+    static const int EQUAL;
+    static const int A;
+    static const int B;
+    static const int C;
+    static const int D;
+    static const int E;
+    static const int F;
+    static const int G;
+    static const int H;
+    static const int I;
+    static const int J;
+    static const int K;
+    static const int L;
+    static const int M;
+    static const int N;
+    static const int O;
+    static const int P;
+    static const int Q;
+    static const int R;
+    static const int S;
+    static const int T;
+    static const int U;
+    static const int V;
+    static const int W;
+    static const int X;
+    static const int Y;
+    static const int Z;
+    static const int LEFT_BRACKET;
+    static const int BACKSLASH;
+    static const int RIGHT_BRACKET;
+    static const int GRAVE_ACCENT;
+    static const int WORLD_1;
+    static const int WORLD_2;
+    static const int ESCAPE;
+    static const int ENTER;
+    static const int TAB;
+    static const int BACKSPACE;
+    static const int INSERT;
+    static const int DEL;
+    static const int RIGHT;
+    static const int LEFT;
+    static const int DOWN;
+    static const int UP;
+    static const int PAGE_UP;
+    static const int PAGE_DOWN;
+    static const int HOME;
+    static const int END;
+    static const int CAPS_LOCK;
+    static const int SCROLL_LOCK;
+    static const int NUM_LOCK;
+    static const int PRINT_SCREEN;
+    static const int PAUSE;
+    static const int F1;
+    static const int F2;
+    static const int F3;
+    static const int F4;
+    static const int F5;
+    static const int F6;
+    static const int F7;
+    static const int F8;
+    static const int F9;
+    static const int F10;
+    static const int F11;
+    static const int F12;
+    static const int F13;
+    static const int F14;
+    static const int F15;
+    static const int F16;
+    static const int F17;
+    static const int F18;
+    static const int F19;
+    static const int F20;
+    static const int F21;
+    static const int F22;
+    static const int F23;
+    static const int F24;
+    static const int F25;
+    static const int NumericKeypadZero;
+    static const int NumericKeypadOne;
+    static const int NumericKeypadTwo;
+    static const int NumericKeypadThree;
+    static const int NumericKeypadFour;
+    static const int NumericKeypadFive;
+    static const int NumericKeypadSix;
+    static const int NumericKeypadSeven;
+    static const int NumericKeypadEight;
+    static const int NumericKeypadNine;
+    static const int NumericKeypadDECIMAL;
+    static const int NumericKeypadDIVIDE;
+    static const int NumericKeypadMULTIPLY;
+    static const int NumericKeypadSUBTRACT;
+    static const int NumericKeypadADD;
+    static const int NumericKeypadENTER;
+    static const int NumericKeypadEQUAL;
+    static const int LEFT_SHIFT;
+    static const int LEFT_CONTROL;
+    static const int LEFT_ALT;
+    static const int LEFT_SUPER;
+    static const int RIGHT_SHIFT;
+    static const int RIGHT_CONTROL;
+    static const int RIGHT_ALT;
+    static const int RIGHT_SUPER;
+    static const int MENU;
 };
 
 enum MouseCursor { Arrow = 0, TextInput, ResizeAll, ResizeNS, ResizeEW, ResizeNESW, ResizeNWSE, Hand, NotAllowed, COUNT };
@@ -152,7 +152,7 @@ private:
 
     bool mouseButtonData[5]{false};
     Maths::Vec2<float> cursorPositionData;
-    float scrollOffsetWData{false}, scrollOffsetHData{false};
+    float scrollOffsetWData{0}, scrollOffsetHData{0};
 
     // Window info data
     Maths::Vec2<unsigned int> windowSizeData;
@@ -177,19 +177,18 @@ protected:
 
     void *cursors[MouseCursor::COUNT];
 
-
     virtual void windowResized() {}
 
     virtual void framebufferResized() {}
 
     /// Keyboard
     virtual void characterInput(unsigned int c) {}
-    virtual void keyboardUpdate(int key, bool pressed) {};
+    virtual void keyboardUpdate(int key, bool pressed){};
 
     /// Mouse
-    virtual void mouseButtonUpdate(int button, bool pressed) {};
-    virtual void cursorPositionUpdate(double xpos, double ypos) {};
-    virtual void scrollUpdate(double xoffset, double yoffset) {};
+    virtual void mouseButtonUpdate(int button, bool pressed){};
+    virtual void cursorPositionUpdate(double xpos, double ypos){};
+    virtual void scrollUpdate(double xoffset, double yoffset){};
 
     // virtual void joystick_callback(int joy, int event) {};
 public:
@@ -239,11 +238,7 @@ public:
 
     static double getTime();
 
-    enum CursorState{
-        CURSOR_HIDDEN,
-        CURSOR_NORMAL,
-        CURSOR_DISABLED
-    };
+    enum CursorState { CURSOR_HIDDEN, CURSOR_NORMAL, CURSOR_DISABLED };
     void setCursorState(CursorState cursorState);
 
     void setMouseCursor(MouseCursor mouseCursor);

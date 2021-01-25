@@ -1,7 +1,9 @@
 #pragma once
 
+#include <Blob/Maths.inl>
 #include <list>
 #include <string>
+#include <unordered_map>
 
 namespace Blob::Core {
 
@@ -9,6 +11,7 @@ class Key {
 public:
     const unsigned int id;
     const bool &pressed;
+
     explicit Key(unsigned int id, bool (&keys)[512]) : id(id), pressed(keys[id]) {}
 
     operator bool() const { return pressed; }
@@ -17,6 +20,9 @@ public:
 };
 
 class Keyboard {
+private:
+    const std::unordered_map<unsigned int, const Key *> keys;
+
 public:
     const Key UNKNOWN;
     const Key SPACE;
@@ -141,11 +147,13 @@ public:
     const Key MENU;
 
     explicit Keyboard(bool (&keys)[512]);
+
+    const Key &operator[](unsigned int id);
 };
 
 class Window;
 
-class KeyboardEvents {
+class KeyboardEvents : GLFW {
     friend Window;
 
 private:
@@ -156,7 +164,7 @@ protected:
 
     ~KeyboardEvents() { subscribers.remove(this); }
 
-    virtual void keyboardUpdate(const Keyboard &keyboard) = 0;
+    virtual void keyboardUpdate(const Key &key) = 0;
 
 public:
     KeyboardEvents(const KeyboardEvents &) = delete;
@@ -181,7 +189,22 @@ protected:
 
 public:
     MouseEvents(const MouseEvents &) = delete;
+
     MouseEvents(MouseEvents &&) = delete;
+};
+
+class Mouse {
+public:
+    Blob::Maths::Vec2<float> &position;
+    bool (&buttons)[5];
+    float &scrollOffsetW, &scrollOffsetH;
+
+    Mouse(Maths::Vec2<float> &position, float &scrollOffsetW, float &scrollOffsetH, bool (&buttons)[5]) :
+        position(position), scrollOffsetW(scrollOffsetW), scrollOffsetH(scrollOffsetH), buttons(buttons) {}
+
+    Mouse(const Mouse &) = delete;
+
+    Mouse(Mouse &&) = delete;
 };
 
 class Controller {

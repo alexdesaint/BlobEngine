@@ -17,6 +17,19 @@ void SingleColor::applyMaterial(const Maths::ProjectionTransform &pt, const Math
     setUniform(albedo, Shaders::SingleColor::albedo);
 }
 
+SingleColorTransparent::SingleColorTransparent(Color::RGBA albedo) : albedo(albedo) {}
+SingleColorTransparent::SingleColorTransparent(Color::RGB albedo, float a) : albedo(albedo, a) {}
+
+void SingleColorTransparent::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+    setShader(Shaders::SingleColorTransparent::instance);
+
+    setUniform(pt, Shaders::SingleColorTransparent::projection);
+    setUniform(vt, Shaders::SingleColorTransparent::view);
+    setUniform(mt, Shaders::SingleColorTransparent::model);
+
+    setUniform(albedo, Shaders::SingleColorTransparent::albedo);
+}
+
 SingleTexture::SingleTexture(const Core::Texture *texture) : texture(texture) {}
 
 void SingleTexture::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {

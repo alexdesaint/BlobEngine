@@ -4,6 +4,9 @@
 #include <cmath>
 #include <list> // TODO: remove this
 #include <ostream>
+
+#include <cstring>
+
 #define PI 3.141592653589793238462643383279502884L
 
 namespace Blob::Maths {
@@ -37,6 +40,8 @@ public:
     constexpr inline Vec2 operator+(const Vec2 &v) const { return {x + v.x, y + v.y}; }
 
     constexpr inline Vec2 operator*(const Vec2 &v) const { return {x * v.x, y * v.y}; }
+
+    constexpr inline Vec2 operator/(const Vec2 &v) const { return {x / v.x, y / v.y}; }
 
     constexpr inline void operator+=(const Vec2 &v) {
         x += v.x;
@@ -108,11 +113,15 @@ public:
 
     [[nodiscard]] constexpr inline Vec2 negate() const { return {-x, -y}; }
 
+    [[nodiscard]] constexpr inline Vec2 abs() const { return {std::abs(x), std::abs(y)}; }
+
     [[nodiscard]] constexpr inline double getOrientation() const { return std::atan2(y, x); }
 
     [[nodiscard]] constexpr inline double getOrientationDeg() const { return std::atan2(y, x) * 180 / PI; }
 
     [[nodiscard]] constexpr inline bool isNull() const { return ((x == 0) && (y == 0)); }
+
+    [[nodiscard]] inline Vec2 round() const noexcept { return {std::round(x), std::round(y)}; }
 
     template<typename U>
     inline Vec2<U> cast() const {
@@ -240,6 +249,8 @@ public:
         return *this;
     }
 
+    inline constexpr operator Vec2<T>() const noexcept { return {x, y}; }
+
     // Functions
     [[nodiscard]] inline T length2() const noexcept { return x * x + y * y + z * z; }
 
@@ -256,11 +267,13 @@ public:
         return {x * t, y * t, z * t};
     }
 
-    [[nodiscard]] inline Vec3<T> getNormal() const noexcept { return operator/(std::sqrt(x * x + y * y + z * z)); }
+    [[nodiscard]] inline Vec3 getNormal() const noexcept { return operator/(std::sqrt(x * x + y * y + z * z)); }
 
     inline Vec3<T> setLength(double newLength) noexcept { return operator=(operator/=(std::sqrt(x * x + y * y + z * z)) * newLength); }
 
     [[nodiscard]] inline bool isNull() const noexcept { return (x == 0) && (y == 0) && (z == 0); }
+
+    [[nodiscard]] inline Vec3 round() const noexcept { return {std::round(x), std::round(y), std::round(z)}; }
 
     template<typename U>
     inline Vec3<U> cast() const noexcept {
@@ -285,6 +298,10 @@ public:
     explicit Vec4(T xyzw) : x(xyzw), y(xyzw), z(xyzw), w(xyzw) {}
 
     explicit Vec4(T xyzw[4]) : x(xyzw[0]), y(xyzw[1]), z(xyzw[2]), w(xyzw[3]) {}
+
+    explicit Vec4(const Vec3<T> &xyz, T w = 1) : x(xyz.x), y(xyz.y), z(xyz.z), w(w) {}
+
+    Vec4(const Vec2<T> &xy, T z, T w = 1) : x(xy.x), y(xy.y), z(z), w(w) {}
 
     Vec4(T x, T y, T z, T w = 1) : x(x), y(y), z(z), w(w) {}
 
@@ -375,7 +392,7 @@ public:
         return *this;
     }
 
-    explicit operator Vec3<T>() const { return {x, y, z}; }
+    operator Vec3<T>() const { return {x, y, z}; }
 
     // Functions
     [[nodiscard]] T length2() const { return x * x + y * y + z * z + w * w; }
@@ -412,6 +429,47 @@ public:
     }
 };
 
+template<typename T>
+class Mat2 {
+public:
+    T a11 = 1, a12 = 0;
+    T a21 = 0, a22 = 1;
+
+    Mat2() noexcept = default;
+
+    Mat2(T a11, T a12, T a21, T a22) noexcept : a11(a11), a12(a12), a21(a21), a22(a22) {}
+
+    explicit Mat2(const std::array<T, 9> &mat) noexcept : a11(mat[0]), a12(mat[1]), a21(mat[2]), a22(mat[3]) {}
+
+    void load(const std::array<T, 4> &mat) {
+        a11 = mat[0];
+        a12 = mat[1];
+        a21 = mat[2];
+        a22 = mat[3];
+    }
+
+    Mat2 operator+(const Mat2 &v) const { return {a11 + v.a11, a12 + v.a12, a21 + v.a21, a22 + v.a22}; }
+
+    Mat2 operator-(const Mat2 &v) const { return {a11 - v.a11, a12 - v.a12, a21 - v.a21, a22 - v.a22}; }
+
+    Mat2 operator*(const Mat2 &v) const {
+        return {a11 * v.a11 + a12 * v.a21, a11 * v.a12 + a12 * v.a22, a21 * v.a11 + a22 * v.a21, a21 * v.a12 + a22 * v.a22};
+    }
+
+    Vec2<T> operator*(const Vec2<T> &v) const { return {a11 * v.x + a12 * v.y, a21 * v.x + a22 * v.y}; }
+
+    template<typename U>
+    Mat2<U> cast() const {
+        return {(U) a11, (U) a12, (U) a21, (U) a22};
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Mat2 &m) {
+        os << m.a11 << ", " << m.a12 << std::endl;
+        os << m.a21 << ", " << m.a22 << std::endl;
+        return os;
+    }
+};
+
 class Mat3 {
 public:
     float a11 = 1, a12 = 0, a13 = 0;
@@ -420,11 +478,11 @@ public:
 
     Mat3() noexcept = default;
 
-    Mat3(float a11, float a12, float a13, float a21, float a22, float a23, float a31, float a32, float a33) noexcept
-        : a11(a11), a12(a12), a13(a13), a21(a21), a22(a22), a23(a23), a31(a31), a32(a32), a33(a33) {}
+    Mat3(float a11, float a12, float a13, float a21, float a22, float a23, float a31, float a32, float a33) noexcept :
+        a11(a11), a12(a12), a13(a13), a21(a21), a22(a22), a23(a23), a31(a31), a32(a32), a33(a33) {}
 
-    explicit Mat3(const std::array<float, 9> &mat) noexcept
-        : a11(mat[0]), a12(mat[1]), a13(mat[2]), a21(mat[3]), a22(mat[4]), a23(mat[5]), a31(mat[6]), a32(mat[7]), a33(mat[8]) {}
+    explicit Mat3(const std::array<float, 9> &mat) noexcept :
+        a11(mat[0]), a12(mat[1]), a13(mat[2]), a21(mat[3]), a22(mat[4]), a23(mat[5]), a31(mat[6]), a32(mat[7]), a33(mat[8]) {}
 
     void load(const std::array<float, 9> &mat) {
         a11 = mat[0];
@@ -436,6 +494,14 @@ public:
         a31 = mat[6];
         a32 = mat[7];
         a33 = mat[8];
+    }
+
+    constexpr inline Mat3 &operator=(const Mat2<float> &v) {
+        a11 = v.a11;
+        a21 = v.a21;
+        a12 = v.a12;
+        a22 = v.a22;
+        return *this;
     }
 
     Mat3 operator+(const Mat3 &v) const {
@@ -469,24 +535,80 @@ public:
 
     Mat4() noexcept = default;
 
-    explicit Mat4(float val)
-        : a11(val), a12(val), a13(val), a14(val), a21(val), a22(val), a23(val), a24(val), a31(val), a32(val), a33(val), a34(val), a41(val), a42(val),
-          a43(val), a44(val) {}
+    explicit Mat4(float val) :
+        a11(val),
+        a12(val),
+        a13(val),
+        a14(val),
+        a21(val),
+        a22(val),
+        a23(val),
+        a24(val),
+        a31(val),
+        a32(val),
+        a33(val),
+        a34(val),
+        a41(val),
+        a42(val),
+        a43(val),
+        a44(val) {}
 
-    Mat4(const Vec4<float> &a1, const Vec4<float> &a2, const Vec4<float> &a3, const Vec4<float> &a4)
-        : a11(a1.x), a12(a1.y), a13(a1.z), a14(a1.w), a21(a2.x), a22(a2.y), a23(a2.z), a24(a2.w), a31(a3.x), a32(a3.y), a33(a3.z), a34(a3.w),
-          a41(a4.x), a42(a4.y), a43(a4.z), a44(a4.w) {}
+    Mat4(const Vec4<float> &a1, const Vec4<float> &a2, const Vec4<float> &a3, const Vec4<float> &a4) :
+        a11(a1.x),
+        a12(a1.y),
+        a13(a1.z),
+        a14(a1.w),
+        a21(a2.x),
+        a22(a2.y),
+        a23(a2.z),
+        a24(a2.w),
+        a31(a3.x),
+        a32(a3.y),
+        a33(a3.z),
+        a34(a3.w),
+        a41(a4.x),
+        a42(a4.y),
+        a43(a4.z),
+        a44(a4.w) {}
 
     Mat4(float a11, float a12, float a13, float a14, float a21, float a22, float a23, float a24, float a31, float a32, float a33, float a34,
-         float a41, float a42, float a43, float a44) noexcept
-        : a11(a11), a12(a12), a13(a13), a14(a14), a21(a21), a22(a22), a23(a23), a24(a24), a31(a31), a32(a32), a33(a33), a34(a34), a41(a41), a42(a42),
-          a43(a43), a44(a44) {}
+         float a41, float a42, float a43, float a44) noexcept :
+        a11(a11),
+        a12(a12),
+        a13(a13),
+        a14(a14),
+        a21(a21),
+        a22(a22),
+        a23(a23),
+        a24(a24),
+        a31(a31),
+        a32(a32),
+        a33(a33),
+        a34(a34),
+        a41(a41),
+        a42(a42),
+        a43(a43),
+        a44(a44) {}
 
     Mat4(const Mat4 &mat) noexcept = default;
 
-    explicit Mat4(const std::array<float, 16> &mat) noexcept
-        : a11(mat[0]), a12(mat[1]), a13(mat[2]), a14(mat[3]), a21(mat[4]), a22(mat[5]), a23(mat[6]), a24(mat[7]), a31(mat[8]), a32(mat[9]),
-          a33(mat[10]), a34(mat[11]), a41(mat[12]), a42(mat[13]), a43(mat[14]), a44(mat[15]) {}
+    explicit Mat4(const std::array<float, 16> &mat) noexcept :
+        a11(mat[0]),
+        a12(mat[1]),
+        a13(mat[2]),
+        a14(mat[3]),
+        a21(mat[4]),
+        a22(mat[5]),
+        a23(mat[6]),
+        a24(mat[7]),
+        a31(mat[8]),
+        a32(mat[9]),
+        a33(mat[10]),
+        a34(mat[11]),
+        a41(mat[12]),
+        a42(mat[13]),
+        a43(mat[14]),
+        a44(mat[15]) {}
 
     void load(const std::array<float, 16> &mat) {
         a11 = mat[0];
@@ -522,6 +644,15 @@ public:
     Mat4 operator/(float val) const {
         return {a11 / val, a12 / val, a13 / val, a14 / val, a21 / val, a22 / val, a23 / val, a24 / val,
                 a31 / val, a32 / val, a33 / val, a34 / val, a41 / val, a42 / val, a43 / val, a44 / val};
+    }
+
+    Vec4<float> operator*(const Vec3<float> &val) const {
+        return {
+            a11 * val.x + a21 * val.y + a31 * val.z + a41,
+            a12 * val.x + a22 * val.y + a32 * val.z + a42,
+            a13 * val.x + a23 * val.y + a33 * val.z + a43,
+            a14 * val.x + a24 * val.y + a34 * val.z + a44,
+        };
     }
 
     Vec4<float> operator*(const Vec4<float> &val) const {
@@ -668,6 +799,16 @@ public:
         a42 += xyz.y;
         a43 += xyz.z;
     }
+
+    void setRotation(const Mat3 &rotation) {
+        ModelTransform::rotation = rotation;
+        compute();
+    };
+
+    void setRotation(const Mat2<float> &rotation) {
+        ModelTransform::rotation = rotation;
+        compute();
+    };
 
     void setRotation(float angle, const Vec3<float> &xyz) {
         const float c = std::cos(angle);
@@ -837,8 +978,8 @@ public:
 
     ViewTransform() : cameraPosition(1, 0, 1), cameraLookAt(0, 0, 0), cameraUp(0, 0, 1) { compute(); }
 
-    ViewTransform(const Vec3<float> &cameraPosition, const Vec3<float> &cameraLookAt, const Vec3<float> &cameraUp)
-        : cameraPosition(cameraPosition), cameraLookAt(cameraLookAt), cameraUp(cameraUp) {
+    ViewTransform(const Vec3<float> &cameraPosition, const Vec3<float> &cameraLookAt, const Vec3<float> &cameraUp) :
+        cameraPosition(cameraPosition), cameraLookAt(cameraLookAt), cameraUp(cameraUp) {
         compute();
     }
 
@@ -879,6 +1020,9 @@ public:
     }
 };
 
+/**
+ * Source : http://www.songho.ca/opengl/gl_projectionmatrix.html
+ */
 class ProjectionTransform : public Mat4 {
 private:
     float cameraAngle = PI / 4, ratio = 1.f, closeRange, longRange;
@@ -887,51 +1031,47 @@ private:
 public:
     ProjectionTransform() = default;
 
-    ProjectionTransform(float cameraAngle, const Vec2<unsigned int> &size, float closeRange, float longRange)
-        : Mat4(0), cameraAngle(cameraAngle), ratio(size.x / (float) size.y) {
+    ProjectionTransform(float cameraAngle, const Vec2<unsigned int> &size, float closeRange, float longRange) :
+        Mat4(0), cameraAngle(cameraAngle), ratio(size.x / (float) size.y) {
         setRange(closeRange, longRange);
         setAngle(cameraAngle);
     }
 
-    ProjectionTransform(float cameraAngle, const Vec2<unsigned int> &size, float closeRange)
+    /*ProjectionTransform(float cameraAngle, const Vec2<unsigned int> &size, float closeRange, float farRange)
         : Mat4(0), cameraAngle(cameraAngle), ratio(size.x / (float) size.y) {
-        setInfinitRange(closeRange);
+        setRange(closeRange, farRange);
         setAngle(cameraAngle);
-    }
+    }*/
 
-    void setInfinitRange(float _closeRange) {
-        /// TODO: send Warning
+    /*    void setInfinitRange(float _closeRange) {
+            closeRange = _closeRange;
 
-        closeRange = _closeRange;
-
-        a43 = -closeRange;
-        a33 = -1.f;
-        a34 = -1.f;
-    }
+            a43 = -closeRange;
+            a33 = -1.f;
+            a34 = -1.f;
+        }*/
 
     void setRange(float _closeRange, float _longRange) {
         closeRange = _closeRange;
         longRange = _longRange;
 
         if (ortho) {
-            a43 = closeRange / (closeRange - longRange);
-            a33 = 1 / (closeRange - longRange);
+            a43 = (longRange + closeRange) / (longRange - closeRange);
+            a33 = -2 / (longRange - closeRange);
             a34 = 0;
+            a44 = 1;
         } else {
-            a43 = (longRange * closeRange) / (closeRange - longRange);
-            a33 = longRange / (closeRange - longRange);
+            a33 = -(longRange + closeRange) / (longRange - closeRange);
+            a43 = -(2 * longRange * closeRange) / (longRange - closeRange);
+
             a34 = -1.f;
+            a44 = 0;
         }
     }
 
     void setAngle(float _cameraAngle) {
         ortho = false;
         cameraAngle = _cameraAngle;
-        a11 = a22 = a33 = a44 = 1.f;
-        a12 = a13 = a14 = 0.f;
-        a21 = a23 = a24 = 0.f;
-        a31 = a32 = a34 = 0.f;
-        a41 = a42 = a43 = 0.f;
 
         const float tanHalfFovy = std::tan(cameraAngle / 2.f);
         a11 = 1.f / (ratio * tanHalfFovy);
@@ -966,7 +1106,6 @@ public:
         a43 = closeRange / (closeRange - longRange);
         a33 = 1 / (closeRange - longRange);
         a34 = 0;
-
     }
 
     friend std::ostream &operator<<(std::ostream &out, const ProjectionTransform &vec) {

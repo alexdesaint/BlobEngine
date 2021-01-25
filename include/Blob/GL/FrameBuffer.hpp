@@ -55,7 +55,7 @@ public:
 
     void attachTexture(const Texture &t, Attachment attachment) const;
     void drawBuffer(Attachment attachment) const;
-    void drawBuffer(const std::vector<Attachment>& attachments) const;
+    void drawBuffer(const std::vector<Attachment> &attachments) const;
     void readBuffer(Attachment attachment) const;
 };
 } // namespace Blob::GL

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Blob/glTF2/Mesh.hpp>
 #include <Blob/Core/Shape.hpp>
+#include <Blob/glTF2/Mesh.hpp>
 #include <iostream>
 #include <nlohmann/json.hpp>
 

@@ -106,16 +106,17 @@ Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLm
     // general settings
 
     // cull
-    glFrontFace(GL_CCW);
-    glCullFace(GL_BACK);
     glEnable(GL_CULL_FACE);
+    //    glCullFace(GL_FRONT);
+    //    glFrontFace(GL_CCW);
 
     glDisable(GL_SCISSOR_TEST);
 
-    // for Reverse Depth
-    glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-    glClearDepth(1.0f);
-    glDepthFunc(GL_LESS);
+    // The default : depth
+    //    glClipControl(GL_LOWER_LEFT, GL_NEGATIVE_ONE_TO_ONE);
+    //    glClearDepth(1.0f);
+    //    glDepthFunc(GL_LESS);
+    //    glEnable(GL_DEPTH_CLAMP);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -148,7 +149,7 @@ void Window::setViewport(const Maths::Vec2<unsigned int> &framebufferSize) const
     glViewport(0, 0, framebufferSize.x, framebufferSize.y);
 }
 
-float Window::readPixel(const Maths::Vec2<unsigned int> &pos) const {
+float Window::readPixel(const Maths::Vec2<int> &pos) const {
     float z;
 
     glReadPixels(pos.x, pos.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);

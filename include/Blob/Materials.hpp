@@ -15,6 +15,18 @@ public:
     explicit SingleColor(Color::RGB albedo);
 };
 
+class SingleColorTransparent : public Core::Material {
+private:
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+
+public:
+    Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
+
+    SingleColorTransparent() = default;
+    explicit SingleColorTransparent(Color::RGBA albedo);
+    explicit SingleColorTransparent(Color::RGB albedo, float alpha = 1.f);
+};
+
 class SingleTexture : public Core::Material {
 private:
     const Core::Texture *texture;
@@ -29,7 +41,7 @@ public:
     void setTexture1(const Core::Texture *texture);
 };
 
-class PerFaceNormal  : public Core::Material {
+class PerFaceNormal : public Core::Material {
 private:
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 

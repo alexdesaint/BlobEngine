@@ -6,7 +6,6 @@
 #include <Blob/Core/Mesh.hpp>
 #include <Blob/Core/Scene.hpp>
 #include <Blob/Core/Shape.hpp>
-#include <Blob/GL/Window.hpp>
 #include <Blob/GL/FrameBuffer.hpp>
 #include <Blob/ImGui.hpp>
 #include <Blob/Time.hpp>
@@ -45,11 +44,12 @@ private:
 
 public:
     Keyboard keyboard;
+    Mouse mouse;
     static float timeFlow;
+    using GLFW::Window::close;
+    using GLFW::Window::isOpen;
     using GLFW::Window::totalTimeFlow;
     using GLFW::Window::windowSize;
-    using GLFW::Window::isOpen;
-    using GLFW::Window::close;
 
     explicit Window(Camera &camera, Maths::Vec2<unsigned int> size = {640, 480});
 
@@ -62,7 +62,6 @@ public:
     void drawTransparent(const Shape &shape, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
     void draw(const Scene &scene, const Maths::Mat4 &sceneModel) const;
     void draw(const Scene &scene) const;
-
 
     void setCamera(Camera &camera);
 
