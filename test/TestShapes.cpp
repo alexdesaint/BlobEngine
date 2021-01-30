@@ -112,18 +112,18 @@ class Test : private Core::KeyboardEvents {
 private:
     Maths::Vec2<> speed, anglePos;
 
-    void keyboardUpdate(const Core::Keyboard &keyboard) final {
+    void keyboardUpdate(const Core::Key &keyboard) final {
         static const float maxSpeed = 1;
 
         speed = Maths::Vec2<>();
 
-        if (keyboard.LEFT)
+        if (keyboard.id == GLFW::Keys::LEFT)
             speed.x = -maxSpeed;
-        if (keyboard.RIGHT)
+        if (keyboard.id == GLFW::Keys::RIGHT)
             speed.x = maxSpeed;
-        if (keyboard.UP)
+        if (keyboard.id == GLFW::Keys::UP)
             speed.y = -maxSpeed;
-        if (keyboard.DOWN)
+        if (keyboard.id == GLFW::Keys::DOWN)
             speed.y = maxSpeed;
     }
 
@@ -140,16 +140,14 @@ public:
             AssetManager a;
 
             Shapes::Cube cube;
+            cube.setPosition({2, 0, 0});
             Shapes::Plane plane;
             Shapes::OctagonalPrism octagonalPrism;
+            octagonalPrism.setPosition({-2, 0, 0});
 
-            Core::Shape shape0{cube, {2, 0, 0}};
-            Core::Shape shape1{plane};
-            Core::Shape shape2{octagonalPrism, {-2, 0, 0}};
+            Core::Scene scene{{&cube, &plane, &octagonalPrism}};
 
-            Core::Scene scene{{&shape0, &shape1, &shape2}};
-
-            window.setInfinitRange(0.1);
+            window.setRange(0.1, 100);
 
             float flow = 0;
             while (window.isOpen()) {

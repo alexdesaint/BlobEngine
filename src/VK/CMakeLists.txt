@@ -1,20 +1,23 @@
 add_library(BlobVK STATIC
-        Window.cpp
-        model.cpp
+        Buffer.cpp
+        CommandBuffer.cpp
+        CommandPool.cpp
+        DescriptorSetLayout.cpp
         Device.cpp
+        DeviceMemory.cpp
+        Framebuffer.cpp
         Image.cpp
         ImageView.cpp
-        Framebuffer.cpp
-        RenderPass.cpp
-        DescriptorSetLayout.cpp
-        PipelineLayout.cpp
+        Instance.cpp
+        model.cpp
+        PhysicalDevice.cpp
         Pipeline.cpp
-        CommandPool.cpp
-        DeviceMemory.cpp
-        CommandBuffer.cpp
+        PipelineLayout.cpp
+        QueueFamily.cpp
+        RenderPass.cpp
         Semaphore.cpp
         Swapchain.cpp
-        Buffer.cpp)
+        Window.cpp)
 
 target_link_libraries(BlobVK Blob::GLFW Vulkan::Vulkan)
 target_include_directories(BlobVK PUBLIC ${INCLUDE_FOLDER})

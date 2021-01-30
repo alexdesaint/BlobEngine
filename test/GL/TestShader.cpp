@@ -93,24 +93,19 @@ int main() {
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (void *) (sizeof(float) * 2));
 
     while (!glfwWindowShouldClose(window)) {
-        float ratio;
         int width, height;
 
-        // Maths::Mat4 m(1), p;
         Maths::ProjectionTransform p;
 
         glfwGetFramebufferSize(window, &width, &height);
-        ratio = width / (float) height;
 
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT);
 
         Maths::ModelTransform m;
         m.rotate((float) glfwGetTime(), {0, 0, 1});
-        // m = glm::rotate(m, (float) glfwGetTime(), glm::vec3(0, 0, 1));
 
-        p.setOrthoProjection(-1.f, 1.f, 1.f, -1.f, -ratio, ratio);
-        // p = glm::ortho(-1.f, 1.f, 1.f, -1.f, -ratio, ratio);
+        p.setOrthoProjection(2);
 
         Maths::Mat4 mvp = m * p;
         glUseProgram(sp.program);

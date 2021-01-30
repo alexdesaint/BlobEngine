@@ -3,6 +3,7 @@ add_subdirectory(VK)
 add_subdirectory(glTF2)
 add_subdirectory(Reader)
 add_subdirectory(Core)
+add_subdirectory(Collision)
 
 add_library(BlobMaths INTERFACE)
 add_library(Blob::Maths ALIAS BlobMaths)

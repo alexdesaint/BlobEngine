@@ -1,6 +1,4 @@
 #include <glad/glad.h>
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
 
 #include <Blob/GL/Material.hpp>
 #include <Blob/GL/Shader.hpp>
@@ -44,37 +42,11 @@ static const char *fragment_shader_text = "#version 110\n"
                                           "    gl_FragColor = vec4(color, 1.0);\n"
                                           "}\n";
 
-static void error_callback(int error, const char *description) {
-    fprintf(stderr, "Error: %s\n", description);
-}
-
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
-
 int main() {
-    int width = 640, height = 480;
+    unsigned int width = 640, height = 480;
 
-    glfwSetErrorCallback(error_callback);
-
-    if (!glfwInit())
-        exit(EXIT_FAILURE);
-
-    GLFWwindow *glfWwindow = glfwCreateWindow(width, height, "Test Blob GL", NULL, NULL);
-    if (!glfWwindow) {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-
-    glfwSetKeyCallback(glfWwindow, key_callback);
-
-    glfwMakeContextCurrent(glfWwindow);
-
-    Window window{(void *) glfwGetProcAddress, {width, height}};
+    Window window{{width, height}};
     Material material;
-
-    glfwSwapInterval(1);
 
     GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
@@ -99,17 +71,15 @@ int main() {
     // unsigned short indices[] = {2, 1, 0, 1, 2, 3};
     unsigned short indices[] = {0, 1, 2, 3, 2, 1};
 
-    while (!glfwWindowShouldClose(glfWwindow)) {
+    while (window.isOpen()) {
 
-        glfwGetFramebufferSize(glfWwindow, &width, &height);
-
-        pt.setRatio({width, height});
+        pt.setRatio(width/((float)height));
 
         window.setViewport({width, height});
 
         window.clear();
 
-        mt.setRotation((float) glfwGetTime(), {0, 0, 1});
+        mt.setRotation(window.totalTimeFlow, {0, 0, 1});
 
         material.setShader(sp);
         window.setVAO(vao);
@@ -118,12 +88,7 @@ int main() {
         material.setUniform(mt, model);
         window.drawIndex(indices, 6, GL_UNSIGNED_SHORT);
 
-        glfwSwapBuffers(glfWwindow);
-        glfwPollEvents();
+        window.swapBuffers();
+        window.updateInputs();
     }
-
-    glfwDestroyWindow(glfWwindow);
-
-    glfwTerminate();
-    exit(EXIT_SUCCESS);
 }

@@ -1,10 +1,10 @@
+#include <glad/glad.h>
 #include <Blob/GLFW.hpp>
 
-#include <Blob/GL/Material.hpp>
 #include <Blob/GL/Shader.hpp>
-#include <Blob/GL/Window.hpp>
-
-#include <Blob/Core/Exception.hpp>
+#include <Blob/Maths.inl>
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 
 using namespace Blob;
@@ -13,94 +13,75 @@ using namespace GLFW;
 static const struct {
     float x, y;
     float r, g, b;
-} vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f}, {0.5f, -0.5f, 0.f, 1.f, 1.f}, {-0.5f, 0.5f, 1.f, 0.f, 1.f}, {0.5f, 0.5f, 0.f, 0.f, 1.f}};
+} vertices[3] = {{-0.6f, -0.4f, 1.f, 0.f, 0.f}, {0.6f, -0.4f, 0.f, 1.f, 0.f}, {0.f, 0.6f, 0.f, 0.f, 1.f}};
 
-static const char *vertex_shader_text = R"=====(
-#version 450
+static std::string vertex_shader_text = "#version 110\n"
+                                        "uniform mat4 MVP;"
+                                        "attribute vec3 vCol;"
+                                        "attribute vec2 vPos;"
+                                        "varying vec3 color;"
+                                        "void main()"
+                                        "{"
+                                        "    gl_Position = MVP * vec4(vPos, 0.0, 1.0);"
+                                        "    color = vCol;"
+                                        "}";
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+static std::string fragment_shader_text = "#version 110\n"
+                                          "varying vec3 color;"
+                                          "void main()"
+                                          "{"
+                                          "    gl_FragColor = vec4(color, 1.0);"
+                                          "}";
 
-attribute vec3 vCol;
-attribute vec2 vPos;
-
-varying vec3 color;
-
-void main() {
-    gl_Position = projection * view * model * vec4(vPos, 0.0, 1.0);
-    color = vCol;
-}
-)=====";
-
-static const char *fragment_shader_text = R"=====(
-#version 450
-
-varying vec3 color;
-out vec4 FragColor;
-void main()  {
-    FragColor = vec4(color, 1.0);
-}
-)=====";
 int main() {
-    int width = 680, height = 480;
-    Window window(false, {width, height}, GL::Window::GLmajor, GL::Window::GLminor);
-    auto glContext = GL::Window((void *) Window::getProcAddress, {width, height});
+    Window window({400, 400}, 3, 0);
 
-    try {
-        GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
+    if (!gladLoadGLLoader((GLADloadproc) Window::getProcAddress)) {}
+    GLuint vertex_buffer;
+    GLint mvp_location, vpos_location, vcol_location;
 
-        GL::Shader sp;
-        sp.addVertexShader(vertex_shader_text);
-        sp.addFragmentShader(fragment_shader_text);
-        sp.linkShaders();
+    glGenBuffers(1, &vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        GL::Material material;
+    Blob::GL::Shader sp;
 
-        GL::VertexArrayObject vao;
-        vao.setBuffer(vbo, sizeof(vertices[0]));
-        vao.setArray<float>(2, sp.getAttribLocation("vPos"), 0);
-        vao.setArray<float>(3, sp.getAttribLocation("vCol"), sizeof(float) * 2);
+    sp.addVertexShader(vertex_shader_text);
+    sp.addFragmentShader(fragment_shader_text);
+    sp.linkShaders();
 
-        Maths::ProjectionTransform pt(PI / 4, {width, height}, 0.1, 10);
-        Maths::ViewTransform vt;
-        Maths::ModelTransform mt;
+    if (sp.isValid())
+        std::cout << "Valid !!!" << std::endl;
+    else
+        std::cout << "Not valid..." << std::endl;
 
-        int model = sp.getUniformLocation("model");
-        int view = sp.getUniformLocation("view");
-        int projection = sp.getUniformLocation("projection");
+    // loc
+    mvp_location = sp.getUniformLocation("MVP");  // glGetUniformLocation(program, "MVP");
+    vpos_location = sp.getAttribLocation("vPos"); // glGetAttribLocation(program, "vPos");
+    vcol_location = sp.getAttribLocation("vCol"); // glGetAttribLocation(program, "vCol");
 
-        unsigned short indices[] = {0, 1, 2, 3, 2, 1};
+    glEnableVertexAttribArray(vpos_location);
+    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (void *) 0);
+    glEnableVertexAttribArray(vcol_location);
+    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (void *) (sizeof(float) * 2));
 
-        while (window.isOpen()) {
-            auto fbs = window.getFrameBufferSize();
+    while (window.isOpen()) {
+        Maths::ProjectionTransform p;
 
-            if (fbs != Maths::Vec2<int>(width, height)) {
-                width = fbs.x;
-                height = fbs.y;
-                glContext.setViewport({width, height});
-            }
+        glViewport(0, 0, window.framebufferSize.x, window.framebufferSize.y);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-            pt.setRatio({width, height});
+        Maths::ModelTransform m;
+        m.rotate((float) window.totalTimeFlow, {0, 0, 1});
 
-            glContext.setViewport({width, height});
+        p.setOrthoProjection(2);
 
-            glContext.clear();
+        Maths::Mat4 mvp = m * p;
+        glUseProgram(sp.program);
+        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, &mvp.a11);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
-            float mod = fmod((float) Window::getTime(), 1);
-            mt.setRotation((float) Window::getTime(), {0, 0, 1});
-            // mt.setPosition({0, mod, 0});
-            // mt.setScale({2, 1, 1});
-            material.setShader(sp);
-            glContext.setVAO(vao);
-            material.setUniform(pt, projection);
-            material.setUniform(vt, view);
-            material.setUniform(mt, model);
-            glContext.drawIndex<unsigned short>(indices, 6);
-
-            window.swapBuffers();
-            Window::updateInputs();
-        }
-
-    } catch (Blob::Core::Exception &ex) { std::cout << ex.what(); }
+        window.swapBuffers();
+        Window::updateInputs();
+    }
 }

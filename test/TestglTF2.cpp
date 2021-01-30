@@ -127,7 +127,7 @@ struct Primitives {
         };
         Blob::Core::RenderOptions renderOptions;
         Mesh0(const Blob::Core::Buffer &buffer, const Materials &materials)
-            : primitive0(attribute0, materials.defaultM, renderOptions) {
+            : primitive0(&attribute0, &materials.defaultM, &renderOptions) {
             renderOptions.setIndices(indicesArray0.data(), 36, 5123);
             addPrimitive(primitive0);
             attribute0.setBuffer(buffer, 48, 0);
@@ -145,7 +145,7 @@ struct Primitives {
         };
         Blob::Core::RenderOptions renderOptions;
         Mesh1(const Blob::Core::Buffer &buffer, const Materials &materials)
-            : primitive0(attribute0, materials.defaultM, renderOptions) {
+            : primitive0(&attribute0, &materials.defaultM, &renderOptions) {
             renderOptions.setIndices(indicesArray0.data(), 6, 5123);
             addPrimitive(primitive0);
             attribute0.setBuffer(buffer, 48, 1152);
@@ -167,7 +167,7 @@ struct Primitives {
         };
         Blob::Core::RenderOptions renderOptions;
         Mesh2(const Blob::Core::Buffer &buffer, const Materials &materials)
-            : primitive0(attribute0, materials.defaultM, renderOptions) {
+            : primitive0(&attribute0, &materials.defaultM, &renderOptions) {
             renderOptions.setIndices(indicesArray0.data(), 84, 5123);
             addPrimitive(primitive0);
             attribute0.setBuffer(buffer, 32, 1344);
@@ -200,18 +200,18 @@ class test : private Core::KeyboardEvents {
 private:
     Maths::Vec2<> speed;
 
-    void keyboardUpdate(const Core::Keyboard &keyboard) final {
+    void keyboardUpdate(const Core::Key &keyboard) final {
         static const float maxSpeed = 1;
 
         speed = Maths::Vec2<>();
 
-        if (keyboard.LEFT)
+        if (keyboard.id == Blob::GLFW::Keys::LEFT)
             speed.y = maxSpeed;
-        if (keyboard.RIGHT)
+        if (keyboard.id == Blob::GLFW::Keys::RIGHT)
             speed.y = -maxSpeed;
-        if (keyboard.UP)
+        if (keyboard.id == Blob::GLFW::Keys::UP)
             speed.x = maxSpeed;
-        if (keyboard.DOWN)
+        if (keyboard.id == Blob::GLFW::Keys::DOWN)
             speed.x = -maxSpeed;
     }
 
@@ -231,7 +231,7 @@ public:
 
             Core::Scene &mainScene = sm.scenes.front();
 
-            window.setInfinitRange(0.1);
+            window.setRange(0.1, 1000);
 
             float flow = 0;
             while (window.isOpen()) {
@@ -255,7 +255,7 @@ public:
 
             AssetManager a;
 
-            window.setInfinitRange(0.1);
+            window.setRange(0.1, 1000);
 
             T t;
 

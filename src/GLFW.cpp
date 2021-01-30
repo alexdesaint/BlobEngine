@@ -138,12 +138,12 @@ const int Keys::RIGHT_SUPER = GLFW_KEY_RIGHT_SUPER;
 const int Keys::MENU = GLFW_KEY_MENU;
 
 const size_t Window::joystickCount = GLFW_JOYSTICK_LAST + 1;
-bool Window::joystickConnected[GLFW_JOYSTICK_LAST];
-const char *Window::joystickName[GLFW_JOYSTICK_LAST];
-int Window::joystickButtonsCount[GLFW_JOYSTICK_LAST];
-const unsigned char *Window::joystickButtons[GLFW_JOYSTICK_LAST];
-int Window::joystickAxesCount[GLFW_JOYSTICK_LAST];
-const float *Window::joystickAxes[GLFW_JOYSTICK_LAST];
+bool Window::joystickConnected[joystickCount];
+const char *Window::joystickName[joystickCount];
+int Window::joystickButtonsCount[joystickCount];
+const unsigned char *Window::joystickButtons[joystickCount];
+int Window::joystickAxesCount[joystickCount];
+const float *Window::joystickAxes[joystickCount];
 
 double Window::totalTimeFlow = 0;
 
@@ -158,7 +158,7 @@ Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLm
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLmajor);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLminor);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
     glfwWindowHint(GLFW_SAMPLES, 8);

@@ -6,9 +6,6 @@ target_link_libraries(TestglTF2 Blob Blob::glTF2)
 add_executable(TestImGUI TestImGUI.cpp)
 target_link_libraries(TestImGUI Blob)# -static -static-libgcc -static-libstdc++ -lpthread)
 
-add_executable(Testentt Testentt.cpp)
-target_link_libraries(Testentt libs)
-
 add_executable(TestWindowCore TestWindowCore.cpp)
 target_link_libraries(TestWindowCore Blob)
 
@@ -27,3 +24,4 @@ target_link_libraries(TestShaders Blob)
 add_subdirectory(GL)
 add_subdirectory(VK)
 add_subdirectory(Maths)
+add_subdirectory(Collision)

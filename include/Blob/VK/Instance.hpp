@@ -2,13 +2,14 @@
 
 // vk
 #include <vulkan/vulkan.h>
+#include <Blob/GLFW.hpp>
 
 // std
 #include <ostream>
 #include <vector>
 
 namespace Blob::VK {
-
+/*
 class Instance {
 private:
     VkInstance instance;
@@ -47,4 +48,21 @@ public:
 
     const std::vector<VkExtensionProperties> &getExtensions() const;
 };
+ */
+
+    class Instance {
+    public:
+        VkInstance instance;
+
+        VkDebugReportCallbackEXT debugReportCallbackEXT;
+
+        explicit Instance(const Blob::GLFW::Window &window);
+
+        ~Instance();
+
+        static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj,
+                                                            size_t location, int32_t code, const char *layerPrefix, const char *msg, void *userData);
+
+        bool checkValidationLayerSupport();
+    };
 } // namespace Blob::VK

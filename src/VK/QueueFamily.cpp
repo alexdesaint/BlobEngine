@@ -3,10 +3,10 @@
 namespace Blob::VK {
 QueueFamily::QueueFamily(Blob::VK::PhysicalDevice &physicalDevice) : physicalDevice(physicalDevice) {
     uint32_t queueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice.getPhysicalDevice(), &queueFamilyCount, nullptr);
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice.physicalDevice, &queueFamilyCount, nullptr);
 
     queueFamilies.resize(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice.getPhysicalDevice(), &queueFamilyCount, queueFamilies.data());
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice.physicalDevice, &queueFamilyCount, queueFamilies.data());
 }
 
 std::ostream &operator<<(std::ostream &os, const QueueFamily &p) {

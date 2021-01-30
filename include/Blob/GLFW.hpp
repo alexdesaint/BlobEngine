@@ -158,7 +158,7 @@ private:
     Maths::Vec2<unsigned int> windowSizeData;
     Maths::Vec2<unsigned int> framebufferSizeData;
     Maths::Vec2<float> contentScaleData;
-    bool fullScreenData;
+    bool fullScreenData = false;
 
     void initInputs();
 
@@ -212,7 +212,7 @@ public:
     static double totalTimeFlow;
 
     Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor);
-    Window(const Maths::Vec2<unsigned int> &windowSize);
+    explicit Window(const Maths::Vec2<unsigned int> &windowSize);
 
     ~Window();
 

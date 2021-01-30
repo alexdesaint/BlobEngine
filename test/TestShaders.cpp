@@ -14,7 +14,7 @@ int main() {
 
         Camera camera;
 
-        Window window(camera, false);
+        Window window(camera);
         AssetManager assetManager;
 
         Materials::PBRSingleColor blue, orange, white;
@@ -22,17 +22,27 @@ int main() {
         orange.albedo = Color::Coral;
         white.albedo = Color::White;
 
+        Core::Scene scene;
         Shapes::Cube cubeOrange(orange), cubeBlue(blue), cubeDm(orange);
-        Shapes::OctagonalPrism opOrange(orange), opBlue(blue);
+        scene.addShape(cubeOrange);
+        cubeOrange.setPosition({4, 4});
+        scene.addShape(cubeBlue);
+        cubeBlue.setPosition({4, 0});
+        scene.addShape(cubeDm);
+        cubeDm.setPosition({4, -4});
+        Shapes::OctagonalPrism opOrange(orange), opBlue(blue), opDm(orange);
+        scene.addShape(opOrange);
+        opOrange.setPosition({-4, 4});
+        scene.addShape(opBlue);
+        opBlue.setPosition({-4, 0});
+        scene.addShape(opDm);
+        opDm.setPosition({-4, -4});
+        
         Shapes::Plane p(white);
-
-        std::vector<Shape> shapes = {
-            Shape(cubeOrange, {4, 0}),       Shape(cubeBlue, {4, 4, 0}),   Shape(opOrange, {0, 4, 0}),  Shape(opBlue, {-4, 4, 0}),
-            Shape(cubeDm, {-4, 0, 0}),       Shape(cubeBlue, {-4, -4, 0}), Shape(opOrange, {0, -4, 0}), Shape(opBlue, {4, -4, 0}),
-
-            Shape(p, {0, 0, -1}, {5, 5, 5}),
-        };
-
+        p.setPosition({0, 0, -1});
+        p.setScale({5, 5, 5});
+        scene.addShape(p);
+        
         camera.setPosition({10, 0, 10});
 
         Time::TimePoint start = Time::now();
@@ -53,8 +63,7 @@ int main() {
             ImGui::SliderFloat3("Light Position", &Materials::PBR::light.position.x, -1.0f, 1.0f);
             ImGui::End();
 
-            for (const auto &s : shapes)
-                window.draw(s);
+            window.draw(scene);
 
             window.display();
         }

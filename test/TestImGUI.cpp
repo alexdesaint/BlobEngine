@@ -95,15 +95,16 @@ int main() {
     vao.setArray(3, sp.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
 
     Core::RenderOptions ro;
-    ro.indexed = true;
+//     ro.indexed = true;
     unsigned short indices[] = {2, 1, 0, 1, 2, 3};
-    ro.indices = indices;
-    ro.numOfIndices = 6;
-    ro.indicesType = GL_UNSIGNED_SHORT;
+    ro.setIndices(indices, 6);
+//     ro.indices = indices;
+//     ro.numOfIndices = 6;
+//     ro.indicesType = GL_UNSIGNED_SHORT;
 
     SimpleMaterial material(sp);
 
-    Core::Primitive primitive(vao, material, ro);
+    Core::Primitive primitive(&vao, &material, &ro);
 
     bool show_demo_window = true;
     bool show_another_window = false;

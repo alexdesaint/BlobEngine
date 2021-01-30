@@ -1,6 +1,6 @@
 #include <Blob/VK/Instance.hpp>
 
-#include <Blob/Exception.hpp>
+#include <Blob/VK/Exception.hpp>
 
 #include <iostream>
 
@@ -9,9 +9,10 @@ using namespace Blob::VK;
 
 int main() {
     try {
-        Blob::VK::Instance instance;
+        Blob::GLFW::Window window({400, 400});
+        Blob::VK::Instance instance(window);
 
-        std::cout << instance;
+        //std::cout << instance;
 
     } catch (Exception &e) {
         std::cout << e.what() << std::endl;

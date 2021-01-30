@@ -93,14 +93,14 @@ int main() {
 
         RenderOptions ro;
         ro.setIndices(indices, 6);
-        Core::Primitive primitive(vao, material, ro);
+        Core::Primitive primitive(&vao, &material, &ro);
         Core::Mesh mesh;
         mesh.addPrimitive(primitive);
         Core::Shape shape(mesh);
 
         while (window.isOpen()) {
 
-            shape.setRotation((float) Core::Window::getTime(), {0, 0, 1});
+            shape.setRotation((float) Core::Window::timeFlow, {0, 0, 1});
             window.draw(shape);
 
             window.display();

@@ -14,7 +14,7 @@ public:
     static const int GLmajor = 4;
     static const int GLminor = 5;
 
-    Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor);
+    Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor = Window::GLmajor, int GLminor = Window::GLminor);
     ~Window();
 
     void setVAO(const VertexArrayObject &vao) const;
