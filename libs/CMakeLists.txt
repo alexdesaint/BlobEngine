@@ -1,17 +1,20 @@
-#glad
+# glad
 add_subdirectory(glad)
 
-#glad
+# Vulkan
 add_subdirectory(Vulkan-Headers)
 add_subdirectory(Vulkan-Loader)
 
-#glfw
+# glfw
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(glfw)
+
+# SDL
+add_subdirectory(SDL)
 
 #imgui
 file(GLOB IMGUIFILES "imgui/*.cpp")

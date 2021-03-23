@@ -4,7 +4,10 @@ add_executable(TestglTF2 TestglTF2.cpp)
 target_link_libraries(TestglTF2 Blob Blob::glTF2)
 
 add_executable(TestImGUI TestImGUI.cpp)
-target_link_libraries(TestImGUI Blob)# -static -static-libgcc -static-libstdc++ -lpthread)
+target_link_libraries(TestImGUI Blob)
+
+add_executable(TestSDL TestSDL.cpp)
+target_link_libraries(TestSDL mingw32 SDL2::SDL2main SDL2::SDL2-static)
 
 add_executable(TestWindowCore TestWindowCore.cpp)
 target_link_libraries(TestWindowCore Blob)
@@ -17,9 +20,6 @@ target_link_libraries(TestShapes Blob)
 
 add_executable(TestShaders TestShaders.cpp)
 target_link_libraries(TestShaders Blob)
-
-#STATIC : -lmingw32 SDL2main SDL2-static
-#STATIC : -mwindows -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
 
 add_subdirectory(GL)
 add_subdirectory(VK)

@@ -30,7 +30,7 @@ public:
 
     Point(const Point &v) = default;
 
-    explicit Point(const Maths::Vec2<float> &v) : Maths::Vec2<float>(v) {}
+    Point(const Maths::Vec2<float> &v) : Maths::Vec2<float>(v) {}
 
     [[nodiscard]] bool overlap(const Rectangle &rectangle) const;
 

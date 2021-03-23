@@ -1,266 +1,332 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
+#include <SDL.h>
 #include <list>
 
 #include <Blob/Collision/CollisionDetector.hpp>
+#include <Blob/Color.hpp>
 
 using namespace Blob;
 
-class Circle : public Collision::Collider<Collision::Circle>, public sf::CircleShape {
+class CircleShape {
+public:
+    float rayon;
+    Collision::Point position;
+    Color::RGB color;
+
+    CircleShape(float rayon, const Collision::Point &position, Color::RGB color = Color::White) : rayon(rayon), position(position), color(color) {}
+};
+
+class RectangleShape {
+public:
+    Collision::Point position, size;
+    Color::RGB color;
+
+    RectangleShape(const Collision::Point &size, const Collision::Point &position, Color::RGB color = Color::White) :
+        position(position), size(size), color(color) {}
+};
+
+class LineShape {
+public:
+    Collision::Point position1, position2;
+    Color::RGB color;
+
+    LineShape(const Collision::Point &position1, const Collision::Point &position2, Color::RGB color = Color::White) :
+        position1(position1), position2(position2), color(color) {}
+};
+
+class Window {
+private:
+    SDL_Window *window = nullptr;
+    SDL_Surface *screenSurface = nullptr;
+    SDL_Renderer *renderer = nullptr;
+    int64_t NOW = SDL_GetPerformanceCounter();
+    int64_t LAST = 0;
+
+public:
+    Window() {
+        window = SDL_CreateWindow("hello_sdl2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1000, 1000, SDL_WINDOW_SHOWN);
+        if (window == nullptr) {
+            fprintf(stderr, "could not create window: %s\n", SDL_GetError());
+            return;
+        }
+        screenSurface = SDL_GetWindowSurface(window);
+        if (screenSurface == nullptr) {
+            fprintf(stderr, "could not create screenSurface: %s\n", SDL_GetError());
+            return;
+        }
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    }
+
+    void draw(const RectangleShape &rectangleShape) {
+        SDL_SetRenderDrawColor(renderer, rectangleShape.color.R * 255, rectangleShape.color.G * 255, rectangleShape.color.B * 255, 255);
+        SDL_Rect rect{(int) (rectangleShape.position.x - rectangleShape.size.x / 2), (int) (rectangleShape.position.y - rectangleShape.size.y / 2),
+                      (int) rectangleShape.size.x, (int) rectangleShape.size.y};
+        SDL_RenderFillRect(renderer, &rect);
+    }
+
+    void draw(const LineShape &lineShape) {
+        SDL_SetRenderDrawColor(renderer, lineShape.color.R * 255, lineShape.color.G * 255, lineShape.color.B * 255, 255);
+        SDL_RenderDrawLine(renderer, lineShape.position1.x, lineShape.position1.y, lineShape.position2.x, lineShape.position2.y);
+    }
+
+    void draw(const CircleShape &circleShape) {
+        SDL_SetRenderDrawColor(renderer, circleShape.color.R * 255, circleShape.color.G * 255, circleShape.color.B * 255, 255);
+        int offsetx, offsety, d;
+        int status;
+
+        offsetx = 0;
+        offsety = circleShape.rayon;
+        d = circleShape.rayon - 1;
+        status = 0;
+
+        while (offsety >= offsetx) {
+
+            status += SDL_RenderDrawLine(renderer, circleShape.position.x - offsety, circleShape.position.y + offsetx,
+                                         circleShape.position.x + offsety, circleShape.position.y + offsetx);
+            status += SDL_RenderDrawLine(renderer, circleShape.position.x - offsetx, circleShape.position.y + offsety,
+                                         circleShape.position.x + offsetx, circleShape.position.y + offsety);
+            status += SDL_RenderDrawLine(renderer, circleShape.position.x - offsetx, circleShape.position.y - offsety,
+                                         circleShape.position.x + offsetx, circleShape.position.y - offsety);
+            status += SDL_RenderDrawLine(renderer, circleShape.position.x - offsety, circleShape.position.y - offsetx,
+                                         circleShape.position.x + offsety, circleShape.position.y - offsetx);
+
+            if (status < 0) {
+                status = -1;
+                break;
+            }
+
+            if (d >= 2 * offsetx) {
+                d -= 2 * offsetx + 1;
+                offsetx += 1;
+            } else if (d < 2 * (circleShape.rayon - offsety)) {
+                d += 2 * offsety - 1;
+                offsety -= 1;
+            } else {
+                d += 2 * (offsety - offsetx - 1);
+                offsety -= 1;
+                offsetx += 1;
+            }
+        }
+    }
+
+    void setTitle(const char *title) { SDL_SetWindowTitle(window, title); }
+
+    void display() { SDL_RenderPresent(renderer); }
+
+    float getFrameTime() {
+        LAST = NOW;
+        NOW = SDL_GetPerformanceCounter();
+        return ((NOW - LAST) * 1000.f / (float) SDL_GetPerformanceFrequency());
+    }
+
+    void clear() {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+    }
+};
+
+class Circle : public Collision::Collider<Collision::Circle>, public CircleShape {
 public:
     Collision::Circle circle;
 
-    Circle(Collision::Point position, float rayon) : Collision::Collider<Collision::Circle>(typeid(Circle), circle),
-                                                     circle(position, rayon), sf::CircleShape(rayon) {
-        sf::CircleShape::setPosition(position.x, position.y);
-        setOrigin(rayon, rayon);
-    }
+    Circle(const Collision::Point &position, float rayon) :
+        Collision::Collider<Collision::Circle>(typeid(Circle), circle), circle(position, rayon), CircleShape(rayon, position) {}
 
-    void setPosition(Collision::Point p) {
-        sf::CircleShape::setPosition(p.x, p.y);
+    void setPosition(const Collision::Point &p) {
+        position = p;
         circle.position = p;
     }
 };
 
-class CircleCursor : public Collision::DynamicCollider<Collision::Circle>, public sf::CircleShape {
+class CircleCursor : public Collision::DynamicCollider<Collision::Circle>, public CircleShape {
 public:
     Collision::Circle circle;
 
-    CircleCursor(Collision::Point position, float rayon) : Collision::DynamicCollider<Collision::Circle>(
-            typeid(CircleCursor), circle), circle(position, rayon), sf::CircleShape(rayon) {
-        sf::CircleShape::setPosition(position.x, position.y);
-        setOrigin(rayon, rayon);
-    }
+    CircleCursor(const Collision::Point &position, float rayon) :
+        Collision::DynamicCollider<Collision::Circle>(typeid(CircleCursor), circle), circle(position, rayon), CircleShape(rayon, position) {}
 
-    void setPosition(Collision::Point p) {
-        sf::CircleShape::setPosition(p.x, p.y);
+    void setPosition(const Collision::Point &p) {
+        position = p;
         circle.position = p;
     }
 
-    void hitStart(PhysicalObject *object) final {
-        setFillColor(sf::Color::Red);
-    }
+    void hitStart(PhysicalObject *object) final { color = Color::Red; }
 
-    void hitEnd(PhysicalObject *object) final {
-        setFillColor(sf::Color::Green);
-    }
+    void hitEnd(PhysicalObject *object) final { color = Color::Green; }
 };
 
-class Point : public Collision::Collider<Collision::Point>, public sf::CircleShape {
+class Point : public Collision::Collider<Collision::Point>, public CircleShape {
 public:
     Collision::Point point;
 
-    Point(Collision::Point position) : Collision::Collider<Collision::Point>(typeid(Point), point), point(position),
-                                       sf::CircleShape(0.2) {
-        sf::CircleShape::setPosition(position.x, position.y);
-        setOrigin(0.2, 0.2);
-    }
+    explicit Point(const Collision::Point &position) :
+        Collision::Collider<Collision::Point>(typeid(Point), point), point(position), CircleShape(2, position) {}
 
-    void setPosition(Collision::Point p) {
-        sf::CircleShape::setPosition(p.x, p.y);
+    void setPosition(const Collision::Point &p) {
+        position = p;
         point = p;
     }
 };
 
-class PointCursor : public Collision::DynamicCollider<Collision::Point>, public sf::CircleShape {
+class PointCursor : public Collision::DynamicCollider<Collision::Point>, public CircleShape {
 public:
     Collision::Point point;
 
-    PointCursor(Collision::Point position) : Collision::DynamicCollider<Collision::Point>(typeid(PointCursor), point),
-                                             point(position), sf::CircleShape(0.2) {
-        sf::CircleShape::setPosition(position.x, position.y);
-        setOrigin(0.2, 0.2);
-    }
+    explicit PointCursor(const Collision::Point &position) :
+        Collision::DynamicCollider<Collision::Point>(typeid(PointCursor), point), point(position), CircleShape(2, position) {}
 
-    void setPosition(Collision::Point p) {
-        sf::CircleShape::setPosition(p.x, p.y);
+    void setPosition(const Collision::Point &p) {
+        position = p;
         point = p;
     }
 
-    void hitStart(PhysicalObject *object) final {
-        setFillColor(sf::Color::Red);
-    }
+    void hitStart(PhysicalObject *object) final { color = Color::Red; }
 
-    void hitEnd(PhysicalObject *object) final {
-        setFillColor(sf::Color::Green);
-    }
+    void hitEnd(PhysicalObject *object) final { color = Color::Green; }
 };
 
-class Rectangle : public Collision::Collider<Collision::Rectangle>, public sf::RectangleShape {
+class Rectangle : public Collision::Collider<Collision::Rectangle>, public RectangleShape {
 public:
     Collision::Rectangle rectangle;
 
-    Rectangle(Collision::Point position, Collision::Point size, sf::Color fillColor = sf::Color::White) :
-            rectangle(position, size), Collision::Collider<Collision::Rectangle>(typeid(Rectangle), rectangle),
-            sf::RectangleShape({size.x, size.y}) {
-        sf::RectangleShape::setPosition(position.x, position.y);
-        setOrigin(size.x / 2, size.y / 2);
-        setFillColor(fillColor);
-    }
+    Rectangle(const Collision::Point &position, const Collision::Point &size, Color::RGB fillColor = Color::White) :
+        rectangle(position, size),
+        Collision::Collider<Collision::Rectangle>(typeid(Rectangle), rectangle),
+        RectangleShape(size, position, fillColor) {}
 
-    void setPosition(Collision::Point p) {
-        sf::RectangleShape::setPosition(p.x, p.y);
+    void setPosition(const Collision::Point &p) {
+        position = p;
         rectangle.position = p;
     }
 };
 
-class RectangleCursor : public Collision::DynamicCollider<Collision::Rectangle>, public sf::RectangleShape {
+class RectangleCursor : public Collision::DynamicCollider<Collision::Rectangle>, public RectangleShape {
 public:
     Collision::Rectangle rectangle;
 
-    RectangleCursor(Collision::Point position, Collision::Point size, sf::Color fillColor = sf::Color::White) :
-            rectangle(position, size),
-            Collision::DynamicCollider<Collision::Rectangle>(typeid(CircleCursor), rectangle),
-            sf::RectangleShape({size.x, size.y}) {
-        sf::RectangleShape::setPosition(position.x, position.y);
-        setOrigin(size.x / 2, size.y / 2);
-        setFillColor(fillColor);
-    }
+    RectangleCursor(const Collision::Point &position, const Collision::Point &size, Color::RGB fillColor = Color::White) :
+        rectangle(position, size),
+        Collision::DynamicCollider<Collision::Rectangle>(typeid(CircleCursor), rectangle),
+        RectangleShape(size, position, fillColor) {}
 
-    void setPosition(Collision::Point p) {
-        sf::RectangleShape::setPosition(p.x, p.y);
+    void setPosition(const Collision::Point &p) {
+        position = p;
         rectangle.position = p;
     }
 
-    void hitStart(PhysicalObject *object) final {
-        setFillColor(sf::Color::Red);
-    }
+    void hitStart(PhysicalObject *object) final { color = Color::Red; }
 
-    void hitEnd(PhysicalObject *object) final {
-        setFillColor(sf::Color::Green);
-    }
+    void hitEnd(PhysicalObject *object) final { color = Color::Green; }
 };
 
-class Line : public Collision::Collider<Collision::Line>, public sf::RectangleShape {
+class Line : public Collision::Collider<Collision::Line>, public LineShape {
 public:
     Collision::Line line;
 
-    Line(Collision::Point position1, Collision::Point position2) : line(position1, position2),
-                                                                   Collision::Collider<Collision::Line>(typeid(Line), line),
-                                                                   sf::RectangleShape(
-                                                                           {0.2, (position1 - position2).length()}) {
-        auto vector = position1 - position2;
-        auto position = (position1 + position2) / 2;
-        setOrigin(0.1, (position1 - position2).length() / 2);
-        sf::RectangleShape::setPosition(position.x, position.y);
-        sf::RectangleShape::setRotation(-std::atan2(vector.x, vector.y) * 180 / PI);
+    Line(Collision::Point position1, Collision::Point position2) :
+        line(position1, position2), Collision::Collider<Collision::Line>(typeid(Line), line), LineShape(position1, position2) {
     }
 
-    void setPosition(Collision::Point position1, Collision::Point position2) {
-        auto vector = position1 - position2;
-        auto position = (position1 + position2) / 2;
-        sf::RectangleShape::setPosition(position.x, position.y);
-        sf::RectangleShape::setRotation(-std::atan2(vector.x, vector.y) * 180 / PI);
-        sf::RectangleShape::setSize({0.2, (position1 - position2).length()});
-        setOrigin(0.1, (position1 - position2).length() / 2);
+    void setPosition(const Collision::Point &position1, const Collision::Point &position2) {
+        LineShape::position1 = position1;
+        LineShape::position2 = position2;
         line.positionA = position1;
         line.positionB = position2;
     }
 };
 
-class LineCursor : public Collision::DynamicCollider<Collision::Line>, public sf::RectangleShape {
+class LineCursor : public Collision::DynamicCollider<Collision::Line>, public LineShape {
 public:
     Collision::Line line;
 
-    LineCursor(Collision::Point position1, Collision::Point position2) : line(position1, position2),
-                                                                         Collision::DynamicCollider<Collision::Line>(typeid(LineCursor),
-                                                                                                                     line),
-                                                                         sf::RectangleShape(
-                                                                                 {0.2,
-                                                                                  (position1 - position2).length()}) {
-        auto vector = position1 - position2;
-        auto position = (position1 + position2) / 2;
-        setOrigin(0.1, (position1 - position2).length() / 2);
-        sf::RectangleShape::setPosition(position.x, position.y);
-        sf::RectangleShape::setRotation(-std::atan2(vector.x, vector.y) * 180 / PI);
+    LineCursor(Collision::Point position1, Collision::Point position2) :
+        line(position1, position2), Collision::DynamicCollider<Collision::Line>(typeid(LineCursor), line), LineShape(position1, position2) {
+        // auto vector = position1 - position2;
+        // setOrigin(0.1, (position1 - position2).length() / 2);
+        // sf::RectangleShape::setPosition(position.x, position.y);
+        // sf::RectangleShape::setRotation(-std::atan2(vector.x, vector.y) * 180 / PI);
     }
 
-    void setPosition(Collision::Point position1, Collision::Point position2) {
-        auto vector = position1 - position2;
-        auto position = (position1 + position2) / 2;
-        sf::RectangleShape::setPosition(position.x, position.y);
-        sf::RectangleShape::setRotation(-std::atan2(vector.x, vector.y) * 180 / PI);
-        sf::RectangleShape::setSize({0.2, (position1 - position2).length()});
-        setOrigin(0.1, (position1 - position2).length() / 2);
+    void setPosition(const Collision::Point &position1, const Collision::Point &position2) {
+        // auto vector = position1 - position2;
+        // auto position = (position1 + position2) / 2;
+        // sf::RectangleShape::setPosition(position.x, position.y);
+        // sf::RectangleShape::setRotation(-std::atan2(vector.x, vector.y) * 180 / PI);
+        // sf::RectangleShape::setSize({0.2, (position1 - position2).length()});
+        // setOrigin(0.1, (position1 - position2).length() / 2);
+        LineShape::position1 = position1;
+        LineShape::position2 = position2;
         line.positionA = position1;
         line.positionB = position2;
     }
 
-    void hitStart(PhysicalObject *object) final {
-        setFillColor(sf::Color::Red);
-    }
+    void hitStart(PhysicalObject *object) final { color = Color::Red; }
 
-    void hitEnd(PhysicalObject *object) final {
-        setFillColor(sf::Color::Green);
-    }
+    void hitEnd(PhysicalObject *object) final { color = Color::Green; }
 };
 
 class Game {
 private:
     unsigned int tick;
-    std::list<sf::Sprite *> ModelList;
-    sf::RenderWindow window;
-    sf::View view;
-    std::map<sf::Keyboard::Key, bool> KeysState;
-    sf::Clock clock;
+    // std::list<sf::Sprite *> ModelList;
+    Window window;
+    // sf::View view;
     std::list<Circle> circles;
     std::list<Rectangle> rectangles;
     std::list<Point> points;
     std::list<Line> lines;
 
 public:
-    Game() : view(sf::FloatRect(0.f, 0.f, 100.f, 100.f)), window(sf::VideoMode(1000, 1000), "SFML works!") {
+    Game() // :
+    // view(sf::FloatRect(0.f, 0.f, 100.f, 100.f)),
+    {
 
         Collision::CollisionDetector collisionDetector;
 
-        window.setKeyRepeatEnabled(false);
-        window.setVerticalSyncEnabled(true);
-        window.setView(view);
-
-        CircleCursor circleCursor(Collision::Point{0, 0}, 2);
+        CircleCursor circleCursor(Collision::Point{0, 0}, 20);
         collisionDetector.enableCollision(circleCursor);
-        RectangleCursor rectangleCursor({0, 0}, {4, 4});
+        RectangleCursor rectangleCursor({0, 0}, {40, 40});
         PointCursor pointCursor({0, 0});
-        LineCursor lineCursor({-2, 0}, {2, 0});
+        LineCursor lineCursor({-20, 0}, {20, 0});
 
-        circles.emplace_back(Collision::Point{20, 20}, 1);
-        circles.emplace_back(Collision::Point{40, 20}, 2);
-        circles.emplace_back(Collision::Point{60, 20}, 3);
-        circles.emplace_back(Collision::Point{80, 20}, 4);
+        circles.emplace_back(Collision::Point{200, 200}, 10);
+        circles.emplace_back(Collision::Point{400, 200}, 20);
+        circles.emplace_back(Collision::Point{600, 200}, 30);
+        circles.emplace_back(Collision::Point{800, 200}, 40);
 
         for (auto &c : circles)
             collisionDetector.enableCollision(c);
 
-        rectangles.emplace_back(Collision::Point{20.5, 40.5}, Collision::Point{2, 20});
-        rectangles.emplace_back(Collision::Point{40, 40}, Collision::Point{4, 4});
-        rectangles.emplace_back(Collision::Point{60, 40}, Collision::Point{10, 6});
-        rectangles.emplace_back(Collision::Point{80, 40}, Collision::Point{6, 10});
+        rectangles.emplace_back(Collision::Point{205, 405}, Collision::Point{20, 200});
+        rectangles.emplace_back(Collision::Point{400, 400}, Collision::Point{40, 40});
+        rectangles.emplace_back(Collision::Point{600, 400}, Collision::Point{100, 60});
+        rectangles.emplace_back(Collision::Point{800, 400}, Collision::Point{60, 100});
 
         for (auto &c : rectangles)
             collisionDetector.enableCollision(c);
 
-        points.emplace_back(Collision::Point{20, 60});
-        points.emplace_back(Collision::Point{40, 60});
-        points.emplace_back(Collision::Point{60, 60});
-        points.emplace_back(Collision::Point{80, 60});
+        points.emplace_back(Collision::Point{200, 600});
+        points.emplace_back(Collision::Point{400, 600});
+        points.emplace_back(Collision::Point{600, 600});
+        points.emplace_back(Collision::Point{800, 600});
 
         for (auto &c : points)
             collisionDetector.enableCollision(c);
 
-        lines.emplace_back(Collision::Point{20, 79}, Collision::Point{20, 81});
-        lines.emplace_back(Collision::Point{38, 80}, Collision::Point{42, 80});
-        lines.emplace_back(Collision::Point{57, 77}, Collision::Point{63, 83});
-        lines.emplace_back(Collision::Point{82, 78}, Collision::Point{78, 82});
+        lines.emplace_back(Collision::Point{200, 790}, Collision::Point{200, 810});
+        lines.emplace_back(Collision::Point{380, 800}, Collision::Point{420, 800});
+        lines.emplace_back(Collision::Point{570, 770}, Collision::Point{630, 830});
+        lines.emplace_back(Collision::Point{820, 780}, Collision::Point{780, 820});
 
         for (auto &c : lines)
             collisionDetector.enableCollision(c);
 
-        sf::Event e{};
+        SDL_Event e;
         bool quit = false;
-        window.setMouseCursorVisible(false);
+        // window.setMouseCursorVisible(false);
+        SDL_ShowCursor(false);
         uint32_t state = 0;
         float mouseOrientation = 0;
-        sf::Clock clock;
+        // sf::Clock clock;
 
         while (!quit) {
             for (const auto &c : circles)
@@ -272,89 +338,83 @@ public:
             for (const auto &r : lines)
                 window.draw(r);
 
-            sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-            sf::Vector2f p = window.mapPixelToCoords(pixelPos);
+            Maths::Vec2<int> cursorPosition;
+            SDL_GetMouseState(&cursorPosition.x, &cursorPosition.y);
             switch (state) {
-                case 0:
-                    circleCursor.setPosition({(float) p.x, (float) p.y});
-                    window.draw(circleCursor);
-                    break;
-                case 1:
-                    rectangleCursor.setPosition({(float) p.x, (float) p.y});
-                    window.draw(rectangleCursor);
-                    break;
-                case 2:
-                    pointCursor.setPosition({(float) p.x, (float) p.y});
-                    window.draw(pointCursor);
-                    break;
-                case 3:
-                    lineCursor.setPosition({(float) p.x + (2 * std::cos(mouseOrientation / 20.f)),
-                                            (float) p.y + (2 * std::sin(mouseOrientation / 20.f))},
-                                           {(float) p.x - (2 * std::cos(mouseOrientation / 20.f)),
-                                            (float) p.y - (2 * std::sin(mouseOrientation / 20.f))});
-                    window.draw(lineCursor);
-                    break;
+            case 0:
+                circleCursor.setPosition(cursorPosition.cast<float>());
+                window.draw(circleCursor);
+                break;
+            case 1:
+                rectangleCursor.setPosition(cursorPosition.cast<float>());
+                window.draw(rectangleCursor);
+                break;
+            case 2:
+                pointCursor.setPosition(cursorPosition.cast<float>());
+                window.draw(pointCursor);
+                break;
+            case 3:
+                lineCursor.setPosition({(float) cursorPosition.x + (20 * std::cos(mouseOrientation / 20.f)),
+                                        (float) cursorPosition.y + (20 * std::sin(mouseOrientation / 20.f))},
+                                       {(float) cursorPosition.x - (20 * std::cos(mouseOrientation / 20.f)),
+                                        (float) cursorPosition.y - (20 * std::sin(mouseOrientation / 20.f))});
+                window.draw(lineCursor);
+                break;
             }
 
-            while (window.pollEvent(e)) {
+            while (SDL_PollEvent(&e) != 0) {
                 switch (e.type) {
-                    case sf::Event::Closed:
-                        quit = true;
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    state++;
+                    if (state > 3)
+                        state = 0;
+                    switch (state) {
+                    case 0:
+                        collisionDetector.disableCollision(lineCursor);
+                        collisionDetector.enableCollision(circleCursor);
                         break;
-                    case sf::Event::KeyPressed:
-                        KeysState[e.key.code] = true;
+                    case 1:
+                        collisionDetector.disableCollision(circleCursor);
+                        collisionDetector.enableCollision(rectangleCursor);
                         break;
-                    case sf::Event::KeyReleased:
-                        KeysState[e.key.code] = false;
+                    case 2:
+                        collisionDetector.disableCollision(rectangleCursor);
+                        collisionDetector.enableCollision(pointCursor);
                         break;
-                    case sf::Event::MouseButtonPressed:
-                        state++;
-                        if (state > 3)
-                            state = 0;
-                        switch (state) {
-                            case 0:
-                                collisionDetector.disableCollision(lineCursor);
-                                collisionDetector.enableCollision(circleCursor);
-                                break;
-                            case 1:
-                                collisionDetector.disableCollision(circleCursor);
-                                collisionDetector.enableCollision(rectangleCursor);
-                                break;
-                            case 2:
-                                collisionDetector.disableCollision(rectangleCursor);
-                                collisionDetector.enableCollision(pointCursor);
-                                break;
-                            case 3:
-                                collisionDetector.disableCollision(pointCursor);
-                                collisionDetector.enableCollision(lineCursor);
-                                break;
-                        }
+                    case 3:
+                        collisionDetector.disableCollision(pointCursor);
+                        collisionDetector.enableCollision(lineCursor);
                         break;
-                    case sf::Event::MouseWheelScrolled:
-                        mouseOrientation += e.mouseWheelScroll.delta;
-                        break;
-                    default:
-                        break;
+                    }
+                    break;
+                case SDL_MOUSEWHEEL:
+                    mouseOrientation += e.wheel.y;
+                    break;
+                default:
+                    break;
                 }
             }
 
-
             tick++;
 
+            auto deltaTime = window.getFrameTime();
             if (tick >= 60) {
                 char szFps[200];
-                sprintf(szFps, "%s : %f FPS", "Game Title", tick / clock.restart().asSeconds());
+                sprintf(szFps, "%s : %f FPS", "Game Title", 1 / deltaTime);
                 tick = 0;
                 window.setTitle(szFps);
             }
-            collisionDetector.update(clock.restart().asSeconds());
+            collisionDetector.update(deltaTime);
             window.display();
-            window.clear(sf::Color(0, 0, 0, 255));
+            window.clear();
         }
     }
 };
 
-int main() {
+int main(int argc, char *args[]) {
     Game game;
 
     return 0;

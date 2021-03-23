@@ -1,125 +1,213 @@
-#include <SFML/Graphics.hpp>
+#include <SDL.h>
 #include <iostream>
 #include <list>
 
 #include <Blob/Collision/Forms.hpp>
+#include <Blob/Color.hpp>
 
 using namespace Blob;
 
-class Circle : public Collision::Circle, public sf::CircleShape {
+class CircleShape {
 public:
-    Circle(Collision::Point position, float rayon) : Collision::Circle(position, rayon), sf::CircleShape(rayon) {
-        sf::CircleShape::setPosition(position.x, position.y);
-        setOrigin(rayon, rayon);
+    float rayon;
+    Collision::Point position;
+    Color::RGB color;
+
+    CircleShape(float rayon, const Collision::Point &position, Color::RGB color = Color::White) : rayon(rayon), position(position), color(color) {}
+};
+
+class RectangleShape {
+public:
+    Collision::Point position, size;
+    Color::RGB color;
+
+    RectangleShape(const Collision::Point &size, const Collision::Point &position, Color::RGB color = Color::White) :
+        position(position), size(size), color(color) {}
+};
+
+class LineShape {
+public:
+    Collision::Point position1, position2;
+    Color::RGB color;
+
+    LineShape(const Collision::Point &position1, const Collision::Point &position2, Color::RGB color = Color::White) :
+        position1(position1), position2(position2), color(color) {}
+};
+
+class Window {
+private:
+    SDL_Window *window = nullptr;
+    SDL_Surface *screenSurface = nullptr;
+    SDL_Renderer *renderer = nullptr;
+    int64_t NOW = SDL_GetPerformanceCounter();
+    int64_t LAST = 0;
+
+public:
+    Window() {
+        window = SDL_CreateWindow("hello_sdl2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1000, 1000, SDL_WINDOW_SHOWN);
+        if (window == nullptr) {
+            fprintf(stderr, "could not create window: %s\n", SDL_GetError());
+            return;
+        }
+        screenSurface = SDL_GetWindowSurface(window);
+        if (screenSurface == nullptr) {
+            fprintf(stderr, "could not create screenSurface: %s\n", SDL_GetError());
+            return;
+        }
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     }
 
-    void setPosition(Collision::Point p) {
-        sf::CircleShape::setPosition(p.x, p.y);
-        position = p;
+    void draw(const RectangleShape &rectangleShape) {
+        SDL_SetRenderDrawColor(renderer, rectangleShape.color.R * 255, rectangleShape.color.G * 255, rectangleShape.color.B * 255, 255);
+        SDL_Rect rect{(int) (rectangleShape.position.x - rectangleShape.size.x / 2), (int) (rectangleShape.position.y - rectangleShape.size.y / 2),
+                      (int) rectangleShape.size.x, (int) rectangleShape.size.y};
+        SDL_RenderFillRect(renderer, &rect);
+    }
+
+    void draw(const LineShape &lineShape) {
+        SDL_SetRenderDrawColor(renderer, lineShape.color.R * 255, lineShape.color.G * 255, lineShape.color.B * 255, 255);
+        SDL_RenderDrawLine(renderer, lineShape.position1.x, lineShape.position1.y, lineShape.position2.x, lineShape.position2.y);
+    }
+
+    void draw(const CircleShape &circleShape) {
+        SDL_SetRenderDrawColor(renderer, circleShape.color.R * 255, circleShape.color.G * 255, circleShape.color.B * 255, 255);
+        int offsetx, offsety, d;
+        int status;
+
+        offsetx = 0;
+        offsety = circleShape.rayon;
+        d = circleShape.rayon - 1;
+        status = 0;
+
+        while (offsety >= offsetx) {
+
+            status += SDL_RenderDrawLine(renderer, circleShape.position.x - offsety, circleShape.position.y + offsetx,
+                                         circleShape.position.x + offsety, circleShape.position.y + offsetx);
+            status += SDL_RenderDrawLine(renderer, circleShape.position.x - offsetx, circleShape.position.y + offsety,
+                                         circleShape.position.x + offsetx, circleShape.position.y + offsety);
+            status += SDL_RenderDrawLine(renderer, circleShape.position.x - offsetx, circleShape.position.y - offsety,
+                                         circleShape.position.x + offsetx, circleShape.position.y - offsety);
+            status += SDL_RenderDrawLine(renderer, circleShape.position.x - offsety, circleShape.position.y - offsetx,
+                                         circleShape.position.x + offsety, circleShape.position.y - offsetx);
+
+            if (status < 0) {
+                status = -1;
+                break;
+            }
+
+            if (d >= 2 * offsetx) {
+                d -= 2 * offsetx + 1;
+                offsetx += 1;
+            } else if (d < 2 * (circleShape.rayon - offsety)) {
+                d += 2 * offsety - 1;
+                offsety -= 1;
+            } else {
+                d += 2 * (offsety - offsetx - 1);
+                offsety -= 1;
+                offsetx += 1;
+            }
+        }
+    }
+
+    void setTitle(const char *title) { SDL_SetWindowTitle(window, title); }
+
+    void display() { SDL_RenderPresent(renderer); }
+
+    float getFrameTime() {
+        LAST = NOW;
+        NOW = SDL_GetPerformanceCounter();
+        return ((NOW - LAST) * 1000.f / (float) SDL_GetPerformanceFrequency());
+    }
+
+    void clear() {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
     }
 };
 
-class Point : public Collision::Point, public sf::CircleShape {
+class Circle : public Collision::Circle, public CircleShape {
 public:
-    Point(Collision::Point position) : Collision::Point(position), sf::CircleShape(0.2) {
-        sf::CircleShape::setPosition(position.x, position.y);
-        setOrigin(0.2, 0.2);
-    }
+    Circle(Collision::Point position, float rayon) : Collision::Circle(position, rayon), CircleShape(rayon, position) {}
 
     void setPosition(Collision::Point p) {
-        sf::CircleShape::setPosition(p.x, p.y);
+        CircleShape::position = p;
+        Collision::Circle::position = p;
+    }
+};
+
+class Point : public Collision::Point, public CircleShape {
+public:
+    Point(Collision::Point position) : Collision::Point(position), CircleShape(0.2, position) {}
+
+    void setPosition(Collision::Point p) {
+        CircleShape::position = p;
         operator=(p);
     }
 };
 
-class Rectangle : public Collision::Rectangle, public sf::RectangleShape {
+class Rectangle : public Collision::Rectangle, public RectangleShape {
 public:
-    Rectangle(Collision::Point position, Collision::Point size, sf::Color fillColor = sf::Color::White) :
-            Collision::Rectangle(position, size),
-            sf::RectangleShape({size.x, size.y}) {
-        sf::RectangleShape::setPosition(position.x, position.y);
-        setOrigin(size.x / 2, size.y / 2);
-        setFillColor(fillColor);
-    }
+    Rectangle(Collision::Point position, Collision::Point size, Color::RGB fillColor = Color::White) :
+        Collision::Rectangle(position, size), RectangleShape(size, position, fillColor) {}
 
     void setPosition(Collision::Point p) {
-        sf::RectangleShape::setPosition(p.x, p.y);
-        position = p;
+        Collision::Rectangle::position = p;
+        RectangleShape::position = p;
     }
 };
 
-class Line : public Collision::Line, public sf::RectangleShape {
+class Line : public Collision::Line, public LineShape {
 public:
-    Line(Collision::Point position1, Collision::Point position2) : Collision::Line(position1, position2),
-                                                                 sf::RectangleShape(
-                                                                         {0.2, (position1 - position2).length()}) {
-        auto vector = position1 - position2;
-        auto position = (position1 + position2) / 2;
-        setOrigin(0.1, (position1 - position2).length() / 2);
-        sf::RectangleShape::setPosition(position.x, position.y);
-        sf::RectangleShape::setRotation(-std::atan2(vector.x, vector.y) * 180 / PI);
-    }
+    Line(Collision::Point position1, Collision::Point position2) : Collision::Line(position1, position2), LineShape(position1, position2) {}
 
     void setPosition(Collision::Point position1, Collision::Point position2) {
-        auto vector = position1 - position2;
-        auto position = (position1 + position2) / 2;
-        sf::RectangleShape::setPosition(position.x, position.y);
-        sf::RectangleShape::setRotation(-std::atan2(vector.x, vector.y) * 180 / PI);
-        sf::RectangleShape::setSize({0.2, (position1 - position2).length()});
-        setOrigin(0.1, (position1 - position2).length() / 2);
-        positionA = position1;
-        positionB = position2;
+        Collision::Line::positionA = position1;
+        Collision::Line::positionB = position2;
+        LineShape::position1 = position1;
+        LineShape::position2 = position2;
     }
 };
 
 class Game {
 private:
     unsigned int tick;
-    std::list<sf::Sprite *> ModelList;
-    sf::RenderWindow window;
-    sf::View view;
-    std::map<sf::Keyboard::Key, bool> KeysState;
-    sf::Clock clock;
+    Window window;
     std::list<Circle> circles;
     std::list<Rectangle> rectangles;
     std::list<Point> points;
     std::list<Line> lines;
 
 public:
-    Game() : view(sf::FloatRect(0.f, 0.f, 100.f, 100.f)), window(sf::VideoMode(1000, 1000), "SFML works!") {
+    Game() {
 
-        window.setKeyRepeatEnabled(false);
-        window.setVerticalSyncEnabled(true);
-        window.setView(view);
-
-        Circle circleCursor(Collision::Point{0, 0}, 2);
-        Rectangle rectangleCursor({0, 0}, {4, 4});
+        Circle circleCursor(Collision::Point{0, 0}, 20);
+        Rectangle rectangleCursor({0, 0}, {40, 40});
         Point pointCursor({0, 0});
-        Line lineCursor({-2, 0}, {2, 0});
+        Line lineCursor({-20, 0}, {20, 0});
 
-        circles.emplace_back(Collision::Point{20, 20}, 1);
-        circles.emplace_back(Collision::Point{40, 20}, 2);
-        circles.emplace_back(Collision::Point{60, 20}, 3);
-        circles.emplace_back(Collision::Point{80, 20}, 4);
+        circles.emplace_back(Collision::Point{200, 200}, 10);
+        circles.emplace_back(Collision::Point{400, 200}, 20);
+        circles.emplace_back(Collision::Point{600, 200}, 30);
+        circles.emplace_back(Collision::Point{800, 200}, 40);
 
-        rectangles.emplace_back(Collision::Point{20.5, 40.5}, Collision::Point{2, 20});
-        rectangles.emplace_back(Collision::Point{40, 40}, Collision::Point{4, 4});
-        rectangles.emplace_back(Collision::Point{60, 40}, Collision::Point{10, 6});
-        rectangles.emplace_back(Collision::Point{80, 40}, Collision::Point{6, 10});
+        rectangles.emplace_back(Collision::Point{205, 405}, Collision::Point{20, 20});
+        rectangles.emplace_back(Collision::Point{400, 400}, Collision::Point{40, 40});
+        rectangles.emplace_back(Collision::Point{600, 400}, Collision::Point{100, 60});
+        rectangles.emplace_back(Collision::Point{800, 400}, Collision::Point{60, 10});
 
-        points.emplace_back(Collision::Point{20, 60});
-        points.emplace_back(Collision::Point{40, 60});
-        points.emplace_back(Collision::Point{60, 60});
-        points.emplace_back(Collision::Point{80, 60});
+        points.emplace_back(Collision::Point{200, 600});
+        points.emplace_back(Collision::Point{400, 600});
+        points.emplace_back(Collision::Point{600, 600});
+        points.emplace_back(Collision::Point{800, 600});
 
-        lines.emplace_back(Collision::Point{20, 79}, Collision::Point{20, 81});
-        lines.emplace_back(Collision::Point{38, 80}, Collision::Point{42, 80});
-        lines.emplace_back(Collision::Point{57, 77}, Collision::Point{63, 83});
-        lines.emplace_back(Collision::Point{82, 78}, Collision::Point{78, 82});
+        lines.emplace_back(Collision::Point{200, 790}, Collision::Point{200, 810});
+        lines.emplace_back(Collision::Point{380, 800}, Collision::Point{420, 800});
+        lines.emplace_back(Collision::Point{570, 770}, Collision::Point{630, 830});
+        lines.emplace_back(Collision::Point{820, 780}, Collision::Point{780, 820});
 
-        sf::Event e{};
+        SDL_Event e{};
         bool quit = false;
-        window.setMouseCursorVisible(false);
+        SDL_ShowCursor(false);
         uint32_t state = 0;
         float mouseOrientation = 0;
 
@@ -133,124 +221,117 @@ public:
             for (const auto &r : lines)
                 window.draw(r);
 
-            sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-            sf::Vector2f p = window.mapPixelToCoords(pixelPos);
+            Maths::Vec2<int> cursorPosition;
+            SDL_GetMouseState(&cursorPosition.x, &cursorPosition.y);
             bool hit = false;
             switch (state) {
-                case 0:
-                    circleCursor.setPosition({(float) p.x, (float) p.y});
-                    for (const auto &c : circles)
-                        if (circleCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : rectangles)
-                        if (circleCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : lines)
-                        if (circleCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : points)
-                        if (circleCursor.overlap(c))
-                            hit = true;
-                    if (hit)
-                        circleCursor.setFillColor(sf::Color::Red);
-                    else
-                        circleCursor.setFillColor(sf::Color::Green);
-                    for (auto &r : circleCursor.rasterize())
-                        window.draw(Rectangle(Collision::Point(r.x + 0.5f, r.y + 0.5f), Collision::Point{1, 1}, sf::Color::Blue));
-                    window.draw(circleCursor);
-                    break;
-                case 1:
-                    rectangleCursor.setPosition({(float) p.x, (float) p.y});
-                    for (const auto &c : circles)
-                        if (rectangleCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : rectangles)
-                        if (rectangleCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : lines)
-                        if (rectangleCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : points)
-                        if (rectangleCursor.overlap(c))
-                            hit = true;
-                    if (hit)
-                        rectangleCursor.setFillColor(sf::Color::Red);
-                    else
-                        rectangleCursor.setFillColor(sf::Color::Green);
-                    for (auto &r : rectangleCursor.rasterize())
-                        window.draw(Rectangle(Collision::Point(r.x + 0.5f, r.y + 0.5f), Collision::Point{1, 1}, sf::Color::Blue));
-                    window.draw(rectangleCursor);
-                    break;
-                case 2:
-                    pointCursor.setPosition({(float) p.x, (float) p.y});
-                    for (const auto &c : circles)
-                        if (pointCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : rectangles)
-                        if (pointCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : lines)
-                        if (pointCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : points)
-                        if (pointCursor.overlap(c))
-                            hit = true;
-                    if (hit)
-                        pointCursor.setFillColor(sf::Color::Red);
-                    else
-                        pointCursor.setFillColor(sf::Color::Green);
-                    for (auto &r : pointCursor.rasterize())
-                        window.draw(Rectangle(Collision::Point(r.x + 0.5f, r.y + 0.5f), Collision::Point{1, 1}, sf::Color::Blue));
-                    window.draw(pointCursor);
-                    break;
-                case 3:
-                    lineCursor.setPosition({(float) p.x + (2 * std::cos(mouseOrientation / 20.f)),
-                                            (float) p.y + (2 * std::sin(mouseOrientation / 20.f))},
-                                           {(float) p.x - (2 * std::cos(mouseOrientation / 20.f)),
-                                            (float) p.y - (2 * std::sin(mouseOrientation / 20.f))});
-                    for (const auto &c : circles)
-                        if (lineCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : rectangles)
-                        if (lineCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : lines)
-                        if (lineCursor.overlap(c))
-                            hit = true;
-                    for (const auto &c : points)
-                        if (lineCursor.overlap(c))
-                            hit = true;
-                    if (hit)
-                        lineCursor.setFillColor(sf::Color::Red);
-                    else
-                        lineCursor.setFillColor(sf::Color::Green);
-                    for (auto &r : lineCursor.rasterize())
-                        window.draw(Rectangle(Collision::Point(r.x + 0.5f, r.y + 0.5f), Collision::Point{1, 1}, sf::Color::Blue));
-                    window.draw(lineCursor);
-                    break;
+            case 0:
+                circleCursor.setPosition(cursorPosition.cast<float>());
+                for (const auto &c : circles)
+                    if (circleCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : rectangles)
+                    if (circleCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : lines)
+                    if (circleCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : points)
+                    if (circleCursor.overlap(c))
+                        hit = true;
+                if (hit)
+                    circleCursor.color = Color::Red;
+                else
+                    circleCursor.color = Color::Green;
+                for (auto &r : circleCursor.rasterize())
+                    window.draw(RectangleShape(Collision::Point{1, 1}, r.cast<float>() + 0.5f, Color::Blue));
+                window.draw(circleCursor);
+                break;
+            case 1:
+                rectangleCursor.setPosition(cursorPosition.cast<float>());
+                for (const auto &c : circles)
+                    if (rectangleCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : rectangles)
+                    if (rectangleCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : lines)
+                    if (rectangleCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : points)
+                    if (rectangleCursor.overlap(c))
+                        hit = true;
+                if (hit)
+                    rectangleCursor.color = Color::Red;
+                else
+                    rectangleCursor.color = Color::Green;
+                for (auto &r : rectangleCursor.rasterize())
+                    window.draw(RectangleShape(Collision::Point{1, 1}, r.cast<float>() + 0.5f, Color::Blue));
+                window.draw(rectangleCursor);
+                break;
+            case 2:
+                pointCursor.setPosition(cursorPosition.cast<float>());
+                for (const auto &c : circles)
+                    if (pointCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : rectangles)
+                    if (pointCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : lines)
+                    if (pointCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : points)
+                    if (pointCursor.overlap(c))
+                        hit = true;
+                if (hit)
+                    pointCursor.color = Color::Red;
+                else
+                    pointCursor.color = Color::Green;
+                for (auto &r : pointCursor.rasterize())
+                    window.draw(RectangleShape(Collision::Point{1, 1}, r.cast<float>() + 0.5f, Color::Blue));
+                window.draw(pointCursor);
+                break;
+            case 3:
+                lineCursor.setPosition(
+                    {(float) cursorPosition.x + (20 * std::cos(mouseOrientation / 20.f)), (float) cursorPosition.y + (20 * std::sin(mouseOrientation / 20.f))},
+                    {(float) cursorPosition.x - (20 * std::cos(mouseOrientation / 20.f)), (float) cursorPosition.y - (20 * std::sin(mouseOrientation / 20.f))});
+                for (const auto &c : circles)
+                    if (lineCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : rectangles)
+                    if (lineCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : lines)
+                    if (lineCursor.overlap(c))
+                        hit = true;
+                for (const auto &c : points)
+                    if (lineCursor.overlap(c))
+                        hit = true;
+                if (hit)
+                    lineCursor.color = Color::Red;
+                else
+                    lineCursor.color = Color::Green;
+                for (auto &r : lineCursor.rasterize())
+                    window.draw(RectangleShape(Collision::Point{1, 1}, r.cast<float>() + 0.5f, Color::Blue));
+                window.draw(lineCursor);
+                break;
             }
 
-            while (window.pollEvent(e)) {
+            while (SDL_PollEvent(&e) != 0) {
                 switch (e.type) {
-                    case sf::Event::Closed:
-                        quit = true;
-                        break;
-                    case sf::Event::KeyPressed:
-                        KeysState[e.key.code] = true;
-                        break;
-                    case sf::Event::KeyReleased:
-                        KeysState[e.key.code] = false;
-                        break;
-                    case sf::Event::MouseButtonPressed:
-                        state++;
-                        if (state > 3)
-                            state = 0;
-                        break;
-                    case sf::Event::MouseWheelScrolled:
-                        mouseOrientation += e.mouseWheelScroll.delta;
-                        break;
-                    default:
-                        break;
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    state++;
+                    if (state > 3)
+                        state = 0;
+                    break;
+                case SDL_MOUSEWHEEL:
+                    mouseOrientation +=e.wheel.y;
+                    break;
+                default:
+                    break;
                 }
             }
 
@@ -258,17 +339,17 @@ public:
 
             if (tick >= 60) {
                 char szFps[200];
-                sprintf(szFps, "%s : %f FPS", "Game Title", tick / clock.restart().asSeconds());
+                sprintf(szFps, "%s : %f FPS", "Game Title", tick / window.getFrameTime());
                 tick = 0;
                 window.setTitle(szFps);
             }
             window.display();
-            window.clear(sf::Color(0, 0, 0, 255));
+            window.clear();
         }
     }
 };
 
-int main() {
+int main(int argc, char *args[]) {
     Game game;
 
     return 0;
