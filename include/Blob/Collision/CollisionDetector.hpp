@@ -9,6 +9,10 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#ifdef BLOB_COLLISION_CALLBACK
+#include <functional>
+#endif
+
 namespace Blob::Collision {
 
 class PhysicalObject {
@@ -28,7 +32,9 @@ public:
 
     PhysicalObject(PhysicalObject &&) = delete;
 
+#ifndef BLOB_COLLISION_CALLBACK
     virtual ~PhysicalObject() = default;
+#endif
 };
 
 template<class T>
@@ -42,6 +48,8 @@ protected:
     Collider(const std::type_info &objectType, T &form) : PhysicalObject(objectType), form(form) {}
 };
 
+
+
 template<class T>
 class DynamicCollider : public Collider<T> {
     template<typename U>
@@ -51,9 +59,9 @@ private:
     std::unordered_set<PhysicalObject *> hitting;
     std::unordered_set<PhysicalObject *> hittingClone;
 
+#ifndef BLOB_COLLISION_CALLBACK
 protected:
     const std::unordered_set<PhysicalObject *> &hittingObjects;
-
     explicit DynamicCollider(const std::type_info &objectType, T &form) : Collider<T>(objectType, form), hittingObjects(hitting) {}
 
     virtual void hitStart(PhysicalObject *object) {}
@@ -65,6 +73,21 @@ protected:
      * @param timeFlow Time in second sins list frame
      */
     virtual void postCollisionUpdate(float timeFlow) {}
+#else
+private:
+    std::function<void(PhysicalObject *)> hitStart, hitEnd;
+    std::function<void(float)> postCollisionUpdate;
+
+public:
+    const std::unordered_set<PhysicalObject *> &hittingObjects;
+
+    explicit DynamicCollider(T &form,
+                             const std::type_info &objectType,
+                             std::function<void(PhysicalObject *)> &&hitStart,
+                             std::function<void(PhysicalObject *)> &&hitEnd,
+                             std::function<void(float)> &&postCollisionUpdate) :
+        Collider<T>(objectType, form), hittingObjects(hitting), hitStart(hitStart), hitEnd(hitEnd), postCollisionUpdate(postCollisionUpdate) {}
+#endif
 };
 
 template<class T>

@@ -50,4 +50,51 @@ Mesh::Mesh(const Primitive &r) {
     addPrimitive(r);
 }
 
+void Mesh2D ::addPrimitive(const Primitive2D &r) {
+    primitives.emplace_back(&r);
+}
+
+void Mesh2D ::addPrimitive(const Primitive2D *r) {
+    primitives.emplace_back(r);
+}
+
+void Mesh2D ::removePrimitive(const Primitive2D &r) {
+    auto it = std::find(primitives.begin(), primitives.end(), &r);
+    if (it != primitives.end()) {
+        primitives.erase(it);
+    }
+}
+
+void Mesh2D ::removePrimitive(const Primitive2D *r) {
+    auto it = std::find(primitives.begin(), primitives.end(), r);
+    if (it != primitives.end()) {
+        primitives.erase(it);
+    }
+}
+
+void Mesh2D ::addTransparentPrimitive(const Primitive2D &r) {
+    transparentPrimitives.emplace_back(&r);
+}
+
+void Mesh2D ::addTransparentPrimitive(const Primitive2D *r) {
+    transparentPrimitives.emplace_back(r);
+}
+
+void Mesh2D ::removeTransparentPrimitive(const Primitive2D &r) {
+    auto it = std::find(transparentPrimitives.begin(), transparentPrimitives.end(), &r);
+    if (it != transparentPrimitives.end()) {
+        transparentPrimitives.erase(it);
+    }
+}
+
+void Mesh2D ::removeTransparentPrimitive(const Primitive2D *r) {
+    auto it = std::find(transparentPrimitives.begin(), transparentPrimitives.end(), r);
+    if (it != transparentPrimitives.end()) {
+        transparentPrimitives.erase(it);
+    }
+}
+Mesh2D ::Mesh2D (const Primitive2D &r) {
+    addPrimitive(r);
+}
+
 } // namespace Blob::Core

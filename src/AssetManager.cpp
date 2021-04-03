@@ -2,6 +2,9 @@
 
 namespace Blob {
 AssetManager::AssetManager() {
+    Shaders::SingleColorSingleTexture2D::instance.build();
+    Shaders::SingleColor2D::instance.build();
+
     Shaders::SingleColor::instance.build();
     Shaders::SingleColorTransparent::instance.build();
     Shaders::SingleTexture::instance.build();

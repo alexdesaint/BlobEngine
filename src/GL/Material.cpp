@@ -88,6 +88,21 @@ void Material::setUniform<>(const Maths::ProjectionTransform &val, int position)
 }
 
 template<>
+void Material::setUniform<>(const Maths::ModelTransform2D &val, int position) const {
+    glUniformMatrix3fv(position, 1, GL_FALSE, &val.a11);
+}
+
+template<>
+void Material::setUniform<>(const Maths::ViewTransform2D &val, int position) const {
+    glUniformMatrix3fv(position, 1, GL_FALSE, &val.a11);
+}
+
+template<>
+void Material::setUniform<>(const Maths::ProjectionTransform2D &val, int position) const {
+    glUniformMatrix3fv(position, 1, GL_FALSE, &val.a11);
+}
+
+template<>
 void Material::setUniform<>(const Color::RGB &val, int position) const {
     glUniform3fv(position, 1, &val.R);
 }

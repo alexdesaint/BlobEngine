@@ -9,7 +9,7 @@ add_library(BlobCore STATIC
         Controls.cpp
         Primitive.cpp
         Buffer.cpp
-        Texture.cpp)
+        Texture.cpp Image.cpp)
 target_link_libraries(BlobCore Blob::GL Blob::ImGui Blob::Time Blob::GLFW Blob::FileReader libs)
 target_include_directories(BlobCore PUBLIC ${INCLUDE_FOLDER})
 add_library(Blob::Core ALIAS BlobCore)

@@ -1,46 +1,45 @@
 #include <Blob/Core/Texture.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include <Blob/Core/Exception.hpp>
 
 namespace Blob::Core {
 
 Texture::Texture(const std::string &path) {
-    setRGBImage(path);
+    setImage(path);
 }
 
 Texture::Texture(const std::string &path, GL::Sampler sampler) {
-    setRGBImage(path);
+    setImage(path);
     applySampler(sampler);
 }
 
-void Texture::setRGBImage(const std::string &path) {
-    int bitPerPixel;
-    Maths::Vec2<int> s;
-    unsigned char *rgb = stbi_load(path.c_str(), &s.x, &s.y, &bitPerPixel, 3);
-
-    if (rgb == nullptr)
-        throw Blob::Core::Exception("Fail to load Texture : " + path);
-
-    setRGB8data(rgb, s.cast<unsigned int>());
-
-    stbi_image_free(rgb);
+Texture::Texture(const Image &image, GL::Sampler sampler) {
+    setImage(image);
+    applySampler(sampler);
 }
 
-void Texture::setRGBAImage(const std::string &path) {
-    int bitPerPixel;
-    ;
-    Maths::Vec2<int> s;
-    unsigned char *rgb = stbi_load(path.c_str(), &s.x, &s.y, &bitPerPixel, 4);
+Texture::Texture(const Image &image) {
+    setImage(image);
+}
 
-    if (rgb == nullptr)
-        throw Blob::Core::Exception("Fail to load Texture : " + path);
+void Texture::setImage(const std::string &path) {
+    Image image(path);
 
-    setRGBA8data(rgb, s.cast<unsigned int>());
+    if(image.channel == Image::Channel::RGB)
+        setRGB8data(image.data, image.size.cast<unsigned int>());
+    else if(image.channel == Image::Channel::RGBA)
+        setRGBA8data(image.data, image.size.cast<unsigned int>());
+    else
+        throw Blob::Core::Exception("Image format not supported");
+}
 
-    stbi_image_free(rgb);
+void Texture::setImage(const Image &image) {
+    if(image.channel == Image::Channel::RGB)
+        setRGB8data(image.data, image.size.cast<unsigned int>());
+    else if(image.channel == Image::Channel::RGBA)
+        setRGBA8data(image.data, image.size.cast<unsigned int>());
+    else
+        throw Blob::Core::Exception("Image format not supported");
 }
 
 } // namespace Blob::Core

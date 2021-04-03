@@ -59,6 +59,15 @@ template<>
 void Material::setUniform<>(const Maths::ProjectionTransform &val, int position) const;
 
 template<>
+void Material::setUniform<>(const Maths::ModelTransform2D &val, int position) const;
+
+template<>
+void Material::setUniform<>(const Maths::ViewTransform2D &val, int position) const;
+
+template<>
+void Material::setUniform<>(const Maths::ProjectionTransform2D &val, int position) const;
+
+template<>
 void Material::setUniform<>(const Color::RGB &val, int position) const;
 
 template<>

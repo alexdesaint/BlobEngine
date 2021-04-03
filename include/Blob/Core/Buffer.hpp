@@ -10,7 +10,17 @@ class Buffer : public GL::VertexBufferObject {
 public:
     Buffer() = default;
     explicit Buffer(const std::string &file);
-    explicit Buffer(const uint8_t *data, size_t dataSize) : GL::VertexBufferObject(data, dataSize) {}
+    Buffer(const uint8_t *data, size_t dataSize) : GL::VertexBufferObject(data, dataSize) {}
+
+    template<typename T>
+    explicit Buffer(std::vector<T> data) {
+        setData(data);
+    }
+
+    template<typename T, std::size_t N>
+    explicit Buffer(std::array<T, N> data) {
+        setData(data);
+    }
 
     template<typename T>
     void setData(std::vector<T> data) {

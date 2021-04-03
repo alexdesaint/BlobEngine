@@ -6,6 +6,49 @@ namespace Blob::Shaders {
 
 /// Simples shaders
 
+class SingleColor2D : public Core::Shader {
+private:
+public:
+    static SingleColor2D instance;
+
+    static const int model = 0;
+    static const int view = 1;
+    static const int projection = 2;
+
+    static const int albedo = 3;
+
+    void build();
+    void destroy();
+};
+
+class SingleColorSingleTexture2D : public Core::Shader {
+private:
+public:
+    static SingleColorSingleTexture2D instance;
+
+    static const int model = 0;
+    static const int view = 1;
+    static const int projection = 2;
+
+    static const int albedo = 3;
+
+    void build();
+    void destroy();
+};
+
+class ColorArraySingleTexture2D : public Core::Shader {
+private:
+public:
+    static ColorArraySingleTexture2D instance;
+
+    static const int model = 0;
+    static const int view = 1;
+    static const int projection = 2;
+
+    void build();
+    void destroy();
+};
+
 class SingleColor : public Core::Shader {
 private:
 public:

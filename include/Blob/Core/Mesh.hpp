@@ -31,4 +31,30 @@ public:
     void removeTransparentPrimitive(const Primitive &r);
     void removeTransparentPrimitive(const Primitive *r);
 };
+
+class Mesh2D {
+    friend class Window;
+
+private:
+    std::list<const Primitive2D *> primitives;
+    std::list<const Primitive2D *> transparentPrimitives;
+
+public:
+    Mesh2D() = default;
+    Mesh2D(const Mesh &) = delete;
+    Mesh2D(Mesh2D &&) = delete;
+    explicit Mesh2D(const Primitive2D &r);
+
+    void addPrimitive(const Primitive2D &r);
+    void addPrimitive(const Primitive2D *r);
+
+    void removePrimitive(const Primitive2D &r);
+    void removePrimitive(const Primitive2D *r);
+
+    void addTransparentPrimitive(const Primitive2D &r);
+    void addTransparentPrimitive(const Primitive2D *r);
+
+    void removeTransparentPrimitive(const Primitive2D &r);
+    void removeTransparentPrimitive(const Primitive2D *r);
+};
 } // namespace Blob::Core

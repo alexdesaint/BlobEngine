@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Blob/Maths.inl>
+#include <functional>
 #include <list>
 #include <string>
 #include <unordered_map>
@@ -14,7 +15,8 @@ public:
 
     explicit Key(int id, bool (&keys)[512]) : id(id), pressed(keys[id]) {}
 
-    operator bool() const { return pressed; }
+    explicit operator bool() const { return pressed; }
+    bool operator==(const int &i) const { return i == id; }
 
     [[nodiscard]] std::string getName() const;
 };
@@ -168,6 +170,19 @@ protected:
 
 public:
     KeyboardEvents(const KeyboardEvents &) = delete;
+};
+
+class KeyboardEvents2 {
+    friend Window;
+
+private:
+    static std::list<KeyboardEvents2 *> subscribers;
+    std::unordered_map<int, std::function<void(bool)>> callbacks;
+
+public:
+    explicit KeyboardEvents2(std::unordered_map<int, std::function<void(bool)>> &&callbacks) : callbacks(callbacks) { subscribers.push_back(this); }
+
+    ~KeyboardEvents2() { subscribers.remove(this); }
 };
 
 class MouseEvents {

@@ -5,57 +5,67 @@
 
 namespace Blob::Core {
 
-class Shape : public Maths::ModelTransform {
+template<class Transform, class Mesh>
+class ShapeBase : public Transform {
     friend Window;
 
 private:
-    // TODO: Use Smart pointer or remove on destructor
     Mesh *mesh = nullptr;
-    std::list<Shape *> shapes;
-    // Shape *parent = nullptr;
+    std::list<ShapeBase *> shapes;
 
 public:
-    Shape() = default;
-    Shape(const Shape &) = delete;
-    Shape(Shape &&) = delete;
+    ShapeBase() = default;
+    ShapeBase(const ShapeBase &) = delete;
+    ShapeBase(ShapeBase &&) = delete;
 
-    explicit Shape(Mesh &r);
+    template<typename... Args>
+    explicit ShapeBase(Mesh &r, Args... args) : mesh(&r), Transform(args...) {}
 
-    Shape(Mesh &r, const Maths::Vec3<float> &Location);
+    template<typename... Args>
+    explicit ShapeBase(Args... args) : Transform(args...) {}
 
-    Shape(Mesh &r, const Maths::Vec2<float> &Location);
+    void setMesh(Mesh &r) { mesh = &r; }
+    void setMesh(Mesh *r) { mesh = r; }
+    void removeMesh() { mesh = nullptr; }
 
-    Shape(Mesh &r, const Maths::Vec3<float> &Location, const Maths::Vec3<float> &Scale);
+    void addChild(ShapeBase *r) {
+        shapes.emplace_back(r);
+    }
 
-    Shape(Mesh &r, const Maths::Vec2<float> &Location, const Maths::Vec2<float> &Scale);
+    void addChild(ShapeBase &r) {
+        shapes.emplace_back(&r);
+    }
 
-    Shape(Mesh &r, const Maths::Vec3<float> &Location, const Maths::Vec3<float> &Scale, const Maths::Vec3<float> &Rotation);
+    void removeChild(ShapeBase &r) {
+        auto it = std::find(shapes.begin(), shapes.end(), &r);
+        if (it != shapes.end())
+            shapes.erase(it);
+    }
 
-    Shape(Mesh &r, const Maths::Mat4 &mat);
+    void removeChild(ShapeBase *r) {
+        auto it = std::find(shapes.begin(), shapes.end(), r);
+        if (it != shapes.end())
+            shapes.erase(it);
+    }
 
-    explicit Shape(const Maths::Vec3<float> &Location);
+    friend std::ostream &operator<<(std::ostream &s, const ShapeBase<Transform, Mesh> &a) {
+        s << "Shape : {" << std::endl;
 
-    explicit Shape(const Maths::Vec2<float> &Location);
+        s << (Maths::ModelTransform) a << std::endl;
 
-    Shape(const Maths::Vec3<float> &Location, const Maths::Vec3<float> &Scale);
+        s << a.mesh << std::endl;
 
-    Shape(const Maths::Vec2<float> &Location, const Maths::Vec2<float> &Scale);
+        for (const auto &r : a.shapes)
+            s << *r;
 
-    Shape(const Maths::Vec3<float> &Location, const Maths::Vec3<float> &Scale, const Maths::Vec3<float> &Rotation);
-
-    Shape(const Maths::Mat4 &mat);
-
-    void setMesh(Mesh &r);
-    void setMesh(Mesh *r);
-
-    void addChild(Shape &r);
-    void addChild(Shape *r);
-
-    void removeMesh();
-
-    void removeChild(Shape &r);
-    void removeChild(Shape *r);
-
-    friend std::ostream &operator<<(std::ostream &s, const Shape &a);
+        s << "}" << std::endl;
+        return s;
+    }
 };
+
+//template class ShapeBase<Maths::ModelTransform>;
+
+typedef ShapeBase<Maths::ModelTransform, Mesh> Shape;
+typedef ShapeBase<Maths::ModelTransform2D, Mesh2D> Shape2D;
+
 } // namespace Blob::Core

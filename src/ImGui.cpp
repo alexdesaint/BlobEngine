@@ -2,6 +2,7 @@
 #include <Blob/GL/Window.hpp>
 #include <Blob/GLFW.hpp>
 #include <Blob/ImGui.hpp>
+#include <Blob/Shaders.hpp>
 #include <imgui.h>
 #include <iostream>
 
@@ -57,47 +58,15 @@ Context::Context(const GLFW::Window &window, const Maths::Vec2<float> &windowSiz
 
     setWindowSize(windowSize, framebufferSize);
     ImGui::NewFrame();
+    projectionTransform.a31 = -1;
+    projectionTransform.a32 = 1;
 }
 
 void Context::createRender() {
-
-    shader.addVertexShader(R"=====(
-#version 450
-
-layout (location = 0) in vec2 Position;
-layout (location = 1) in vec2 TexturePosition;
-layout (location = 2) in vec4 Color;
-
-uniform mat4 projection;
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-
-void main() {
-    Frag_UV = TexturePosition;
-    Frag_Color = Color;
-    gl_Position = projection * vec4(Position.xy, 0, 1);
-}
-		)=====");
-    shader.addFragmentShader(R"=====(
-#version 450
-
-layout (location = 0) out vec4 Out_Color;
-
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-uniform sampler2D Texture;
-
-void main() {
-    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);
-}
-		)=====");
-    shader.linkShaders();
-
-    projectionPosition = shader.getUniformLocation("projection");
-
-    vertexArrayObject.setArray<float>(2, shader.getAttribLocation("Position"), (uint32_t) offsetof(ImDrawVert, pos));
-    vertexArrayObject.setArray<float>(2, shader.getAttribLocation("TexturePosition"), (uint32_t) offsetof(ImDrawVert, uv));
-    vertexArrayObject.setArray<uint8_t>(4, shader.getAttribLocation("Color"), (uint32_t) offsetof(ImDrawVert, col), true);
+    Blob::Shaders::ColorArraySingleTexture2D::instance.build();
+    vertexArrayObject.setArray<float>(2, Blob::Core::Shader::AttributeLocation::POSITION, (uint32_t) offsetof(ImDrawVert, pos));
+    vertexArrayObject.setArray<float>(2, Blob::Core::Shader::AttributeLocation::TEXCOORD_0, (uint32_t) offsetof(ImDrawVert, uv));
+    vertexArrayObject.setArray<uint8_t>(4, Blob::Core::Shader::AttributeLocation::COLOR_0, (uint32_t) offsetof(ImDrawVert, col), true);/**/
 }
 
 void Context::buildFont() {
@@ -136,7 +105,8 @@ void Context::draw(const Blob::GL::Window &window) {
     unsigned int offset = 0;
 
     window.setVAO(vertexArrayObject);
-    setShader(shader);
+    //setShader(shader);
+    setShader(Blob::Shaders::ColorArraySingleTexture2D::instance);
     setScissorTest(true);
     setCullFace(false);
     setDepthTest(false);
@@ -156,7 +126,9 @@ void Context::draw(const Blob::GL::Window &window) {
                        (int) (pcmd->ClipRect.w - pcmd->ClipRect.y));
 
             setTexture(*((GL::Texture *) pcmd->TextureId));
-            setUniform(projectionMatrix, projectionPosition);
+            setUniform(projectionTransform, Blob::Shaders::ColorArraySingleTexture2D::projection);
+            setUniform(viewTransform, Blob::Shaders::ColorArraySingleTexture2D::view);
+            setUniform(modelTransform, Blob::Shaders::ColorArraySingleTexture2D::model);
 
             window.drawIndex<unsigned short>(cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size);
 
@@ -170,8 +142,8 @@ void Context::draw(const Blob::GL::Window &window) {
 }
 
 void Context::setWindowSize(const Maths::Vec2<float> &windowSize, const Maths::Vec2<float> &framebufferSize) {
-    projectionMatrix[0] = 2.0f / framebufferSize.x;
-    projectionMatrix[5] = 2.0f / -framebufferSize.y;
+    projectionTransform.a11 = 2.f / framebufferSize.x;
+    projectionTransform.a22 = 2.f / -framebufferSize.y;
 
     ImGuiIO &io = ImGui::GetIO();
     io.DisplaySize = windowSize.cast<float>();

@@ -16,15 +16,19 @@ class Window;
  * > Citation
  * *gras* **pas gras**
  */
-class Material : protected GL::Material {
+template<class ...Args>
+class MaterialBase : protected GL::Material {
 public:
     /// This function will be called before the draw
     /// \param pt oui
     /// \param vt non
     /// \param mt pas toujours
-    virtual void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const = 0;
+    virtual void applyMaterial(const Args &...) const = 0;
 
-    virtual ~Material() = default;
+    virtual ~MaterialBase() = default;
 };
+
+typedef MaterialBase<Maths::ProjectionTransform, Maths::ViewTransform, Maths::Mat4> Material;
+typedef MaterialBase<Maths::Mat3, Maths::Mat3, Maths::Mat3> Material2D;
 
 } // namespace Blob::Core

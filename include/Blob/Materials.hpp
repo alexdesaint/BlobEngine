@@ -4,6 +4,31 @@
 
 namespace Blob::Materials {
 
+class SingleColor2D : public Core::Material2D {
+private:
+    void applyMaterial(const Maths::Mat3 &pt, const Maths::Mat3 &vt, const Maths::Mat3 &mt) const final;
+
+public:
+    Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
+
+    SingleColor2D() = default;
+    explicit SingleColor2D(Color::RGBA albedo);
+    explicit SingleColor2D(Color::RGB albedo, float alpha = 1.f);
+};
+
+class SingleColorSingleTexture2D : public Core::Material2D {
+private:
+    const Core::Texture *texture = nullptr;
+    void applyMaterial(const Maths::Mat3 &pt, const Maths::Mat3 &vt, const Maths::Mat3 &mt) const final;
+
+public:
+    Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
+    explicit SingleColorSingleTexture2D(const Core::Texture &texture);
+    SingleColorSingleTexture2D(const Core::Texture &texture, const Color::RGBA &albedo);
+
+    void setTexture1(const Core::Texture &texture);
+};
+
 class SingleColor : public Core::Material {
 private:
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;

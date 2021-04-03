@@ -266,6 +266,7 @@ const Key &Keyboard::operator[](unsigned int id) {
 }
 
 std::list<KeyboardEvents *> KeyboardEvents::subscribers;
+std::list<KeyboardEvents2 *> KeyboardEvents2::subscribers;
 std::list<MouseEvents *> MouseEvents::subscribers;
 
 /*

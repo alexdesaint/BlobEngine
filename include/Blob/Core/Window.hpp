@@ -16,11 +16,9 @@
 
 namespace Blob::Core {
 
-class Window : private GL::Window, public Maths::ProjectionTransform {
+class Window : private GL::Window {
 private:
     ImGui::Context imgui;
-
-    Camera *camera;
 
     // time counting
     Time::TimePoint lastFrameTime;
@@ -50,27 +48,30 @@ public:
     using GLFW::Window::isOpen;
     using GLFW::Window::totalTimeFlow;
     using GLFW::Window::windowSize;
+    Maths::ProjectionTransform projectionTransform;
+    Maths::ProjectionTransform2D projectionTransform2D;
 
-    explicit Window(Camera &camera, Maths::Vec2<unsigned int> size = {640, 480});
+    explicit Window(const Maths::Vec2<unsigned int>& size = {640, 480});
 
-    ~Window();
+    void draw(const Primitive2D &primitive, const Maths::ViewTransform2D &camera, const Maths::Mat3 &modelTransform = Maths::Mat3()) const;
+    void draw(const Mesh2D &mesh, const Maths::ViewTransform2D &camera, const Maths::Mat3 &modelTransform = Maths::Mat3()) const;
+    void draw(const Shape2D &shape, const Maths::ViewTransform2D &camera, const Maths::Mat3 &modelTransform = Maths::Mat3()) const;
+    void draw(const Scene2D &scene) const;
 
-    void draw(const Primitive &primitive, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
-    void draw(const Mesh &mesh, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
-    void draw(const Shape &shape, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
-    void drawTransparent(const Mesh &mesh, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
-    void drawTransparent(const Shape &shape, const Maths::Mat4 &sceneModel = Maths::Mat4()) const;
-    void draw(const Scene &scene, const Maths::Mat4 &sceneModel) const;
+    void draw(const Primitive &primitive, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
+    void draw(const Mesh &mesh, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
+    void draw(const Shape &shape, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
+    void drawTransparent(const Mesh &mesh, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
+    void drawTransparent(const Shape &shape, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
+    void draw(const Scene &scene, const Maths::Mat4 &modelTransform) const;
     void draw(const Scene &scene) const;
-
-    void setCamera(Camera &camera);
 
     void disableMouseCursor();
     void enableMouseCursor();
 
     float display();
 
-    Maths::Vec3<float> getWorldPosition();
+    Maths::Vec3<float> getWorldPosition(const Camera &camera);
 };
 
 } // namespace Blob::Core

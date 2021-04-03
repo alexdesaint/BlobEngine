@@ -70,7 +70,7 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
 
     switch (severity) {
     case GL_DEBUG_SEVERITY_NOTIFICATION:
-        // std::cout << errorName << " (Notification) : " << std::endl << "    " << message << std::endl;
+        //std::cout << errorName << " (Notification) : " << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_LOW:
         std::cout << errorName << " (Low severity Error) : " << std::endl << message << std::endl;
@@ -79,7 +79,7 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
         std::cout << errorName << " (Medium severity Error) : " << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_HIGH:
-        throw Blob::Core::Exception(errorName + " (High severity Error) : " + "\n" + message);
+        throw Blob::Core::Exception(errorName + " (High severity Error) :\n" + message + "\n");
     default:
         std::cout << errorName << " (Unknow severity Error) : " << std::endl << message << std::endl;
         break;

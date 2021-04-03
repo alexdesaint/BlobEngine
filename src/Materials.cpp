@@ -5,6 +5,41 @@
 
 namespace Blob::Materials {
 
+void SingleColor2D::applyMaterial(const Maths::Mat3 &pt, const Maths::Mat3 &vt, const Maths::Mat3 &mt) const {
+    setCullFace(false);
+    setDepthTest(false);
+    setShader(Shaders::SingleColor2D::instance);
+
+    setUniform(pt, Shaders::SingleColor2D::projection);
+    setUniform(vt, Shaders::SingleColor2D::view);
+    setUniform(mt, Shaders::SingleColor2D::model);
+
+    setUniform(albedo, Shaders::SingleColor2D::albedo);
+}
+
+SingleColor2D::SingleColor2D(Color::RGBA albedo) : albedo(albedo) {}
+
+SingleColor2D::SingleColor2D(Color::RGB albedo, float alpha) : albedo(albedo, alpha) {}
+
+void SingleColorSingleTexture2D::applyMaterial(const Maths::Mat3 &pt, const Maths::Mat3 &vt, const Maths::Mat3 &mt) const {
+    setCullFace(false);
+    setDepthTest(false);
+    setShader(Shaders::SingleColorSingleTexture2D::instance);
+
+    setUniform(pt, Shaders::SingleColorSingleTexture2D::projection);
+    setUniform(vt, Shaders::SingleColorSingleTexture2D::view);
+    setUniform(mt, Shaders::SingleColorSingleTexture2D::model);
+
+    setUniform(albedo, Shaders::SingleColorSingleTexture2D::albedo);
+    setTexture(texture);
+}
+
+SingleColorSingleTexture2D::SingleColorSingleTexture2D(const Core::Texture &texture) : texture(&texture) {}
+SingleColorSingleTexture2D::SingleColorSingleTexture2D(const Core::Texture &texture, const Color::RGBA &albedo) : texture(&texture), albedo(albedo) {}
+void SingleColorSingleTexture2D::setTexture1(const Core::Texture &texture_) {
+    texture = &texture_;
+}
+
 SingleColor::SingleColor(Color::RGB albedo) : albedo(albedo) {}
 
 void SingleColor::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {

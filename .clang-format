@@ -1,19 +1,23 @@
----
 Language: Cpp
 BasedOnStyle: LLVM
-AllowAllArgumentsOnNextLine: false
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortBlocksOnASingleLine: Always
-AllowShortFunctionsOnASingleLine: Inline
 AlwaysBreakTemplateDeclarations: Yes
 IndentWidth: 4
 AccessModifierOffset: -4
 SpaceAfterCStyleCast: true
 SpaceAfterTemplateKeyword: false
-ColumnLimit: 150
+ColumnLimit: 200
+
+# Funcion
+BinPackParameters: false
+BinPackArguments: false
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: Inline
+
+# Code
+AllowShortBlocksOnASingleLine: Always
 
 # Constructor
 BreakConstructorInitializers: AfterColon
 BreakInheritanceList: AfterColon
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
-...

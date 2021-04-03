@@ -12,11 +12,10 @@ private:
     Blob::GL::Texture fontTexture;
     Blob::GL::VertexBufferObject vertexBufferObject;
     Blob::GL::VertexArrayObject vertexArrayObject;
-    float projectionMatrix[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, -1, 1, 0, 1};
-    float id[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-    Blob::GL::Shader shader;
 
-    int projectionPosition = -1;
+    Blob::Maths::Mat3 projectionTransform;
+    Blob::Maths::Mat3 modelTransform;
+    Blob::Maths::Mat3 viewTransform;
 
     void buildFont();
 

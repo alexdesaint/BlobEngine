@@ -6,9 +6,11 @@
 
 namespace Blob::Core {
 
-Window::Window(Camera &camera, Maths::Vec2<unsigned int> size)
-    : GL::Window(size, GLmajor, GLminor), camera(&camera),
-      ProjectionTransform(PI / 4, size, 0.1, 1000), imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()),
+Window::Window(const Maths::Vec2<unsigned int>& size) :
+    GL::Window(size, GLmajor, GLminor),
+    imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()),
+    projectionTransform(PI / 4, framebufferSize, 0.1, 1000),
+    projectionTransform2D(framebufferSize.cast<float>()),
     keyboard(*keys),
     mouse(*cursorPosition, *scrollOffsetH, *scrollOffsetW, *mouseButton) {
     imgui.createRender();
@@ -42,10 +44,6 @@ Window::Window(Camera &camera, Maths::Vec2<unsigned int> size)
     lastFrameTime = std::chrono::high_resolution_clock::now();
 }
 
-Window::~Window() {
-    // imgui.draw(*this);
-}
-
 float Window::timeFlow = 0;
 
 float Window::display() {
@@ -73,7 +71,8 @@ void Window::windowResized() {
 }
 
 void Window::framebufferResized() {
-    setRatio(framebufferSize.x / ((float) framebufferSize.y));
+    projectionTransform.setRatio(framebufferSize);
+    projectionTransform2D.setRatio(framebufferSize.cast<float>());
     imgui.setWindowSize(windowSize.cast<float>(), framebufferSize.cast<float>());
 
     setViewport(framebufferSize);
@@ -83,7 +82,7 @@ void Window::characterInput(unsigned int c) {
     imgui.addInputCharacter(c);
 }
 
-Maths::Vec3<float> Window::getWorldPosition() {
+Maths::Vec3<float> Window::getWorldPosition(const Camera &camera) {
 
     //
     /*        ImGui::Begin("getWorldPosition");
@@ -111,7 +110,7 @@ Maths::Vec3<float> Window::getWorldPosition() {
             ImGui::Text("Window :  %f %f %f %f", pos.x, pos.y, pos.z, pos.w);*/
     //
 
-    pos = (*camera * *this).inverse() * pos;
+    pos = (camera * projectionTransform).inverse() * pos;
 
     //
     /*        ImGui::Text("World :  %f %f %f %f", pos.x / pos.w, pos.y / pos.w, pos.z / pos.w, pos.w);
@@ -121,14 +120,10 @@ Maths::Vec3<float> Window::getWorldPosition() {
     return pos / pos.w;
 }
 
-void Window::setCamera(Camera &camera_) {
-    camera = &camera_;
-}
-
-void Window::draw(const Primitive &primitive, const Maths::Mat4 &sceneModel) const {
+void Window::draw(const Primitive2D &primitive, const Maths::ViewTransform2D &camera, const Maths::Mat3 &model) const {
     setVAO(primitive.vertexArrayObject);
 
-    primitive.material->applyMaterial(*this, *camera, sceneModel);
+    primitive.material->applyMaterial(projectionTransform2D, camera, model);
 
     if (primitive.renderOptions->indexed)
         drawIndex(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType);
@@ -136,71 +131,107 @@ void Window::draw(const Primitive &primitive, const Maths::Mat4 &sceneModel) con
         drawArrays(primitive.renderOptions->numOfElements, primitive.renderOptions->elementOffset);
 }
 
-void Window::draw(const Mesh &mesh, const Maths::Mat4 &sceneModel) const {
+void Window::draw(const Mesh2D &mesh, const Maths::ViewTransform2D &camera, const Maths::Mat3 &sceneModel) const {
     for (auto r : mesh.primitives)
-        draw(*r, sceneModel);
+        draw(*r, camera, sceneModel);
 }
 
-void Window::draw(const Shape &shape, const Maths::Mat4 &sceneModel) const {
+void Window::draw(const Shape2D &shape, const Maths::ViewTransform2D &camera, const Maths::Mat3 &sceneModel) const {
+    Maths::Mat3 modelMatrix = shape * sceneModel;
+
+    if (shape.mesh != nullptr)
+        draw(*shape.mesh, camera, modelMatrix);
+
+    for (auto r : shape.shapes)
+        draw(*r, camera, modelMatrix);
+}
+
+void Window::draw(const Scene2D &scene) const {
+    for (auto r : scene.shapes)
+        draw(*r, scene.camera);
+    //for (auto r : scene.shapes)
+    //    drawTransparent(*r, scene.camera);
+}
+
+void Window::draw(const Primitive &primitive, const Maths::ViewTransform &camera, const Maths::Mat4 &sceneModel) const {
+    setVAO(primitive.vertexArrayObject);
+
+    primitive.material->applyMaterial(projectionTransform, camera, sceneModel);
+
+    if (primitive.renderOptions->indexed)
+        drawIndex(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType);
+    else
+        drawArrays(primitive.renderOptions->numOfElements, primitive.renderOptions->elementOffset);
+}
+
+void Window::draw(const Mesh &mesh, const Maths::ViewTransform &camera, const Maths::Mat4 &sceneModel) const {
+    for (auto r : mesh.primitives)
+        draw(*r, camera, sceneModel);
+}
+
+void Window::draw(const Shape &shape, const Maths::ViewTransform &camera, const Maths::Mat4 &sceneModel) const {
     Maths::Mat4 modelMatrix = shape * sceneModel;
 
     if (shape.mesh != nullptr)
-        draw(*shape.mesh, modelMatrix);
+        draw(*shape.mesh, camera, modelMatrix);
 
     for (auto r : shape.shapes)
-        draw(*r, modelMatrix);
+        draw(*r, camera, modelMatrix);
 }
 
 void Window::draw(const Scene &scene, const Maths::Mat4 &sceneModel) const {
     for (auto r : scene.shapes)
-        draw(*r, sceneModel);
+        draw(*r, scene.camera, sceneModel);
     for (auto r : scene.shapes)
-        drawTransparent(*r, sceneModel);
+        drawTransparent(*r, scene.camera, sceneModel);
 }
 
 void Window::draw(const Scene &scene) const {
-    // gFrameBuffer.bind();
-
     for (auto r : scene.shapes)
-        draw(*r);
+        draw(*r, scene.camera);
     for (auto r : scene.shapes)
-        drawTransparent(*r);
+        drawTransparent(*r, scene.camera);
 }
 
-void Window::drawTransparent(const Mesh &mesh, const Maths::Mat4 &sceneModel) const {
+void Window::drawTransparent(const Mesh &mesh, const Maths::ViewTransform &camera, const Maths::Mat4 &sceneModel) const {
     for (auto r : mesh.transparentPrimitives)
-        draw(*r, sceneModel);
+        draw(*r, camera, sceneModel);
 }
 
-void Window::drawTransparent(const Shape &shape, const Maths::Mat4 &sceneModel) const {
+void Window::drawTransparent(const Shape &shape, const Maths::ViewTransform &camera, const Maths::Mat4 &sceneModel) const {
     Maths::Mat4 modelMatrix = shape * sceneModel;
 
     if (shape.mesh != nullptr)
-        drawTransparent(*shape.mesh, modelMatrix);
+        drawTransparent(*shape.mesh, camera, modelMatrix);
 
     for (auto r : shape.shapes)
-        drawTransparent(*r, modelMatrix);
+        drawTransparent(*r, camera, modelMatrix);
 }
 
 void Window::keyboardUpdate(int key, bool pressed) {
     for (auto &k : KeyboardEvents::subscribers)
         k->keyboardUpdate(keyboard[key]);
+    for (auto &k : KeyboardEvents2::subscribers) {
+        auto it = k->callbacks.find(key);
+        if(it != k->callbacks.end() && it->second)
+            it->second(pressed);
+    }
 }
 
 void Window::mouseButtonUpdate(int button, bool pressed) {
     for (auto &k : MouseEvents::subscribers)
         k->mouseButtonUpdate(button, pressed);
-};
+}
 
 void Window::cursorPositionUpdate(double xpos, double ypos) {
     for (auto &k : MouseEvents::subscribers)
         k->cursorPosUpdate(xpos, ypos);
-};
+}
 
 void Window::scrollUpdate(double xoffset, double yoffset) {
     for (auto &k : MouseEvents::subscribers)
         k->scrollUpdate(xoffset, yoffset);
-};
+}
 
 void Window::disableMouseCursor() {
     imgui.disableMouseCursor();

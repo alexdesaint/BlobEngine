@@ -30,6 +30,10 @@ public:
         y = point2.y - point1.y;
     }
 
+    // operator with nothing
+
+    constexpr inline Vec2 operator-() const { return {-x, -y}; }
+
     // operator with Vec2
     constexpr inline bool operator==(const Vec2 &v) const { return x == v.x && y == v.y; }
 
@@ -158,6 +162,10 @@ public:
         y = point2.y - point1.y;
         z = point2.z - point1.z;
     }
+
+    // operator with nothing
+
+    constexpr inline Vec3 operator-() const { return {-x, -y, -z}; }
 
     // operator with Vec3
     inline constexpr bool operator==(const Vec3 &v) const noexcept { return x == v.x && y == v.y && z == v.z; }
@@ -314,6 +322,10 @@ public:
         w = point2.w - point1.w;
     }
 
+    // operator with nothing
+
+    constexpr inline Vec4 operator-() const { return {-x, -y, -z, -w}; }
+
     // operator with Vec4
     bool operator==(const Vec4 &v) const { return x == v.x && y == v.y && z == v.z && w == v.w; }
 
@@ -447,6 +459,10 @@ public:
         a21 = mat[2];
         a22 = mat[3];
     }
+
+    // operator with nothing
+
+    constexpr inline Mat2 operator-() const { return {- a11, -a22, -a21, -a22}; }
 
     Mat2 operator+(const Mat2 &v) const { return {a11 + v.a11, a12 + v.a12, a21 + v.a21, a22 + v.a22}; }
 
@@ -751,6 +767,136 @@ public:
         os << m.a13 << ", " << m.a23 << ", " << m.a33 << ", " << m.a43 << ", " << std::endl;
         os << m.a14 << ", " << m.a24 << ", " << m.a34 << ", " << m.a44 << std::endl;
         return os;
+    }
+};
+
+class ModelTransform2D : public Mat3 {
+private:
+    Vec2<float> scale = {1, 1};
+    Mat2<float> rotation;
+
+    void compute() {
+        a11 = rotation.a11 * scale.x;
+        a12 = rotation.a12 * scale.x;
+        a21 = rotation.a21 * scale.y;
+        a22 = rotation.a22 * scale.y;
+    }
+
+public:
+    using Mat3::Mat3;
+
+    explicit ModelTransform2D(const Mat3 &mat3) : Mat3(mat3) {}
+
+    explicit ModelTransform2D(const Vec2<float> &position) {setPosition(position);}
+    explicit ModelTransform2D(const Vec2<float> &position, const Vec2<float> &scale) {
+        setPosition(position);
+        setScale(scale);
+    }
+    explicit ModelTransform2D(const Vec2<float> &position, const Vec2<float> &scale, float angle) : scale(scale) {
+        setPosition(position);
+        setRotation(angle);
+    }
+
+    void setPosition(const Vec2<float> &xy) {
+        a31 = xy.x;
+        a32 = xy.y;
+    }
+
+    void setRotation(const Mat2<float> &rotation) {
+        ModelTransform2D::rotation = rotation;
+        compute();
+    };
+
+    void setRotation(float angle) {
+        const float c = std::cos(angle);
+        const float s = std::sin(angle);
+        rotation.a11 = c;
+        rotation.a12 = -s;
+        rotation.a21 = s;
+        rotation.a22 = c;
+        compute();
+    };
+
+    void setScale(float xy) {
+        scale = xy;
+        compute();
+    }
+
+    void setScale(const Vec2<float> &xy) {
+        scale = xy;
+        compute();
+    }
+
+    void rescale(float xy) {
+        scale *= xy;
+        compute();
+    }
+
+    void rescale(const Vec2<float> &xy) {
+        scale = xy;
+        compute();
+    }
+};
+
+class ViewTransform2D : public Mat3 {
+private:
+    Mat2<float> rotation;
+
+    void compute() {
+        a11 = rotation.a11;
+        a12 = rotation.a12;
+        a21 = rotation.a21;
+        a22 = rotation.a22;
+    }
+
+public:
+    using Mat3::Mat3;
+
+    explicit ViewTransform2D() = default;
+    explicit ViewTransform2D(const Mat3 &mat3) : Mat3(mat3) {}
+    explicit ViewTransform2D(const Vec2<float> &position) { setPosition(position); }
+    explicit ViewTransform2D(const Vec2<float> &position, float angle) {
+        setPosition(position);
+        setRotation(angle);
+    }
+
+    void setPosition(const Vec2<float> &xy) {
+        a31 = -xy.x;
+        a32 = -xy.y;
+    }
+
+    void setRotation(const Mat2<float> &rotation) {
+        ViewTransform2D::rotation = -rotation;
+        compute();
+    };
+
+    void setRotation(float angle) {
+        const float c = std::cos(-angle);
+        const float s = std::sin(-angle);
+        rotation.a11 = c;
+        rotation.a12 = -s;
+        rotation.a21 = s;
+        rotation.a22 = c;
+        compute();
+    };
+};
+
+class ProjectionTransform2D : public Mat3 {
+private:
+    float height = 1, ratio = 1;
+public:
+    ProjectionTransform2D() = default;
+    explicit ProjectionTransform2D(const Vec2<float> &size) { setRatio(size); }
+    void setRatio(const Vec2<float> &size) {
+        ratio = size.x / (float) size.y;
+        a11 = 2.f / (height * ratio);
+        a22 = 2.f / height;
+    }
+
+    void setHeight(float height) {
+        ProjectionTransform2D::height = height;
+        a11 = 2.f / (height * ratio);
+        a22 = 2.f / height;
     }
 };
 
@@ -1078,8 +1224,8 @@ public:
         a22 = 1.f / (tanHalfFovy);
     }
 
-    void setRatio(float _ratio) {
-        ratio = _ratio;
+    void setRatio(const Vec2<unsigned int> &size) {
+        ratio = size.x / (float) size.y;
 
         if (ortho) {
             a11 = 1.f / (cameraAngle * ratio); // 2 / width
