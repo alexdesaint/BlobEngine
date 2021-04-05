@@ -7,7 +7,7 @@
 
 #include <Blob/VK/Window.hpp>
 #include <Blob/VK/model.hpp>
-#include <Blob/VK/pipeline.hpp>
+#include <Blob/VK/Pipeline.hpp>
 
 /*********************************************************************************************************************************************************************/
 namespace Blob::VK {
