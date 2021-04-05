@@ -11,7 +11,7 @@ add_library(BlobVK STATIC
         Instance.cpp
         model.cpp
         PhysicalDevice.cpp
-        Pipeline.cpp
+#        Pipeline.cpp
         PipelineLayout.cpp
         QueueFamily.cpp
         RenderPass.cpp

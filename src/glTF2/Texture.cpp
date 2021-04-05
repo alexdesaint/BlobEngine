@@ -9,7 +9,7 @@ Texture::Texture(const nlohmann::json &j, vector<Image> &images, vector<Sampler>
     NotRequired(j, "sampler", sampler); /// TODO: Create a Blob::Sampler class
 
     if (NotRequired(j, "source", source)) {
-        setRGBAImage(images[source].uri);
+        setImage(images[source].uri);
         if (sampler != -1)
             applySampler(samplers[sampler]);
     }
