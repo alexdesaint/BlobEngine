@@ -8,7 +8,7 @@ VertexBufferObject::VertexBufferObject() {
     glCreateBuffers(1, &vertexBufferObject);
 }
 
-VertexBufferObject::VertexBufferObject(const GLubyte *data, GLsizeiptr dataSize) {
+VertexBufferObject::VertexBufferObject(const uint8_t *data, size_t dataSize) {
     glCreateBuffers(1, &vertexBufferObject);
     setData(data, dataSize);
 }
@@ -23,7 +23,7 @@ VertexBufferObject::~VertexBufferObject() {
     glDeleteBuffers(1, &vertexBufferObject);
 }
 
-void VertexBufferObject::setData(const GLubyte *data, GLsizeiptr ds, bool dynamic) {
+void VertexBufferObject::setData(const uint8_t *data, size_t ds, bool dynamic) {
     dataSize = ds;
 
     if (dynamic)
@@ -32,7 +32,7 @@ void VertexBufferObject::setData(const GLubyte *data, GLsizeiptr ds, bool dynami
         glNamedBufferStorage(vertexBufferObject, dataSize, data, 0);
 }
 
-void VertexBufferObject::setSubData(uint8_t *data, int64_t dataSize, int64_t offset) {
+void VertexBufferObject::setSubData(uint8_t *data, size_t dataSize, size_t offset) {
     glNamedBufferSubData(vertexBufferObject, offset, dataSize, data);
 }
 
