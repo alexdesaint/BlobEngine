@@ -69,7 +69,7 @@ int SimpleMaterial::projection;
 int main() {
     Core::Camera camera;
 
-    Core::Window window(camera);
+    Core::Window window;
 
     try {
         GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
@@ -101,7 +101,7 @@ int main() {
         while (window.isOpen()) {
 
             shape.setRotation((float) Core::Window::timeFlow, {0, 0, 1});
-            window.draw(shape);
+            window.draw(shape, camera);
 
             window.display();
         }

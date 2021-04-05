@@ -76,7 +76,7 @@ int SimpleMaterial::projection;
 int main() {
     Core::Camera camera;
 
-    Core::Window window(camera);
+    Core::Window window;
 
     Blob::GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
@@ -113,7 +113,7 @@ int main() {
     while (window.isOpen()) {
 
         // renderable.setRotation((float) glfwGetTime(), 0, 0, 1);
-        window.draw(primitive);
+        window.draw(primitive, camera);
         // ImGui::NewFrame();
 
         if (show_demo_window)

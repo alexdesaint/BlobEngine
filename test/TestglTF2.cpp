@@ -1,3 +1,4 @@
+#include "Blob/Maths.inl"
 #include <Blob/Core/Exception.hpp>
 #include <Blob/Core/Window.hpp>
 #include <Blob/Materials.hpp>
@@ -176,13 +177,13 @@ struct Primitives {
             attribute0.setArray(2, 3, 5126, 24, 0);
         }
     } mesh2;
-    Blob::Core::Shape shape0{mesh0, {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
+    Blob::Core::Shape shape0{mesh0, Blob::Maths::Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
     Blob::Core::Shape shape1{
-        {-0.290865, 0.955171, -0.0551891, 0, -0.771101, -0.199883, 0.604525, 0, 0.566393, 0.218391, 0.794672, 0, 4.07625, 1.00545, 5.90386, 1}};
+        Blob::Maths::Mat4{-0.290865, 0.955171, -0.0551891, 0, -0.771101, -0.199883, 0.604525, 0, 0.566393, 0.218391, 0.794672, 0, 4.07625, 1.00545, 5.90386, 1}};
     Blob::Core::Shape shape2{
-        {0.685921, 0.727676, 0, 0, -0.324014, 0.305421, 0.895396, 0, 0.651558, -0.61417, 0.445271, 0, 7.35889, -6.92579, 4.95831, 1}};
-    Blob::Core::Shape shape3{mesh1, {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
-    Blob::Core::Shape shape4{mesh2, {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
+        Blob::Maths::Mat4{0.685921, 0.727676, 0, 0, -0.324014, 0.305421, 0.895396, 0, 0.651558, -0.61417, 0.445271, 0, 7.35889, -6.92579, 4.95831, 1}};
+    Blob::Core::Shape shape3{mesh1, Blob::Maths::Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
+    Blob::Core::Shape shape4{mesh2, Blob::Maths::Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
     Blob::Core::Scene scene0{{
         &shape0,
         &shape1,
