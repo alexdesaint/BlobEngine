@@ -14,7 +14,7 @@
 #include "vdeleter.h"
 #include "CoreEngine.h"
 
-#include "pipeline.h"
+#include "Pipeline.h"
 
 pipeline::pipeline(const Device &device) :
         swapchain(), device(device),
