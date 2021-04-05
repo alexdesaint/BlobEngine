@@ -7,7 +7,7 @@ add_executable(TestImGUI TestImGUI.cpp)
 target_link_libraries(TestImGUI Blob)
 
 add_executable(TestSDL TestSDL.cpp)
-target_link_libraries(TestSDL mingw32 SDL2::SDL2main SDL2::SDL2-static)
+target_link_libraries(TestSDL SDL2::SDL2main SDL2::SDL2-static)
 
 add_executable(TestWindowCore TestWindowCore.cpp)
 target_link_libraries(TestWindowCore Blob)
