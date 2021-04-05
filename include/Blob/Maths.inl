@@ -2,7 +2,7 @@
 
 #include <array>
 #include <cmath>
-#include <list> // TODO: remove this
+#include <numbers>
 #include <ostream>
 
 #include <cstring>
@@ -1171,7 +1171,7 @@ public:
  */
 class ProjectionTransform : public Mat4 {
 private:
-    float cameraAngle = PI / 4, ratio = 1.f, closeRange, longRange;
+    float cameraAngle = std::numbers::pi_v<float> / 4.f, ratio = 1.f, closeRange, longRange;
     bool ortho = false;
 
 public:

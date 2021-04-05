@@ -68,7 +68,7 @@ void FrameBuffer::drawBuffer(FrameBuffer::Attachment attachment) const {
 }
 
 void FrameBuffer::drawBuffer(const std::vector<FrameBuffer::Attachment> &attachments) const {
-    glNamedFramebufferDrawBuffers(frameBufferObject, attachments.size(), attachments.data());
+    glNamedFramebufferDrawBuffers(frameBufferObject, (GLsizei) attachments.size(), attachments.data());
 }
 
 void FrameBuffer::readBuffer(FrameBuffer::Attachment attachment) const {

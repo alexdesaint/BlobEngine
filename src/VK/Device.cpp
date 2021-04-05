@@ -14,7 +14,7 @@
 #include <Blob/VK/Vertex.hpp>
 #include <Blob/VK/Window.hpp>
 #include <Blob/VK/model.hpp>
-#include <Blob/VK/pipeline.hpp>
+#include <Blob/VK/Pipeline.hpp>
 #include <Blob/VK/vdeleter.hpp>
 
 namespace Blob::VK {

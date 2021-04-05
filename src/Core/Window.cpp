@@ -9,10 +9,10 @@ namespace Blob::Core {
 Window::Window(const Maths::Vec2<unsigned int>& size) :
     GL::Window(size, GLmajor, GLminor),
     imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()),
-    projectionTransform(PI / 4, framebufferSize, 0.1, 1000),
-    projectionTransform2D(framebufferSize.cast<float>()),
     keyboard(*keys),
-    mouse(*cursorPosition, *scrollOffsetH, *scrollOffsetW, *mouseButton) {
+    mouse(*cursorPosition, *scrollOffsetH, *scrollOffsetW, *mouseButton),
+    projectionTransform(PI / 4, framebufferSize, 0.1, 1000),
+    projectionTransform2D(framebufferSize.cast<float>()) {
     imgui.createRender();
 
     ImGuiIO &io = ImGui::GetIO();

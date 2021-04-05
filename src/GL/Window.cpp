@@ -121,7 +121,7 @@ Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLm
     glEnable(GL_DEPTH_TEST);
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // pour faire des lignes
-    glClearColor(0.27, 0.27, 0.27, 1.0);
+    glClearColor(0.27f, 0.27f, 0.27f, 1.0f);
     glViewport(0, 0, windowSize.x, windowSize.y);
 
     // alpha

@@ -27,7 +27,6 @@ jobs:
       run: git submodule update --init --recursive
     - name: Install libs
       run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libwayland-dev
-      #sudo apt-get install libxcb-dri3-0 libxcb-present0 libpciaccess0 libxcb-keysyms1-dev libxcb-dri3-dev libx11-dev libmirclient-dev libwayland-dev libxcb-ewmh-dev
     - name: Configure
       run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
     - name: Build
