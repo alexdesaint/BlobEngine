@@ -133,9 +133,7 @@ public:
             Maths::Vec3<> pos{0, 0, 10};
             Materials::PBR::light.position = {10, 10, 10};
 
-            Core::Camera camera;
-
-            Core::Window window(camera);
+            Core::Window window;
 
             AssetManager a;
 
@@ -147,12 +145,12 @@ public:
 
             Core::Scene scene{{&cube, &plane, &octagonalPrism}};
 
-            window.setRange(0.1, 100);
+            window.projectionTransform.setRange(0.1, 100);
 
             float flow = 0;
             while (window.isOpen()) {
                 anglePos += speed * flow;
-                camera.setPosition(Maths::Vec3<>(std::cos(anglePos.x), std::sin(anglePos.x), std::cos(anglePos.y)) * 10);
+                scene.camera.setPosition(Maths::Vec3<>(std::cos(anglePos.x), std::sin(anglePos.x), std::cos(anglePos.y)) * 10);
                 window.draw(scene);
 
                 flow = window.display();

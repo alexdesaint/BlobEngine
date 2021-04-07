@@ -73,7 +73,7 @@ int main() {
 
     while (window.isOpen()) {
 
-        pt.setRatio(width/((float)height));
+        pt.setRatio({width,height});
 
         window.setViewport({width, height});
 

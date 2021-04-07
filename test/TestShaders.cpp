@@ -12,9 +12,7 @@ using namespace Core;
 int main() {
     try {
 
-        Camera camera;
-
-        Window window(camera);
+        Window window;
         AssetManager assetManager;
 
         Materials::PBRSingleColor blue, orange, white;
@@ -43,7 +41,7 @@ int main() {
         p.setScale({5, 5, 5});
         scene.addShape(p);
         
-        camera.setPosition({10, 0, 10});
+        scene.camera.setPosition({10, 0, 10});
 
         Time::TimePoint start = Time::now();
         while (window.isOpen()) {

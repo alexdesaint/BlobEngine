@@ -10,7 +10,7 @@ class ShapeBase : public Transform {
     friend Window;
 
 private:
-    Mesh *mesh = nullptr;
+    const Mesh *mesh = nullptr;
     std::list<ShapeBase *> shapes;
 
 public:
@@ -18,11 +18,14 @@ public:
     ShapeBase(const ShapeBase &) = delete;
     ShapeBase(ShapeBase &&) = delete;
 
-    template<typename... Args>
-    explicit ShapeBase(Mesh &r, Args... args) : mesh(&r), Transform(args...) {}
+    //template<typename... Args>
+    explicit ShapeBase(const Transform& args) : Transform(args) {}
 
-    template<typename... Args>
-    explicit ShapeBase(Args... args) : Transform(args...) {}
+    //template<typename... Args>
+    explicit ShapeBase(const Mesh &r) : mesh(&r) {}
+
+    //template<typename... Args>
+    explicit ShapeBase(const Mesh &r, const Transform& args) : mesh(&r), Transform(args) {}
 
     void setMesh(Mesh &r) { mesh = &r; }
     void setMesh(Mesh *r) { mesh = r; }

@@ -8,6 +8,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+IF(MINGW)
+  link_libraries(mingw32)
+ENDIF()
+
 option(BLOBTEST "Build the tests" OFF)
 option(BLOBVK "Build Vulkan" OFF)
 option(BUILD_DOC "Build documentation" ON)

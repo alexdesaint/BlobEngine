@@ -177,13 +177,13 @@ struct Primitives {
             attribute0.setArray(2, 3, 5126, 24, 0);
         }
     } mesh2;
-    Blob::Core::Shape shape0{mesh0, Blob::Maths::Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
+    Blob::Core::Shape shape0{mesh0, Maths::ModelTransform{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
     Blob::Core::Shape shape1{
-        Blob::Maths::Mat4{-0.290865, 0.955171, -0.0551891, 0, -0.771101, -0.199883, 0.604525, 0, 0.566393, 0.218391, 0.794672, 0, 4.07625, 1.00545, 5.90386, 1}};
+        Maths::ModelTransform{-0.290865, 0.955171, -0.0551891, 0, -0.771101, -0.199883, 0.604525, 0, 0.566393, 0.218391, 0.794672, 0, 4.07625, 1.00545, 5.90386, 1}};
     Blob::Core::Shape shape2{
-        Blob::Maths::Mat4{0.685921, 0.727676, 0, 0, -0.324014, 0.305421, 0.895396, 0, 0.651558, -0.61417, 0.445271, 0, 7.35889, -6.92579, 4.95831, 1}};
-    Blob::Core::Shape shape3{mesh1, Blob::Maths::Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
-    Blob::Core::Shape shape4{mesh2, Blob::Maths::Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
+        Maths::ModelTransform{0.685921, 0.727676, 0, 0, -0.324014, 0.305421, 0.895396, 0, 0.651558, -0.61417, 0.445271, 0, 7.35889, -6.92579, 4.95831, 1}};
+    Blob::Core::Shape shape3{Maths::ModelTransform{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
+    Blob::Core::Shape shape4{Maths::ModelTransform{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
     Blob::Core::Scene scene0{{
         &shape0,
         &shape1,
@@ -221,9 +221,7 @@ public:
         try {
             std::cout << "test : " << path << std::endl;
 
-            Core::Camera camera(pos, pos + Maths::Vec3<>(1, 0, 0), {0, 1, 0});
-
-            Core::Window window(camera);
+            Core::Window window;
 
             glTF2::SceneManager sm(path);
 
@@ -231,13 +229,16 @@ public:
             std::cout << sm.toCHeader() << std::endl;
 
             Core::Scene &mainScene = sm.scenes.front();
+            mainScene.camera.setPosition(pos);
+            mainScene.camera.setLookAt(pos + Maths::Vec3<>(1, 0, 0));
+            mainScene.camera.setCameraUp( {0, 1, 0});
 
-            window.setRange(0.1, 1000);
+            window.projectionTransform.setRange(0.1, 1000);
 
             float flow = 0;
             while (window.isOpen()) {
                 angle -= speed.y * flow;
-                camera.move({std::cos(angle) * speed.x * flow, 0, std::sin(angle) * speed.x * flow}, angle);
+                mainScene.camera.move({std::cos(angle) * speed.x * flow, 0, std::sin(angle) * speed.x * flow}, angle);
                 window.draw(mainScene);
 
                 flow = window.display();
@@ -252,11 +253,11 @@ public:
 
             Core::Camera camera(pos, pos + Maths::Vec3<>(1, 0, 0), {0, 1, 0});
 
-            Core::Window window(camera);
+            Core::Window window;
 
             AssetManager a;
 
-            window.setRange(0.1, 1000);
+            window.projectionTransform.setRange(0.1, 1000);
 
             T t;
 
@@ -264,7 +265,7 @@ public:
             while (window.isOpen()) {
                 angle -= speed.y * flow;
                 camera.move({std::cos(angle) * speed.x * flow, 0, std::sin(angle) * speed.x * flow}, angle);
-                window.draw(t.shape2);
+                window.draw(t.shape2, camera);
 
                 flow = window.display();
             }
