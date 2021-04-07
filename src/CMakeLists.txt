@@ -22,7 +22,7 @@ target_include_directories(BlobGLFW PUBLIC ${INCLUDE_FOLDER})
 add_library(Blob::GLFW ALIAS BlobGLFW)
 
 add_library(BlobImGui STATIC ImGui.cpp)
-target_link_libraries(BlobImGui imgui Blob::GL)
+target_link_libraries(BlobImGui imgui BlobShaders)
 target_include_directories(BlobImGui PUBLIC ${INCLUDE_FOLDER})
 add_library(Blob::ImGui ALIAS BlobImGui)
 
