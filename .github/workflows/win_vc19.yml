@@ -1,0 +1,19 @@
+name: Visual Studio 2019
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  VisualStudio:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Submodules
+      run: git submodule update --init --recursive
+    - name: Configure
+      run: cmake -Bbuild -G"Visual Studio 16 2019"
+    - name: Build
+      run: cmake --build build --config Release
