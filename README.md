@@ -1,8 +1,8 @@
 # BlobEngine
 
 [![Linux gcc 10](https://github.com/alexdesaint/BlobEngine/actions/workflows/lInux_gcc.yml/badge.svg)](https://github.com/alexdesaint/BlobEngine/actions/workflows/lInux_gcc.yml)
-[![Visual Studio 2019](https://github.com/alexdesaint/BlobEngine/actions/workflows/win_vc19.yml/badge.svg)](https://github.com/alexdesaint/BlobEngine/actions/workflows/win_vc19.yml)
 [![Linux clang](https://github.com/alexdesaint/BlobEngine/actions/workflows/linux_clang.yml/badge.svg)](https://github.com/alexdesaint/BlobEngine/actions/workflows/linux_clang.yml)
+[![Visual Studio 2019](https://github.com/alexdesaint/BlobEngine/actions/workflows/win_vc19.yml/badge.svg)](https://github.com/alexdesaint/BlobEngine/actions/workflows/win_vc19.yml)
 
 ![Demo](doc/Demo.png )
 
