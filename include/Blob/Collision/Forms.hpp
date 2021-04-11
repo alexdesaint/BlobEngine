@@ -5,6 +5,7 @@
 #include <array>
 #include <cmath>
 #include <ostream>
+#include <string>
 #include <unordered_set>
 #include <utility>
 #include <vector>
@@ -43,16 +44,20 @@ public:
     [[nodiscard]] static bool overlap(const RasterArea &rasterArea) { return true; }
 
     [[nodiscard]] std::unordered_set<Maths::Vec2<int32_t>> rasterize() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const Point &p) { return os << "Point: " << (Maths::Vec2<float>) p; }
 };
 
 class Circle {
 public:
-    double rayon = 0;
+    float rayon = 0;
     Point position;
 
-    Circle(const Point &position, double rayon) : rayon(rayon), position(position) {}
+    Circle() = default;
 
-    Circle(const Maths::Vec2<float> &position, double rayon) : rayon(rayon), position(position) {}
+    Circle(const Point &position, float rayon) : rayon(rayon), position(position) {}
+
+    Circle(const Maths::Vec2<float> &position, float rayon) : rayon(rayon), position(position) {}
 
     [[nodiscard]] bool overlap(const Rectangle &rectangle) const;
 
@@ -65,6 +70,8 @@ public:
     [[nodiscard]] static bool overlap(const RasterArea &rasterArea) { return true; }
 
     [[nodiscard]] std::unordered_set<Maths::Vec2<int32_t>> rasterize() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const Circle &p) { return os << "Circle: {position: " << (Maths::Vec2<float>) p.position << ", rayon: " << p.rayon << "}"; }
 };
 
 class Line {
@@ -99,6 +106,10 @@ public:
     //        [[nodiscard]] double getGradient() const { return vector.y / vector.x; }
 
     //        [[nodiscard]] double getConstant() const { return position.y - vector.y / vector.x * position.x; }
+
+    friend std::ostream &operator<<(std::ostream &os, const Line &p) {
+        return os << "Line: {positionA: " << (Maths::Vec2<float>) p.positionA << ", positionB: " << (Maths::Vec2<float>) p.positionB << "}";
+    }
 };
 
 class Rectangle {
@@ -120,6 +131,10 @@ public:
     [[nodiscard]] static bool overlap(const RasterArea &rasterArea) { return true; }
 
     [[nodiscard]] std::unordered_set<Maths::Vec2<int32_t>> rasterize() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const Rectangle &p) {
+        return os << "Rectangle: {position: " << (Maths::Vec2<float>) p.position << ", size: " << (Maths::Vec2<float>) p.size << "}";
+    }
 };
 
 class RasterArea {
@@ -156,7 +171,7 @@ public:
     }
 
     void setArea(const Maths::Vec2<int32_t> &center, int32_t sizeX, int32_t sizeY) {
-        Maths::Vec2<int32_t> size(sizeX, sizeY), size2(size/2);
+        Maths::Vec2<int32_t> size(sizeX, sizeY), size2(size / 2);
         setArea(center - size2, center + size - size2 - 1);
     }
 
@@ -171,6 +186,8 @@ public:
     [[nodiscard]] static bool overlap(const RasterArea &rasterArea) { return true; }
 
     [[nodiscard]] std::unordered_set<Maths::Vec2<int32_t>> rasterize() const { return area; };
+
+    friend std::ostream &operator<<(std::ostream &os, const RasterArea &p) { return os << "RasterArea: "; }
 };
 
-} // namespace Blob::Geometry
+} // namespace Blob::Collision
