@@ -46,10 +46,10 @@ bool Circle::overlap(const Point &point) const {
 
 std::unordered_set<Maths::Vec2<int32_t>> Circle::rasterize() const {
     std::unordered_set<Maths::Vec2<int32_t>> points;
-    auto startx = (int64_t) (position.x - rayon);
-    auto endx = (int64_t) (position.x + rayon);
-    auto starty = (int64_t) (position.y - rayon);
-    auto endy = (int64_t) (position.y + rayon);
+    auto startx = (int32_t) (position.x - rayon);
+    auto endx = (int32_t) (position.x + rayon);
+    auto starty = (int32_t) (position.y - rayon);
+    auto endy = (int32_t) (position.y + rayon);
 
     for (int i = startx; i <= endx; i++)
         for (int j = starty; j <= endy; j++)

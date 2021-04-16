@@ -65,21 +65,21 @@ protected:
 
     /**
      * This method is called right before the collision is computed
-     * @param currentForm Time in second sins list frame
+     * @param currentForm the actual form used for the collision detection
      * @param timeFlow Time in second sins list frame
      * @return the form you wish to test the next collision
      */
-    virtual T preCollisionUpdate(const T &currentForm, float timeFlow) { return currentForm; }
+    virtual T preCollisionUpdate(T currentForm, float timeFlow) { return currentForm; }
 
     /**
-     * This method is called right after the collision is computed and return the final position that will be saved in the internal spacial definition. 
+     * This method is called right after the collision is computed and return the final position that will be saved in the internal spacial definition.
      * In this method CollisionDetector::testCollision will never detect itself becaus it is not in the internal spacial definition yet.
      * @param currentForm Time in second sins list frame
      * @param nextForm Time in second sins list frame
      * @param timeFlow Time in second sins list frame
      * @return the fianl position
      */
-    virtual T postCollisionUpdate(const T &currentForm, const T &nextForm, float timeFlow) { return nextForm; }
+    virtual T postCollisionUpdate(const T &currentForm, T nextForm, float timeFlow) { return nextForm; }
 
 public:
     const T &collider{form};
