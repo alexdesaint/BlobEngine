@@ -21,6 +21,7 @@ target_link_libraries(TestShapes Blob)
 add_executable(TestShaders TestShaders.cpp)
 target_link_libraries(TestShaders Blob)
 
+add_subdirectory(BlenderExporter)
 add_subdirectory(GL)
 add_subdirectory(VK)
 add_subdirectory(Maths)
