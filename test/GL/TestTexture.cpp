@@ -1,4 +1,7 @@
+#include "Blob/GL/Texture.hpp"
+#include "JustOneMoreTime/Texture.hpp"
 #include <glad/glad.h>
+#include <stdint.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -12,12 +15,18 @@ using namespace Blob;
 
 static const struct Vertice {
     float x, y;
+    float uvx, uxy;
     float r, g, b;
-} vertices[3] = {{-0.6f, -0.4f, 1.f, 0.f, 0.f}, 
-                 {0.6f, -0.4f,  0.f, 1.f, 0.f}, 
-                 {0.f, 0.6f,    0.f, 0.f, 1.f}};
+} vertices[] = {{-0.6f, -0.4f, 0.f, 0., 1.f, 1.f, 1.f},
+                {0.6f, -0.4f, 1.f, 0.f, 1.f, 1.f, 1.f},
+                {-0.6f, 0.4f, 0.f, 1.f, 1.f, 1.f, 1.f},
+                {0.6f, 0.4f, 1.f, 1.f, 1.f, 1.f, 1.f},
+                {-0.6f, 0.4f, 0.f, 1.f, 1.f, 1.f, 1.f},
+                {0.6f, -0.4f, 1.f, 0.f, 1.f, 1.f, 1.f}};
 
-static std::string vertex_shader_text = R"=====(#version 110
+static const struct Pixel { uint8_t r, g, b, a; } image[] = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {255, 255, 0}};
+
+static std::string vertex_shader_text = R"=====(#version 400
 attribute vec2 Position;
 attribute vec3 Color;
 attribute vec2 TexturePosition;
@@ -25,17 +34,21 @@ attribute vec2 TexturePosition;
 uniform mat4 MVP;
 
 varying vec3 color;
+varying vec2 texCoord;
 void main()
 {
     gl_Position = MVP * vec4(Position, 0.0, 1.0);
     color = Color;
+    texCoord = TexturePosition;
 })=====";
 
-static std::string fragment_shader_text = R"=====(#version 110
+static std::string fragment_shader_text = R"=====(#version 400
 varying vec3 color;
+varying vec2 texCoord;
+uniform sampler2D Texture;
 void main()
 {
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color, 1.0) * texture(Texture, texCoord.st);
 })=====";
 
 static void error_callback(int error, const char *description) {
@@ -54,7 +67,7 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
 int main() {
     GLFWwindow *window;
     GLuint vertex_buffer;
-    GLint mvp_location, vpos_location, vcol_location;
+    GLint model_location = 0, view_location = 1, projection_location = 2, position_location = 0, texturePosition_location = 3, color_location = 5;
 
     glfwSetErrorCallback(error_callback);
 
@@ -102,16 +115,25 @@ int main() {
         exit(EXIT_SUCCESS);
     }
 
-    // loc
-    mvp_location = sp.getUniformLocation("MVP");
-    vpos_location = sp.getAttribLocation("Position");
-    vcol_location = sp.getAttribLocation("Color");
+    GL::Texture texture;
+    GL::Sampler sample(GL::Sampler::NEAREST, GL::Sampler::NEAREST);
 
-    glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void *) 0);
-    glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void *) (sizeof(float) * 2));
+    texture.setRGBA8data((uint8_t *) image, Maths::Vec2<unsigned int>{2, 2});
+    texture.applySampler(sample);
 
+    model_location = sp.getUniformLocation("MVP");
+    position_location = sp.getAttribLocation("Position");
+    color_location = sp.getAttribLocation("Color");
+    texturePosition_location = sp.getAttribLocation("TexturePosition");
+
+    glEnableVertexAttribArray(position_location);
+    glVertexAttribPointer(position_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void *) offsetof(Vertice, x));
+    glEnableVertexAttribArray(texturePosition_location);
+    glVertexAttribPointer(texturePosition_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void *) offsetof(Vertice, uvx));
+    glEnableVertexAttribArray(color_location);
+    glVertexAttribPointer(color_location, 3, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void *) offsetof(Vertice, r));
+
+    glBindTexture(GL_TEXTURE_2D, texture.texture);
     glUseProgram(sp.program);
     while (!glfwWindowShouldClose(window)) {
         int width, height;
@@ -128,9 +150,9 @@ int main() {
 
         p.setOrthoProjection(2);
 
-        Maths::Mat4 mvp = m * p;
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, &mvp.a11);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        Maths::Mat4 mvp = p * m;
+        glUniformMatrix4fv(model_location, 1, GL_FALSE, &mvp.a11);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

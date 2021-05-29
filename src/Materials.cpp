@@ -24,7 +24,6 @@ SingleColor2D::SingleColor2D(Color::RGB albedo, float alpha) : albedo(albedo, al
 void SingleColorSingleTexture2D::applyMaterial(const Maths::Mat3 &pt, const Maths::Mat3 &vt, const Maths::Mat3 &mt) const {
     setCullFace(false);
     setDepthTest(false);
-    setShader(Shaders::SingleColorSingleTexture2D::instance);
 
     setUniform(pt, Shaders::SingleColorSingleTexture2D::projection);
     setUniform(vt, Shaders::SingleColorSingleTexture2D::view);
@@ -32,6 +31,7 @@ void SingleColorSingleTexture2D::applyMaterial(const Maths::Mat3 &pt, const Math
 
     setUniform(albedo, Shaders::SingleColorSingleTexture2D::albedo);
     setTexture(texture);
+    setShader(Shaders::SingleColorSingleTexture2D::instance);
 }
 
 SingleColorSingleTexture2D::SingleColorSingleTexture2D(const Core::Texture &texture) : texture(&texture) {}

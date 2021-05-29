@@ -105,8 +105,7 @@ void Context::draw(const Blob::GL::Window &window) {
     unsigned int offset = 0;
 
     window.setVAO(vertexArrayObject);
-    //setShader(shader);
-    setShader(Blob::Shaders::ColorArraySingleTexture2D::instance);
+
     setScissorTest(true);
     setCullFace(false);
     setDepthTest(false);
@@ -126,6 +125,7 @@ void Context::draw(const Blob::GL::Window &window) {
                        (int) (pcmd->ClipRect.w - pcmd->ClipRect.y));
 
             setTexture(*((GL::Texture *) pcmd->TextureId));
+            setShader(Blob::Shaders::ColorArraySingleTexture2D::instance);
             setUniform(projectionTransform, Blob::Shaders::ColorArraySingleTexture2D::projection);
             setUniform(viewTransform, Blob::Shaders::ColorArraySingleTexture2D::view);
             setUniform(modelTransform, Blob::Shaders::ColorArraySingleTexture2D::model);

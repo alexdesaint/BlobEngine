@@ -30,16 +30,16 @@ Window::Window(const Maths::Vec2<unsigned int>& size) :
     new (&mouse) Mouse(*cursorPosition, *scrollOffsetH, *scrollOffsetW, *mouseButton);
 
     // Deferred Shading
-    gPosition.setRGBA16data(nullptr, framebufferSize);
-    gPosition.applySampler({GL::Sampler::FILTER::NEAREST, GL::Sampler::FILTER::NEAREST});
-    gFrameBuffer.attachTexture(gPosition, GL::FrameBuffer::COLOR_ATTACHMENT0);
-    gNormal.setRGBA16data(nullptr, framebufferSize);
-    gNormal.applySampler({GL::Sampler::FILTER::NEAREST, GL::Sampler::FILTER::NEAREST});
-    gFrameBuffer.attachTexture(gPosition, GL::FrameBuffer::COLOR_ATTACHMENT1);
-    gAlbedo.setRGBA16data(nullptr, framebufferSize);
-    gAlbedo.applySampler({GL::Sampler::FILTER::NEAREST, GL::Sampler::FILTER::NEAREST});
-    gFrameBuffer.attachTexture(gPosition, GL::FrameBuffer::COLOR_ATTACHMENT2);
-    gFrameBuffer.drawBuffer({GL::FrameBuffer::COLOR_ATTACHMENT0, GL::FrameBuffer::COLOR_ATTACHMENT1, GL::FrameBuffer::COLOR_ATTACHMENT2});
+    // gPosition.setRGBA16data(nullptr, framebufferSize);
+    // gPosition.applySampler({GL::Sampler::FILTER::NEAREST, GL::Sampler::FILTER::NEAREST});
+    // gFrameBuffer.attachTexture(gPosition, GL::FrameBuffer::COLOR_ATTACHMENT0);
+    // gNormal.setRGBA16data(nullptr, framebufferSize);
+    // gNormal.applySampler({GL::Sampler::FILTER::NEAREST, GL::Sampler::FILTER::NEAREST});
+    // gFrameBuffer.attachTexture(gPosition, GL::FrameBuffer::COLOR_ATTACHMENT1);
+    // gAlbedo.setRGBA16data(nullptr, framebufferSize);
+    // gAlbedo.applySampler({GL::Sampler::FILTER::NEAREST, GL::Sampler::FILTER::NEAREST});
+    // gFrameBuffer.attachTexture(gPosition, GL::FrameBuffer::COLOR_ATTACHMENT2);
+    // gFrameBuffer.drawBuffer({GL::FrameBuffer::COLOR_ATTACHMENT0, GL::FrameBuffer::COLOR_ATTACHMENT1, GL::FrameBuffer::COLOR_ATTACHMENT2});
 
     lastFrameTime = std::chrono::high_resolution_clock::now();
 }

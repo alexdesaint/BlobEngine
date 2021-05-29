@@ -32,7 +32,6 @@ class Texture {
     friend class FrameBuffer;
 
 private:
-    uint32_t texture = 0; // the opengl texture
 
 protected:
     Maths::Vec2<unsigned int> size;
@@ -55,5 +54,7 @@ public:
     void setRGBA16data(uint8_t *pixels, Maths::Vec2<unsigned int> size);
 
     [[nodiscard]] Maths::Vec2<unsigned int> getTextureSize() const;
+    
+    uint32_t texture = 0; // the opengl texture
 };
 } // namespace Blob::GL

@@ -22,7 +22,6 @@ void main() {
 layout(location=0) out vec4 color;
 
 layout(location = 3) uniform vec4 albedo;
-uniform sampler2D Texture;
 
 void main() {
     color = albedo;
