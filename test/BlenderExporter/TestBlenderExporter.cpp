@@ -574,7 +574,7 @@ int main() {
             zAngle = zAngleNew;
             xyAngle = xyAngleNew;
         }
-        camera.setPosition(Blob::Maths::Vec3{cos(xyAngleNew) * sin(zAngleNew), sin(xyAngleNew) * sin(zAngleNew), cos(zAngleNew)} * dist);
+        camera.setPosition(Blob::Maths::Vec3{std::cos(xyAngleNew) * std::sin(zAngleNew), std::sin(xyAngleNew) * std::sin(zAngleNew), std::cos(zAngleNew)} * dist);
 
         window.display();
     }
