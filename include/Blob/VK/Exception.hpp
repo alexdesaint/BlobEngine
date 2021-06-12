@@ -17,7 +17,8 @@ public:
 #ifdef __cpp_lib_source_location
     template<class T>
     explicit Exception(T *t, std::string errorMsg, const std::source_location &location = std::source_location::current()) :
-        errorMsg(std::string(typeid(t).name()) + location.file_name() + location.line() + location.function_name() + errorMsg) {}
+        errorMsg(std::string(typeid(t).name()) + ": " + location.file_name() + " (" + std::to_string(location.line()) + ":" + std::to_string(location.column()) + ") \"" +
+                 std::to_string(location.function_name()) + "\": " + errorMsg) {}
 #else
     template<class T>
     explicit Exception(T *t, std::string errorMsg) : errorMsg(std::string("VK::") + typeid(T).name() + " : " + errorMsg) {}
