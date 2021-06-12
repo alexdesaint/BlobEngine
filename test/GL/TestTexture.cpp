@@ -1,5 +1,4 @@
-#include "Blob/GL/Texture.hpp"
-#include "JustOneMoreTime/Texture.hpp"
+#include <Blob/GL/Texture.hpp>
 #include <glad/glad.h>
 #include <stdint.h>
 #define GLFW_INCLUDE_NONE
