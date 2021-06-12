@@ -1,4 +1,3 @@
-#include "Blob/AssetManager.hpp"
 #include "Blob/Core/Buffer.hpp"
 #include "Blob/Core/Exception.hpp"
 #include "Blob/Materials.hpp"
@@ -550,7 +549,6 @@ struct Cube_675 : public Blob::Core::Mesh {
 
 int main() {
     Blob::Core::Window window;
-    Blob::AssetManager assetManager;
 
     Blob::Materials::PBRColorArray colorArray;
 

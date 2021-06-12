@@ -11,6 +11,5 @@ add_library(BlobglTF2 STATIC
         Texture.cpp
         Image.cpp
         Sampler.cpp)
-target_link_libraries(BlobglTF2 Blob libs)
-target_include_directories(BlobglTF2 PUBLIC ${INCLUDE_FOLDER})
+target_link_libraries(BlobglTF2 Blob Blob::Includes libs)
 add_library(Blob::glTF2 ALIAS BlobglTF2)

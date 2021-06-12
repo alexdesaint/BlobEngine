@@ -2,9 +2,7 @@
 
 namespace Blob::Shaders {
 
-SingleColor2D SingleColor2D::instance;
-
-void SingleColor2D::build() {
+SingleColor2D::SingleColor2D() {
     addVertexShader(R"=====(#version 450
 layout(location = 0) in vec2 Position;
 
@@ -29,13 +27,7 @@ void main() {
     linkShaders();
 }
 
-void SingleColor2D::destroy() {
-    GL::Shader::destroy();
-}
-
-SingleColorSingleTexture2D SingleColorSingleTexture2D::instance;
-
-void SingleColorSingleTexture2D::build() {
+SingleColorSingleTexture2D::SingleColorSingleTexture2D() {
     addVertexShader(R"=====(#version 450
 layout(location = 0) in vec2 Position;
 layout(location = 3) in vec2 TexturePosition;
@@ -68,13 +60,7 @@ void main() {
     linkShaders();
 }
 
-void SingleColorSingleTexture2D::destroy() {
-    GL::Shader::destroy();
-}
-
-ColorArraySingleTexture2D ColorArraySingleTexture2D::instance;
-
-void ColorArraySingleTexture2D::build() {
+ColorArraySingleTexture2D::ColorArraySingleTexture2D() {
     addVertexShader(R"=====(#version 450
 layout(location = 0) in vec2 Position;
 layout(location = 3) in vec2 TexturePosition;
@@ -106,13 +92,7 @@ void main() {
     linkShaders();
 }
 
-void ColorArraySingleTexture2D::destroy() {
-    GL::Shader::destroy();
-}
-
-SingleColor SingleColor::instance;
-
-void SingleColor::build() {
+SingleColor::SingleColor() {
     addVertexShader(R"=====(#version 450
 
 layout(location = 0) in vec3 POSITION;
@@ -136,13 +116,7 @@ void main()
     linkShaders();
 }
 
-void SingleColor::destroy() {
-    GL::Shader::destroy();
-}
-
-SingleColorTransparent SingleColorTransparent::instance;
-
-void SingleColorTransparent::build() {
+SingleColorTransparent::SingleColorTransparent() {
     addVertexShader(R"=====(
 #version 450
 
@@ -167,13 +141,7 @@ void main()
     linkShaders();
 }
 
-void SingleColorTransparent::destroy() {
-    GL::Shader::destroy();
-}
-
-SingleTexture SingleTexture::instance;
-
-void SingleTexture::build() {
+SingleTexture::SingleTexture() {
     addVertexShader(R"=====(
 #version 450
 
@@ -205,15 +173,9 @@ void main()
     linkShaders();
 }
 
-void SingleTexture::destroy() {
-    GL::Shader::destroy();
-}
-
 /********************* Utils *********************/
 
-PerFaceNormal PerFaceNormal::instance;
-
-void PerFaceNormal::build() {
+PerFaceNormal::PerFaceNormal() {
     addVertexShader(R"=====(
 #version 450
 
@@ -271,13 +233,7 @@ void main()
     linkShaders();
 }
 
-void PerFaceNormal::destroy() {
-    GL::Shader::destroy();
-}
-
-Deferred Deferred::instance;
-
-void Deferred::build() {
+Deferred::Deferred() {
     addVertexShader(R"=====(
 #version 450
 
@@ -309,10 +265,6 @@ void main()
 {
 })=====");*/
     linkShaders();
-}
-
-void Deferred::destroy() {
-    GL::Shader::destroy();
 }
 
 /********************* PBR code *********************/
@@ -449,9 +401,7 @@ float lightAttenuationLocale(float lightPower, float lightRadius, vec3 lightPosi
 }
 )=====";
 
-PBRSingleColor PBRSingleColor::instance;
-
-void PBRSingleColor::build() {
+PBRSingleColor::PBRSingleColor() {
     addVertexShader(PBRvertex);
     addFragmentShader(PBRpixelHead + PBRfunctions + R"=====(
 // material parameters
@@ -477,13 +427,7 @@ void main()
     linkShaders();
 }
 
-void PBRSingleColor::destroy() {
-    GL::Shader::destroy();
-}
-
-PBRSingleTexture PBRSingleTexture::instance;
-
-void PBRSingleTexture::build() {
+PBRSingleTexture::PBRSingleTexture() {
     addVertexShader(PBRvertex);
     addFragmentShader(PBRpixelHead + PBRfunctions + R"=====(
 // material parameters
@@ -510,13 +454,7 @@ void main()
     linkShaders();
 }
 
-void PBRSingleTexture::destroy() {
-    GL::Shader::destroy();
-}
-
-PBRColorArray PBRColorArray::instance;
-
-void PBRColorArray::build() {
+PBRColorArray::PBRColorArray() {
     addVertexShader(PBRvertex);
     addFragmentShader(PBRpixelHead + PBRfunctions + R"=====(
 layout(location = 5) in vec3 COLOR_0;
@@ -540,13 +478,7 @@ limunance = COLOR_0;
     linkShaders();
 }
 
-void PBRColorArray::destroy() {
-    GL::Shader::destroy();
-}
-
-PBRWater PBRWater::instance;
-
-void PBRWater::build() {
+PBRWater::PBRWater() {
     addVertexShader(R"=====(
 #version 450
 #define PI 3.1415926535897932384626433832795
@@ -653,7 +585,5 @@ void main()
 })=====");
     linkShaders();
 }
-void PBRWater::destroy() {
-    GL::Shader::destroy();
-}
+
 } // namespace Blob::Shaders

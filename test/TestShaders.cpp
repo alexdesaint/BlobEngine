@@ -1,4 +1,5 @@
-#include <Blob/AssetManager.hpp>
+#include <Blob/Materials.hpp>
+#include <Blob/Shapes.hpp>
 #include <Blob/Core/Exception.hpp>
 #include <Blob/Core/Window.hpp>
 #include <Blob/Time.hpp>
@@ -13,7 +14,6 @@ int main() {
     try {
 
         Window window;
-        AssetManager assetManager;
 
         Materials::PBRSingleColor blue, orange, white;
         blue.albedo = Color::DeepSkyBlue;

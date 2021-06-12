@@ -10,7 +10,7 @@ namespace ImGui {
 
 using namespace Blob;
 
-Context::Context(const GLFW::Window &window, const Maths::Vec2<float> &windowSize, const Maths::Vec2<float> &framebufferSize) {
+Context::Context(const GLFW::Window &window, const Maths::Vec2<float> &windowSize, const Maths::Vec2<float> &framebufferSize) : shader(Blob::Shaders::ColorArraySingleTexture2D::getInstance()) {
     std::cout << "init ImGui" << std::endl;
     ImGui::CreateContext();
 
@@ -63,10 +63,10 @@ Context::Context(const GLFW::Window &window, const Maths::Vec2<float> &windowSiz
 }
 
 void Context::createRender() {
-    Blob::Shaders::ColorArraySingleTexture2D::instance.build();
+    Blob::Shaders::ColorArraySingleTexture2D::getInstance();
     vertexArrayObject.setArray<float>(2, Blob::Core::Shader::AttributeLocation::POSITION, (uint32_t) offsetof(ImDrawVert, pos));
     vertexArrayObject.setArray<float>(2, Blob::Core::Shader::AttributeLocation::TEXCOORD_0, (uint32_t) offsetof(ImDrawVert, uv));
-    vertexArrayObject.setArray<uint8_t>(4, Blob::Core::Shader::AttributeLocation::COLOR_0, (uint32_t) offsetof(ImDrawVert, col), true);/**/
+    vertexArrayObject.setArray<uint8_t>(4, Blob::Core::Shader::AttributeLocation::COLOR_0, (uint32_t) offsetof(ImDrawVert, col), true); /**/
 }
 
 void Context::buildFont() {
@@ -121,11 +121,10 @@ void Context::draw(const Blob::GL::Window &window) {
         for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
             const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
 
-            setScissor((int) pcmd->ClipRect.x, (int) (fb_height - pcmd->ClipRect.w), (int) (pcmd->ClipRect.z - pcmd->ClipRect.x),
-                       (int) (pcmd->ClipRect.w - pcmd->ClipRect.y));
+            setScissor((int) pcmd->ClipRect.x, (int) (fb_height - pcmd->ClipRect.w), (int) (pcmd->ClipRect.z - pcmd->ClipRect.x), (int) (pcmd->ClipRect.w - pcmd->ClipRect.y));
 
             setTexture(*((GL::Texture *) pcmd->TextureId));
-            setShader(Blob::Shaders::ColorArraySingleTexture2D::instance);
+            setShader(shader);
             setUniform(projectionTransform, Blob::Shaders::ColorArraySingleTexture2D::projection);
             setUniform(viewTransform, Blob::Shaders::ColorArraySingleTexture2D::view);
             setUniform(modelTransform, Blob::Shaders::ColorArraySingleTexture2D::model);

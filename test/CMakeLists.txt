@@ -1,5 +1,8 @@
 message("Blob Test are enable")
 
+add_executable(TestAsset TestAsset.cpp)
+target_link_libraries(TestAsset Blob::Includes)
+
 add_executable(TestglTF2 TestglTF2.cpp)
 target_link_libraries(TestglTF2 Blob Blob::glTF2)
 

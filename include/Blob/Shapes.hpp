@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Blob/Core/Asset.hpp>
 #include <Blob/Core/Buffer.hpp>
 #include <Blob/Core/Exception.hpp>
 #include <Blob/Core/Mesh.hpp>
@@ -10,10 +11,8 @@
 #include <iostream>
 
 namespace Blob {
-class Shapes {
+class Shapes : public Core::Asset<Shapes> {
 private:
-    static Shapes *instance;
-
     static const std::array<const uint8_t, 2880> data;
     struct Data {
         Blob::Maths::Vec2<float> position;
@@ -31,9 +30,7 @@ private:
     Blob::Core::Buffer buffer{data}, buffer2D{data2D};
 
 public:
-    struct Materials {
-        Blob::Materials::PBRSingleColor defaultM;
-    } materials;
+    Blob::Materials::PBRSingleColor defaultMaterial;
 
 private:
     struct CubeAttributes {
@@ -92,28 +89,44 @@ private:
 
 public:
     struct Cube : public Core::Shape {
+        std::shared_ptr<Shapes> shapesData;
         Blob::Core::Primitive primitive0;
         Blob::Core::Mesh mesh;
-        explicit Cube(const Blob::Core::Material &material = instance->materials.defaultM) : primitive0(&instance->cubeAttributes.attribute0, &material, &instance->cubeAttributes.renderOptions0) {
+        explicit Cube() : shapesData(getInstance()), primitive0(&shapesData->cubeAttributes.attribute0, &shapesData->defaultMaterial, &shapesData->cubeAttributes.renderOptions0) {
+            mesh.addPrimitive(primitive0);
+            setMesh(mesh);
+        }
+        explicit Cube(const Blob::Core::Material &material) : shapesData(getInstance()), primitive0(&shapesData->cubeAttributes.attribute0, &material, &shapesData->cubeAttributes.renderOptions0) {
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
     };
 
     struct Plane : public Core::Shape {
+        std::shared_ptr<Shapes> shapesData;
         Blob::Core::Primitive primitive0;
         Blob::Core::Mesh mesh;
-        explicit Plane(const Blob::Core::Material &material = instance->materials.defaultM) : primitive0(&instance->planeAttributes.attribute0, &material, &instance->planeAttributes.renderOptions0) {
+        explicit Plane() : shapesData(getInstance()), primitive0(&shapesData->planeAttributes.attribute0, &shapesData->defaultMaterial, &shapesData->planeAttributes.renderOptions0) {
+            mesh.addPrimitive(primitive0);
+            setMesh(mesh);
+        }
+        explicit Plane(const Blob::Core::Material &material) : shapesData(getInstance()), primitive0(&shapesData->planeAttributes.attribute0, &material, &shapesData->planeAttributes.renderOptions0) {
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
     };
 
     struct OctagonalPrism : public Core::Shape {
+        std::shared_ptr<Shapes> shapesData;
         Blob::Core::Primitive primitive0;
         Blob::Core::Mesh mesh;
-        explicit OctagonalPrism(const Blob::Core::Material &material = instance->materials.defaultM) :
-            primitive0(&instance->octagonalPrismAttributes.attribute0, &material, &instance->octagonalPrismAttributes.renderOptions0) {
+        explicit OctagonalPrism() :
+            shapesData(getInstance()), primitive0(&shapesData->octagonalPrismAttributes.attribute0, &shapesData->defaultMaterial, &shapesData->octagonalPrismAttributes.renderOptions0) {
+            mesh.addPrimitive(primitive0);
+            setMesh(mesh);
+        }
+        explicit OctagonalPrism(const Blob::Core::Material &material) :
+            shapesData(getInstance()), primitive0(&shapesData->octagonalPrismAttributes.attribute0, &material, &shapesData->octagonalPrismAttributes.renderOptions0) {
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
@@ -121,23 +134,24 @@ public:
 
     template<class Material>
     struct Plane2D : public Core::Shape2D {
+        std::shared_ptr<Shapes> shapesData;
         Blob::Core::Primitive2D primitive0;
         Material material;
         Blob::Core::Mesh2D mesh;
         template<class... Args>
         explicit Plane2D(const Args &...args) :
-            Core::Shape2D(mesh), primitive0(&instance->plane2DAttributes.attribute, &material, &instance->plane2DAttributes.renderOptions), mesh(primitive0), material(args...) {}
+            shapesData(getInstance()),
+            Core::Shape2D(mesh),
+            primitive0(&shapesData->plane2DAttributes.attribute, &material, &shapesData->plane2DAttributes.renderOptions),
+            mesh(primitive0),
+            material(args...) {}
         template<class Transform>
         explicit Plane2D(const Material &materialRef, const Transform &transform) :
-            Core::Shape2D(mesh, transform), primitive0(&instance->plane2DAttributes.attribute, &material, &instance->plane2DAttributes.renderOptions), mesh(primitive0), material(materialRef) {}
+            shapesData(getInstance()),
+            Core::Shape2D(mesh, transform),
+            primitive0(&shapesData->plane2DAttributes.attribute, &material, &shapesData->plane2DAttributes.renderOptions),
+            mesh(primitive0),
+            material(materialRef) {}
     };
-
-    Shapes() {
-        if (instance != nullptr)
-            throw Blob::Core::Exception("Shapes already loaded");
-        instance = this;
-    }
-
-    ~Shapes() { instance = nullptr; }
 };
 } // namespace Blob

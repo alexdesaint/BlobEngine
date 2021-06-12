@@ -1,131 +1,120 @@
 #pragma once
 
-#include <Blob/Shapes.hpp>
+#include <Blob/Core/Asset.hpp>
+#include <Blob/Core/Shader.hpp>
+#include <memory>
 
 namespace Blob::Shaders {
 
 /// Simples shaders
 
-class SingleColor2D : public Core::Shader {
+class SingleColor2D : public Core::Shader, public Core::Asset<SingleColor2D> {
 private:
-public:
-    static SingleColor2D instance;
+    friend Core::Asset<SingleColor2D>;
+    SingleColor2D();
 
+public:
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
 
     static const int albedo = 3;
-
-    void build();
-    void destroy();
 };
 
-class SingleColorSingleTexture2D : public Core::Shader {
+class SingleColorSingleTexture2D : public Core::Shader, public Core::Asset<SingleColorSingleTexture2D> {
 private:
-public:
-    static SingleColorSingleTexture2D instance;
+    friend Core::Asset<SingleColorSingleTexture2D>;
+    SingleColorSingleTexture2D();
 
+public:
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
 
     static const int albedo = 3;
-
-    void build();
-    void destroy();
 };
 
-class ColorArraySingleTexture2D : public Core::Shader {
-private:
-public:
-    static ColorArraySingleTexture2D instance;
+class ColorArraySingleTexture2D : public Core::Shader, public Core::Asset<ColorArraySingleTexture2D> {
+    friend Core::Asset<ColorArraySingleTexture2D>;
 
+private:
+    ColorArraySingleTexture2D();
+
+public:
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
-
-    void build();
-    void destroy();
 };
 
-class SingleColor : public Core::Shader {
+class SingleColor : public Core::Shader, public Core::Asset<SingleColor> {
 private:
+    friend Core::Asset<SingleColor>;
+    SingleColor();
+
 public:
-    static SingleColor instance;
-
-    static const int model = 0;
-    static const int view = 1;
-    static const int projection = 2;
-
-    static const int albedo = 3;
-
-    void build();
-    void destroy();
-};
-
-class SingleColorTransparent : public Core::Shader {
-private:
-public:
-    static SingleColorTransparent instance;
-
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
 
     static const int albedo = 3;
-
-    void build();
-    void destroy();
 };
 
-class SingleTexture : public Core::Shader {
+class SingleColorTransparent : public Core::Shader, public Core::Asset<SingleColorTransparent> {
 private:
-public:
-    static SingleTexture instance;
+    friend Core::Asset<SingleColorTransparent>;
+    SingleColorTransparent();
 
+public:
+    static const int model = 0;
+    static const int view = 1;
+    static const int projection = 2;
+
+    static const int albedo = 3;
+};
+
+class SingleTexture : public Core::Shader, public Core::Asset<SingleTexture> {
+private:
+    friend Core::Asset<SingleTexture>;
+    SingleTexture();
+
+public:
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
 
     static const int textureScale = 3;
-
-    void build();
-    void destroy();
 };
 
 /// Utils
 
-class PerFaceNormal : public Core::Shader {
-public:
-    static PerFaceNormal instance;
+class PerFaceNormal : public Core::Shader, public Core::Asset<PerFaceNormal> {
+private:
+    friend Core::Asset<PerFaceNormal>;
+    PerFaceNormal();
 
+public:
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
 
     static const int albedo = 3;
     static const int length = 4;
-
-    void build();
-    void destroy();
 };
 
 class Deferred : public Core::Shader {
-public:
-    static Deferred instance;
-
-    void build();
-    void destroy();
+private:
+    friend Core::Asset<SingleColor2D>;
+    Deferred();
 };
 
 /// PBR
 
-class PBRSingleColor : public Core::Shader {
+class PBRSingleColor : public Core::Shader, public Core::Asset<PBRSingleColor> {
 private:
-public:
-    static PBRSingleColor instance;
+    friend Core::Asset<PBRSingleColor>;
+    PBRSingleColor();
 
+public:
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
@@ -140,15 +129,14 @@ public:
     static const int lightColor = 9;
     static const int lightRadius = 10;
     static const int lightPower = 11;
-    void build();
-    void destroy();
 };
 
-class PBRSingleTexture : public Core::Shader {
+class PBRSingleTexture : public Core::Shader, public Core::Asset<PBRSingleTexture> {
 private:
-public:
-    static PBRSingleTexture instance;
+    friend Core::Asset<PBRSingleTexture>;
+    PBRSingleTexture();
 
+public:
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
@@ -163,15 +151,14 @@ public:
     static const int lightColor = 9;
     static const int lightRadius = 10;
     static const int lightPower = 11;
-    void build();
-    void destroy();
 };
 
-class PBRColorArray : public Core::Shader {
+class PBRColorArray : public Core::Shader, public Core::Asset<PBRColorArray> {
 private:
-public:
-    static PBRColorArray instance;
+    friend Core::Asset<PBRColorArray>;
+    PBRColorArray();
 
+public:
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
@@ -185,15 +172,14 @@ public:
     static const int lightColor = 9;
     static const int lightRadius = 10;
     static const int lightPower = 11;
-    void build();
-    void destroy();
 };
 
-class PBRWater : public Core::Shader {
+class PBRWater : public Core::Shader, public Core::Asset<PBRWater> {
 private:
-public:
-    static PBRWater instance;
+    friend Core::Asset<PBRWater>;
+    PBRWater();
 
+public:
     static const int model = 0;
     static const int view = 1;
     static const int projection = 2;
@@ -209,9 +195,6 @@ public:
     static const int lightRadius = 10;
     static const int lightPower = 11;
     static const int timeStep = 12;
-
-    void build();
-    void destroy();
 };
 
 } // namespace Blob::Shaders

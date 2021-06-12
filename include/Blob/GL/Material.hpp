@@ -4,6 +4,7 @@
 #include <Blob/GL/Shader.hpp>
 #include <Blob/GL/Texture.hpp>
 #include <Blob/Maths.inl>
+#include <memory>
 #include <ostream>
 namespace Blob::GL {
 
@@ -13,6 +14,7 @@ public:
     void setScissorTest(bool set) const;
 
     void setShader(const Shader &shaderProgram) const;
+    void setShader(const std::shared_ptr<Shader> &shaderProgram) const;
     void setScissor(int x, int y, int width, int height) const;
     void setDepthTest(bool set) const;
     void setTexture(const Texture &texture) const;

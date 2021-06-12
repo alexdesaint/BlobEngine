@@ -253,8 +253,6 @@ public:
 
             Core::Window window;
 
-            AssetManager a;
-
             window.projectionTransform.setRange(0.1, 1000);
 
             T t;

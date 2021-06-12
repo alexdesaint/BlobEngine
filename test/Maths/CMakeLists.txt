@@ -4,4 +4,4 @@
 #target_compile_options(TestVec4 PUBLIC -mavx)
 
 add_executable(TestMVP TestMVP.cpp)
-target_link_libraries(TestMVP Blob::Maths)
+target_link_libraries(TestMVP Blob::Includes)

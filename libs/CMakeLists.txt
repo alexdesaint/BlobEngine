@@ -21,7 +21,7 @@ file(GLOB IMGUIFILES "imgui/*.cpp")
 add_library(imgui ${IMGUIFILES})
 target_compile_definitions(imgui INTERFACE IMGUI_USER_CONFIG=<imconfigUser.h> INTERFACE IMGUI_DISABLE_INCLUDE_IMCONFIG_H)
 set_target_properties(imgui PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(imgui Blob::Maths)
+target_link_libraries(imgui Blob::Includes)
 target_include_directories(imgui PUBLIC imgui/ imguiConfig/)
 
 # libs

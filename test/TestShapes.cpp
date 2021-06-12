@@ -1,4 +1,4 @@
-#include <Blob/AssetManager.hpp>
+#include <Blob/Shapes.hpp>
 #include <Blob/Core/Window.hpp>
 #include <Blob/Maths.inl>
 
@@ -134,8 +134,6 @@ public:
             Materials::PBR::light.position = {10, 10, 10};
 
             Core::Window window;
-
-            AssetManager a;
 
             Shapes::Cube cube;
             cube.setPosition({2, 0, 0});

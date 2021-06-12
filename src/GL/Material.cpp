@@ -24,6 +24,10 @@ void Material::setShader(const Shader &shaderProgram) const {
     glUseProgram(shaderProgram.program);
 }
 
+void Material::setShader(const std::shared_ptr<Shader> &shaderProgram) const {
+    glUseProgram(shaderProgram->program);
+}
+
 void Material::setScissor(int x, int y, int width, int height) const {
     glScissor(x, y, width, height);
 }

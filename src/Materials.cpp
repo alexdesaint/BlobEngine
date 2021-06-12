@@ -8,7 +8,7 @@ namespace Blob::Materials {
 void SingleColor2D::applyMaterial(const Maths::Mat3 &pt, const Maths::Mat3 &vt, const Maths::Mat3 &mt) const {
     setCullFace(false);
     setDepthTest(false);
-    setShader(Shaders::SingleColor2D::instance);
+    setShader(Shaders::SingleColor2D::getInstance());
 
     setUniform(pt, Shaders::SingleColor2D::projection);
     setUniform(vt, Shaders::SingleColor2D::view);
@@ -31,7 +31,7 @@ void SingleColorSingleTexture2D::applyMaterial(const Maths::Mat3 &pt, const Math
 
     setUniform(albedo, Shaders::SingleColorSingleTexture2D::albedo);
     setTexture(texture);
-    setShader(Shaders::SingleColorSingleTexture2D::instance);
+    setShader(Shaders::SingleColorSingleTexture2D::getInstance());
 }
 
 SingleColorSingleTexture2D::SingleColorSingleTexture2D(const Core::Texture &texture) : texture(&texture) {}
@@ -43,7 +43,7 @@ void SingleColorSingleTexture2D::setTexture1(const Core::Texture &texture_) {
 SingleColor::SingleColor(Color::RGB albedo) : albedo(albedo) {}
 
 void SingleColor::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    setShader(Shaders::SingleColor::instance);
+    setShader(Shaders::SingleColor::getInstance());
 
     setUniform(pt, Shaders::SingleColor::projection);
     setUniform(vt, Shaders::SingleColor::view);
@@ -56,7 +56,7 @@ SingleColorTransparent::SingleColorTransparent(Color::RGBA albedo) : albedo(albe
 SingleColorTransparent::SingleColorTransparent(Color::RGB albedo, float a) : albedo(albedo, a) {}
 
 void SingleColorTransparent::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    setShader(Shaders::SingleColorTransparent::instance);
+    setShader(Shaders::SingleColorTransparent::getInstance());
 
     setUniform(pt, Shaders::SingleColorTransparent::projection);
     setUniform(vt, Shaders::SingleColorTransparent::view);
@@ -68,7 +68,7 @@ void SingleColorTransparent::applyMaterial(const Maths::ProjectionTransform &pt,
 SingleTexture::SingleTexture(const Core::Texture *texture) : texture(texture) {}
 
 void SingleTexture::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    setShader(Shaders::SingleTexture::instance);
+    setShader(Shaders::SingleTexture::getInstance());
 
     setUniform(pt, Shaders::SingleTexture::projection);
     setUniform(vt, Shaders::SingleTexture::view);
@@ -86,7 +86,7 @@ void SingleTexture::setTexture1(const Core::Texture *texture) {
 PerFaceNormal::PerFaceNormal(Color::RGB albedo) : albedo(albedo) {}
 
 void PerFaceNormal::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    setShader(Shaders::PerFaceNormal::instance);
+    setShader(Shaders::PerFaceNormal::getInstance());
 
     setUniform(pt, Shaders::PerFaceNormal::projection);
     setUniform(vt, Shaders::PerFaceNormal::view);
@@ -103,7 +103,7 @@ Light PBR::light;
 PBRSingleColor::PBRSingleColor(Color::RGB albedo) : albedo(albedo) {}
 
 void PBRSingleColor::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    setShader(Shaders::PBRSingleColor::instance);
+    setShader(Shaders::PBRSingleColor::getInstance());
 
     setUniform(pt, Shaders::PBRSingleColor::projection);
     setUniform(vt, Shaders::PBRSingleColor::view);
@@ -126,7 +126,7 @@ void PBRSingleColor::applyMaterial(const Maths::ProjectionTransform &pt, const M
 PBRSingleTexture::PBRSingleTexture(const Core::Texture &texture) : texture(texture) {}
 
 void PBRSingleTexture::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    setShader(Shaders::PBRSingleTexture::instance);
+    setShader(Shaders::PBRSingleTexture::getInstance());
 
     setUniform(pt, Shaders::PBRSingleTexture::projection);
     setUniform(vt, Shaders::PBRSingleTexture::view);
@@ -149,7 +149,7 @@ void PBRSingleTexture::applyMaterial(const Maths::ProjectionTransform &pt, const
 
 /********************* PBRColorArray *********************/
 void PBRColorArray::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    setShader(Shaders::PBRColorArray::instance);
+    setShader(Shaders::PBRColorArray::getInstance());
 
     setUniform(pt, Shaders::PBRColorArray::projection);
     setUniform(vt, Shaders::PBRColorArray::view);
@@ -168,7 +168,7 @@ void PBRColorArray::applyMaterial(const Maths::ProjectionTransform &pt, const Ma
 }
 
 void PBRWater::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    setShader(Shaders::PBRWater::instance);
+    setShader(Shaders::PBRWater::getInstance());
 
     setUniform(pt, Shaders::PBRWater::projection);
     setUniform(vt, Shaders::PBRWater::view);

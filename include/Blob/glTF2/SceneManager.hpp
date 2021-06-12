@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Blob/Materials.hpp"
 #include <deque>
 #include <vector>
 
-#include <Blob/AssetManager.hpp>
 #include <Blob/glTF2/Accessor.hpp>
 #include <Blob/glTF2/Asset.hpp>
 #include <Blob/glTF2/Buffer.hpp>
@@ -17,7 +17,7 @@
 #include <Blob/glTF2/Texture.hpp>
 
 namespace Blob::glTF2 {
-class SceneManager : AssetManager {
+class SceneManager {
 private:
     std::string file;
 
@@ -44,6 +44,7 @@ public:
     //
     Core::Buffer buffer;
     std::vector<uint8_t> finalBuffer;
+    Materials::SingleColor defaultMaterial;
 
     explicit SceneManager(const std::string &file);
 

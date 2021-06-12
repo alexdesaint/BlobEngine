@@ -1,14 +1,17 @@
 #pragma once
 
+#include "Blob/Core/Shader.hpp"
 #include <Blob/GL/Material.hpp>
 #include <Blob/GL/Shader.hpp>
 #include <Blob/GL/Texture.hpp>
 #include <Blob/GL/VertexArrayObject.hpp>
 #include <Blob/GL/Window.hpp>
+#include <memory>
 
 namespace ImGui {
 class Context : private Blob::GL::Material {
 private:
+    std::shared_ptr<Blob::Core::Shader> shader;
     Blob::GL::Texture fontTexture;
     Blob::GL::VertexBufferObject vertexBufferObject;
     Blob::GL::VertexArrayObject vertexArrayObject;
