@@ -14,8 +14,8 @@ jobs:
     - name: Submodules
       run: git submodule update --init --recursive
     - name: Install libs
-      run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libwayland-dev
+      run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libwayland-dev clang-12
     - name: Configure
-      run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+      run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12
     - name: Build
       run: cmake --build build --config Release
