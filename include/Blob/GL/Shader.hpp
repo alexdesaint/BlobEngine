@@ -1,41 +1,78 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-
+#include <Blob/GL/ShaderProgram.hpp>
+#include <Blob/Color.hpp>
+#include <Blob/GL/Shader.hpp>
+#include <Blob/GL/Texture.hpp>
+#include <Blob/Maths.inl>
+#include <memory>
+#include <ostream>
 namespace Blob::GL {
 
-class Material;
-
-/// this program is created only once ans is used by multiple different materials
 class Shader {
-    friend Material;
-
 public:
-    unsigned int program = 0;
+    void setCullFace(bool set) const;
+    void setScissorTest(bool set) const;
 
-    unsigned int vertexShader = 0, fragmentShader = 0, geometryShader = 0;
+    void setShaderProgram(const ShaderProgram &shaderProgram) const;
+    void setScissor(int x, int y, int width, int height) const;
+    void setDepthTest(bool set) const;
+    void setTexture(const Texture &texture) const;
+    void setTexture(const Texture *texture) const;
 
-    Shader() noexcept = default;
-    Shader(const Shader &) = delete; /// Copy constructors
-    // ShaderProgram(ShaderProgram &&shaderProgram) noexcept; /// Move constructors
-    Shader(Shader &&shaderProgram) = delete; /// Move constructors
-
-    void destroy() const;
-
-    void addVertexShader(const std::string &src);
-
-    void addGeometryShader(const std::string &src);
-
-    void addFragmentShader(const std::string &src);
-
-    void linkShaders();
-
-    int32_t getUniformLocation(const char *name) const;
-
-    int32_t getAttribLocation(const char *name) const;
-
-    [[nodiscard]] bool isValid() const { return program != 0; }
+    template<typename T>
+    void setUniform(const T &val, int position) const;
 };
+
+template<>
+void Shader::setUniform<>(const int &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const unsigned int &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const float &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const float (&val)[4][4], int position) const;
+
+template<>
+void Shader::setUniform<>(const float (&val)[16], int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::Vec2<float> &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::Vec3<float> &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::Mat3 &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::Mat4 &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::ModelTransform &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::ViewTransform &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::ProjectionTransform &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::ModelTransform2D &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::ViewTransform2D &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Maths::ProjectionTransform2D &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Color::RGB &val, int position) const;
+
+template<>
+void Shader::setUniform<>(const Color::RGBA &val, int position) const;
 
 } // namespace Blob::GL

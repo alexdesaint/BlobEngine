@@ -1,3 +1,4 @@
+#pragma once
 #include <memory>
 
 namespace Blob::Core {
@@ -8,7 +9,9 @@ private:
     inline static std::weak_ptr<T> instance;
 
 public:
-    static std::shared_ptr<T> getInstance() {
+    using Intance = std::shared_ptr<T>;
+
+    static Intance getInstance() {
         auto sharedPointer = instance.lock();
         if (!sharedPointer) {
             sharedPointer = std::shared_ptr<T>(new T);

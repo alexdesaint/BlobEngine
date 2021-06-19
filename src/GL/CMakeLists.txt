@@ -1,12 +1,12 @@
 add_library(BlobGL STATIC
-        Window.cpp
         FrameBuffer.cpp
         Shader.cpp
+        ShaderProgram.cpp
         Texture.cpp
+        Types.cpp
         VertexArrayObject.cpp
         VertexBufferObject.cpp
-        Material.cpp
-        Types.cpp)
+        Window.cpp)
 
 target_link_libraries(BlobGL Blob::Includes Blob::GLFW glad)
 add_library(Blob::GL ALIAS BlobGL)

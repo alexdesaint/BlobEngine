@@ -7,6 +7,7 @@
 #include <Blob/Core/Primitive.hpp>
 #include <Blob/Core/Shape.hpp>
 #include <Blob/Materials.hpp>
+#include <Blob/Core/AttributeLocation.hpp>
 
 #include <iostream>
 
@@ -81,8 +82,8 @@ private:
         explicit Plane2DAttributes(const Blob::Core::Buffer &buffer) {
             renderOptions.setArray(6);
             attribute.setBuffer(buffer, sizeof(Data));
-            attribute.setArray<float>(2, Core::Shader::AttributeLocation::POSITION, 0);
-            attribute.setArray<float>(2, Core::Shader::AttributeLocation::TEXCOORD_0, 8);
+            attribute.setArray<float>(2, Core::AttributeLocation::POSITION, 0);
+            attribute.setArray<float>(2, Core::AttributeLocation::TEXCOORD_0, 8);
         }
 
     } plane2DAttributes{buffer2D};

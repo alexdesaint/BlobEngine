@@ -1,12 +1,16 @@
 #pragma once
 
+#include "Blob/Maths.inl"
 #include <Blob/Core/Material.hpp>
+#include <Blob/Shaders.hpp>
 
 namespace Blob::Materials {
 
 class SingleColor2D : public Core::Material2D {
 private:
-    void applyMaterial(const Maths::Mat3 &pt, const Maths::Mat3 &vt, const Maths::Mat3 &mt) const final;
+    Blob::Shaders2D::SingleColor::Intance shader = Blob::Shaders2D::SingleColor::getInstance();
+
+    void applyMaterial(const Maths::ProjectionTransform2D &pt, const Maths::ViewTransform2D &vt, const Maths::Mat3 &mt) const final;
 
 public:
     Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
@@ -18,19 +22,19 @@ public:
 
 class SingleColorSingleTexture2D : public Core::Material2D {
 private:
-    const Core::Texture *texture = nullptr;
-    void applyMaterial(const Maths::Mat3 &pt, const Maths::Mat3 &vt, const Maths::Mat3 &mt) const final;
+    Blob::Shaders2D::SingleColorSingleTexture::Intance shader = Blob::Shaders2D::SingleColorSingleTexture::getInstance();
+    const Core::Texture &texture;
+    void applyMaterial(const Maths::ProjectionTransform2D &pt, const Maths::ViewTransform2D &vt, const Maths::Mat3 &mt) const final;
 
 public:
     Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
     explicit SingleColorSingleTexture2D(const Core::Texture &texture);
     SingleColorSingleTexture2D(const Core::Texture &texture, const Color::RGBA &albedo);
-
-    void setTexture1(const Core::Texture &texture);
 };
 
 class SingleColor : public Core::Material {
 private:
+    Blob::Shaders::SingleColor::Intance shader = Blob::Shaders::SingleColor::getInstance();
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
@@ -42,6 +46,7 @@ public:
 
 class SingleColorTransparent : public Core::Material {
 private:
+    Blob::Shaders::SingleColorTransparent::Intance shader = Blob::Shaders::SingleColorTransparent::getInstance();
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
@@ -54,20 +59,20 @@ public:
 
 class SingleTexture : public Core::Material {
 private:
-    const Core::Texture *texture;
+    Blob::Shaders::SingleTexture::Intance shader = Blob::Shaders::SingleTexture::getInstance();
+    const Core::Texture &texture;
 
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
     Maths::Vec2<float> texScale = {1.f, 1.f};
 
-    explicit SingleTexture(const Core::Texture *texture);
-
-    void setTexture1(const Core::Texture *texture);
+    explicit SingleTexture(const Core::Texture &texture);
 };
 
 class PerFaceNormal : public Core::Material {
 private:
+    Blob::Shaders::PerFaceNormal::Intance shader = Blob::Shaders::PerFaceNormal::getInstance();
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
@@ -99,6 +104,7 @@ public:
 /// A Material to draw in a single color
 class PBRSingleColor : public Core::Material, public PBR {
 private:
+    Blob::Shaders::PBR::SingleColor::Intance shader = Blob::Shaders::PBR::SingleColor::getInstance();
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
@@ -110,6 +116,7 @@ public:
 
 class PBRSingleTexture : public Core::Material, public PBR {
 private:
+    Blob::Shaders::PBR::SingleTexture::Intance shader = Blob::Shaders::PBR::SingleTexture::getInstance();
     const Core::Texture &texture;
 
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
@@ -122,6 +129,7 @@ public:
 
 class PBRColorArray : public Core::Material, public PBR {
 private:
+    Blob::Shaders::PBR::ColorArray::Intance shader = Blob::Shaders::PBR::ColorArray::getInstance();
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
@@ -130,13 +138,14 @@ public:
 
 class PBRWater : public Core::Material, public PBR {
 private:
+    Blob::Shaders::PBR::Water::Intance shader = Blob::Shaders::PBR::Water::getInstance();
     void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
 
 public:
     Color::RGBA albedo = {0.f, 0.f, 1.f, 0.5f};
 
     PBRWater() = default;
-    explicit PBRWater(Color::RGBA albedo);
+    explicit PBRWater(const Color::RGBA &albedo);
 };
 
 } // namespace Blob::Materials

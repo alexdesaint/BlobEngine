@@ -2,6 +2,7 @@
 
 namespace Blob::Shaders {
 
+/*
 SingleColor2D::SingleColor2D() {
     addVertexShader(R"=====(#version 450
 layout(location = 0) in vec2 Position;
@@ -172,9 +173,9 @@ void main()
 })=====");
     linkShaders();
 }
-
+*/
 /********************* Utils *********************/
-
+/*
 PerFaceNormal::PerFaceNormal() {
     addVertexShader(R"=====(
 #version 450
@@ -259,16 +260,11 @@ void main()
     // store specular intensity in gAlbedoSpec's alpha component
     gAlbedoSpec.a = texture(texture_specular1, TexCoords).r;
 } )=====");
-    /*addFragmentShader(R"=====(
-#version 450
-void main()
-{
-})=====");*/
     linkShaders();
 }
-
+*/
 /********************* PBR code *********************/
-
+/*
 static const std::string PBRvertex = R"=====(
 #version 450
 
@@ -523,45 +519,6 @@ void main()
 
     EndPrimitive();
 })=====");
-    // Per point normal
-    /*    addGeometryShader(R"=====(
-    #version 450
-    layout(triangles) in;
-
-    // Three lines will be generated: 6 vertices
-    layout(line_strip, max_vertices=6) out;
-
-    layout(location = 0) out vec3 position;
-    layout(location = 2) out vec3 normal;
-
-    layout(location = 1) uniform mat4 view;
-    layout(location = 2) uniform mat4 projection;
-
-    void main()
-    {
-        float normal_length = 1;
-
-        vec3 a = ( gl_in[1].gl_Position - gl_in[0].gl_Position ).xyz;
-        vec3 b = ( gl_in[2].gl_Position - gl_in[0].gl_Position ).xyz;
-        vec3 N = normalize( cross( b, a ) );
-
-      for(int i=0; i<gl_in.length(); i++)
-      {
-            vec4 P = gl_in[i].gl_Position;
-
-            position = P.xyz;
-            gl_Position = projection * view * P;
-            normal = N;
-            EmitVertex();
-
-            position = P.xyz + N * 0.1;
-            gl_Position = projection * view * (P + vec4(N, 0));
-            normal = N;
-            EmitVertex();
-
-            EndPrimitive();
-      }
-    })=====");*/
     addFragmentShader(PBRpixelHead + PBRfunctions + R"=====(
 // material parameters
 layout(location = 3) uniform vec4 albedo;
@@ -584,6 +541,6 @@ void main()
     color = vec4(limunance, albedo.w);
 })=====");
     linkShaders();
-}
+}*/
 
 } // namespace Blob::Shaders

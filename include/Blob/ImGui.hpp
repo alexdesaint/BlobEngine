@@ -1,24 +1,23 @@
 #pragma once
 
-#include "Blob/Core/Shader.hpp"
-#include <Blob/GL/Material.hpp>
+#include "Blob/Maths.inl"
 #include <Blob/GL/Shader.hpp>
 #include <Blob/GL/Texture.hpp>
 #include <Blob/GL/VertexArrayObject.hpp>
 #include <Blob/GL/Window.hpp>
-#include <memory>
+#include <Blob/Shaders.hpp>
 
 namespace ImGui {
-class Context : private Blob::GL::Material {
+class Context : private Blob::GL::Shader {
 private:
-    std::shared_ptr<Blob::Core::Shader> shader;
-    Blob::GL::Texture fontTexture;
+    Blob::Shaders2D::ColorArraySingleTexture::Intance shader = Blob::Shaders2D::ColorArraySingleTexture::getInstance();
+    Blob::Core::Texture fontTexture;
     Blob::GL::VertexBufferObject vertexBufferObject;
     Blob::GL::VertexArrayObject vertexArrayObject;
 
-    Blob::Maths::Mat3 projectionTransform;
-    Blob::Maths::Mat3 modelTransform;
-    Blob::Maths::Mat3 viewTransform;
+    Blob::Maths::ProjectionTransform2D projectionTransform;
+    Blob::Maths::ModelTransform2D modelTransform;
+    Blob::Maths::ViewTransform2D viewTransform;
 
     void buildFont();
 

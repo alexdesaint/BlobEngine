@@ -17,7 +17,7 @@
 //#define IM_ASSERT(_EXPR)  MyAssert(_EXPR)
 //#define IM_ASSERT(_EXPR)  ((void)(_EXPR))     // Disable asserts
 
-//---- Define attributes of all API symbols declarations, e.g. for DLL under Windows 
+//---- Define attributes of all API symbols declarations, e.g. for DLL under Windows
 // Using dear imgui via a shared library is not recommended, because of function call overhead and because we don't guarantee backward nor forward ABI compatibility.
 //#define IMGUI_API __declspec( dllexport )
 //#define IMGUI_API __declspec( dllimport )
@@ -36,8 +36,9 @@
 //#define IMGUI_DISABLE_WIN32_FUNCTIONS                     // [Win32] Won't use and link with any Win32 function (clipboard, ime).
 //#define IMGUI_ENABLE_OSX_DEFAULT_CLIPBOARD_FUNCTIONS      // [OSX] Implement default OSX clipboard handler (need to link with '-framework ApplicationServices').
 //#define IMGUI_DISABLE_FORMAT_STRING_FUNCTIONS             // Don't implement ImFormatString/ImFormatStringV so you can implement them yourself if you don't want to link with vsnprintf.
-//#define IMGUI_DISABLE_MATH_FUNCTIONS                      // Don't implement ImFabs/ImSqrt/ImPow/ImFmod/ImCos/ImSin/ImAcos/ImAtan2 wrapper so you can implement them yourself. Declare your prototypes in imconfig.h.
-//#define IMGUI_DISABLE_DEFAULT_ALLOCATORS                  // Don't implement default allocators calling malloc()/free() to avoid linking with them. You will need to call ImGui::SetAllocatorFunctions().
+//#define IMGUI_DISABLE_MATH_FUNCTIONS                      // Don't implement ImFabs/ImSqrt/ImPow/ImFmod/ImCos/ImSin/ImAcos/ImAtan2 wrapper so you can implement them yourself. Declare your prototypes
+//in imconfig.h. #define IMGUI_DISABLE_DEFAULT_ALLOCATORS                  // Don't implement default allocators calling malloc()/free() to avoid linking with them. You will need to call
+//ImGui::SetAllocatorFunctions().
 
 //---- Include imgui_user.h at the end of imgui.h as a convenience
 //#define IMGUI_INCLUDE_IMGUI_USER_H
@@ -64,16 +65,16 @@
         operator MyVec4() const { return MyVec4(x,y,z,w); }
 */
 
-//---- Using 32-bits vertex indices (default is 16-bits) is one way to allow large meshes with more than 64K vertices. 
+//---- Using 32-bits vertex indices (default is 16-bits) is one way to allow large meshes with more than 64K vertices.
 // Your renderer back-end will need to support it (most example renderer back-ends support both 16/32-bits indices).
-// Another way to allow large meshes while keeping 16-bits indices is to handle ImDrawCmd::VtxOffset in your renderer. 
+// Another way to allow large meshes while keeping 16-bits indices is to handle ImDrawCmd::VtxOffset in your renderer.
 // Read about ImGuiBackendFlags_RendererHasVtxOffset for details.
 //#define ImDrawIdx unsigned int
 
 //---- Override ImDrawCallback signature (will need to modify renderer back-ends accordingly)
-//struct ImDrawList;
-//struct ImDrawCmd;
-//typedef void (*MyImDrawCallback)(const ImDrawList* draw_list, const ImDrawCmd* cmd, void* my_renderer_user_data);
+// struct ImDrawList;
+// struct ImDrawCmd;
+// typedef void (*MyImDrawCallback)(const ImDrawList* draw_list, const ImDrawCmd* cmd, void* my_renderer_user_data);
 //#define ImDrawCallback MyImDrawCallback
 
 //---- Debug Tools
@@ -92,18 +93,19 @@ namespace ImGui
 }
 */
 
-#include <Blob/Maths.inl>
 #include <Blob/Core/Exception.hpp>
-namespace Blob {
-	//class Vec2f;
+#include <Blob/Maths.inl>
 
-	namespace GL {
-		class Texture;
-	}
+namespace Blob::Core {
+class Texture;
 }
-#define IM_VEC2_CLASS_EXTRA                                                 \
-        ImVec2(const Blob::Maths::Vec2<float>& f) { x = f.x; y = f.y; }                       \
-        operator Blob::Maths::Vec2<float>() const { return Blob::Maths::Vec2<float>(x,y); }
+
+#define IM_VEC2_CLASS_EXTRA                                                                                                                                                                            \
+    ImVec2(const Blob::Maths::Vec2<float> &f) {                                                                                                                                                        \
+        x = f.x;                                                                                                                                                                                       \
+        y = f.y;                                                                                                                                                                                       \
+    }                                                                                                                                                                                                  \
+    operator Blob::Maths::Vec2<float>() const { return Blob::Maths::Vec2<float>(x, y); }
 /*
 #define IM_ASSERT(expr)							\
      (static_cast <bool> (expr)						\
@@ -115,4 +117,4 @@ namespace Blob {
 
 #define ImTextureID textureID
 
-typedef Blob::GL::Texture* textureID;
+typedef Blob::Core::Texture *textureID;
