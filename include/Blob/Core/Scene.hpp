@@ -16,12 +16,16 @@ public:
     Camera camera;
     Scene() = default;
 
-    explicit Scene(std::list<Shape const *> shapes) : shapes(std::move(shapes)) {}
+    explicit Scene(std::list<Shape const *> shapes);
+    Scene(const Camera &camera, std::list<Shape const *> shapes);
 
-    void addShape(const Shape &r) { shapes.emplace_back(&r); }
-    void removeShape(const Shape &r) { shapes.remove(&r); }
-    void removeAll() { shapes.clear(); }
+    void addShape(const Shape &r);
+    void addShape(const Shape *r);
+    void removeShape(const Shape &r);
+    void removeShape(const Shape *r);
+    void removeAll();
 };
+
 class Scene2D {
     friend Window;
 
@@ -29,15 +33,15 @@ private:
     std::list<Shape2D const *> shapes;
 
 public:
-    const Blob::Maths::ViewTransform2D &camera;
-    explicit Scene2D(const Blob::Maths::ViewTransform2D &camera) : camera(camera) {}
+    const Maths::ViewTransform2D &camera;
+    explicit Scene2D(const Maths::ViewTransform2D &camera);
 
-    Scene2D(const Blob::Maths::ViewTransform2D &camera, std::list<Shape2D const *> shapes) : camera(camera), shapes(std::move(shapes)) {}
+    Scene2D(const Maths::ViewTransform2D &camera, std::list<Shape2D const *> shapes);
 
-    void addShape(const Shape2D &r) { shapes.emplace_back(&r); }
-    void addShape(const Shape2D *r) { shapes.emplace_back(r); }
-    void removeShape(const Shape2D &r) { shapes.remove(&r); }
-    void removeShape(const Shape2D *r) { shapes.remove(r); }
-    void removeAll() { shapes.clear(); }
+    void addShape(const Shape2D &r);
+    void addShape(const Shape2D *r);
+    void removeShape(const Shape2D &r);
+    void removeShape(const Shape2D *r);
+    void removeAll();
 };
 } // namespace Blob::Core
