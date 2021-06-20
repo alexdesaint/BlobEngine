@@ -463,6 +463,40 @@ void main()
                                  UniformLightPower,
                                  Core::UniformAttribute<Color::RGB, 11>>;
 
+using SingleTransparentColor = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD PBR_FUNCTIONS R"=====(
+// material parameters
+layout(location = 3) uniform float metallic;
+layout(location = 4) uniform float roughness;
+layout(location = 5) uniform float ao;
+
+layout(location = 6) uniform vec3 eyePosition;
+layout(location = 7) uniform vec3 lightPosition;
+layout(location = 8) uniform vec3 lightColor;
+layout(location = 9) uniform float lightRadius;
+layout(location = 10) uniform float lightPower;
+
+layout(location = 11) uniform vec4 albedo;
+
+// Main
+
+void main()
+{
+    vec3 limunance = albedo.xyz * lightAttenuation(lightPower, lightPosition, position, normal);
+    color = vec4(limunance, albedo.w);
+})=====">>,
+                                 UniformModel,
+                                 UniformView,
+                                 UniformProjection,
+                                 UniformMetallic,
+                                 UniformRoughness,
+                                 UniformAo,
+                                 UniformCameraPosition,
+                                 UniformLightPosition,
+                                 UniformLightColor,
+                                 UniformLightRadius,
+                                 UniformLightPower,
+                                 Core::UniformAttribute<Color::RGBA, 11>>;
+
 using SingleTexture = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD PBR_FUNCTIONS R"=====(
 // material parameters
 layout(location = 3) uniform vec2 texScale;

@@ -1,4 +1,4 @@
-name: Linux gcc 10
+name: Linux gcc 11
 
 on:
   push:

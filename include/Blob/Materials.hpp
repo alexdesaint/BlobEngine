@@ -53,7 +53,7 @@ public:
     Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
 
     SingleColorTransparent() = default;
-    explicit SingleColorTransparent(Color::RGBA albedo);
+    explicit SingleColorTransparent(Color::RGBA albedo) : albedo(albedo) {}
     explicit SingleColorTransparent(Color::RGB albedo, float alpha = 1.f);
 };
 
@@ -80,7 +80,7 @@ public:
     float length = 1.f;
 
     PerFaceNormal() = default;
-    explicit PerFaceNormal(Color::RGB albedo);
+    explicit PerFaceNormal(Color::RGB albedo) : albedo(albedo) {}
 };
 
 struct Light {
@@ -111,7 +111,19 @@ public:
     Color::RGB albedo = {1.0f, 0.5f, 0.31f};
 
     PBRSingleColor() = default;
-    explicit PBRSingleColor(Color::RGB albedo);
+    explicit PBRSingleColor(Color::RGB albedo) : albedo(albedo) {}
+};
+
+class PBRSingleTransparentColor : public Core::Material, public PBR {
+private:
+    Blob::Shaders::PBR::SingleTransparentColor::Intance shader = Blob::Shaders::PBR::SingleTransparentColor::getInstance();
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+
+public:
+    Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
+
+    PBRSingleTransparentColor() = default;
+    explicit PBRSingleTransparentColor(Color::RGBA albedo) : albedo(albedo) {}
 };
 
 class PBRSingleTexture : public Core::Material, public PBR {
@@ -145,7 +157,7 @@ public:
     Color::RGBA albedo = {0.f, 0.f, 1.f, 0.5f};
 
     PBRWater() = default;
-    explicit PBRWater(const Color::RGBA &albedo);
+    explicit PBRWater(const Color::RGBA &albedo) : albedo(albedo) {}
 };
 
 } // namespace Blob::Materials
