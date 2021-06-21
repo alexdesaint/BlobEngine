@@ -136,7 +136,7 @@ private:
 public:
     Maths::Vec2<float> texScale = {1.f, 1.f};
 
-    explicit PBRSingleTexture(const Core::Texture &texture): texture(texture) {}
+    explicit PBRSingleTexture(const Core::Texture &texture) : texture(texture) {}
 };
 
 class PBRColorArray : public Core::Material, public PBR {

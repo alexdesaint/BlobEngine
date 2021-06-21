@@ -1,5 +1,3 @@
-#include "Blob/Maths.inl"
-#include "JustOneMoreTime/Texture.hpp"
 #include <Blob/Core/Window.hpp>
 #include <Blob/Materials.hpp>
 

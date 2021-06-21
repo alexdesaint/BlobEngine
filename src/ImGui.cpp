@@ -1,4 +1,3 @@
-#include "Blob/Maths.inl"
 #include <Blob/Core/AttributeLocation.hpp>
 #include <Blob/Core/Exception.hpp>
 #include <Blob/GL/Window.hpp>
