@@ -1,3 +1,4 @@
+#include "Blob/GL/ShaderProgram.hpp"
 #include <glad/glad.h>
 #include <Blob/GLFW.hpp>
 
@@ -44,7 +45,7 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    Blob::GL::Shader sp;
+    Blob::GL::ShaderProgram sp;
 
     sp.addVertexShader(vertex_shader_text);
     sp.addFragmentShader(fragment_shader_text);

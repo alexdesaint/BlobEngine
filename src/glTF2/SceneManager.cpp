@@ -3,6 +3,7 @@
 #include <Blob/Reader/FileReader.hpp>
 
 #include <Blob/Core/Exception.hpp>
+#include <Blob/Core/AttributeLocation.hpp>
 #include <iostream>
 #include <sstream>
 
@@ -212,14 +213,14 @@ void SceneManager::createVBO() {
 
             size_t relativeOffset = 0;
 
-            setPrimitive(p.attributes.POSITION, Core::Shader::AttributeLocation::POSITION, p, relativeOffset);
-            setPrimitive(p.attributes.NORMAL, Core::Shader::AttributeLocation::NORMAL, p, relativeOffset);
-            setPrimitive(p.attributes.TANGENT, Core::Shader::AttributeLocation::TANGENT, p, relativeOffset);
-            setPrimitive(p.attributes.TEXCOORD_0, Core::Shader::AttributeLocation::TEXCOORD_0, p, relativeOffset);
-            setPrimitive(p.attributes.TEXCOORD_1, Core::Shader::AttributeLocation::TEXCOORD_1, p, relativeOffset);
-            setPrimitive(p.attributes.COLOR_0, Core::Shader::AttributeLocation::COLOR_0, p, relativeOffset);
-            setPrimitive(p.attributes.JOINTS_0, Core::Shader::AttributeLocation::JOINTS_0, p, relativeOffset);
-            setPrimitive(p.attributes.WEIGHTS_0, Core::Shader::AttributeLocation::WEIGHTS_0, p, relativeOffset);
+            setPrimitive(p.attributes.POSITION, Core::AttributeLocation::POSITION, p, relativeOffset);
+            setPrimitive(p.attributes.NORMAL, Core::AttributeLocation::NORMAL, p, relativeOffset);
+            setPrimitive(p.attributes.TANGENT, Core::AttributeLocation::TANGENT, p, relativeOffset);
+            setPrimitive(p.attributes.TEXCOORD_0, Core::AttributeLocation::TEXCOORD_0, p, relativeOffset);
+            setPrimitive(p.attributes.TEXCOORD_1, Core::AttributeLocation::TEXCOORD_1, p, relativeOffset);
+            setPrimitive(p.attributes.COLOR_0, Core::AttributeLocation::COLOR_0, p, relativeOffset);
+            setPrimitive(p.attributes.JOINTS_0, Core::AttributeLocation::JOINTS_0, p, relativeOffset);
+            setPrimitive(p.attributes.WEIGHTS_0, Core::AttributeLocation::WEIGHTS_0, p, relativeOffset);
         }
     }
 
@@ -304,14 +305,14 @@ std::string SceneManager::toCHeader() const {
             cursor += p.attributes.dataSize;
 
             size_t relativeOffset = 0;
-            code << getPrimitiveLine(p.attributes.POSITION, Core::Shader::AttributeLocation::POSITION, j, relativeOffset);
-            code << getPrimitiveLine(p.attributes.NORMAL, Core::Shader::AttributeLocation::NORMAL, j, relativeOffset);
-            code << getPrimitiveLine(p.attributes.TANGENT, Core::Shader::AttributeLocation::TANGENT, j, relativeOffset);
-            code << getPrimitiveLine(p.attributes.TEXCOORD_0, Core::Shader::AttributeLocation::TEXCOORD_0, j, relativeOffset);
-            code << getPrimitiveLine(p.attributes.TEXCOORD_1, Core::Shader::AttributeLocation::TEXCOORD_1, j, relativeOffset);
-            code << getPrimitiveLine(p.attributes.COLOR_0, Core::Shader::AttributeLocation::COLOR_0, j, relativeOffset);
-            code << getPrimitiveLine(p.attributes.JOINTS_0, Core::Shader::AttributeLocation::JOINTS_0, j, relativeOffset);
-            code << getPrimitiveLine(p.attributes.WEIGHTS_0, Core::Shader::AttributeLocation::WEIGHTS_0, j, relativeOffset);
+            code << getPrimitiveLine(p.attributes.POSITION, Core::AttributeLocation::POSITION, j, relativeOffset);
+            code << getPrimitiveLine(p.attributes.NORMAL, Core::AttributeLocation::NORMAL, j, relativeOffset);
+            code << getPrimitiveLine(p.attributes.TANGENT, Core::AttributeLocation::TANGENT, j, relativeOffset);
+            code << getPrimitiveLine(p.attributes.TEXCOORD_0, Core::AttributeLocation::TEXCOORD_0, j, relativeOffset);
+            code << getPrimitiveLine(p.attributes.TEXCOORD_1, Core::AttributeLocation::TEXCOORD_1, j, relativeOffset);
+            code << getPrimitiveLine(p.attributes.COLOR_0, Core::AttributeLocation::COLOR_0, j, relativeOffset);
+            code << getPrimitiveLine(p.attributes.JOINTS_0, Core::AttributeLocation::JOINTS_0, j, relativeOffset);
+            code << getPrimitiveLine(p.attributes.WEIGHTS_0, Core::AttributeLocation::WEIGHTS_0, j, relativeOffset);
         }
 
         declarations << "        Mesh" << i << "(const Blob::Core::Buffer &buffer, const Materials &materials) : " << join(init, ", ") << " {\n"

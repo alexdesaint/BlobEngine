@@ -16,8 +16,8 @@ public:
     Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
 
     SingleColor2D() = default;
-    explicit SingleColor2D(Color::RGBA albedo);
-    explicit SingleColor2D(Color::RGB albedo, float alpha = 1.f);
+    explicit SingleColor2D(Color::RGBA albedo) : albedo(albedo) {}
+    explicit SingleColor2D(Color::RGB albedo, float alpha = 1.f) : albedo(albedo, alpha) {}
 };
 
 class SingleColorSingleTexture2D : public Core::Material2D {
@@ -28,8 +28,8 @@ private:
 
 public:
     Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
-    explicit SingleColorSingleTexture2D(const Core::Texture &texture);
-    SingleColorSingleTexture2D(const Core::Texture &texture, const Color::RGBA &albedo);
+    explicit SingleColorSingleTexture2D(const Core::Texture &texture) : texture(texture) {}
+    SingleColorSingleTexture2D(const Core::Texture &texture, const Color::RGBA &albedo) : texture(texture), albedo(albedo) {}
 };
 
 class SingleColor : public Core::Material {
@@ -41,7 +41,7 @@ public:
     Color::RGB albedo = {1.0f, 0.5f, 0.31f};
 
     SingleColor() = default;
-    explicit SingleColor(Color::RGB albedo);
+    explicit SingleColor(Color::RGB albedo) : albedo(albedo) {}
 };
 
 class SingleColorTransparent : public Core::Material {
@@ -54,7 +54,7 @@ public:
 
     SingleColorTransparent() = default;
     explicit SingleColorTransparent(Color::RGBA albedo) : albedo(albedo) {}
-    explicit SingleColorTransparent(Color::RGB albedo, float alpha = 1.f);
+    explicit SingleColorTransparent(Color::RGB albedo, float alpha = 1.f) : albedo(albedo, alpha) {}
 };
 
 class SingleTexture : public Core::Material {
@@ -67,7 +67,7 @@ private:
 public:
     Maths::Vec2<float> texScale = {1.f, 1.f};
 
-    explicit SingleTexture(const Core::Texture &texture);
+    explicit SingleTexture(const Core::Texture &texture) : texture(texture) {}
 };
 
 class PerFaceNormal : public Core::Material {
@@ -136,7 +136,7 @@ private:
 public:
     Maths::Vec2<float> texScale = {1.f, 1.f};
 
-    explicit PBRSingleTexture(const Core::Texture &texture);
+    explicit PBRSingleTexture(const Core::Texture &texture): texture(texture) {}
 };
 
 class PBRColorArray : public Core::Material, public PBR {

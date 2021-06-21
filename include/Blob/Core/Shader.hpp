@@ -76,9 +76,10 @@ class Shader : public GL::Shader, public Core::Asset<Shader<SHADER_PROGRAM, UNIF
 private:
     friend Core::Asset<Shader<SHADER_PROGRAM, UNIFORM_ATTRIBUTES...>>;
     Shader() {}
-    const SHADER_PROGRAM shaderProgram;
 
 public:
+    const SHADER_PROGRAM shaderProgram;
+    
     void setUniform(const Texture &texture, int position) const { 
         GL::Shader::setTexture(texture); 
     }

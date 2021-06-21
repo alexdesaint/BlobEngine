@@ -3,6 +3,7 @@
 #include "Blob/Materials.hpp"
 #include "Blob/Shaders.hpp"
 #include <Blob/Core/Window.hpp>
+#include <Blob/Core/AttributeLocation.hpp>
 #include <memory>
 struct Cube_675 : public Blob::Core::Mesh {
     struct Attributes {
@@ -531,9 +532,9 @@ struct Cube_675 : public Blob::Core::Mesh {
         Blob::Core::RenderOptions renderOptions{513};
         Attributes() {
             attribute.setBuffer(buffer, sizeof(float) * (3 + 3 + 4));
-            attribute.setArray<float>(3, Blob::Core::Shader::POSITION, offsetof(Data, pos));
-            attribute.setArray<float>(3, Blob::Core::Shader::NORMAL, offsetof(Data, normal));
-            attribute.setArray<float>(4, Blob::Core::Shader::COLOR_0, offsetof(Data, color));
+            attribute.setArray<float>(3, Blob::Core::AttributeLocation::POSITION, offsetof(Data, pos));
+            attribute.setArray<float>(3, Blob::Core::AttributeLocation::NORMAL, offsetof(Data, normal));
+            attribute.setArray<float>(4, Blob::Core::AttributeLocation::COLOR_0, offsetof(Data, color));
         }
     };
     inline static std::unique_ptr<Attributes> attributes;

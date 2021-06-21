@@ -21,7 +21,8 @@ static const struct {
     float r, g, b;
 } vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f}, {0.5f, -0.5f, 0.f, 1.f, 1.f}, {-0.5f, 0.5f, 1.f, 0.f, 1.f}, {0.5f, 0.5f, 0.f, 0.f, 1.f}};
 
-static const std::string vertex_shader_text = R"=====(
+using SimpleShader = Core::Shader<Core::ShaderProgram<Core::VertexShader<
+                                                          R"=====(
 #version 450
 
 uniform mat4 model;
@@ -37,9 +38,9 @@ void main() {
     gl_Position = projection * view * model * vec4(vPos, 0.0, 1.0);
     color = vCol;
 }
-)=====";
-
-static const std::string fragment_shader_text = R"=====(
+)=====">,
+                                                      Core::FragmentShader<
+                                                          R"=====(
 #version 450
 
 varying vec3 color;
@@ -47,62 +48,43 @@ out vec4 FragColor;
 void main()  {
     FragColor = vec4(color, 1.0);
 }
-)=====";
+)=====">>,
+                                  Core::UniformAttribute<Maths::Mat4, 0>,
+                                  Core::UniformAttribute<Maths::ViewTransform, 1>,
+                                  Core::UniformAttribute<Maths::ProjectionTransform, 2>>;
 
-class SimpleMaterial : public Material {
-private:
-    void applyMaterial(const ProjectionTransform &pt, const ViewTransform &vt, const Mat4 &mt) const final {
-        setShader(sp);
-        setUniform(pt, projection);
-        setUniform(vt, view);
-        setUniform(mt, model);
-    }
-
-    const Blob::GL::Shader &sp;
-
+class SimpleMaterial : public Core::Material {
 public:
-    static int model;
-    static int view;
-    static int projection;
+    SimpleShader::Intance shader = SimpleShader::getInstance();
 
-    explicit SimpleMaterial(const Blob::GL::Shader &sp)
-        : sp(sp) {}
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final { shader->setAttributes(mt, vt, pt); }
 };
-
-int SimpleMaterial::model;
-int SimpleMaterial::view;
-int SimpleMaterial::projection;
 
 int main() {
     Core::Camera camera;
 
     Core::Window window;
 
+    SimpleMaterial material;
+
     Blob::GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
-    Blob::GL::Shader sp;
-    sp.addVertexShader(vertex_shader_text);
-    sp.addFragmentShader(fragment_shader_text);
-    sp.linkShaders();
-
-    SimpleMaterial::model = sp.getUniformLocation("model");
-    SimpleMaterial::view = sp.getUniformLocation("view");
-    SimpleMaterial::projection = sp.getUniformLocation("projection");
+    int model = material.shader->shaderProgram.getUniformLocation("model");
+    int view = material.shader->shaderProgram.getUniformLocation("view");
+    int projection = material.shader->shaderProgram.getUniformLocation("projection");
 
     Blob::GL::VertexArrayObject vao;
     vao.setBuffer(vbo, sizeof(vertices[0]));
-    vao.setArray(2, sp.getAttribLocation("vPos"), GL_FLOAT, 0);
-    vao.setArray(3, sp.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
+    vao.setArray(2, material.shader->shaderProgram.getAttribLocation("vPos"), GL_FLOAT, 0);
+    vao.setArray(3, material.shader->shaderProgram.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
 
     Core::RenderOptions ro;
-//     ro.indexed = true;
+    //     ro.indexed = true;
     unsigned short indices[] = {2, 1, 0, 1, 2, 3};
     ro.setIndices(indices, 6);
-//     ro.indices = indices;
-//     ro.numOfIndices = 6;
-//     ro.indicesType = GL_UNSIGNED_SHORT;
-
-    SimpleMaterial material(sp);
+    //     ro.indices = indices;
+    //     ro.numOfIndices = 6;
+    //     ro.indicesType = GL_UNSIGNED_SHORT;
 
     Core::Primitive primitive(&vao, &material, &ro);
 

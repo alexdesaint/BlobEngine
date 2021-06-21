@@ -1,6 +1,6 @@
+#include "Blob/GL/ShaderProgram.hpp"
 #include <glad/glad.h>
 
-#include <Blob/GL/Material.hpp>
 #include <Blob/GL/Shader.hpp>
 #include <Blob/GL/VertexBufferObject.hpp>
 #include <Blob/GL/Window.hpp>
@@ -46,11 +46,11 @@ int main() {
     unsigned int width = 640, height = 480;
 
     Window window{{width, height}};
-    Material material;
+    Shader shader;
 
     GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
-    GL::Shader sp;
+    GL::ShaderProgram sp;
     sp.addVertexShader(vertex_shader_text);
     sp.addFragmentShader(fragment_shader_text);
     sp.linkShaders();
@@ -81,11 +81,11 @@ int main() {
 
         mt.setRotation(window.totalTimeFlow, {0, 0, 1});
 
-        material.setShader(sp);
+        shader.setShaderProgram(sp);
         window.setVAO(vao);
-        material.setUniform(pt, projection);
-        material.setUniform(vt, view);
-        material.setUniform(mt, model);
+        shader.setUniform(pt, projection);
+        shader.setUniform(vt, view);
+        shader.setUniform(mt, model);
         window.drawIndex(indices, 6, GL_UNSIGNED_SHORT);
 
         window.swapBuffers();
