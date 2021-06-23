@@ -27,7 +27,7 @@ void ShaderProgram::destroy() {
 
 void ShaderProgram::addShader(Type type, const std::string &src) {
     shaders[type] = glCreateShader(type);
-    std::cout << "addShader" << std::endl;
+    std::cout << "Shader " << shaders[type] << std::endl;
     std::cout << src << std::endl;
     try {
         const GLchar *source = src.c_str();
@@ -58,8 +58,12 @@ void ShaderProgram::addFragmentShader(const std::string &src) {
 void ShaderProgram::linkShaders() {
     try {
         program = glCreateProgram();
-        for (auto &[type, shader] : shaders)
+        std::cout << "Program " << program << "(";
+        for (auto &[type, shader] : shaders) {
+            std::cout << " " << shader;
             glAttachShader(program, shader);
+        }
+        std::cout << ") " << std::endl;
 
         glLinkProgram(program);
 

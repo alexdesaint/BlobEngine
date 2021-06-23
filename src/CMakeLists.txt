@@ -20,10 +20,6 @@ add_library(BlobGLFW STATIC GLFW.cpp)
 target_link_libraries(BlobGLFW glfw glad Blob::Includes)
 add_library(Blob::GLFW ALIAS BlobGLFW)
 
-add_library(BlobImGui STATIC ImGui.cpp)
-target_link_libraries(BlobImGui imgui Blob::Shaders)
-add_library(Blob::ImGui ALIAS BlobImGui)
-
 add_library(BlobMaterials STATIC Materials.cpp)
 target_link_libraries(BlobMaterials Blob::Shaders Blob::Color)
 add_library(Blob::Materials ALIAS BlobMaterials)

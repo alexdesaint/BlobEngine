@@ -1,4 +1,8 @@
+#include "Blob/GLFW.hpp"
 #include <Blob/Core/Window.hpp>
+
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 
 // Blob
 #include <imgui.h>
@@ -6,16 +10,26 @@
 
 namespace Blob::Core {
 
-Window::Window(const Maths::Vec2<unsigned int>& size) :
+Window::Window(const Maths::Vec2<unsigned int> &size) :
     GL::Window(size, GLmajor, GLminor),
-    imgui(*this, windowSize.cast<float>(), framebufferSize.cast<float>()),
     keyboard(*keys),
     mouse(*cursorPosition, *scrollOffsetH, *scrollOffsetW, *mouseButton),
     projectionTransform(PI / 4, framebufferSize, 0.1, 1000),
     projectionTransform2D(framebufferSize.cast<float>()) {
-    imgui.createRender();
 
-    ImGuiIO &io = ImGui::GetIO();
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.BackendRendererName = "BlobEngine";
+    io.IniFilename = nullptr;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow *) GLFW::Window::window, true);
+    ImGui_ImplOpenGL3_Init("#version 450");
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
     cursorPosition = (Maths::Vec2<float> *) &io.MousePos;
     mouseButton = &io.MouseDown;
     scrollOffsetW = &io.MouseWheel;
@@ -44,16 +58,24 @@ Window::Window(const Maths::Vec2<unsigned int>& size) :
     lastFrameTime = std::chrono::high_resolution_clock::now();
 }
 
+Window::~Window() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
+
 float Window::timeFlow = 0;
 
 float Window::display() {
-    imgui.updateMouseCursor(*this);
-    imgui.draw(*this);
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     swapBuffers();
     clear();
-    updateInputs();
 
+    updateInputs();
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
     auto now = std::chrono::high_resolution_clock::now();
@@ -67,19 +89,19 @@ float Window::display() {
 }
 
 void Window::windowResized() {
-    imgui.setWindowSize(windowSize.cast<float>(), framebufferSize.cast<float>());
+    // imgui.setWindowSize(windowSize.cast<float>(), framebufferSize.cast<float>());
 }
 
 void Window::framebufferResized() {
     projectionTransform.setRatio(framebufferSize);
     projectionTransform2D.setRatio(framebufferSize.cast<float>());
-    imgui.setWindowSize(windowSize.cast<float>(), framebufferSize.cast<float>());
+    // imgui.setWindowSize(windowSize.cast<float>(), framebufferSize.cast<float>());
 
     setViewport(framebufferSize);
 }
 
 void Window::characterInput(unsigned int c) {
-    imgui.addInputCharacter(c);
+    // imgui.addInputCharacter(c);
 }
 
 Maths::Vec3<float> Window::getWorldPosition(const Camera &camera) {
@@ -149,7 +171,7 @@ void Window::draw(const Shape2D &shape, const Maths::ViewTransform2D &camera, co
 void Window::draw(const Scene2D &scene) const {
     for (auto r : scene.shapes)
         draw(*r, scene.camera);
-    //for (auto r : scene.shapes)
+    // for (auto r : scene.shapes)
     //    drawTransparent(*r, scene.camera);
 }
 
@@ -213,7 +235,7 @@ void Window::keyboardUpdate(int key, bool pressed) {
         k->keyboardUpdate(keyboard[key]);
     for (auto &k : KeyboardEvents2::subscribers) {
         auto it = k->callbacks.find(key);
-        if(it != k->callbacks.end() && it->second)
+        if (it != k->callbacks.end() && it->second)
             it->second(pressed);
     }
 }
@@ -234,12 +256,12 @@ void Window::scrollUpdate(double xoffset, double yoffset) {
 }
 
 void Window::disableMouseCursor() {
-    imgui.disableMouseCursor();
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
     setCursorState(CURSOR_DISABLED);
 }
 
 void Window::enableMouseCursor() {
-    imgui.enableMouseCursor();
+    ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
     setCursorState(CURSOR_NORMAL);
 }
 

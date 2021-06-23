@@ -7,7 +7,8 @@
 #include <Blob/Core/Scene.hpp>
 #include <Blob/Core/Shape.hpp>
 #include <Blob/GL/FrameBuffer.hpp>
-#include <Blob/ImGui.hpp>
+#include <Blob/GLFW.hpp>
+#include <Blob/GL/Window.hpp>
 #include <Blob/Time.hpp>
 
 // std
@@ -18,7 +19,7 @@ namespace Blob::Core {
 
 class Window : private GL::Window {
 private:
-    ImGui::Context imgui;
+    //ImGui::Context imgui;
 
     // time counting
     Time::TimePoint lastFrameTime;
@@ -52,6 +53,7 @@ public:
     Maths::ProjectionTransform2D projectionTransform2D;
 
     explicit Window(const Maths::Vec2<unsigned int>& size = {640, 480});
+    ~Window();
 
     void draw(const Primitive2D &primitive, const Maths::ViewTransform2D &camera, const Maths::Mat3 &modelTransform = Maths::Mat3()) const;
     void draw(const Mesh2D &mesh, const Maths::ViewTransform2D &camera, const Maths::Mat3 &modelTransform = Maths::Mat3()) const;

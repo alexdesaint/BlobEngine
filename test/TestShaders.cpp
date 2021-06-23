@@ -56,6 +56,7 @@ int main() {
 
             ImGui::Text("Light");
             ImGui::ColorEdit3("Light color", &Materials::PBR::light.color.R);
+            ImGui::ColorPicker3("another color", &Materials::PBR::light.color.R, ImGuiColorEditFlags_Float);
             ImGui::SliderFloat("Light power", &Materials::PBR::light.power, 1.0f, 1000.f);
             ImGui::SliderFloat("Light radius", &Materials::PBR::light.radius, 0.1f, 10.0f);
             ImGui::SliderFloat3("Light Position", &Materials::PBR::light.position.x, -1.0f, 1.0f);

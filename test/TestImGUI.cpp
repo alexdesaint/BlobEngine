@@ -25,14 +25,14 @@ using SimpleShader = Core::Shader<Core::ShaderProgram<Core::VertexShader<
                                                           R"=====(
 #version 450
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+layout(location = 0) uniform mat4 model;
+layout(location = 1) uniform mat4 view;
+layout(location = 2) uniform mat4 projection;
 
-attribute vec3 vCol;
-attribute vec2 vPos;
+layout(location = 0) in vec3 vCol;
+layout(location = 1) in vec2 vPos;
 
-varying vec3 color;
+layout(location = 0) out vec3 color;
 
 void main() {
     gl_Position = projection * view * model * vec4(vPos, 0.0, 1.0);
@@ -43,7 +43,8 @@ void main() {
                                                           R"=====(
 #version 450
 
-varying vec3 color;
+layout(location = 0) in vec3 color;
+
 out vec4 FragColor;
 void main()  {
     FragColor = vec4(color, 1.0);
@@ -69,10 +70,6 @@ int main() {
 
     Blob::GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
-    int model = material.shader->shaderProgram.getUniformLocation("model");
-    int view = material.shader->shaderProgram.getUniformLocation("view");
-    int projection = material.shader->shaderProgram.getUniformLocation("projection");
-
     Blob::GL::VertexArrayObject vao;
     vao.setBuffer(vbo, sizeof(vertices[0]));
     vao.setArray(2, material.shader->shaderProgram.getAttribLocation("vPos"), GL_FLOAT, 0);
@@ -82,9 +79,6 @@ int main() {
     //     ro.indexed = true;
     unsigned short indices[] = {2, 1, 0, 1, 2, 3};
     ro.setIndices(indices, 6);
-    //     ro.indices = indices;
-    //     ro.numOfIndices = 6;
-    //     ro.indicesType = GL_UNSIGNED_SHORT;
 
     Core::Primitive primitive(&vao, &material, &ro);
 
@@ -114,6 +108,7 @@ int main() {
 
             ImGui::SliderFloat("float", &f, 0.0f, 1.0f);              // Edit 1 float using a slider from 0.0f to 1.0f
             ImGui::ColorEdit3("clear color", (float *) &clear_color); // Edit 3 floats representing a color
+            ImGui::ColorPicker3("another color", (float *) &clear_color);
 
             if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
                 counter++;
