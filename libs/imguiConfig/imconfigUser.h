@@ -115,6 +115,6 @@ class Texture;
 
 #define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 
-#define ImTextureID textureID
+#define ImTextureID TextureID
 
-typedef Blob::Core::Texture *textureID;
+typedef Blob::Core::Texture *TextureID;

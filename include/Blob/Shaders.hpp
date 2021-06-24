@@ -499,24 +499,24 @@ void main()
 
 using SingleTexture = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD PBR_FUNCTIONS R"=====(
 // material parameters
-layout(location = 3) uniform vec2 texScale;
-uniform sampler2D Texture;
-layout(location = 4) uniform float metallic;
-layout(location = 5) uniform float roughness;
-layout(location = 6) uniform float ao;
+layout(location = 3) uniform float metallic;
+layout(location = 4) uniform float roughness;
+layout(location = 5) uniform float ao;
 
-layout(location = 7) uniform vec3 eyePosition;
-layout(location = 8) uniform vec3 lightPosition;
-layout(location = 9) uniform vec3 lightColor;
-layout(location = 10) uniform float lightRadius;
-layout(location = 11) uniform float lightPower;
+layout(location = 6) uniform vec3 eyePosition;
+layout(location = 7) uniform vec3 lightPosition;
+layout(location = 8) uniform vec3 lightColor;
+layout(location = 9) uniform float lightRadius;
+layout(location = 10) uniform float lightPower;
+
+layout(location = 11) uniform vec2 texScale;
+uniform sampler2D Texture;
 
 void main()
 {
     vec3 albedo = texture(Texture, texCoord * texScale).rgb;
 
     vec3 limunance = albedo * lightAttenuation(lightPower, lightPosition, position, normal);
-//limunance = albedo;
     color = vec4(limunance, 1.0);
 })=====">>,
                                    UniformModel,
@@ -533,22 +533,22 @@ void main()
                                    Core::UniformAttribute<Core::Texture, 0>>;
 
 using ColorArray = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD PBR_FUNCTIONS R"=====(
-layout(location = 5) in vec3 COLOR_0;
 // material parameters
-layout(location = 4) uniform float metallic;
-layout(location = 5) uniform float roughness;
-layout(location = 6) uniform float ao;
+layout(location = 3) uniform float metallic;
+layout(location = 4) uniform float roughness;
+layout(location = 5) uniform float ao;
 
-layout(location = 7) uniform vec3 eyePosition;
-layout(location = 8) uniform vec3 lightPosition;
-layout(location = 9) uniform vec3 lightColor;
-layout(location = 10) uniform float lightRadius;
-layout(location = 11) uniform float lightPower;
+layout(location = 6) uniform vec3 eyePosition;
+layout(location = 7) uniform vec3 lightPosition;
+layout(location = 8) uniform vec3 lightColor;
+layout(location = 9) uniform float lightRadius;
+layout(location = 10) uniform float lightPower;
+
+layout(location = 11) in vec3 COLOR_0;
 
 void main()
 {
     vec3 limunance = COLOR_0 * lightAttenuation(lightPower, lightPosition, position, normal);
-limunance = COLOR_0;
     color = vec4(limunance, 1.0);
 })=====">>,
                                 UniformModel,

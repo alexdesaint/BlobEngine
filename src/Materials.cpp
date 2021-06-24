@@ -30,30 +30,32 @@ void PerFaceNormal::applyMaterial(const Maths::ProjectionTransform &pt, const Ma
 }
 
 /********************* PBR *********************/
+
 Light PBR::light;
+
 /********************* PBRSingleColor *********************/
 
 void PBRSingleColor::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.power, light.radius, albedo);
+    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.radius, light.power, albedo);
 }
 
 void PBRSingleTransparentColor::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.power, light.radius, albedo);
+    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.radius, light.power, albedo);
 }
 
 /********************* PBRSingleTexture *********************/
 
 void PBRSingleTexture::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.power, light.radius, texture);
+    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.radius, light.power, texture);
 }
 
 /********************* PBRColorArray *********************/
 void PBRColorArray::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.power, light.radius);
+    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.radius, light.power);
 }
 
 void PBRWater::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
-    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.power, light.radius, (float) Core::Window::totalTimeFlow);
+    shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.radius, light.power, (float) Core::Window::totalTimeFlow);
 }
 
 } // namespace Blob::Materials
