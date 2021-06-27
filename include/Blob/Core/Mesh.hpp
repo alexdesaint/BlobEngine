@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <unordered_map>
 
 #include <Blob/Core/Primitive.hpp>
 
@@ -30,6 +31,8 @@ public:
 
     void removeTransparentPrimitive(const Primitive &r);
     void removeTransparentPrimitive(const Primitive *r);
+
+    void getDrawCallList(std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> &drawCallList, Maths::Mat4 transform = Maths::Mat4()) const;
 };
 
 class Mesh2D {

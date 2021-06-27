@@ -5,61 +5,89 @@
 #include <Blob/Core/Texture.hpp>
 #include <Blob/GL/Shader.hpp>
 #include <Blob/GL/ShaderProgram.hpp>
+#include <iostream>
 #include <stddef.h>
 #include <string>
-#include <iostream>
 
 namespace Blob::Core {
 
 template<size_t N>
-struct StringLiteral {
-    constexpr StringLiteral(const char (&str)[N]) { std::copy_n(str, N, value); }
+struct GlslCode {
+    constexpr GlslCode(const char (&str)[N]) { std::copy_n(str, N, value); }
 
     static const size_t size = N;
     char value[N];
 };
 
-template<StringLiteral lit, GL::ShaderProgram::Type TYPE>
+template<GL::ShaderProgram::Type TYPE, GlslCode... lit>
 struct ShaderCode {
-    static std::string getCode() { return std::string(lit.value); }
+    static std::string getCode() {
+        std::string ret;
+        ((ret += std::string(lit.value)), ...);
+        return ret;
+    }
     inline static const GL::ShaderProgram::Type type = TYPE;
 };
 
-template<StringLiteral lit>
+template<GlslCode... lit>
 struct VertexShader {
-    static std::string getCode() { return std::string(lit.value); }
+    static std::string getCode() {
+        std::string ret;
+        ((ret += std::string(lit.value)), ...);
+        return ret;
+    }
     inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Vertex;
 };
-template<StringLiteral lit>
+template<GlslCode... lit>
 struct TessellationControlShader {
-    static std::string getCode() { return std::string(lit.value); }
+    static std::string getCode() {
+        std::string ret;
+        ((ret += std::string(lit.value)), ...);
+        return ret;
+    }
     inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::TessellationControl;
 };
-template<StringLiteral lit>
+template<GlslCode... lit>
 struct EvaluationShader {
-    static std::string getCode() { return std::string(lit.value); }
+    static std::string getCode() {
+        std::string ret;
+        ((ret += std::string(lit.value)), ...);
+        return ret;
+    }
     inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Evaluation;
 };
-template<StringLiteral lit>
+template<GlslCode... lit>
 struct GeometryShader {
-    static std::string getCode() { return std::string(lit.value); }
+    static std::string getCode() {
+        std::string ret;
+        ((ret += std::string(lit.value)), ...);
+        return ret;
+    }
     inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Geometry;
 };
-template<StringLiteral lit>
+template<GlslCode... lit>
 struct FragmentShader {
-    static std::string getCode() { return std::string(lit.value); }
+    static std::string getCode() {
+        std::string ret;
+        ((ret += std::string(lit.value)), ...);
+        return ret;
+    }
     inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Fragment;
 };
-template<StringLiteral lit>
+template<GlslCode... lit>
 struct ComputeShader {
-    static std::string getCode() { return std::string(lit.value); }
+    static std::string getCode() {
+        std::string ret;
+        ((ret += std::string(lit.value)), ...);
+        return ret;
+    }
     inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Compute;
 };
 
 template<class... SHADER_CODE>
 struct ShaderProgram : public GL::ShaderProgram {
     ShaderProgram() {
-        (addShader(SHADER_CODE::type, SHADER_CODE::getCode()),...);
+        (addShader(SHADER_CODE::type, SHADER_CODE::getCode()), ...);
         linkShaders();
     }
 };
@@ -79,10 +107,8 @@ private:
 
 public:
     const SHADER_PROGRAM shaderProgram;
-    
-    void setUniform(const Texture &texture, int position) const { 
-        GL::Shader::setTexture(texture); 
-    }
+
+    void setUniform(const Texture &texture, int position) const { GL::Shader::setTexture(texture); }
 
     using GL::Shader::setUniform;
 

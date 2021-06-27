@@ -1,3 +1,4 @@
+#include "Blob/Core/Primitive.hpp"
 #include <Blob/Core/Shape.hpp>
 #include <algorithm>
 
@@ -36,6 +37,15 @@ void Shape::removeChild(Shape *r) {
     auto it = std::find(shapes.begin(), shapes.end(), r);
     if (it != shapes.end())
         shapes.erase(it);
+}
+
+void Shape::getDrawCallList(std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> &drawCallList, Maths::Mat4 transform) const {
+    Maths::Mat4 modelMatrix = *this * transform;
+    for (auto shape : shapes)
+        shape->getDrawCallList(drawCallList, modelMatrix);
+
+    if (mesh != nullptr)
+        mesh->getDrawCallList(drawCallList, modelMatrix);
 }
 
 std::ostream &operator<<(std::ostream &s, const Shape &a) {

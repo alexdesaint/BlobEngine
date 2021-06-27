@@ -2,6 +2,7 @@
 
 #include <Blob/Core/Camera.hpp>
 #include <Blob/Core/Shape.hpp>
+#include <ostream>
 #include <utility>
 
 namespace Blob::Core {
@@ -24,6 +25,10 @@ public:
     void removeShape(const Shape &r);
     void removeShape(const Shape *r);
     void removeAll();
+
+    std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> getDrawCallList() const;
+
+    friend std::ostream &operator<<(std::ostream &, const Scene &);
 };
 
 class Scene2D {
@@ -43,5 +48,7 @@ public:
     void removeShape(const Shape2D &r);
     void removeShape(const Shape2D *r);
     void removeAll();
+
+    friend std::ostream &operator<<(std::ostream &, const Scene2D &);
 };
 } // namespace Blob::Core

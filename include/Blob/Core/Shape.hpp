@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Blob/Core/Mesh.hpp>
-#include <list>
 
 namespace Blob::Core {
 
@@ -10,7 +9,7 @@ class Shape : public Maths::ModelTransform {
 
 private:
     const Mesh *mesh = nullptr;
-    std::list<Shape *> shapes;
+    std::list<const Shape *> shapes;
 
 public:
     Shape() = default;
@@ -30,6 +29,8 @@ public:
 
     void removeChild(Shape &r);
     void removeChild(Shape *r);
+
+    void getDrawCallList(std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> &drawCallList, Maths::Mat4 transform = Maths::Mat4()) const;
 
     friend std::ostream &operator<<(std::ostream &s, const Shape &a);
 };

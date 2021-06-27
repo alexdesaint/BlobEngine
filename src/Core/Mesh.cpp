@@ -3,6 +3,10 @@
 
 namespace Blob::Core {
 
+Mesh::Mesh(const Primitive &r) {
+    addPrimitive(r);
+}
+
 void Mesh::addPrimitive(const Primitive &r) {
     primitives.emplace_back(&r);
 }
@@ -46,8 +50,10 @@ void Mesh::removeTransparentPrimitive(const Primitive *r) {
         transparentPrimitives.erase(it);
     }
 }
-Mesh::Mesh(const Primitive &r) {
-    addPrimitive(r);
+
+void Mesh::getDrawCallList(std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> &drawCallList, Maths::Mat4 transform) const{
+    for (auto primitive : primitives)
+        drawCallList[primitive].emplace_back(transform);
 }
 
 void Mesh2D ::addPrimitive(const Primitive2D &r) {
@@ -93,7 +99,7 @@ void Mesh2D ::removeTransparentPrimitive(const Primitive2D *r) {
         transparentPrimitives.erase(it);
     }
 }
-Mesh2D ::Mesh2D (const Primitive2D &r) {
+Mesh2D ::Mesh2D(const Primitive2D &r) {
     addPrimitive(r);
 }
 

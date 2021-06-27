@@ -327,8 +327,7 @@ void main() {
     gl_Position =  projection * view * model * vec4(POSITION, 1.0);
 })=====">;
 
-#define PBR_HEAD                                                                                                                                                                                       \
-    R"=====(#version 450
+constexpr char PBR_HEAD[] = R"=====(#version 450
 layout(location=0) out vec4 color;
 
 const float PI = 3.14159265359;
@@ -340,9 +339,9 @@ layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 layout(location = 3) in vec3 tangent;
 layout(location = 4) in vec3 binormal;
-)====="
+)=====";
 
-#define PBR_FUNCTIONS                                                                                                                                                                                  \
+constexpr char PBR_FUNCTIONS[] =
     R"=====(
 // GGX/Towbridge-Reitz normal distribution function.
 // Uses Disney's reparametrization of alpha = roughness^2.
@@ -426,9 +425,9 @@ float lightAttenuationLocale(float lightPower, float lightRadius, vec3 lightPosi
 	//att *=  getAngleAtt(L, lightForward, lightAngleScale, lightAngleOffset);
 	return att;
 }
-)====="
+)=====";
 
-using SingleColor = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD PBR_FUNCTIONS R"=====(
+using SingleColor = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform float metallic;
 layout(location = 4) uniform float roughness;
@@ -463,7 +462,7 @@ void main()
                                  UniformLightPower,
                                  Core::UniformAttribute<Color::RGB, 11>>;
 
-using SingleTransparentColor = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD PBR_FUNCTIONS R"=====(
+using SingleTransparentColor = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform float metallic;
 layout(location = 4) uniform float roughness;
@@ -484,20 +483,20 @@ void main()
     vec3 limunance = albedo.xyz * lightAttenuation(lightPower, lightPosition, position, normal);
     color = vec4(limunance, albedo.w);
 })=====">>,
-                                 UniformModel,
-                                 UniformView,
-                                 UniformProjection,
-                                 UniformMetallic,
-                                 UniformRoughness,
-                                 UniformAo,
-                                 UniformCameraPosition,
-                                 UniformLightPosition,
-                                 UniformLightColor,
-                                 UniformLightRadius,
-                                 UniformLightPower,
-                                 Core::UniformAttribute<Color::RGBA, 11>>;
+                                            UniformModel,
+                                            UniformView,
+                                            UniformProjection,
+                                            UniformMetallic,
+                                            UniformRoughness,
+                                            UniformAo,
+                                            UniformCameraPosition,
+                                            UniformLightPosition,
+                                            UniformLightColor,
+                                            UniformLightRadius,
+                                            UniformLightPower,
+                                            Core::UniformAttribute<Color::RGBA, 11>>;
 
-using SingleTexture = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD PBR_FUNCTIONS R"=====(
+using SingleTexture = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform float metallic;
 layout(location = 4) uniform float roughness;
@@ -532,7 +531,7 @@ void main()
                                    UniformLightPower,
                                    Core::UniformAttribute<Core::Texture, 0>>;
 
-using ColorArray = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD PBR_FUNCTIONS R"=====(
+using ColorArray = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform float metallic;
 layout(location = 4) uniform float roughness;
@@ -608,7 +607,7 @@ void main()
 
     EndPrimitive();
 })=====">,
-                                               Core::FragmentShader<PBR_HEAD PBR_FUNCTIONS R"=====(
+                                               Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform vec4 albedo;
 layout(location = 4) uniform float metallic;
