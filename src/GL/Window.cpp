@@ -7,17 +7,11 @@
 
 // std
 #include <iostream>
+#include <stdint.h>
 
 namespace Blob::GL {
 
-void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message,
-                                       const void *userParam) {
-    (void) source;
-    (void) type;
-    (void) id;
-    (void) length;
-    (void) userParam;
-
+void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
     std::string errorName;
 
     switch (type) {
@@ -70,7 +64,7 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
 
     switch (severity) {
     case GL_DEBUG_SEVERITY_NOTIFICATION:
-        //std::cout << errorName << " (Notification) : " << std::endl << message << std::endl;
+        std::cout << errorName << " (Notification) : " << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_LOW:
         std::cout << errorName << " (Low severity Error) : " << std::endl << message << std::endl;
@@ -79,6 +73,7 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
         std::cout << errorName << " (Medium severity Error) : " << std::endl << message << std::endl;
         break;
     case GL_DEBUG_SEVERITY_HIGH:
+        std::cout << errorName << " (Medium severity Error) : " << std::endl << message << std::endl;
         throw Blob::Core::Exception(errorName + " (High severity Error) :\n" + message + "\n");
     default:
         std::cout << errorName << " (Unknow severity Error) : " << std::endl << message << std::endl;
@@ -86,15 +81,13 @@ void GLAPIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GL
     }
 }
 
-Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor) : GLFW::Window(windowSize, GLmajor, GLminor){
-    //std::cout << "init OpenGL" << std::endl;
+Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor) : GLFW::Window(windowSize, GLmajor, GLminor) {
     if (!gladLoadGLLoader((GLADloadproc) GLFW::Window::getProcAddress))
         throw Blob::Core::Exception("Fail to load openGL");
 
     if (GLmajor != GLVersion.major || GLminor > GLVersion.minor)
-        throw Blob::Core::Exception("Fail to load the right version of OpenGL. Loaded version : " + std::to_string(GLVersion.major) + "." +
-                                    std::to_string(GLVersion.minor) + " instead of " + std::to_string(GLmajor) + "\n" + std::to_string(GLminor) +
-                                    ". System version : " + (char *) glGetString(GL_VERSION));
+        throw Blob::Core::Exception("Fail to load the right version of OpenGL. Loaded version : " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor) + " instead of " +
+                                    std::to_string(GLmajor) + "\n" + std::to_string(GLminor) + ". System version : " + (char *) glGetString(GL_VERSION));
 
     std::cout << "init OpenGL " << GLVersion.major << "." << GLVersion.minor << std::endl;
     // Enable the debug callback
@@ -102,7 +95,7 @@ Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLm
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(openglCallbackFunction, nullptr);
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-    
+
     glEnable(GL_FRAMEBUFFER_SRGB);
 
     // general settings
@@ -136,10 +129,7 @@ Window::~Window() {
 }
 
 std::ostream &operator<<(std::ostream &s, const Window &a) {
-    s << glGetString(GL_VENDOR) << std::endl
-      << glGetString(GL_RENDERER) << std::endl
-      << glGetString(GL_VERSION) << std::endl
-      << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+    s << glGetString(GL_VENDOR) << std::endl << glGetString(GL_RENDERER) << std::endl << glGetString(GL_VERSION) << std::endl << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
     return s;
 }
 
@@ -188,6 +178,29 @@ void Window::drawIndex<uint16_t>(const void *indices, int32_t numOfIndices) cons
 template<>
 void Window::drawIndex<uint32_t>(const void *indices, int32_t numOfIndices) const {
     glDrawElements(GL_TRIANGLES, numOfIndices, GL_UNSIGNED_INT, indices);
+}
+
+void Window::drawArraysInstanced(int32_t count, uint32_t offset, int32_t instances) const {
+    glDrawArraysInstanced(GL_TRIANGLES, offset, count, instances);
+}
+
+void Window::drawIndexInstanced(const void *indices, int32_t numOfIndices, uint32_t indicesType, int32_t instances) const {
+    glDrawElementsInstanced(GL_TRIANGLES, numOfIndices, indicesType, indices, instances);
+}
+
+template<>
+void Window::drawIndexInstanced<uint8_t>(const void *indices, int32_t numOfIndices, int32_t instances) const {
+    glDrawElementsInstanced(GL_TRIANGLES, numOfIndices, GL_UNSIGNED_BYTE, indices, instances);
+}
+
+template<>
+void Window::drawIndexInstanced<uint16_t>(const void *indices, int32_t numOfIndices, int32_t instances) const {
+    glDrawElementsInstanced(GL_TRIANGLES, numOfIndices, GL_UNSIGNED_SHORT, indices, instances);
+}
+
+template<>
+void Window::drawIndexInstanced<uint32_t>(const void *indices, int32_t numOfIndices, int32_t instances) const {
+    glDrawElementsInstanced(GL_TRIANGLES, numOfIndices, GL_UNSIGNED_INT, indices, instances);
 }
 
 } // namespace Blob::GL

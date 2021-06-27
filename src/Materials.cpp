@@ -39,6 +39,10 @@ void PBRSingleColor::applyMaterial(const Maths::ProjectionTransform &pt, const M
     shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.radius, light.power, albedo);
 }
 
+void PBRSingleColorInstanced::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
+    shader->setAttributes(vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.radius, light.power, albedo);
+}
+
 void PBRSingleTransparentColor::applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const {
     shader->setAttributes(mt, vt, pt, metallic, roughness, ao, vt.cameraPosition, light.position, light.color, light.radius, light.power, albedo);
 }

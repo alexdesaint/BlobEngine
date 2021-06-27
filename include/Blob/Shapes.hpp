@@ -97,7 +97,7 @@ public:
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
-        explicit Cube(const Blob::Core::Material &material) : shapesData(getInstance()), primitive0(&shapesData->cubeAttributes.attribute0, &material, &shapesData->cubeAttributes.renderOptions0) {
+        explicit Cube(Blob::Core::Material &material) : shapesData(getInstance()), primitive0(&shapesData->cubeAttributes.attribute0, &material, &shapesData->cubeAttributes.renderOptions0) {
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
@@ -111,7 +111,7 @@ public:
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
-        explicit Plane(const Blob::Core::Material &material) : shapesData(getInstance()), primitive0(&shapesData->planeAttributes.attribute0, &material, &shapesData->planeAttributes.renderOptions0) {
+        explicit Plane(Blob::Core::Material &material) : shapesData(getInstance()), primitive0(&shapesData->planeAttributes.attribute0, &material, &shapesData->planeAttributes.renderOptions0) {
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
@@ -126,7 +126,7 @@ public:
             mesh.addPrimitive(primitive0);
             setMesh(mesh);
         }
-        explicit OctagonalPrism(const Blob::Core::Material &material) :
+        explicit OctagonalPrism(Blob::Core::Material &material) :
             shapesData(getInstance()), primitive0(&shapesData->octagonalPrismAttributes.attribute0, &material, &shapesData->octagonalPrismAttributes.renderOptions0) {
             mesh.addPrimitive(primitive0);
             setMesh(mesh);

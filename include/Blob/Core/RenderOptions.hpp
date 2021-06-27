@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <stdint.h>
 
 namespace Blob::Core {
 class RenderOptions {
@@ -20,6 +21,9 @@ private:
     int32_t elementOffset = 0, numOfElements = 0;
 
 public:
+    // Instanced
+    int32_t instancedCount = 0;
+
     RenderOptions() = default;
     RenderOptions(const RenderOptions &) = delete;
     RenderOptions(RenderOptions &&) = delete;

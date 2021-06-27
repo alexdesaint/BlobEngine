@@ -10,22 +10,22 @@ class Primitive {
     friend class Window;
 
 private:
-    const Material *material = nullptr;
-    const GL::VertexArrayObject *vertexArrayObject = nullptr;
-    const RenderOptions *renderOptions = nullptr;
-
 public:
+    Material *material = nullptr;
+    GL::VertexArrayObject *vertexArrayObject = nullptr;
+    RenderOptions *renderOptions = nullptr;
+
     Primitive() = default;
-    Primitive(const GL::VertexArrayObject *vertexArrayObject, const Material *material, const RenderOptions *renderOptions) :
+    Primitive(GL::VertexArrayObject *vertexArrayObject, Material *material, RenderOptions *renderOptions) :
         material(material), vertexArrayObject(vertexArrayObject), renderOptions(renderOptions) {}
-    Primitive(const Primitive &) = delete;
+    Primitive(const Primitive &) = default;
     Primitive(Primitive &&) = delete;
 
-    void setMaterial(const Material *material) { Primitive::material = material; }
+    void setMaterial(Material *material) { Primitive::material = material; }
 
-    void setVertexArrayObject(const GL::VertexArrayObject *vertexArrayObject) { Primitive::vertexArrayObject = vertexArrayObject; }
+    void setVertexArrayObject(GL::VertexArrayObject *vertexArrayObject) { Primitive::vertexArrayObject = vertexArrayObject; }
 
-    void setRenderOptions(const RenderOptions *renderOptions) { Primitive::renderOptions = renderOptions; }
+    void setRenderOptions(RenderOptions *renderOptions) { Primitive::renderOptions = renderOptions; }
 };
 
 class Primitive2D {

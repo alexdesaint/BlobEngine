@@ -21,12 +21,8 @@ target_link_libraries(BlobGLFW glfw glad Blob::Includes)
 add_library(Blob::GLFW ALIAS BlobGLFW)
 
 add_library(BlobMaterials STATIC Materials.cpp)
-target_link_libraries(BlobMaterials Blob::Shaders Blob::Color)
+target_link_libraries(BlobMaterials Blob::Color)
 add_library(Blob::Materials ALIAS BlobMaterials)
-
-add_library(BlobShaders STATIC Shaders.cpp)
-target_link_libraries(BlobShaders Blob::Core)
-add_library(Blob::Shaders ALIAS BlobShaders)
 
 add_library(BlobShapes STATIC Shapes.cpp)
 target_link_libraries(BlobShapes Blob::Materials)

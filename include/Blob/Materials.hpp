@@ -114,6 +114,18 @@ public:
     explicit PBRSingleColor(Color::RGB albedo) : albedo(albedo) {}
 };
 
+class PBRSingleColorInstanced : public Core::Material, public PBR {
+private:
+    Blob::Shaders::PBR::SingleColorInstanced::Intance shader = Blob::Shaders::PBR::SingleColorInstanced::getInstance();
+    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+
+public:
+    Color::RGB albedo = {1.0f, 0.5f, 0.31f};
+
+    PBRSingleColorInstanced() = default;
+    explicit PBRSingleColorInstanced(Color::RGB albedo) : albedo(albedo) {}
+};
+
 class PBRSingleTransparentColor : public Core::Material, public PBR {
 private:
     Blob::Shaders::PBR::SingleTransparentColor::Intance shader = Blob::Shaders::PBR::SingleTransparentColor::getInstance();

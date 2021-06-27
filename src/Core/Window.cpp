@@ -19,7 +19,7 @@ Window::Window(const Maths::Vec2<unsigned int> &size) :
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.BackendRendererName = "BlobEngine";
     io.IniFilename = nullptr;
     ImGui::StyleColorsDark();
@@ -180,10 +180,17 @@ void Window::draw(const Primitive &primitive, const Maths::ViewTransform &camera
 
     primitive.material->applyMaterial(projectionTransform, camera, sceneModel);
 
-    if (primitive.renderOptions->indexed)
-        drawIndex(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType);
-    else
-        drawArrays(primitive.renderOptions->numOfElements, primitive.renderOptions->elementOffset);
+    if (primitive.renderOptions->indexed) {
+        if (primitive.renderOptions->instancedCount)
+            drawIndexInstanced(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType, primitive.renderOptions->instancedCount);
+        else
+            drawIndex(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType);
+    } else {
+        if (primitive.renderOptions->instancedCount)
+            drawArraysInstanced(primitive.renderOptions->numOfElements, primitive.renderOptions->elementOffset, primitive.renderOptions->instancedCount);
+        else
+            drawArrays(primitive.renderOptions->numOfElements, primitive.renderOptions->elementOffset);
+    }
 }
 
 void Window::draw(const Mesh &mesh, const Maths::ViewTransform &camera, const Maths::Mat4 &sceneModel) const {
