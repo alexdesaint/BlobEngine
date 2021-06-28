@@ -80,24 +80,19 @@ class Parameter:
         return ret
 
 
-class Class:
-    def __init__(self, name, parents={}, content=[], namespace=[], indent=0, struct=False):
+class Struct:
+    def __init__(self, name, parents={}, content=[], namespace=[], indent=0):
         self.name = name
         self.parents = parents
         self.content = content
         self.indent = indent
         self.namespace = namespace
-        self.struct = struct
 
     def getType(self):
         return "::".join(self.namespace) + "::" + self.name
 
     def getHeader(self):
-        ret = ""
-        if self.struct:
-            ret += "struct " + self.name
-        else:
-            ret += "class " + self.name
+        ret = "struct " + self.name
 
         if self.parents:
             ret += " : "
@@ -174,8 +169,8 @@ def codeMesh(mesh):
     use_morph_normals = False
 
     dataType = [('x', np.float32), ('y', np.float32), ('z', np.float32)]
-    dataStruct = Class("Data", {}, [Parameter("x", float_t), Parameter(
-        "y", float_t), Parameter("z", float_t)], [], struct=True)
+    dataStruct = Struct("Data", {}, [Parameter("x", float_t), Parameter(
+        "y", float_t), Parameter("z", float_t)], [])
     if use_normals:
         dataType += [('nx', np.float32), ('ny', np.float32),
                      ('nz', np.float32)]
@@ -220,7 +215,7 @@ def codeMesh(mesh):
     headerCode = ""
     coreCode = ""
     headerCode += "struct " + name + " : public Blob::Core::Mesh {\n"
-    attributes = Class("Attributes", content=[], struct=True)
+    attributes = Struct("Attributes", content=[])
     dataStruct.namespace.append(name)
     dataStruct.namespace.append("Attributes")
     if attributes.content:
@@ -309,9 +304,9 @@ def codeMesh(mesh):
     headerCode += "        if (!attributes)\n"
     headerCode += "            attributes = std::make_unique<Attributes>();\n"
     for material in mesh.materials:
-        headerCode += "        primitive.setMaterial(&material);\n"
-    headerCode += "        primitive.setRenderOptions(&attributes->renderOptions);\n"
-    headerCode += "        primitive.setVertexArrayObject(&attributes->attribute);\n"
+        headerCode += "        primitive.material = &material;\n"
+    headerCode += "        primitive.renderOptions = &attributes->renderOptions;\n"
+    headerCode += "        primitive.vertexArrayObject = &attributes->attribute;\n"
     headerCode += "    }\n"
     headerCode += "};\n"
     return headerCode, coreCode
@@ -351,11 +346,11 @@ for mesh in bpy.data.meshes:
         f.write(coreCode)
         f.write("}\n")
 
-allMeshesType = Class("AllMeshes", struct=True)
+allMeshesType = Struct("AllMeshes")
 for mesh in bpy.data.meshes:
     name = mesh.name.replace('.', '_')
     allMeshesType.content.append(Parameter(name, NativeType("Meshes::" + name)))
-project = Class("Project" + projectName,
+project = Struct("Project" + projectName,
                 content=[Parameter("meshes", allMeshesType)])
 constructor = Function(project.name)
 for object in bpy.data.objects:

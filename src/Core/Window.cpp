@@ -147,10 +147,17 @@ void Window::draw(const Primitive2D &primitive, const Maths::ViewTransform2D &ca
 
     primitive.material->applyMaterial(projectionTransform2D, camera, model);
 
-    if (primitive.renderOptions->indexed)
-        drawIndex(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType);
-    else
-        drawArrays(primitive.renderOptions->numOfElements, primitive.renderOptions->elementOffset);
+    if (primitive.renderOptions->indices != nullptr) {
+        if (primitive.renderOptions->instancedCount)
+            drawIndexInstanced(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType, primitive.renderOptions->instancedCount);
+        else
+            drawIndex(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType);
+    } else {
+        if (primitive.renderOptions->instancedCount)
+            drawArraysInstanced(primitive.renderOptions->numOfElements, primitive.renderOptions->elementOffset, primitive.renderOptions->instancedCount);
+        else
+            drawArrays(primitive.renderOptions->numOfElements, primitive.renderOptions->elementOffset);
+    }
 }
 
 void Window::draw(const Mesh2D &mesh, const Maths::ViewTransform2D &camera, const Maths::Mat3 &sceneModel) const {
@@ -180,7 +187,7 @@ void Window::draw(const Primitive &primitive, const Maths::ViewTransform &camera
 
     primitive.material->applyMaterial(projectionTransform, camera, sceneModel);
 
-    if (primitive.renderOptions->indexed) {
+    if (primitive.renderOptions->indices != nullptr) {
         if (primitive.renderOptions->instancedCount)
             drawIndexInstanced(primitive.renderOptions->indices, primitive.renderOptions->numOfIndices, primitive.renderOptions->indicesType, primitive.renderOptions->instancedCount);
         else

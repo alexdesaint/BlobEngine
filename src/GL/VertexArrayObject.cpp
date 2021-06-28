@@ -18,6 +18,7 @@ VertexArrayObject::~VertexArrayObject() {
 
 void VertexArrayObject::setBuffer(const VertexBufferObject &vbo, GLsizei stride, GLuint dataOffset, GLuint bufferPosition, GLuint divisor) const {
     glVertexArrayVertexBuffer(vertexArrayObject, bufferPosition, vbo.vertexBufferObject, dataOffset, stride);
+    
     if (divisor != 0)
         glVertexArrayBindingDivisor(vertexArrayObject, bufferPosition, divisor);
 }
@@ -31,9 +32,7 @@ void VertexArrayObject::setArray(GLuint numValuePerArray, GLuint outPosition, GL
 
     glVertexArrayAttribFormat(vertexArrayObject, outPosition, numValuePerArray, dataType, static_cast<GLboolean>(normalized), relativeOffset);
 
-
     glVertexArrayAttribBinding(vertexArrayObject, outPosition, bufferPosition);
-
 }
 
 template<>
