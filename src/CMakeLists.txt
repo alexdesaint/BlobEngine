@@ -21,7 +21,7 @@ target_link_libraries(BlobGLFW glfw glad Blob::Includes)
 add_library(Blob::GLFW ALIAS BlobGLFW)
 
 add_library(BlobMaterials STATIC Materials.cpp)
-target_link_libraries(BlobMaterials Blob::Color)
+target_link_libraries(BlobMaterials Blob::Color Blob::Core)
 add_library(Blob::Materials ALIAS BlobMaterials)
 
 add_library(BlobShapes STATIC Shapes.cpp)
