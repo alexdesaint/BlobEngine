@@ -542,9 +542,9 @@ struct Cube_675 : public Blob::Core::Mesh {
     explicit Cube_675(const Blob::Core::Material &material) : Blob::Core::Mesh(primitive) {
         if (!attributes)
             attributes = std::make_unique<Attributes>();
-        primitive.setMaterial(&material);
-        primitive.setRenderOptions(&attributes->renderOptions);
-        primitive.setVertexArrayObject(&attributes->attribute);
+        primitive.material = &material;
+        primitive.renderOptions = &attributes->renderOptions;
+        primitive.vertexArrayObject = &attributes->attribute;
     }
 };
 
