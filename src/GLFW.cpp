@@ -158,7 +158,7 @@ Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLm
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLmajor);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLminor);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-//    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
     glfwWindowHint(GLFW_SAMPLES, 8);
@@ -299,6 +299,11 @@ void Window::joystick_callback(int joy, int event) {
         joystickConnected[joy] = false;
 }
 
+void Window::windowFocusCallback(void *window, int c) {
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    w.windowFocused = c == GLFW_TRUE;
+}
+
 bool Window::isOpen() const {
     return !glfwWindowShouldClose((GLFWwindow *) window);
 }
@@ -408,6 +413,8 @@ void Window::initInputs() {
 
     // Controller init
     glfwSetJoystickCallback(joystick_callback);
+
+    glfwSetWindowFocusCallback((GLFWwindow *) window, (GLFWwindowfocusfun) windowFocusCallback);
 
     for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
         if (glfwJoystickPresent(i))

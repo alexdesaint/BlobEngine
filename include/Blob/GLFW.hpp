@@ -145,7 +145,9 @@ private:
     static void scrollCallback(void *window, double xoffset, double yoffset);
     static void charCallback(void *window, unsigned int c);
     static void joystick_callback(int joy, int event);
+    static void windowFocusCallback(void *window, int event);
 
+    bool windowFocused = true;
     // The default imputs data storage
     bool keysData[512]{false};
     bool keyCtrlData{false}, keyShiftData{false}, keyAltData{false}, keySuperData{false};

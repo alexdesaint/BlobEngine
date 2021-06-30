@@ -222,6 +222,13 @@ void Window::draw(const Scene &scene, const Maths::Mat4 &sceneModel) const {
         drawTransparent(*r, scene.camera, sceneModel);
 }
 
+void Window::draw(const Scene &scene, const Maths::ViewTransform &camera) const {
+    for (auto r : scene.shapes)
+        draw(*r, camera);
+    for (auto r : scene.shapes)
+        drawTransparent(*r, camera);
+}
+
 void Window::draw(const Scene &scene) const {
     for (auto r : scene.shapes)
         draw(*r, scene.camera);

@@ -66,6 +66,7 @@ public:
     void drawTransparent(const Mesh &mesh, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
     void drawTransparent(const Shape &shape, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
     void draw(const Scene &scene, const Maths::Mat4 &modelTransform) const;
+    void draw(const Scene &scene, const Maths::ViewTransform &camera) const;
     void draw(const Scene &scene) const;
 
     void disableMouseCursor();
