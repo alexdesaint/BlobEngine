@@ -96,7 +96,7 @@ class Struct:
 
         if self.parents:
             ret += " : "
-        ret += ", ".join([str(access) + " " + parent.name for parent,
+        ret += ", ".join([str(access) + " " + str(parent) for parent,
                          access in self.parents.items()])
         ret += " {\n"
         ret += "".join(["    " + c.getHeader() for c in self.content])
@@ -215,7 +215,7 @@ def codeMesh(mesh):
     headerCode = ""
     coreCode = ""
     headerCode += "struct " + name + " : public Blob::Core::Mesh {\n"
-    attributes = Struct("Attributes", content=[])
+    attributes = Struct("Attributes", content=[], parents={"Blob::Core::Asset<Attributes>": "public"})
     dataStruct.namespace.append(name)
     dataStruct.namespace.append("Attributes")
     if attributes.content:
@@ -280,7 +280,7 @@ def codeMesh(mesh):
 
     headerCode += attributes.getHeader()
     coreCode += attributes.getCore(name + "::")
-    headerCode += "    inline static std::unique_ptr<Attributes> attributes;\n"
+    headerCode += "    Attributes::Intance attributes = Attributes::getInstance();\n"
     headerCode += "    Blob::Core::Primitive primitive;\n"
     albedo = False
     for keyName, prop in mesh.items():
@@ -301,8 +301,6 @@ def codeMesh(mesh):
             headerCode += "    Blob::Materials::" + material.name + " material;\n"
     headerCode += "    explicit " + name + \
         "() : Blob::Core::Mesh(primitive) {\n"
-    headerCode += "        if (!attributes)\n"
-    headerCode += "            attributes = std::make_unique<Attributes>();\n"
     for material in mesh.materials:
         headerCode += "        primitive.material = &material;\n"
     headerCode += "        primitive.renderOptions = &attributes->renderOptions;\n"

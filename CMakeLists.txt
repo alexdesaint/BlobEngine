@@ -17,19 +17,6 @@ option(BLOBVK "Build Vulkan" OFF)
 option(BUILD_DOC "Build documentation" ON)
 
 set(OpenGL_GL_PREFERENCE "GLVND")
-find_package(OpenGL REQUIRED)
-if (NOT OPENGL_FOUND)
-    message(ERROR "OpenGL not found")
-endif ()
-include_directories(${OPENGL_INCLUDE_DIR})
-
-if (BLOBVK)
-    find_package(Vulkan REQUIRED)
-    if (NOT Vulkan_FOUND)
-        message(ERROR "Vulkan not found")
-    endif ()
-    include_directories(${VULKAN_INCLUDE_DIR})
-endif ()
 
 # check if Doxygen is installed
 find_package(Doxygen)

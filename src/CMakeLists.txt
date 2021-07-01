@@ -10,8 +10,6 @@ add_subdirectory(Reader)
 add_subdirectory(SDL2)
 add_subdirectory(VK)
 
-
-
 add_library(BlobColor STATIC Color.cpp)
 target_link_libraries(BlobColor Blob::Includes)
 add_library(Blob::Color ALIAS BlobColor)

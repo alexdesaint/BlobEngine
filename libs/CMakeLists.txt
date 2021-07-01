@@ -19,7 +19,10 @@ add_subdirectory(SDL)
 #imgui
 file(GLOB IMGUIFILES "imgui/*.cpp")
 add_library(imgui ${IMGUIFILES} imgui/backends/imgui_impl_glfw.cpp imgui/backends/imgui_impl_opengl3.cpp)
-target_compile_definitions(imgui INTERFACE IMGUI_USER_CONFIG=<imconfigUser.h> INTERFACE IMGUI_DISABLE_INCLUDE_IMCONFIG_H)
+target_compile_definitions(imgui 
+    PUBLIC IMGUI_USER_CONFIG=<imconfigUser.h> 
+    PUBLIC IMGUI_DISABLE_INCLUDE_IMCONFIG_H
+    PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
 set_target_properties(imgui PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(imgui Blob::Includes glfw glad)
 target_include_directories(imgui PUBLIC imgui/ imguiConfig/)
