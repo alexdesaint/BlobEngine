@@ -43,14 +43,20 @@ Attribute_t = NativeType("Blob::GL::VertexArrayObject")
 RenderOptions_t = NativeType("Blob::Core::RenderOptions")
 Shape_t = NativeType("Blob::Core::Shape")
 Scene_t = NativeType("Blob::Core::Scene")
+Primitive_t = NativeType("Blob::Core::Primitive")
 
+
+def getIndent(size):
+    ret = ""
+    for i in range(size):
+        ret += "    "
+    return ret
 
 class Parameter:
-    def __init__(self, name, type, init=None, preQualif="", midQualif="", postQualif="", indent=0, static=False):
+    def __init__(self, name, type, init=None, preQualif="", midQualif="", postQualif="", static=False):
         self.name = name
         self.type = type
         self.init = init
-        self.indent = indent
         if preQualif != "":
             preQualif += " "
         if midQualif != "":
@@ -60,8 +66,8 @@ class Parameter:
         self.postQualif = postQualif
         self.static = static
 
-    def getHeader(self):
-        ret = ""
+    def getHeader(self, indent=0):
+        ret = getIndent(indent)
         if self.static:
             ret += "static "
         ret += self.preQualif + \
@@ -81,49 +87,49 @@ class Parameter:
 
 
 class Struct:
-    def __init__(self, name, parents={}, content=[], namespace=[], indent=0):
+    def __init__(self, name, parents={}, content=[], namespace=[]):
         self.name = name
         self.parents = parents
         self.content = content
-        self.indent = indent
         self.namespace = namespace
 
     def getType(self):
-        return "::".join(self.namespace) + "::" + self.name
+        if self.namespace:
+            return "::".join(self.namespace) + "::" + self.name
+        else:
+            return self.name
 
-    def getHeader(self):
-        ret = "struct " + self.name
+    def getHeader(self, indent=0):
+        ret = getIndent(indent) + "struct " + self.name
 
         if self.parents:
             ret += " : "
-        ret += ", ".join([str(access) + " " + str(parent) for parent,
-                         access in self.parents.items()])
+        ret += ", ".join([str(access) + " " + str(parent) for parent, access in self.parents.items()])
         ret += " {\n"
-        ret += "".join(["    " + c.getHeader() for c in self.content])
-        ret += "};\n"
+        ret += "".join([c.getHeader(indent + 1) for c in self.content])
+        ret += getIndent(indent) + "};\n"
         return ret
 
-    def getCore(self, namespace):
-        ret = ""
-        ret += "".join([c.getCore(namespace + self.name + "::")
-                       for c in self.content])
-        return ret
+    def getCore(self, namespace = None):
+        if namespace:
+            return "".join([c.getCore(namespace + self.name + "::") for c in self.content])
+        else:
+            return "".join([c.getCore(self.name + "::") for c in self.content])
 
 
 class Function:
-    def __init__(self, name, ret=None, parameters=[], constructorInit={}, content=[], indent=0):
+    def __init__(self, name, ret=None, parameters=[], constructorInit=[], content=[]):
         self.name = name
         self.ret = ret
         self.parameters = parameters
         self.constructorInit = constructorInit
         self.content = content
-        self.indent = indent
 
-    def getHeader(self):
-        ret = ""
+    def getHeader(self, indent=0):
+        ret = getIndent(indent)
         if self.ret:
             ret += str(self.ret) + " "
-        ret = self.name
+        ret += self.name
         ret += "();\n"
         return ret
 
@@ -132,7 +138,13 @@ class Function:
         if self.ret:
             ret += str(self.ret) + " "
         ret = namespace + self.name
-        ret += "() {\n"
+        ret += "("
+        if self.parameters:
+            ", ".join(self.parameters)
+        ret += ") "
+        if self.constructorInit:
+            ret += ": " + ", ".join(self.constructorInit)
+        ret += "{\n"
         ret += "    " + "\n    ".join(self.content) + '\n'
         ret += "}\n"
         return ret
@@ -212,9 +224,6 @@ def codeMesh(mesh):
                 Parameter('morph%dnz' % col_i, float_t)
             ]
 
-    headerCode = ""
-    coreCode = ""
-    headerCode += "struct " + name + " : public Blob::Core::Mesh {\n"
     attributes = Struct("Attributes", content=[], parents={"Blob::Core::Asset<Attributes>": "public"})
     dataStruct.namespace.append(name)
     dataStruct.namespace.append("Attributes")
@@ -278,36 +287,31 @@ def codeMesh(mesh):
 
     attributes.content.append(Function("Attributes", content=constructorCode))
 
-    headerCode += attributes.getHeader()
-    coreCode += attributes.getCore(name + "::")
-    headerCode += "    Attributes::Intance attributes = Attributes::getInstance();\n"
-    headerCode += "    Blob::Core::Primitive primitive;\n"
+    meshStruct = Struct(name, {"Blob::Core::Mesh": "public"}, [
+        attributes, 
+        Parameter("attributes", NativeType("Attributes::Intance"), "Attributes::getInstance()"),
+        Parameter("primitive", Primitive_t)])
     albedo = False
     for keyName, prop in mesh.items():
         propType = float_t
         if type(prop) == idprop.types.IDPropertyArray:
             if keyName == "albedo":
                 albedo = True
-            headerCode += Parameter(keyName, propType, print1dData(prop.to_list()),
-                                    postQualif='[' + str(len(prop.to_list())) + ']').getHeader()
+            meshStruct.content.append(Parameter(keyName, propType, print1dData(prop.to_list()), postQualif='[' + str(len(prop.to_list())) + ']'))
         if type(prop) == idprop.types.IDPropertyGroup:
             continue
 
     for material in mesh.materials:
         if "SingleColor" in material.name and albedo:
-            headerCode += "    Blob::Materials::" + \
-                material.name + " material{{albedo}};\n"
+            meshStruct.content.append(Parameter("material",  NativeType("Blob::Materials::" + material.name), "{albedo}"))
         else:
-            headerCode += "    Blob::Materials::" + material.name + " material;\n"
-    headerCode += "    explicit " + name + \
-        "() : Blob::Core::Mesh(primitive) {\n"
-    for material in mesh.materials:
-        headerCode += "        primitive.material = &material;\n"
-    headerCode += "        primitive.renderOptions = &attributes->renderOptions;\n"
-    headerCode += "        primitive.vertexArrayObject = &attributes->attribute;\n"
-    headerCode += "    }\n"
-    headerCode += "};\n"
-    return headerCode, coreCode
+            meshStruct.content.append(Parameter("material", NativeType("Blob::Materials::" + material.name)))
+    meshStruct.content.append(Function(name, None, [], ["Blob::Core::Mesh(primitive)"], [
+        "primitive.material = &material;",
+        "primitive.renderOptions = &attributes->renderOptions;",
+        "primitive.vertexArrayObject = &attributes->attribute;"
+    ]))
+    return meshStruct.getHeader(), meshStruct.getCore()
 
 
 projectName = bpy.path.display_name_from_filepath(bpy.data.filepath)
@@ -401,7 +405,7 @@ with open(mainCore, "w") as f:
     
     f.write("namespace Project" + projectName +" {\n")
     cppFiles.append("src/" + projectName + ".cpp")
-    f.write(project.getCore(""))
+    f.write(project.getCore())
     f.write("}\n")
 
 
