@@ -1,5 +1,3 @@
 #include <Blob/VK/PipelineLayout.hpp>
 
-namespace Blob::VK {
-
-}
+namespace Blob::VK {}

@@ -16,13 +16,21 @@ public:
     explicit Exception(const std::string &errorMsg) : errorMsg(errorMsg) {}
 #ifdef __cpp_lib_source_location
     template<class T>
-    explicit Exception(T *t, std::string errorMsg, const std::source_location &location = std::source_location::current()) :
-        errorMsg(std::string(typeid(t).name()) + ": " + location.file_name() + " (" + std::to_string(location.line()) + ":" + std::to_string(location.column()) + ") \"" + location.function_name() +
-                 "\": " + errorMsg) {}
+    explicit Exception(T *t,
+                       std::string errorMsg,
+                       const std::source_location &location =
+                           std::source_location::current()) :
+        errorMsg(std::string(typeid(t).name()) + ": " + location.file_name() +
+                 " (" + std::to_string(location.line()) + ":" +
+                 std::to_string(location.column()) + ") \"" +
+                 location.function_name() + "\": " + errorMsg) {}
 #else
     template<class T>
-    explicit Exception(T *t, std::string errorMsg) : errorMsg(std::string("VK::") + typeid(T).name() + " : " + errorMsg) {}
+    explicit Exception(T *t, std::string errorMsg) :
+        errorMsg(std::string("VK::") + typeid(T).name() + " : " + errorMsg) {}
 #endif
-    [[nodiscard]] const char *what() const noexcept override { return errorMsg.c_str(); }
+    [[nodiscard]] const char *what() const noexcept override {
+        return errorMsg.c_str();
+    }
 };
 } // namespace Blob::VK

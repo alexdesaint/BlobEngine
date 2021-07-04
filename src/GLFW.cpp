@@ -147,13 +147,13 @@ const float *Window::joystickAxes[joystickCount];
 
 double Window::totalTimeFlow = 0;
 
-Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor) {
+Window::Window(const Vec2<unsigned int> &windowSize, int GLmajor, int GLminor) {
     // The OpenGL window build
     std::cout << "init OpenGl Window" << std::endl;
     glfwSetErrorCallback(errorCallback);
 
     if (!glfwInit())
-        throw Core::Exception("Can't init Window");
+        throw Exception("Can't init Window");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLmajor);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLminor);
@@ -170,13 +170,21 @@ Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLm
         glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-        window = glfwCreateWindow(windowSize.x, windowSize.y, "My Title", glfwGetPrimaryMonitor(), nullptr);
+        window = glfwCreateWindow(windowSize.x,
+                                  windowSize.y,
+                                  "My Title",
+                                  glfwGetPrimaryMonitor(),
+                                  nullptr);
     } else
-        window = glfwCreateWindow(windowSize.x, windowSize.y, "My Title", nullptr, nullptr);
+        window = glfwCreateWindow(windowSize.x,
+                                  windowSize.y,
+                                  "My Title",
+                                  nullptr,
+                                  nullptr);
 
     if (!window) {
         glfwTerminate();
-        throw Blob::Core::Exception("Can't create window");
+        throw Blob::Exception("Can't create window");
     }
 
     {
@@ -197,19 +205,20 @@ Window::Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLm
     initInputs();
 }
 
-Window::Window(const Maths::Vec2<unsigned int> &windowSize) {
+Window::Window(const Vec2<unsigned int> &windowSize) {
     std::cout << "init Vulkan Window" << std::endl;
     glfwSetErrorCallback(errorCallback);
 
     if (!glfwInit())
-        throw Core::Exception("Can't init Window");
+        throw Exception("Can't init Window");
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    window = glfwCreateWindow(windowSize.x, windowSize.y, "My Title", NULL, NULL);
+    window =
+        glfwCreateWindow(windowSize.x, windowSize.y, "My Title", NULL, NULL);
 
     if (!window) {
         glfwTerminate();
-        throw Blob::Core::Exception("Can't create window");
+        throw Blob::Exception("Can't create window");
     }
 
     initInputs();
@@ -220,7 +229,8 @@ void Window::errorCallback(int error, const char *description) {
 }
 
 void Window::framebufferSizeCallback(void *window, int width, int height) {
-    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(
+        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.framebufferSizeData.x = width;
     w.framebufferSizeData.y = height;
@@ -228,7 +238,8 @@ void Window::framebufferSizeCallback(void *window, int width, int height) {
 }
 
 void Window::windowSizeCallback(void *window, int width, int height) {
-    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(
+        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.windowSizeData.x = width;
     w.windowSizeData.y = height;
@@ -236,21 +247,28 @@ void Window::windowSizeCallback(void *window, int width, int height) {
 }
 
 void Window::contentScaleCallback(void *window, float width, float height) {
-    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(
+        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.contentScaleData.x = width;
     w.contentScaleData.y = height;
 }
 
-void Window::keyCallback(void *window, int key, int scancode, int action, int mods) {
+void Window::keyCallback(void *window,
+                         int key,
+                         int scancode,
+                         int action,
+                         int mods) {
     if (action == GLFW_REPEAT)
         return;
 
-    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(
+        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     (*w.keys)[key] = action;
 
-    *w.keyCtrl = (*w.keys)[Keys::LEFT_CONTROL] || (*w.keys)[Keys::RIGHT_CONTROL];
+    *w.keyCtrl =
+        (*w.keys)[Keys::LEFT_CONTROL] || (*w.keys)[Keys::RIGHT_CONTROL];
     *w.keyShift = (*w.keys)[Keys::LEFT_SHIFT] || (*w.keys)[Keys::RIGHT_SHIFT];
     *w.keyAlt = (*w.keys)[Keys::LEFT_ALT] || (*w.keys)[Keys::RIGHT_ALT];
     *w.keySuper = (*w.keys)[Keys::LEFT_SUPER] || (*w.keys)[Keys::RIGHT_SUPER];
@@ -258,8 +276,12 @@ void Window::keyCallback(void *window, int key, int scancode, int action, int mo
     w.keyboardUpdate(key, action);
 }
 
-void Window::mouseButtonCallback(void *window, int button, int action, int mods) {
-    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+void Window::mouseButtonCallback(void *window,
+                                 int button,
+                                 int action,
+                                 int mods) {
+    Window &w = *reinterpret_cast<Window *>(
+        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     if (button < 5)
         (*w.mouseButton)[button] = action != GLFW_RELEASE;
@@ -268,7 +290,8 @@ void Window::mouseButtonCallback(void *window, int button, int action, int mods)
 }
 
 void Window::cursorPosCallback(void *window, double xpos, double ypos) {
-    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(
+        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.cursorPosition->x = (float) xpos;
     w.cursorPosition->y = (float) ypos;
@@ -277,7 +300,8 @@ void Window::cursorPosCallback(void *window, double xpos, double ypos) {
 }
 
 void Window::scrollCallback(void *window, double xoffset, double yoffset) {
-    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(
+        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     *w.scrollOffsetH = (float) xoffset;
     *w.scrollOffsetW = (float) yoffset;
@@ -286,7 +310,8 @@ void Window::scrollCallback(void *window, double xoffset, double yoffset) {
 }
 
 void Window::charCallback(void *window, unsigned int c) {
-    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(
+        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.characterInput(c);
 }
@@ -300,7 +325,8 @@ void Window::joystick_callback(int joy, int event) {
 }
 
 void Window::windowFocusCallback(void *window, int c) {
-    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(
+        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
     w.windowFocused = c == GLFW_TRUE;
 }
 
@@ -328,7 +354,7 @@ void Window::setTitle(const std::string &name) {
     glfwSetWindowTitle((GLFWwindow *) window, name.c_str());
 }
 
-Maths::Vec2<int> Window::getFrameBufferSize() {
+Vec2<int> Window::getFrameBufferSize() {
     int display_w, display_h;
     glfwGetFramebufferSize((GLFWwindow *) window, &display_w, &display_h);
     return {display_w, display_h};
@@ -354,7 +380,8 @@ void Window::updateInputs() {
     glfwPollEvents();
 
     for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
-        joystickButtons[i] = glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
+        joystickButtons[i] =
+            glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
         joystickAxes[i] = glfwGetJoystickAxes(i, &joystickAxesCount[i]);
     }
 
@@ -372,39 +399,60 @@ void Window::setMouseCursor(MouseCursor mouseCursor) {
 void Window::setCursorState(CursorState cursorState) {
     switch (cursorState) {
     case CURSOR_HIDDEN:
-        glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        glfwSetInputMode((GLFWwindow *) window,
+                         GLFW_CURSOR,
+                         GLFW_CURSOR_HIDDEN);
         break;
     case CURSOR_DISABLED:
-        glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode((GLFWwindow *) window,
+                         GLFW_CURSOR,
+                         GLFW_CURSOR_DISABLED);
         break;
     default:
-        glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        glfwSetInputMode((GLFWwindow *) window,
+                         GLFW_CURSOR,
+                         GLFW_CURSOR_NORMAL);
         break;
     }
 }
 void Window::initInputs() {
     // Callback init
     glfwSetWindowUserPointer((GLFWwindow *) window, this);
-    glfwSetFramebufferSizeCallback((GLFWwindow *) window, (GLFWframebuffersizefun) framebufferSizeCallback);
-    glfwSetWindowSizeCallback((GLFWwindow *) window, (GLFWwindowsizefun) windowSizeCallback);
+    glfwSetFramebufferSizeCallback(
+        (GLFWwindow *) window,
+        (GLFWframebuffersizefun) framebufferSizeCallback);
+    glfwSetWindowSizeCallback((GLFWwindow *) window,
+                              (GLFWwindowsizefun) windowSizeCallback);
 
     // Cursor init
     if (glfwRawMouseMotionSupported())
-        glfwSetInputMode((GLFWwindow *) window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        glfwSetInputMode((GLFWwindow *) window,
+                         GLFW_RAW_MOUSE_MOTION,
+                         GLFW_TRUE);
     GLFWerrorfun prev_error_callback = glfwSetErrorCallback(nullptr);
     cursors[MouseCursor::Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-    cursors[MouseCursor::TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
-    cursors[MouseCursor::ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
-    cursors[MouseCursor::ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+    cursors[MouseCursor::TextInput] =
+        glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+    cursors[MouseCursor::ResizeNS] =
+        glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
+    cursors[MouseCursor::ResizeEW] =
+        glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
     cursors[MouseCursor::Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
-    cursors[MouseCursor::ResizeAll] = glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
-    cursors[MouseCursor::ResizeNESW] = glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
-    cursors[MouseCursor::ResizeNWSE] = glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
-    cursors[MouseCursor::NotAllowed] = glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
+    cursors[MouseCursor::ResizeAll] =
+        glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
+    cursors[MouseCursor::ResizeNESW] =
+        glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
+    cursors[MouseCursor::ResizeNWSE] =
+        glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
+    cursors[MouseCursor::NotAllowed] =
+        glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
     glfwSetErrorCallback(prev_error_callback);
-    glfwSetMouseButtonCallback((GLFWwindow *) window, (GLFWmousebuttonfun) mouseButtonCallback);
-    glfwSetScrollCallback((GLFWwindow *) window, (GLFWscrollfun) scrollCallback);
-    glfwSetCursorPosCallback((GLFWwindow *) window, (GLFWcursorposfun) cursorPosCallback);
+    glfwSetMouseButtonCallback((GLFWwindow *) window,
+                               (GLFWmousebuttonfun) mouseButtonCallback);
+    glfwSetScrollCallback((GLFWwindow *) window,
+                          (GLFWscrollfun) scrollCallback);
+    glfwSetCursorPosCallback((GLFWwindow *) window,
+                             (GLFWcursorposfun) cursorPosCallback);
 
     // Keyboard init
     // glfwSetInputMode((GLFWwindow *) window, GLFW_STICKY_KEYS, GLFW_TRUE);
@@ -414,12 +462,14 @@ void Window::initInputs() {
     // Controller init
     glfwSetJoystickCallback(joystick_callback);
 
-    glfwSetWindowFocusCallback((GLFWwindow *) window, (GLFWwindowfocusfun) windowFocusCallback);
+    glfwSetWindowFocusCallback((GLFWwindow *) window,
+                               (GLFWwindowfocusfun) windowFocusCallback);
 
     for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
         if (glfwJoystickPresent(i))
             joystick_callback(i, GLFW_CONNECTED);
-        joystickButtons[i] = glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
+        joystickButtons[i] =
+            glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
         joystickAxes[i] = glfwGetJoystickAxes(i, &joystickAxesCount[i]);
     }
 }

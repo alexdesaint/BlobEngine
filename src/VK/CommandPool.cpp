@@ -1,5 +1,2 @@
 #include <Blob/VK/CommandPool.hpp>
-namespace Blob::VK {
-
-}
-
+namespace Blob::VK {}

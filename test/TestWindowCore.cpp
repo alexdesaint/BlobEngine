@@ -13,10 +13,13 @@ using namespace Blob;
 static const struct {
     float x, y;
     float r, g, b;
-} vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f}, {0.5f, -0.5f, 0.f, 1.f, 1.f}, {-0.5f, 0.5f, 1.f, 0.f, 1.f}, {0.5f, 0.5f, 0.f, 0.f, 1.f}};
+} vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f},
+                 {0.5f, -0.5f, 0.f, 1.f, 1.f},
+                 {-0.5f, 0.5f, 1.f, 0.f, 1.f},
+                 {0.5f, 0.5f, 0.f, 0.f, 1.f}};
 
-using SimpleShader = Core::Shader<Core::ShaderProgram<Core::VertexShader<
-                                                          R"=====(
+using SimpleShader = Shader<ShaderProgram<VertexShader<
+                                              R"=====(
 #version 450
 
 uniform mat4 model;
@@ -33,8 +36,8 @@ void main() {
     color = vCol;
 }
 )=====">,
-                                                      Core::FragmentShader<
-                                                          R"=====(
+                                          FragmentShader<
+                                              R"=====(
 #version 450
 
 varying vec3 color;
@@ -43,21 +46,25 @@ void main()  {
     FragColor = vec4(color, 1.0);
 }
 )=====">>,
-                                  Core::UniformAttribute<Maths::Mat4, 0>,
-                                  Core::UniformAttribute<Maths::ViewTransform, 1>,
-                                  Core::UniformAttribute<Maths::ProjectionTransform, 2>>;
+                            UniformAttribute<Mat4, 0>,
+                            UniformAttribute<ViewTransform, 1>,
+                            UniformAttribute<ProjectionTransform, 2>>;
 
-class SimpleMaterial : public Core::Material {
+class SimpleMaterial : public Material {
 public:
     SimpleShader::Intance shader = SimpleShader::getInstance();
 
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final { shader->setAttributes(mt, vt, pt); }
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final {
+        shader->setAttributes(mt, vt, pt);
+    }
 };
 
 int main() {
-    Core::Camera camera;
+    Camera camera;
 
-    Core::Window window;
+    Window window;
 
     SimpleMaterial material;
 
@@ -66,27 +73,33 @@ int main() {
 
         GL::VertexArrayObject vao;
         vao.setBuffer(vbo, sizeof(vertices[0]));
-        vao.setArray<float>(2, material.shader->shaderProgram.getAttribLocation("vPos"), 0);
-        vao.setArray<float>(3, material.shader->shaderProgram.getAttribLocation("vCol"), sizeof(float) * 2);
+        vao.setArray<float>(
+            2,
+            material.shader->shaderProgram.getAttribLocation("vPos"),
+            0);
+        vao.setArray<float>(
+            3,
+            material.shader->shaderProgram.getAttribLocation("vCol"),
+            sizeof(float) * 2);
 
         unsigned short indices[] = {0, 1, 2, 3, 2, 1};
 
-        Core::RenderOptions ro;
+        RenderOptions ro;
         ro.setIndices(indices, 6);
-        Core::Primitive primitive(&vao, &material, &ro);
-        Core::Mesh mesh;
+        Primitive primitive(&vao, &material, &ro);
+        Mesh mesh;
         mesh.addPrimitive(primitive);
-        Core::Shape shape(mesh);
+        Shape shape(mesh);
 
         while (window.isOpen()) {
 
-            shape.setRotation((float) Core::Window::timeFlow, {0, 0, 1});
+            shape.setRotation((float) Window::timeFlow, {0, 0, 1});
             window.draw(shape, camera);
 
             window.display();
         }
 
-    } catch (Core::Exception &ex) { std::cout << ex.what(); }
+    } catch (Exception &ex) { std::cout << ex.what(); }
 
     return 0;
 }

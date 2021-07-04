@@ -7,14 +7,24 @@ namespace Blob::VK {
 
 std::list<model *> model::models;
 
-model::model(const Window &coreEngine, const std::string &textPath, const std::string &modelPath)
-    : coreEngine(coreEngine), textureImage(coreEngine.device, textPath, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_SAMPLED_BIT,
-                                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) /*,
-                                                                 textureImageView(coreEngine.device, textureImage.image,
-                                                                                  VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT)*/
+model::model(const Window &coreEngine,
+             const std::string &textPath,
+             const std::string &modelPath) :
+    coreEngine(coreEngine),
+    textureImage(coreEngine.device,
+                 textPath,
+                 VK_FORMAT_R8G8B8A8_UNORM,
+                 VK_IMAGE_TILING_LINEAR,
+                 VK_IMAGE_USAGE_SAMPLED_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                     VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) /*,
+     textureImageView(coreEngine.device, textureImage.image,
+                      VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT)*/
 {
 
-    textureImage.transitionImageLayout(VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+    textureImage.transitionImageLayout(VK_FORMAT_R8G8B8A8_UNORM,
+                                       VK_IMAGE_LAYOUT_PREINITIALIZED,
+                                       VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                                        coreEngine.commandPool);
 
     /*  createTextureImage(textPath);
@@ -30,7 +40,7 @@ model::model(const Window &coreEngine, const std::string &textPath, const std::s
       createDescriptorSet();
       createCommandBuffers();*/
 
-    position = Blob::Maths::Vec3<>(0, 0, 0);
+    position = Blob::Vec3<>(0, 0, 0);
     models.push_back(this);
 }
 
@@ -345,4 +355,4 @@ inline void model::createCommandBuffers() {
 model::~model() {
     vkDestroyDescriptorPool(coreEngine.device.device, descriptorPool, nullptr);
 }
-}
+} // namespace Blob::VK

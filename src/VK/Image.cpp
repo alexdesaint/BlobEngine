@@ -3,7 +3,11 @@
 
 namespace Blob::VK {
 
-void Image::createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
+void Image::createImage(uint32_t width,
+                        uint32_t height,
+                        VkFormat format,
+                        VkImageTiling tiling,
+                        VkImageUsageFlags usage,
                         VkMemoryPropertyFlags properties) {
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -29,19 +33,28 @@ void Image::createImage(uint32_t width, uint32_t height, VkFormat format, VkImag
     VkMemoryAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = device.physicalDevice.findMemoryType(memRequirements.memoryTypeBits, properties);
+    allocInfo.memoryTypeIndex =
+        device.physicalDevice.findMemoryType(memRequirements.memoryTypeBits,
+                                             properties);
 
-    if (vkAllocateMemory(device.device, &allocInfo, nullptr, &deviceMemory) != VK_SUCCESS)
+    if (vkAllocateMemory(device.device, &allocInfo, nullptr, &deviceMemory) !=
+        VK_SUCCESS)
         throw std::runtime_error("failed to allocate image memory!");
 
     vkBindImageMemory(device.device, image, deviceMemory, 0);
 }
 
-Image::Image(const Device &device, const std::string &path, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
-             VkMemoryPropertyFlags properties)
-    : device(device) {
+Image::Image(const Device &device,
+             const std::string &path,
+             VkFormat format,
+             VkImageTiling tiling,
+             VkImageUsageFlags usage,
+             VkMemoryPropertyFlags properties) :
+    device(device) {
     int texWidth, texHeight, texChannels;
-    unsigned char *pixels = nullptr; // stbi_uc* pixels = stbi_load(path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    unsigned char *pixels =
+        nullptr; // stbi_uc* pixels = stbi_load(path.c_str(), &texWidth,
+                 // &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
     if (!pixels)
@@ -55,7 +68,10 @@ Image::Image(const Device &device, const std::string &path, VkFormat format, VkI
     subresource.arrayLayer = 0;
 
     VkSubresourceLayout stagingImageLayout;
-    vkGetImageSubresourceLayout(device.device, image, &subresource, &stagingImageLayout);
+    vkGetImageSubresourceLayout(device.device,
+                                image,
+                                &subresource,
+                                &stagingImageLayout);
 
     void *data;
     vkMapMemory(device.device, deviceMemory, 0, imageSize, 0, &data);
@@ -66,7 +82,9 @@ Image::Image(const Device &device, const std::string &path, VkFormat format, VkI
         uint8_t *dataBytes = reinterpret_cast<uint8_t *>(data);
 
         for (int y = 0; y < texHeight; y++) {
-            memcpy(&dataBytes[y * stagingImageLayout.rowPitch], &pixels[y * texWidth * 4], texWidth * 4);
+            memcpy(&dataBytes[y * stagingImageLayout.rowPitch],
+                   &pixels[y * texWidth * 4],
+                   texWidth * 4);
         }
     }
 

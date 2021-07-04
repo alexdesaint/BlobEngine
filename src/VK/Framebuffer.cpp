@@ -1,4 +1,2 @@
 #include <Blob/VK/Framebuffer.hpp>
-namespace Blob::VK {
-
-}
+namespace Blob::VK {}

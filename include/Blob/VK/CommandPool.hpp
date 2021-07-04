@@ -14,11 +14,16 @@ public:
         poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolInfo.queueFamilyIndex = device.physicalDevice.graphicsFamily;
 
-        if (vkCreateCommandPool(device.device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
+        if (vkCreateCommandPool(device.device,
+                                &poolInfo,
+                                nullptr,
+                                &commandPool) != VK_SUCCESS)
             throw std::runtime_error("failed to create graphics command pool!");
     }
 
-    ~CommandPool() { vkDestroyCommandPool(device.device, commandPool, nullptr); }
+    ~CommandPool() {
+        vkDestroyCommandPool(device.device, commandPool, nullptr);
+    }
 
     VkCommandBuffer beginSingleTimeCommands() const {
         VkCommandBufferAllocateInfo allocInfo = {};
@@ -53,5 +58,5 @@ public:
         vkFreeCommandBuffers(device.device, commandPool, 1, &commandBuffer);
     }
 };
-}
+} // namespace Blob::VK
 #endif // BLOBATTACK_COMMANDPOOL_HPP

@@ -19,7 +19,7 @@ type Shader struct {
 
 func (shader Shader) ToString() string {
 	ret := "namespace Blob::Shaders {\n"
-	ret += "class " + shader.name + " : public Core::Shader {\n"
+	ret += "class " + shader.name + " : public Shader {\n"
 	ret += "private:\n"
 	ret += "public:\n"
 	ret += "    inline static ClassName instance;\n"
@@ -150,7 +150,7 @@ func (material Matrial) ToString() string {
 	ret := material.shader.ToString()
 	
 	ret += "namespace Blob::Materails {\n"
-	ret += "class " + material.name + " : public Core::Matrial {\n"
+	ret += "class " + material.name + " : public Matrial {\n"
 	ret += "};\n"
 	ret += "}\n"
 	

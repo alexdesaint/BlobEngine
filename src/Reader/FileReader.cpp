@@ -8,8 +8,6 @@
 
 namespace Blob::Reader {
 
-using namespace Core;
-
 FileReader::FileReader(const std::string &FilePath) {
     inFile.open(FilePath, std::ios::in | std::ios::binary | std::ios::ate);
     if (!inFile.is_open())
@@ -53,7 +51,8 @@ std::string FileReader::getString(int length) {
 std::vector<uint8_t> FileReader::loadBinaryFile(const std::string &filename) {
     std::vector<uint8_t> buffer;
 
-    std::ifstream file(filename, std::ios::in | std::ios::binary | std::ios::ate);
+    std::ifstream file(filename,
+                       std::ios::in | std::ios::binary | std::ios::ate);
     if (file.is_open()) {
         std::streampos size = file.tellg();
         buffer.resize(size);
@@ -103,7 +102,8 @@ std::ostream &operator<<(std::ostream &s, FileReader &a) {
 
     int cpt = 0;
     while (!a.EOFReached()) {
-        s << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << (unsigned int) a.readNextByte();
+        s << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+          << (unsigned int) a.readNextByte();
 
         cpt++;
 

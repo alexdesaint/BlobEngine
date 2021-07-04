@@ -1,7 +1,7 @@
 #include <Blob/Maths.inl>
 #include <iostream>
 
-using namespace Blob::Maths;
+using namespace Blob;
 
 int main() {
     Vec4<float> c1{0, 0, 0, 1};
@@ -10,7 +10,8 @@ int main() {
 
     /// Camera
     ViewTransform camera;
-    //    camera.setPosition({width / 2.f, 0, 1 + height / std::tan(cameraAngle)});
+    //    camera.setPosition({width / 2.f, 0, 1 + height /
+    //    std::tan(cameraAngle)});
     // camera.setLookAt({width / 2.f, height * std::tan(cameraAngle / 2.f), 1});
     camera.setCameraUp({0, 0, 1});
     camera.setLookAt({0, 0, 0});

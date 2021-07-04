@@ -1,7 +1,7 @@
 #include <Blob/Core/Mesh.hpp>
 #include <algorithm>
 
-namespace Blob::Core {
+namespace Blob {
 
 Mesh::Mesh(const Primitive &r) {
     addPrimitive(r);
@@ -38,20 +38,26 @@ void Mesh::addTransparentPrimitive(const Primitive *r) {
 }
 
 void Mesh::removeTransparentPrimitive(const Primitive &r) {
-    auto it = std::find(transparentPrimitives.begin(), transparentPrimitives.end(), &r);
+    auto it = std::find(transparentPrimitives.begin(),
+                        transparentPrimitives.end(),
+                        &r);
     if (it != transparentPrimitives.end()) {
         transparentPrimitives.erase(it);
     }
 }
 
 void Mesh::removeTransparentPrimitive(const Primitive *r) {
-    auto it = std::find(transparentPrimitives.begin(), transparentPrimitives.end(), r);
+    auto it = std::find(transparentPrimitives.begin(),
+                        transparentPrimitives.end(),
+                        r);
     if (it != transparentPrimitives.end()) {
         transparentPrimitives.erase(it);
     }
 }
 
-void Mesh::getDrawCallList(std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> &drawCallList, Maths::Mat4 transform) const{
+void Mesh::getDrawCallList(
+    std::unordered_map<const Primitive *, std::vector<Mat4>> &drawCallList,
+    Mat4 transform) const {
     for (auto primitive : primitives)
         drawCallList[primitive].emplace_back(transform);
 }
@@ -87,14 +93,18 @@ void Mesh2D ::addTransparentPrimitive(const Primitive2D *r) {
 }
 
 void Mesh2D ::removeTransparentPrimitive(const Primitive2D &r) {
-    auto it = std::find(transparentPrimitives.begin(), transparentPrimitives.end(), &r);
+    auto it = std::find(transparentPrimitives.begin(),
+                        transparentPrimitives.end(),
+                        &r);
     if (it != transparentPrimitives.end()) {
         transparentPrimitives.erase(it);
     }
 }
 
 void Mesh2D ::removeTransparentPrimitive(const Primitive2D *r) {
-    auto it = std::find(transparentPrimitives.begin(), transparentPrimitives.end(), r);
+    auto it = std::find(transparentPrimitives.begin(),
+                        transparentPrimitives.end(),
+                        r);
     if (it != transparentPrimitives.end()) {
         transparentPrimitives.erase(it);
     }
@@ -103,4 +113,4 @@ Mesh2D ::Mesh2D(const Primitive2D &r) {
     addPrimitive(r);
 }
 
-} // namespace Blob::Core
+} // namespace Blob

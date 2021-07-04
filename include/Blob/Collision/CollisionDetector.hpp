@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Blob/Collision/Exception.hpp>
 #include <Blob/Collision/Forms.hpp>
+#include <Blob/Core/Exception.hpp>
 
 #include <iostream>
 #include <unordered_map>
@@ -11,7 +11,7 @@
 #include <sstream>
 #endif
 
-namespace Blob::Collision {
+namespace Blob {
 
 class PhysicalObject {
     template<typename U>
@@ -21,7 +21,8 @@ private:
     bool enable = false;
 
 protected:
-    explicit PhysicalObject(const std::type_info &objectType) : objectType(objectType) {}
+    explicit PhysicalObject(const std::type_info &objectType) :
+        objectType(objectType) {}
 
 public:
     const std::type_info &objectType;
@@ -41,7 +42,8 @@ class StaticCollider : public PhysicalObject {
 public:
     const T form;
 
-    StaticCollider(const std::type_info &objectType, T &&form) : PhysicalObject(objectType), form(form) {}
+    StaticCollider(const std::type_info &objectType, T &&form) :
+        PhysicalObject(objectType), form(form) {}
 };
 
 template<class T>
@@ -57,7 +59,8 @@ private:
 
 protected:
     const std::unordered_set<PhysicalObject *> &hittingObjects{hitting};
-    explicit DynamicCollider(const std::type_info &objectType, T &&form) : PhysicalObject(objectType), form(form) {}
+    explicit DynamicCollider(const std::type_info &objectType, T &&form) :
+        PhysicalObject(objectType), form(form) {}
 
     virtual void hitStart(PhysicalObject *object) {}
 
@@ -66,20 +69,27 @@ protected:
     /**
      * This method is called right before the collision is computed
      * @param currentForm the actual form used for the collision detection
-     * @param timeFlow Time in second sins list frame
+     * @param timeFlow Time in second sinse list frame
      * @return the form you wish to test the next collision
      */
-    virtual T preCollisionUpdate(T currentForm, float timeFlow) { return currentForm; }
+    virtual T preCollisionUpdate(T currentForm, float timeFlow) {
+        return currentForm;
+    }
 
     /**
-     * This method is called right after the collision is computed and return the final position that will be saved in the internal spacial definition.
-     * In this method CollisionDetector::testCollision will never detect itself becaus it is not in the internal spacial definition yet.
+     * This method is called right after the collision is computed and return
+     * the final position that will be saved in the internal spacial definition.
+     * In this method CollisionDetector::testCollision will never detect itself
+     * because it is not in the internal spacial definition yet.
      * @param currentForm Time in second sins list frame
      * @param nextForm Time in second sins list frame
      * @param timeFlow Time in second sins list frame
      * @return the fianl position
      */
-    virtual T postCollisionUpdate(const T &currentForm, T nextForm, float timeFlow) { return nextForm; }
+    virtual T
+    postCollisionUpdate(const T &currentForm, T nextForm, float timeFlow) {
+        return nextForm;
+    }
 
 public:
     const T &collider{form};
@@ -91,8 +101,10 @@ class FormDatabase {
     friend class FormDatabase;
 
 protected:
-    std::unordered_map<Maths::Vec2<int32_t>, std::unordered_set<StaticCollider<T> *>> staticSpacialHash;
-    std::unordered_map<Maths::Vec2<int32_t>, std::unordered_set<DynamicCollider<T> *>> dynamicSpacialHash;
+    std::unordered_map<Vec2<int32_t>, std::unordered_set<StaticCollider<T> *>>
+        staticSpacialHash;
+    std::unordered_map<Vec2<int32_t>, std::unordered_set<DynamicCollider<T> *>>
+        dynamicSpacialHash;
     std::unordered_set<DynamicCollider<T> *> dynamicColliders;
     std::unordered_set<DynamicCollider<T> *> ghostColliders;
 
@@ -105,7 +117,8 @@ protected:
 
         for (const auto &position : collider.form.rasterize())
             if (!staticSpacialHash[position].insert(&collider).second)
-                throw Exception("Insertion in Spacial Hash but element already exist");
+                throw Exception(
+                    "Insertion in Spacial Hash but element already exist");
     }
 
     void disableCollision(StaticCollider<T> &collider) {
@@ -127,7 +140,8 @@ protected:
 
         for (const auto &position : collider.form.rasterize())
             if (!dynamicSpacialHash[position].insert(&collider).second)
-                throw Exception("Insertion in Spacial Hash but element already exist");
+                throw Exception(
+                    "Insertion in Spacial Hash but element already exist");
         dynamicColliders.emplace(&collider);
     }
 
@@ -163,8 +177,10 @@ protected:
     }
 
     template<class U>
-    void overlap(std::unordered_set<PhysicalObject *> &collidingObjects, const U &form, std::unordered_set<Maths::Vec2<int32_t>> rasters) const {
-        for (const Maths::Vec2<int32_t> &position : rasters) {
+    void overlap(std::unordered_set<PhysicalObject *> &collidingObjects,
+                 const U &form,
+                 std::unordered_set<Vec2<int32_t>> rasters) const {
+        for (const Vec2<int32_t> &position : rasters) {
             {
                 auto positions = staticSpacialHash.find(position);
                 if (positions != staticSpacialHash.end())
@@ -189,9 +205,12 @@ private:
     template<class T>
     void updateOneForm(DynamicCollider<T> *dynamicCollider, float timeFlow) {
         // 1: get the nex position of the collider
-        auto nextForm = dynamicCollider->preCollisionUpdate(dynamicCollider->form, timeFlow);
+        auto nextForm =
+            dynamicCollider->preCollisionUpdate(dynamicCollider->form,
+                                                timeFlow);
 
-        std::unordered_set<PhysicalObject *> hitedTargets = testCollision(nextForm);
+        std::unordered_set<PhysicalObject *> hitedTargets =
+            testCollision(nextForm);
 
         for (PhysicalObject *physicalObjects : hitedTargets) {
             if (dynamicCollider->hitting.erase(physicalObjects) == 0)
@@ -203,23 +222,35 @@ private:
         dynamicCollider->hitting = std::move(hitedTargets);
 
         // 3: tell set the new position of the collider
-        dynamicCollider->form = dynamicCollider->postCollisionUpdate(dynamicCollider->form, nextForm, timeFlow);
+        dynamicCollider->form =
+            dynamicCollider->postCollisionUpdate(dynamicCollider->form,
+                                                 nextForm,
+                                                 timeFlow);
     }
 
     template<class T>
     void updateOneFormDatabase(float timeFlow) {
         for (auto dynamicCollider : FormDatabase<T>::dynamicColliders) {
-            // Remove the collider from the dynamicSpacialHash so he cannot find himself in
+            // Remove the collider from the dynamicSpacialHash so he cannot find
+            // himself
             for (const auto &position : dynamicCollider->form.rasterize())
-                if (FormDatabase<T>::dynamicSpacialHash[position].erase(dynamicCollider) == 0)
-                    throw Exception(std::string("erase ") + typeid(dynamicCollider).name() + " in dynamic Spacial Hash but element does not exist");
+                if (FormDatabase<T>::dynamicSpacialHash[position].erase(
+                        dynamicCollider) == 0)
+                    throw Exception(
+                        std::string("erase ") + typeid(dynamicCollider).name() +
+                        " in dynamic Spacial Hash but element does not exist");
 
             updateOneForm(dynamicCollider, timeFlow);
 
             // set back the new position in the dynamicSpacialHash
             for (const auto &position : dynamicCollider->form.rasterize())
-                if (!FormDatabase<T>::dynamicSpacialHash[position].insert(dynamicCollider).second)
-                    throw Exception(std::string("insert ") + typeid(dynamicCollider).name() + " in dynamic Spacial Hash but element already exist");
+                if (!FormDatabase<T>::dynamicSpacialHash[position]
+                         .insert(dynamicCollider)
+                         .second)
+                    throw Exception(
+                        std::string("insert ") +
+                        typeid(dynamicCollider).name() +
+                        " in dynamic Spacial Hash but element already exist");
         }
         for (auto ghostCollider : FormDatabase<T>::ghostColliders)
             updateOneForm(ghostCollider, timeFlow);
@@ -236,15 +267,20 @@ public:
     std::unordered_set<PhysicalObject *> testCollision(const T &form) const {
         auto rasters = form.rasterize();
         std::unordered_set<PhysicalObject *> collidingObjects;
-        (FormDatabase<Types>::template overlap<T>(collidingObjects, form, rasters), ...);
+        (FormDatabase<Types>::template overlap<T>(collidingObjects,
+                                                  form,
+                                                  rasters),
+         ...);
         return collidingObjects;
     }
 
-    void update(float timeFlow) { (updateOneFormDatabase<Types>(timeFlow), ...); }
+    void update(float timeFlow) {
+        (updateOneFormDatabase<Types>(timeFlow), ...);
+    }
 
 #ifdef BLOB_COLLISION_IMGUI
     bool ImGuiDebugWindowVisible = true;
-    Maths::Vec2<int32_t> scanPos;
+    Vec2<int32_t> scanPos;
     Circle testCircle;
 
     template<class T>
@@ -260,7 +296,7 @@ public:
     }
 
     template<class T>
-    void printSingleSpacialHash(const Maths::Vec2<int32_t> &scanPos) {
+    void printSingleSpacialHash(const Vec2<int32_t> &scanPos) {
         for (auto colliders : FormDatabase<T>::staticSpacialHash[scanPos]) {
             ImGui::TableNextColumn();
             ImGui::Text("%llu", colliders);
@@ -302,6 +338,7 @@ public:
 #endif
 };
 
-typedef CollisionDetectorTemplate<Circle, Rectangle, Point, Line, RasterArea> CollisionDetector;
+typedef CollisionDetectorTemplate<Circle, Rectangle, Point, Line, RasterArea>
+    CollisionDetector;
 
-} // namespace Blob::Collision
+} // namespace Blob

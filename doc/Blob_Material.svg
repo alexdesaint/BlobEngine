@@ -50,7 +50,7 @@
 <text text-anchor="middle" x="569" y="-114.8" font-family="Times,serif" font-size="14.00">+ao : float</text>
 <text text-anchor="middle" x="569" y="-99.8" font-family="Times,serif" font-size="14.00">+options : uint32_t</text>
 <polyline fill="none" stroke="black" points="186,-92 952,-92 "/>
-<text text-anchor="middle" x="569" y="-76.3" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const Maths::ProjectionTransform &amp;, const Maths::ViewTransform &amp;, const glm::mat4 &amp;)</text>
+<text text-anchor="middle" x="569" y="-76.3" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const ProjectionTransform &amp;, const ViewTransform &amp;, const glm::mat4 &amp;)</text>
 <text text-anchor="middle" x="569" y="-61.3" font-family="Times,serif" font-size="14.00">+SingleColorMaterial()</text>
 <text text-anchor="middle" x="569" y="-46.3" font-family="Times,serif" font-size="14.00">+SingleColorMaterial(Blob::Material::Color)</text>
 <text text-anchor="middle" x="569" y="-31.3" font-family="Times,serif" font-size="14.00">+init()</text>
@@ -71,7 +71,7 @@
 <polyline fill="none" stroke="black" points="966.5,-326 1739.5,-326 "/>
 <text text-anchor="middle" x="1353" y="-310.8" font-family="Times,serif" font-size="14.00">&#45;shaderProgramPrivate : const GL::ShaderProgram &amp;</text>
 <polyline fill="none" stroke="black" points="966.5,-303 1739.5,-303 "/>
-<text text-anchor="middle" x="1353" y="-287.3" font-family="Times,serif" font-size="14.00">+applyMaterial(const Maths::ProjectionTransform &amp;, const Maths::ViewTransform &amp;, const glm::mat4 &amp;)</text>
+<text text-anchor="middle" x="1353" y="-287.3" font-family="Times,serif" font-size="14.00">+applyMaterial(const ProjectionTransform &amp;, const ViewTransform &amp;, const glm::mat4 &amp;)</text>
 <text text-anchor="middle" x="1353" y="-272.3" font-family="Times,serif" font-size="14.00">+Material(const GL::ShaderProgram &amp;)</text>
 </g>
 <!-- Blob.Material.Material&#45;&gt;Blob.Material.SingleColorMaterial -->
@@ -86,7 +86,7 @@
 <polygon fill="none" stroke="black" points="1754,-49.5 1754,-141.5 2520,-141.5 2520,-49.5 1754,-49.5"/>
 <text text-anchor="middle" x="2137" y="-126.3" font-family="Times,serif" font-size="14.00">DefaultMaterial</text>
 <polyline fill="none" stroke="black" points="1754,-118.5 2520,-118.5 "/>
-<text text-anchor="middle" x="2137" y="-102.8" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const Maths::ProjectionTransform &amp;, const Maths::ViewTransform &amp;, const glm::mat4 &amp;)</text>
+<text text-anchor="middle" x="2137" y="-102.8" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const ProjectionTransform &amp;, const ViewTransform &amp;, const glm::mat4 &amp;)</text>
 <text text-anchor="middle" x="2137" y="-87.8" font-family="Times,serif" font-size="14.00">+DefaultMaterial()</text>
 <text text-anchor="middle" x="2137" y="-72.8" font-family="Times,serif" font-size="14.00">+init()</text>
 <text text-anchor="middle" x="2137" y="-57.8" font-family="Times,serif" font-size="14.00">+destroy()</text>
@@ -110,7 +110,7 @@
 <text text-anchor="middle" x="1353" y="-92.3" font-family="Times,serif" font-size="14.00">+options : uint32_t</text>
 <text text-anchor="middle" x="1353" y="-77.3" font-family="Times,serif" font-size="14.00">+texScale : float [2]</text>
 <polyline fill="none" stroke="black" points="970,-69.5 1736,-69.5 "/>
-<text text-anchor="middle" x="1353" y="-53.8" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const Maths::ProjectionTransform &amp;, const Maths::ViewTransform &amp;, const glm::mat4 &amp;)</text>
+<text text-anchor="middle" x="1353" y="-53.8" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const ProjectionTransform &amp;, const ViewTransform &amp;, const glm::mat4 &amp;)</text>
 <text text-anchor="middle" x="1353" y="-38.8" font-family="Times,serif" font-size="14.00">+SingleTextureMaterial(const Blob::GL::Texture &amp;)</text>
 <text text-anchor="middle" x="1353" y="-23.8" font-family="Times,serif" font-size="14.00">+init()</text>
 <text text-anchor="middle" x="1353" y="-8.8" font-family="Times,serif" font-size="14.00">+destroy()</text>

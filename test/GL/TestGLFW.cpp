@@ -1,6 +1,6 @@
 #include "Blob/GL/ShaderProgram.hpp"
-#include <glad/glad.h>
 #include <Blob/GLFW.hpp>
+#include <glad/glad.h>
 
 #include <Blob/GL/Shader.hpp>
 #include <Blob/Maths.inl>
@@ -9,23 +9,25 @@
 #include <iostream>
 
 using namespace Blob;
-using namespace GLFW;
 
 static const struct {
     float x, y;
     float r, g, b;
-} vertices[3] = {{-0.6f, -0.4f, 1.f, 0.f, 0.f}, {0.6f, -0.4f, 0.f, 1.f, 0.f}, {0.f, 0.6f, 0.f, 0.f, 1.f}};
+} vertices[3] = {{-0.6f, -0.4f, 1.f, 0.f, 0.f},
+                 {0.6f, -0.4f, 0.f, 1.f, 0.f},
+                 {0.f, 0.6f, 0.f, 0.f, 1.f}};
 
-static std::string vertex_shader_text = "#version 110\n"
-                                        "uniform mat4 MVP;"
-                                        "attribute vec3 vCol;"
-                                        "attribute vec2 vPos;"
-                                        "varying vec3 color;"
-                                        "void main()"
-                                        "{"
-                                        "    gl_Position = MVP * vec4(vPos, 0.0, 1.0);"
-                                        "    color = vCol;"
-                                        "}";
+static std::string vertex_shader_text =
+    "#version 110\n"
+    "uniform mat4 MVP;"
+    "attribute vec3 vCol;"
+    "attribute vec2 vPos;"
+    "varying vec3 color;"
+    "void main()"
+    "{"
+    "    gl_Position = MVP * vec4(vPos, 0.0, 1.0);"
+    "    color = vCol;"
+    "}";
 
 static std::string fragment_shader_text = "#version 110\n"
                                           "varying vec3 color;"
@@ -35,9 +37,9 @@ static std::string fragment_shader_text = "#version 110\n"
                                           "}";
 
 int main() {
-    Window window({400, 400}, 3, 0);
+    GLFW::Window window({400, 400}, 3, 0);
 
-    if (!gladLoadGLLoader((GLADloadproc) Window::getProcAddress)) {}
+    if (!gladLoadGLLoader((GLADloadproc) GLFW::Window::getProcAddress)) {}
     GLuint vertex_buffer;
     GLint mvp_location, vpos_location, vcol_location;
 
@@ -57,32 +59,45 @@ int main() {
         std::cout << "Not valid..." << std::endl;
 
     // loc
-    mvp_location = sp.getUniformLocation("MVP");  // glGetUniformLocation(program, "MVP");
-    vpos_location = sp.getAttribLocation("vPos"); // glGetAttribLocation(program, "vPos");
-    vcol_location = sp.getAttribLocation("vCol"); // glGetAttribLocation(program, "vCol");
+    mvp_location =
+        sp.getUniformLocation("MVP"); // glGetUniformLocation(program, "MVP");
+    vpos_location =
+        sp.getAttribLocation("vPos"); // glGetAttribLocation(program, "vPos");
+    vcol_location =
+        sp.getAttribLocation("vCol"); // glGetAttribLocation(program, "vCol");
 
     glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (void *) 0);
+    glVertexAttribPointer(vpos_location,
+                          2,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          sizeof(vertices[0]),
+                          (void *) 0);
     glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (void *) (sizeof(float) * 2));
+    glVertexAttribPointer(vcol_location,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          sizeof(vertices[0]),
+                          (void *) (sizeof(float) * 2));
 
     while (window.isOpen()) {
-        Maths::ProjectionTransform p;
+        ProjectionTransform p;
 
         glViewport(0, 0, window.framebufferSize.x, window.framebufferSize.y);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        Maths::ModelTransform m;
+        ModelTransform m;
         m.rotate((float) window.totalTimeFlow, {0, 0, 1});
 
         p.setOrthoProjection(2);
 
-        Maths::Mat4 mvp = m * p;
+        Mat4 mvp = m * p;
         glUseProgram(sp.program);
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, &mvp.a11);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         window.swapBuffers();
-        Window::updateInputs();
+        GLFW::Window::updateInputs();
     }
 }

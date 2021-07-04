@@ -1,5 +1,5 @@
 #pragma once
-namespace Blob::Core {
+namespace Blob {
 enum AttributeLocation {
     POSITION = 0,
     NORMAL = 1,

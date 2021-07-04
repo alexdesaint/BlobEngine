@@ -1,25 +1,36 @@
-#include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
+#include <vulkan/vulkan.h>
 
 #include <cstring>
 #include <stdexcept>
 #include <vector>
 
+#include <Blob/VK/Pipeline.hpp>
 #include <Blob/VK/Window.hpp>
 #include <Blob/VK/model.hpp>
-#include <Blob/VK/Pipeline.hpp>
 
 /*********************************************************************************************************************************************************************/
 namespace Blob::VK {
-Window::Window(unsigned int width, unsigned int height)
-    : GLFW::Window({width, height}), instance(*this), surface(*this, instance),
-      physicalDevice(PhysicalDevice::pickPhysicalDevice(instance, surface)), device(physicalDevice),
-      swapchain(device, surface, VkExtent2D{width, height}), descriptorSetLayout(device),
-      pipelineLayout(device, descriptorSetLayout.descriptorSetLayout, VkExtent2D{width, height}),
-      renderPass(device, swapchain.swapChainImageFormat,
-                 device.physicalDevice.findSupportedFormat({VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
-                                                           VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)),
-      commandPool(device) {}
+Window::Window(unsigned int width, unsigned int height) :
+    GLFW::Window({width, height}),
+    instance(*this),
+    surface(*this, instance),
+    physicalDevice(PhysicalDevice::pickPhysicalDevice(instance, surface)),
+    device(physicalDevice),
+    swapchain(device, surface, VkExtent2D{width, height}),
+    descriptorSetLayout(device),
+    pipelineLayout(device,
+                   descriptorSetLayout.descriptorSetLayout,
+                   VkExtent2D{width, height}),
+    renderPass(device,
+               swapchain.swapChainImageFormat,
+               device.physicalDevice.findSupportedFormat(
+                   {VK_FORMAT_D32_SFLOAT,
+                    VK_FORMAT_D32_SFLOAT_S8_UINT,
+                    VK_FORMAT_D24_UNORM_S8_UINT},
+                   VK_IMAGE_TILING_OPTIMAL,
+                   VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)),
+    commandPool(device) {}
 
 Window::~Window() {}
 

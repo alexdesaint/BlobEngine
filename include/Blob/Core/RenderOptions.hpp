@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <stdint.h>
 
-namespace Blob::Core {
+namespace Blob {
 struct RenderOptions {
     // Index options
     const void *indices = nullptr;
@@ -23,7 +23,9 @@ struct RenderOptions {
 
     RenderOptions(int32_t size, int32_t offset = 0);
 
-    RenderOptions(const void *indices, int32_t numOfIndices, uint32_t indicesType);
+    RenderOptions(const void *indices,
+                  int32_t numOfIndices,
+                  uint32_t indicesType);
 
     RenderOptions(const uint8_t *indices, int32_t numOfIndices);
     RenderOptions(const uint16_t *indices, int32_t numOfIndices);
@@ -31,11 +33,12 @@ struct RenderOptions {
 
     void setArray(int32_t size, int32_t offset = 0);
 
-    void setIndices(const void *indices, int32_t numOfIndices, uint32_t indicesType);
+    void
+    setIndices(const void *indices, int32_t numOfIndices, uint32_t indicesType);
 
     void setIndices(const uint8_t *indices, int32_t numOfIndices);
     void setIndices(const uint16_t *indices, int32_t numOfIndices);
     void setIndices(const uint32_t *indices, int32_t numOfIndices);
 };
 
-} // namespace Blob::Core
+} // namespace Blob

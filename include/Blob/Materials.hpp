@@ -4,38 +4,71 @@
 #include <Blob/Core/Material.hpp>
 #include <Blob/Shaders.hpp>
 
+namespace Blob::Materials2D {
+
+class SingleColor : public Material2D {
+private:
+    Blob::Shaders2D::SingleColor::Intance shader =
+        Blob::Shaders2D::SingleColor::getInstance();
+
+    void applyMaterial(const ProjectionTransform2D &pt,
+                       const ViewTransform2D &vt,
+                       const Mat3 &mt) const final;
+
+public:
+    Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
+
+    SingleColor() = default;
+    explicit SingleColor(Color::RGBA albedo) : albedo(albedo) {}
+    explicit SingleColor(Color::RGB albedo, float alpha = 1.f) :
+        albedo(albedo, alpha) {}
+};
+
+class SingleColorSingleTexture : public Material2D {
+private:
+    Blob::Shaders2D::SingleColorSingleTexture::Intance shader =
+        Blob::Shaders2D::SingleColorSingleTexture::getInstance();
+    void applyMaterial(const ProjectionTransform2D &pt,
+                       const ViewTransform2D &vt,
+                       const Mat3 &mt) const final;
+
+public:
+    const Texture &texture;
+    Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
+    Vec2<size_t> texturePosition, textureSize;
+    explicit SingleColorSingleTexture(const Texture &texture) :
+        texture(texture), textureSize(texture.getTextureSize()) {}
+    SingleColorSingleTexture(const Texture &texture,
+                             Vec2<size_t> texturePosition,
+                             Vec2<size_t> textureSize) :
+        texture(texture),
+        texturePosition(texturePosition),
+        textureSize(textureSize) {}
+    SingleColorSingleTexture(const Texture &texture,
+                             const Color::RGBA &albedo) :
+        texture(texture),
+        albedo(albedo),
+        textureSize(texture.getTextureSize()) {}
+    SingleColorSingleTexture(const Texture &texture,
+                             Vec2<size_t> texturePosition,
+                             Vec2<size_t> textureSize,
+                             const Color::RGBA &albedo) :
+        texture(texture),
+        texturePosition(texturePosition),
+        textureSize(textureSize),
+        albedo(albedo) {}
+};
+
+} // namespace Blob::Materials2D
 namespace Blob::Materials {
 
-class SingleColor2D : public Core::Material2D {
+class SingleColor : public Material {
 private:
-    Blob::Shaders2D::SingleColor::Intance shader = Blob::Shaders2D::SingleColor::getInstance();
-
-    void applyMaterial(const Maths::ProjectionTransform2D &pt, const Maths::ViewTransform2D &vt, const Maths::Mat3 &mt) const final;
-
-public:
-    Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
-
-    SingleColor2D() = default;
-    explicit SingleColor2D(Color::RGBA albedo) : albedo(albedo) {}
-    explicit SingleColor2D(Color::RGB albedo, float alpha = 1.f) : albedo(albedo, alpha) {}
-};
-
-class SingleColorSingleTexture2D : public Core::Material2D {
-private:
-    Blob::Shaders2D::SingleColorSingleTexture::Intance shader = Blob::Shaders2D::SingleColorSingleTexture::getInstance();
-    const Core::Texture &texture;
-    void applyMaterial(const Maths::ProjectionTransform2D &pt, const Maths::ViewTransform2D &vt, const Maths::Mat3 &mt) const final;
-
-public:
-    Color::RGBA albedo = {1.f, 1.f, 1.f, 1.f};
-    explicit SingleColorSingleTexture2D(const Core::Texture &texture) : texture(texture) {}
-    SingleColorSingleTexture2D(const Core::Texture &texture, const Color::RGBA &albedo) : texture(texture), albedo(albedo) {}
-};
-
-class SingleColor : public Core::Material {
-private:
-    Blob::Shaders::SingleColor::Intance shader = Blob::Shaders::SingleColor::getInstance();
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    Blob::Shaders::SingleColor::Intance shader =
+        Blob::Shaders::SingleColor::getInstance();
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
     Color::RGB albedo = {1.0f, 0.5f, 0.31f};
@@ -44,36 +77,46 @@ public:
     explicit SingleColor(Color::RGB albedo) : albedo(albedo) {}
 };
 
-class SingleColorTransparent : public Core::Material {
+class SingleColorTransparent : public Material {
 private:
-    Blob::Shaders::SingleColorTransparent::Intance shader = Blob::Shaders::SingleColorTransparent::getInstance();
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    Blob::Shaders::SingleColorTransparent::Intance shader =
+        Blob::Shaders::SingleColorTransparent::getInstance();
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
     Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
 
     SingleColorTransparent() = default;
     explicit SingleColorTransparent(Color::RGBA albedo) : albedo(albedo) {}
-    explicit SingleColorTransparent(Color::RGB albedo, float alpha = 1.f) : albedo(albedo, alpha) {}
+    explicit SingleColorTransparent(Color::RGB albedo, float alpha = 1.f) :
+        albedo(albedo, alpha) {}
 };
 
-class SingleTexture : public Core::Material {
+class SingleTexture : public Material {
 private:
-    Blob::Shaders::SingleTexture::Intance shader = Blob::Shaders::SingleTexture::getInstance();
-    const Core::Texture &texture;
+    Blob::Shaders::SingleTexture::Intance shader =
+        Blob::Shaders::SingleTexture::getInstance();
+    const Texture &texture;
 
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
-    Maths::Vec2<float> texScale = {1.f, 1.f};
+    Vec2<float> texScale = {1.f, 1.f};
 
-    explicit SingleTexture(const Core::Texture &texture) : texture(texture) {}
+    explicit SingleTexture(const Texture &texture) : texture(texture) {}
 };
 
-class PerFaceNormal : public Core::Material {
+class PerFaceNormal : public Material {
 private:
-    Blob::Shaders::PerFaceNormal::Intance shader = Blob::Shaders::PerFaceNormal::getInstance();
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    Blob::Shaders::PerFaceNormal::Intance shader =
+        Blob::Shaders::PerFaceNormal::getInstance();
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
     Color::RGB albedo = {1.0f, 0.5f, 0.31f};
@@ -84,7 +127,7 @@ public:
 };
 
 struct Light {
-    Maths::Vec3<float> position = {0.f, 0.f, 2.0f};
+    Vec3<float> position = {0.f, 0.f, 2.0f};
     Color::RGB color = {1.f, 1.f, 1.f};
     float power = 1000.f;
     float radius = 0.1f;
@@ -102,10 +145,13 @@ public:
 };
 
 /// A Material to draw in a single color
-class PBRSingleColor : public Core::Material, public PBR {
+class PBRSingleColor : public Material, public PBR {
 private:
-    Blob::Shaders::PBR::SingleColor::Intance shader = Blob::Shaders::PBR::SingleColor::getInstance();
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    Blob::Shaders::PBR::SingleColor::Intance shader =
+        Blob::Shaders::PBR::SingleColor::getInstance();
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
     Color::RGB albedo = {1.0f, 0.5f, 0.31f};
@@ -114,10 +160,13 @@ public:
     explicit PBRSingleColor(Color::RGB albedo) : albedo(albedo) {}
 };
 
-class PBRSingleColorInstanced : public Core::Material, public PBR {
+class PBRSingleColorInstanced : public Material, public PBR {
 private:
-    Blob::Shaders::PBR::SingleColorInstanced::Intance shader = Blob::Shaders::PBR::SingleColorInstanced::getInstance();
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    Blob::Shaders::PBR::SingleColorInstanced::Intance shader =
+        Blob::Shaders::PBR::SingleColorInstanced::getInstance();
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
     Color::RGB albedo = {1.0f, 0.5f, 0.31f};
@@ -126,10 +175,13 @@ public:
     explicit PBRSingleColorInstanced(Color::RGB albedo) : albedo(albedo) {}
 };
 
-class PBRSingleTransparentColor : public Core::Material, public PBR {
+class PBRSingleTransparentColor : public Material, public PBR {
 private:
-    Blob::Shaders::PBR::SingleTransparentColor::Intance shader = Blob::Shaders::PBR::SingleTransparentColor::getInstance();
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    Blob::Shaders::PBR::SingleTransparentColor::Intance shader =
+        Blob::Shaders::PBR::SingleTransparentColor::getInstance();
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
     Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
@@ -138,32 +190,41 @@ public:
     explicit PBRSingleTransparentColor(Color::RGBA albedo) : albedo(albedo) {}
 };
 
-class PBRSingleTexture : public Core::Material, public PBR {
+class PBRSingleTexture : public Material, public PBR {
 private:
-    Blob::Shaders::PBR::SingleTexture::Intance shader = Blob::Shaders::PBR::SingleTexture::getInstance();
-    const Core::Texture &texture;
+    Blob::Shaders::PBR::SingleTexture::Intance shader =
+        Blob::Shaders::PBR::SingleTexture::getInstance();
+    const Texture &texture;
 
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
-    Maths::Vec2<float> texScale = {1.f, 1.f};
+    Vec2<float> texScale = {1.f, 1.f};
 
-    explicit PBRSingleTexture(const Core::Texture &texture) : texture(texture) {}
+    explicit PBRSingleTexture(const Texture &texture) : texture(texture) {}
 };
 
-class PBRColorArray : public Core::Material, public PBR {
+class PBRColorArray : public Material, public PBR {
 private:
-    Blob::Shaders::PBR::ColorArray::Intance shader = Blob::Shaders::PBR::ColorArray::getInstance();
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    Blob::Shaders::PBR::ColorArray::Intance shader =
+        Blob::Shaders::PBR::ColorArray::getInstance();
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
     PBRColorArray() = default;
 };
 
-class PBRWater : public Core::Material, public PBR {
+class PBRWater : public Material, public PBR {
 private:
-    Blob::Shaders::PBR::Water::Intance shader = Blob::Shaders::PBR::Water::getInstance();
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final;
+    Blob::Shaders::PBR::Water::Intance shader =
+        Blob::Shaders::PBR::Water::getInstance();
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final;
 
 public:
     Color::RGBA albedo = {0.f, 0.f, 1.f, 0.5f};

@@ -1,5 +1,3 @@
 #include <Blob/VK/Buffer.hpp>
 
-namespace Blob::VK {
-
-}
+namespace Blob::VK {}

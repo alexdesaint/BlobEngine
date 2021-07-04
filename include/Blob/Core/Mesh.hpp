@@ -5,7 +5,7 @@
 
 #include <Blob/Core/Primitive.hpp>
 
-namespace Blob::Core {
+namespace Blob {
 
 class Mesh {
     friend class Window;
@@ -32,7 +32,9 @@ public:
     void removeTransparentPrimitive(const Primitive &r);
     void removeTransparentPrimitive(const Primitive *r);
 
-    void getDrawCallList(std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> &drawCallList, Maths::Mat4 transform = Maths::Mat4()) const;
+    void getDrawCallList(
+        std::unordered_map<const Primitive *, std::vector<Mat4>> &drawCallList,
+        Mat4 transform = Mat4()) const;
 };
 
 class Mesh2D {
@@ -60,4 +62,4 @@ public:
     void removeTransparentPrimitive(const Primitive2D &r);
     void removeTransparentPrimitive(const Primitive2D *r);
 };
-} // namespace Blob::Core
+} // namespace Blob

@@ -2,9 +2,9 @@
 
 #include <Blob/Core/Mesh.hpp>
 
-namespace Blob::Core {
+namespace Blob {
 
-class Shape : public Maths::ModelTransform {
+class Shape : public ModelTransform {
     friend Window;
 
 private:
@@ -15,9 +15,9 @@ public:
     Shape() = default;
     Shape(const Shape &) = delete;
     Shape(Shape &&) = delete;
-    explicit Shape(const Maths::ModelTransform &args);
+    explicit Shape(const ModelTransform &args);
     explicit Shape(const Mesh &r);
-    Shape(const Mesh &r, const Maths::ModelTransform &args);
+    Shape(const Mesh &r, const ModelTransform &args);
 
     void setMesh(Mesh &r);
     void setMesh(Mesh *r);
@@ -30,12 +30,14 @@ public:
     void removeChild(Shape &r);
     void removeChild(Shape *r);
 
-    void getDrawCallList(std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> &drawCallList, Maths::Mat4 transform = Maths::Mat4()) const;
+    void getDrawCallList(
+        std::unordered_map<const Primitive *, std::vector<Mat4>> &drawCallList,
+        Mat4 transform = Mat4()) const;
 
     friend std::ostream &operator<<(std::ostream &s, const Shape &a);
 };
 
-class Shape2D : public Maths::ModelTransform2D {
+class Shape2D : public ModelTransform2D {
     friend Window;
 
 private:
@@ -46,9 +48,9 @@ public:
     Shape2D() = default;
     Shape2D(const Shape2D &) = delete;
     Shape2D(Shape2D &&) = delete;
-    explicit Shape2D(const Maths::ModelTransform2D &args);
+    explicit Shape2D(const ModelTransform2D &args);
     explicit Shape2D(const Mesh2D &r);
-    Shape2D(const Mesh2D &r, const Maths::ModelTransform2D &args);
+    Shape2D(const Mesh2D &r, const ModelTransform2D &args);
 
     void setMesh(Mesh2D &r);
     void setMesh(Mesh2D *r);
@@ -64,4 +66,4 @@ public:
     friend std::ostream &operator<<(std::ostream &s, const Shape2D &a);
 };
 
-} // namespace Blob::Core
+} // namespace Blob

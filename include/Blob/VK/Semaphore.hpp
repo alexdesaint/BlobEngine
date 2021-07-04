@@ -5,10 +5,6 @@
 #ifndef BLOBATTACK_SEMAPHORE_HPP
 #define BLOBATTACK_SEMAPHORE_HPP
 
+class Semaphore {};
 
-class Semaphore {
-
-};
-
-
-#endif //BLOBATTACK_SEMAPHORE_HPP
+#endif // BLOBATTACK_SEMAPHORE_HPP

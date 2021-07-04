@@ -107,7 +107,7 @@
 <g id="node4" class="node">
 <title>Blob.glTF2.Buffer</title>
 <polygon fill="none" stroke="black" points="8235.5,-166.5 8235.5,-304.5 8630.5,-304.5 8630.5,-166.5 8235.5,-166.5"/>
-<text text-anchor="middle" x="8433" y="-289.3" font-family="Times,serif" font-size="14.00">Blob::Core::Buffer</text>
+<text text-anchor="middle" x="8433" y="-289.3" font-family="Times,serif" font-size="14.00">Blob::Buffer</text>
 <polyline fill="none" stroke="black" points="8235.5,-281.5 8630.5,-281.5 "/>
 <text text-anchor="middle" x="8433" y="-266.3" font-family="Times,serif" font-size="14.00">Buffer</text>
 <polyline fill="none" stroke="black" points="8235.5,-258.5 8630.5,-258.5 "/>
@@ -190,7 +190,7 @@
 <g id="node8" class="node">
 <title>Blob.glTF2.Texture</title>
 <polygon fill="none" stroke="black" points="8649,-174 8649,-297 9269,-297 9269,-174 8649,-174"/>
-<text text-anchor="middle" x="8959" y="-281.8" font-family="Times,serif" font-size="14.00">Blob::Core::Texture</text>
+<text text-anchor="middle" x="8959" y="-281.8" font-family="Times,serif" font-size="14.00">Blob::Texture</text>
 <polyline fill="none" stroke="black" points="8649,-274 9269,-274 "/>
 <text text-anchor="middle" x="8959" y="-258.8" font-family="Times,serif" font-size="14.00">Texture</text>
 <polyline fill="none" stroke="black" points="8649,-251 9269,-251 "/>
@@ -356,7 +356,7 @@
 <g id="node15" class="node">
 <title>Blob.glTF2.Mesh.Primitive</title>
 <polygon fill="none" stroke="black" points="8235.5,-393 8235.5,-561 8518.5,-561 8518.5,-393 8235.5,-393"/>
-<text text-anchor="middle" x="8377" y="-545.8" font-family="Times,serif" font-size="14.00">Blob::Core::Mesh</text>
+<text text-anchor="middle" x="8377" y="-545.8" font-family="Times,serif" font-size="14.00">Blob::Mesh</text>
 <polyline fill="none" stroke="black" points="8235.5,-538 8518.5,-538 "/>
 <text text-anchor="middle" x="8377" y="-522.8" font-family="Times,serif" font-size="14.00">Primitive</text>
 <polyline fill="none" stroke="black" points="8235.5,-515 8518.5,-515 "/>
@@ -402,7 +402,7 @@
 <g id="node17" class="node">
 <title>Blob.glTF2.Node</title>
 <polygon fill="none" stroke="black" points="9763.5,-114 9763.5,-357 10224.5,-357 10224.5,-114 9763.5,-114"/>
-<text text-anchor="middle" x="9994" y="-341.8" font-family="Times,serif" font-size="14.00">Blob::Core::Shape</text>
+<text text-anchor="middle" x="9994" y="-341.8" font-family="Times,serif" font-size="14.00">Blob::Shape</text>
 <polyline fill="none" stroke="black" points="9763.5,-334 10224.5,-334 "/>
 <text text-anchor="middle" x="9994" y="-318.8" font-family="Times,serif" font-size="14.00">Node</text>
 <polyline fill="none" stroke="black" points="9763.5,-311 10224.5,-311 "/>
@@ -431,7 +431,7 @@
 <g id="node18" class="node">
 <title>Blob.glTF2.Scene</title>
 <polygon fill="none" stroke="black" points="9287,-181.5 9287,-289.5 9745,-289.5 9745,-181.5 9287,-181.5"/>
-<text text-anchor="middle" x="9516" y="-274.3" font-family="Times,serif" font-size="14.00">Blob::Core::Scene</text>
+<text text-anchor="middle" x="9516" y="-274.3" font-family="Times,serif" font-size="14.00">Blob::Scene</text>
 <polyline fill="none" stroke="black" points="9287,-266.5 9745,-266.5 "/>
 <text text-anchor="middle" x="9516" y="-251.3" font-family="Times,serif" font-size="14.00">Scene</text>
 <polyline fill="none" stroke="black" points="9287,-243.5 9745,-243.5 "/>
@@ -460,7 +460,7 @@
 <g id="node20" class="node">
 <title>Blob.Shapes.Cube</title>
 <polygon fill="none" stroke="black" points="1856,-657 1856,-727 2122,-727 2122,-657 1856,-657"/>
-<text text-anchor="middle" x="1989" y="-711.8" font-family="Times,serif" font-size="14.00">Blob::Core::Mesh</text>
+<text text-anchor="middle" x="1989" y="-711.8" font-family="Times,serif" font-size="14.00">Blob::Mesh</text>
 <polyline fill="none" stroke="black" points="1856,-704 2122,-704 "/>
 <text text-anchor="middle" x="1989" y="-688.8" font-family="Times,serif" font-size="14.00">Cube</text>
 <polyline fill="none" stroke="black" points="1856,-681 2122,-681 "/>
@@ -470,7 +470,7 @@
 <g id="node21" class="node">
 <title>Blob.Shapes.Plane</title>
 <polygon fill="none" stroke="black" points="1206.5,-657 1206.5,-727 1475.5,-727 1475.5,-657 1206.5,-657"/>
-<text text-anchor="middle" x="1341" y="-711.8" font-family="Times,serif" font-size="14.00">Blob::Core::Mesh</text>
+<text text-anchor="middle" x="1341" y="-711.8" font-family="Times,serif" font-size="14.00">Blob::Mesh</text>
 <polyline fill="none" stroke="black" points="1206.5,-704 1475.5,-704 "/>
 <text text-anchor="middle" x="1341" y="-688.8" font-family="Times,serif" font-size="14.00">Plane</text>
 <polyline fill="none" stroke="black" points="1206.5,-681 1475.5,-681 "/>
@@ -480,7 +480,7 @@
 <g id="node22" class="node">
 <title>Blob.Shapes.OctagonalPrism</title>
 <polygon fill="none" stroke="black" points="1494,-657 1494,-727 1838,-727 1838,-657 1494,-657"/>
-<text text-anchor="middle" x="1666" y="-711.8" font-family="Times,serif" font-size="14.00">Blob::Core::Mesh</text>
+<text text-anchor="middle" x="1666" y="-711.8" font-family="Times,serif" font-size="14.00">Blob::Mesh</text>
 <polyline fill="none" stroke="black" points="1494,-704 1838,-704 "/>
 <text text-anchor="middle" x="1666" y="-688.8" font-family="Times,serif" font-size="14.00">OctagonalPrism</text>
 <polyline fill="none" stroke="black" points="1494,-681 1838,-681 "/>
@@ -619,19 +619,19 @@
 <g id="node28" class="node">
 <title>Blob.Core.Window</title>
 <polygon fill="none" stroke="black" points="2456,-1049 2456,-1277 2944,-1277 2944,-1049 2456,-1049"/>
-<text text-anchor="middle" x="2700" y="-1261.8" font-family="Times,serif" font-size="14.00">Blob::Maths::ProjectionTransform</text>
+<text text-anchor="middle" x="2700" y="-1261.8" font-family="Times,serif" font-size="14.00">Blob::ProjectionTransform</text>
 <polyline fill="none" stroke="black" points="2456,-1254 2944,-1254 "/>
 <text text-anchor="middle" x="2700" y="-1238.8" font-family="Times,serif" font-size="14.00">Window</text>
 <polyline fill="none" stroke="black" points="2456,-1231 2944,-1231 "/>
 <text text-anchor="middle" x="2700" y="-1215.8" font-family="Times,serif" font-size="14.00">&#45;lastFrameTime : std::chrono::high_resolution_clock::time_point</text>
 <text text-anchor="middle" x="2700" y="-1200.8" font-family="Times,serif" font-size="14.00">&#45;fpsCouner : std::chrono::duration&lt;float&gt;</text>
 <polyline fill="none" stroke="black" points="2456,-1193 2944,-1193 "/>
-<text text-anchor="middle" x="2700" y="-1177.3" font-family="Times,serif" font-size="14.00">+Window(Blob::Core::Camera &amp;, bool, unsigned int, unsigned int)</text>
+<text text-anchor="middle" x="2700" y="-1177.3" font-family="Times,serif" font-size="14.00">+Window(Blob::Camera &amp;, bool, unsigned int, unsigned int)</text>
 <text text-anchor="middle" x="2700" y="-1162.3" font-family="Times,serif" font-size="14.00">+~Window()</text>
-<text text-anchor="middle" x="2700" y="-1147.3" font-family="Times,serif" font-size="14.00">+draw(const Blob::Core::Mesh &amp;, glm::mat4)</text>
-<text text-anchor="middle" x="2700" y="-1132.3" font-family="Times,serif" font-size="14.00">+draw(const Blob::Core::Shape &amp;, glm::mat4)</text>
-<text text-anchor="middle" x="2700" y="-1117.3" font-family="Times,serif" font-size="14.00">+draw(const Blob::Core::Scene &amp;)</text>
-<text text-anchor="middle" x="2700" y="-1102.3" font-family="Times,serif" font-size="14.00">+setCamera(Blob::Core::Camera &amp;)</text>
+<text text-anchor="middle" x="2700" y="-1147.3" font-family="Times,serif" font-size="14.00">+draw(const Blob::Mesh &amp;, glm::mat4)</text>
+<text text-anchor="middle" x="2700" y="-1132.3" font-family="Times,serif" font-size="14.00">+draw(const Blob::Shape &amp;, glm::mat4)</text>
+<text text-anchor="middle" x="2700" y="-1117.3" font-family="Times,serif" font-size="14.00">+draw(const Blob::Scene &amp;)</text>
+<text text-anchor="middle" x="2700" y="-1102.3" font-family="Times,serif" font-size="14.00">+setCamera(Blob::Camera &amp;)</text>
 <text text-anchor="middle" x="2700" y="-1087.3" font-family="Times,serif" font-size="14.00">+display() : float</text>
 <text text-anchor="middle" x="2700" y="-1072.3" font-family="Times,serif" font-size="14.00">+getWorldPosition() : std::array&lt;float, 3&gt;</text>
 <text text-anchor="middle" x="2700" y="-1057.3" font-family="Times,serif" font-size="14.00">+resize(unsigned int, unsigned int)</text>
@@ -699,19 +699,19 @@
 <g id="node31" class="node">
 <title>Blob.Core.Shape</title>
 <polygon fill="none" stroke="black" points="3157,-823 3157,-1013 3745,-1013 3745,-823 3157,-823"/>
-<text text-anchor="middle" x="3451" y="-997.8" font-family="Times,serif" font-size="14.00">Blob::Maths::ModelTransform</text>
+<text text-anchor="middle" x="3451" y="-997.8" font-family="Times,serif" font-size="14.00">Blob::ModelTransform</text>
 <polyline fill="none" stroke="black" points="3157,-990 3745,-990 "/>
 <text text-anchor="middle" x="3451" y="-974.8" font-family="Times,serif" font-size="14.00">Shape</text>
 <polyline fill="none" stroke="black" points="3157,-967 3745,-967 "/>
-<text text-anchor="middle" x="3451" y="-951.3" font-family="Times,serif" font-size="14.00">+Shape(Blob::Core::Mesh &amp;, float, float, float, float, float, float, float, float, float)</text>
+<text text-anchor="middle" x="3451" y="-951.3" font-family="Times,serif" font-size="14.00">+Shape(Blob::Mesh &amp;, float, float, float, float, float, float, float, float, float)</text>
 <text text-anchor="middle" x="3451" y="-936.3" font-family="Times,serif" font-size="14.00">+Shape(float, float, float, float, float, float, float, float, float)</text>
-<text text-anchor="middle" x="3451" y="-921.3" font-family="Times,serif" font-size="14.00">+setMesh(Blob::Core::Mesh &amp;)</text>
-<text text-anchor="middle" x="3451" y="-906.3" font-family="Times,serif" font-size="14.00">+setMesh(Blob::Core::Mesh *)</text>
-<text text-anchor="middle" x="3451" y="-891.3" font-family="Times,serif" font-size="14.00">+setChild(Blob::Core::Shape &amp;)</text>
-<text text-anchor="middle" x="3451" y="-876.3" font-family="Times,serif" font-size="14.00">+setChild(Blob::Core::Shape *)</text>
+<text text-anchor="middle" x="3451" y="-921.3" font-family="Times,serif" font-size="14.00">+setMesh(Blob::Mesh &amp;)</text>
+<text text-anchor="middle" x="3451" y="-906.3" font-family="Times,serif" font-size="14.00">+setMesh(Blob::Mesh *)</text>
+<text text-anchor="middle" x="3451" y="-891.3" font-family="Times,serif" font-size="14.00">+setChild(Blob::Shape &amp;)</text>
+<text text-anchor="middle" x="3451" y="-876.3" font-family="Times,serif" font-size="14.00">+setChild(Blob::Shape *)</text>
 <text text-anchor="middle" x="3451" y="-861.3" font-family="Times,serif" font-size="14.00">+removeMesh()</text>
-<text text-anchor="middle" x="3451" y="-846.3" font-family="Times,serif" font-size="14.00">+removeChild(Blob::Core::Shape &amp;)</text>
-<text text-anchor="middle" x="3451" y="-831.3" font-family="Times,serif" font-size="14.00">+removeChild(Blob::Core::Shape *)</text>
+<text text-anchor="middle" x="3451" y="-846.3" font-family="Times,serif" font-size="14.00">+removeChild(Blob::Shape &amp;)</text>
+<text text-anchor="middle" x="3451" y="-831.3" font-family="Times,serif" font-size="14.00">+removeChild(Blob::Shape *)</text>
 </g>
 <!-- Blob.Core.Mesh&#45;&gt;Blob.Core.Shape -->
 <g id="edge26" class="edge">
@@ -744,7 +744,7 @@
 <g id="node32" class="node">
 <title>Blob.Core.Camera</title>
 <polygon fill="none" stroke="black" points="3493.5,-1429.5 3493.5,-1476.5 3714.5,-1476.5 3714.5,-1429.5 3493.5,-1429.5"/>
-<text text-anchor="middle" x="3604" y="-1461.3" font-family="Times,serif" font-size="14.00">Blob::Maths::ViewTransform</text>
+<text text-anchor="middle" x="3604" y="-1461.3" font-family="Times,serif" font-size="14.00">Blob::ViewTransform</text>
 <polyline fill="none" stroke="black" points="3493.5,-1453.5 3714.5,-1453.5 "/>
 <text text-anchor="middle" x="3604" y="-1437.8" font-family="Times,serif" font-size="14.00">Camera</text>
 </g>
@@ -763,8 +763,8 @@
 <polyline fill="none" stroke="black" points="2962.5,-1182.5 3287.5,-1182.5 "/>
 <text text-anchor="middle" x="3125" y="-1167.3" font-family="Times,serif" font-size="14.00">&#45;shapes : std::list&lt;const Shape *&gt;</text>
 <polyline fill="none" stroke="black" points="2962.5,-1159.5 3287.5,-1159.5 "/>
-<text text-anchor="middle" x="3125" y="-1143.8" font-family="Times,serif" font-size="14.00">+addShape(const Blob::Core::Shape &amp;)</text>
-<text text-anchor="middle" x="3125" y="-1128.8" font-family="Times,serif" font-size="14.00">+removeShape(const Blob::Core::Shape &amp;)</text>
+<text text-anchor="middle" x="3125" y="-1143.8" font-family="Times,serif" font-size="14.00">+addShape(const Blob::Shape &amp;)</text>
+<text text-anchor="middle" x="3125" y="-1128.8" font-family="Times,serif" font-size="14.00">+removeShape(const Blob::Shape &amp;)</text>
 </g>
 <!-- Blob.Core.Camera&#45;&gt;Blob.Core.Scene -->
 <g id="edge30" class="edge">
@@ -822,8 +822,8 @@
 <text text-anchor="middle" x="2942" y="-1441.3" font-family="Times,serif" font-size="14.00">#WindowCore(bool, unsigned int, unsigned int)</text>
 <text text-anchor="middle" x="2942" y="-1426.3" font-family="Times,serif" font-size="14.00">#~WindowCore()</text>
 <text text-anchor="middle" x="2942" y="-1411.3" font-family="Times,serif" font-size="14.00">+isOpen() : bool</text>
-<text text-anchor="middle" x="2942" y="-1396.3" font-family="Times,serif" font-size="14.00">+getSize() : Blob::Maths::Vec2f</text>
-<text text-anchor="middle" x="2942" y="-1381.3" font-family="Times,serif" font-size="14.00">+getFrameBufferSize() : Blob::Maths::Vec2f</text>
+<text text-anchor="middle" x="2942" y="-1396.3" font-family="Times,serif" font-size="14.00">+getSize() : Blob::Vec2f</text>
+<text text-anchor="middle" x="2942" y="-1381.3" font-family="Times,serif" font-size="14.00">+getFrameBufferSize() : Blob::Vec2f</text>
 <text text-anchor="middle" x="2942" y="-1366.3" font-family="Times,serif" font-size="14.00">+setTitle(const std::string &amp;)</text>
 <text text-anchor="middle" x="2942" y="-1351.3" font-family="Times,serif" font-size="14.00">+resize(unsigned int, unsigned int)</text>
 <text text-anchor="middle" x="2942" y="-1336.3" font-family="Times,serif" font-size="14.00">+close()</text>
@@ -905,7 +905,7 @@
 <text text-anchor="middle" x="6038" y="-711.3" font-family="Times,serif" font-size="14.00">+ao : float</text>
 <text text-anchor="middle" x="6038" y="-696.3" font-family="Times,serif" font-size="14.00">+options : uint32_t</text>
 <polyline fill="none" stroke="black" points="5655,-688.5 6421,-688.5 "/>
-<text text-anchor="middle" x="6038" y="-672.8" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const Maths::ProjectionTransform &amp;, const Maths::ViewTransform &amp;, const glm::mat4 &amp;)</text>
+<text text-anchor="middle" x="6038" y="-672.8" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const ProjectionTransform &amp;, const ViewTransform &amp;, const glm::mat4 &amp;)</text>
 <text text-anchor="middle" x="6038" y="-657.8" font-family="Times,serif" font-size="14.00">+SingleColorMaterial()</text>
 <text text-anchor="middle" x="6038" y="-642.8" font-family="Times,serif" font-size="14.00">+SingleColorMaterial(Blob::Material::Color)</text>
 <text text-anchor="middle" x="6038" y="-627.8" font-family="Times,serif" font-size="14.00">+init()</text>
@@ -932,7 +932,7 @@
 <polyline fill="none" stroke="black" points="4867.5,-937.5 5640.5,-937.5 "/>
 <text text-anchor="middle" x="5254" y="-922.3" font-family="Times,serif" font-size="14.00">&#45;shaderProgramPrivate : const GL::ShaderProgram &amp;</text>
 <polyline fill="none" stroke="black" points="4867.5,-914.5 5640.5,-914.5 "/>
-<text text-anchor="middle" x="5254" y="-898.8" font-family="Times,serif" font-size="14.00">+applyMaterial(const Maths::ProjectionTransform &amp;, const Maths::ViewTransform &amp;, const glm::mat4 &amp;)</text>
+<text text-anchor="middle" x="5254" y="-898.8" font-family="Times,serif" font-size="14.00">+applyMaterial(const ProjectionTransform &amp;, const ViewTransform &amp;, const glm::mat4 &amp;)</text>
 <text text-anchor="middle" x="5254" y="-883.8" font-family="Times,serif" font-size="14.00">+Material(const GL::ShaderProgram &amp;)</text>
 </g>
 <!-- Blob.Material.Material&#45;&gt;Blob.Material.SingleColorMaterial -->
@@ -947,7 +947,7 @@
 <polygon fill="none" stroke="black" points="4871,-646 4871,-738 5637,-738 5637,-646 4871,-646"/>
 <text text-anchor="middle" x="5254" y="-722.8" font-family="Times,serif" font-size="14.00">DefaultMaterial</text>
 <polyline fill="none" stroke="black" points="4871,-715 5637,-715 "/>
-<text text-anchor="middle" x="5254" y="-699.3" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const Maths::ProjectionTransform &amp;, const Maths::ViewTransform &amp;, const glm::mat4 &amp;)</text>
+<text text-anchor="middle" x="5254" y="-699.3" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const ProjectionTransform &amp;, const ViewTransform &amp;, const glm::mat4 &amp;)</text>
 <text text-anchor="middle" x="5254" y="-684.3" font-family="Times,serif" font-size="14.00">+DefaultMaterial()</text>
 <text text-anchor="middle" x="5254" y="-669.3" font-family="Times,serif" font-size="14.00">+init()</text>
 <text text-anchor="middle" x="5254" y="-654.3" font-family="Times,serif" font-size="14.00">+destroy()</text>
@@ -971,7 +971,7 @@
 <text text-anchor="middle" x="4470" y="-688.8" font-family="Times,serif" font-size="14.00">+options : uint32_t</text>
 <text text-anchor="middle" x="4470" y="-673.8" font-family="Times,serif" font-size="14.00">+texScale : float [2]</text>
 <polyline fill="none" stroke="black" points="4087,-666 4853,-666 "/>
-<text text-anchor="middle" x="4470" y="-650.3" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const Maths::ProjectionTransform &amp;, const Maths::ViewTransform &amp;, const glm::mat4 &amp;)</text>
+<text text-anchor="middle" x="4470" y="-650.3" font-family="Times,serif" font-size="14.00">&#45;applyMaterial(const ProjectionTransform &amp;, const ViewTransform &amp;, const glm::mat4 &amp;)</text>
 <text text-anchor="middle" x="4470" y="-635.3" font-family="Times,serif" font-size="14.00">+SingleTextureMaterial(const Blob::GL::Texture &amp;)</text>
 <text text-anchor="middle" x="4470" y="-620.3" font-family="Times,serif" font-size="14.00">+init()</text>
 <text text-anchor="middle" x="4470" y="-605.3" font-family="Times,serif" font-size="14.00">+destroy()</text>
@@ -1015,7 +1015,7 @@
 <text text-anchor="middle" x="2160" y="-1824.3" font-family="Times,serif" font-size="14.00">+setUint(int32_t, int)</text>
 <text text-anchor="middle" x="2160" y="-1809.3" font-family="Times,serif" font-size="14.00">+drawIndex(const void *, int32_t, uint32_t)</text>
 <text text-anchor="middle" x="2160" y="-1794.3" font-family="Times,serif" font-size="14.00">+drawIndex(const void *, int32_t)</text>
-<text text-anchor="middle" x="2160" y="-1779.3" font-family="Times,serif" font-size="14.00">+readPixel(Blob::Maths::Vec2f) : float</text>
+<text text-anchor="middle" x="2160" y="-1779.3" font-family="Times,serif" font-size="14.00">+readPixel(Blob::Vec2f) : float</text>
 <text text-anchor="middle" x="2160" y="-1764.3" font-family="Times,serif" font-size="14.00">+getType() : uint32_t</text>
 </g>
 <!-- Blob.Material.LightPos&#45;&gt;Blob.GL.Core -->
@@ -1045,15 +1045,15 @@
 <polyline fill="none" stroke="black" points="7043,-1547.5 8201,-1547.5 "/>
 <text text-anchor="middle" x="7622" y="-1532.3" font-family="Times,serif" font-size="14.00">&#45;timeStoped : bool</text>
 <polyline fill="none" stroke="black" points="7043,-1524.5 8201,-1524.5 "/>
-<text text-anchor="middle" x="7622" y="-1508.8" font-family="Times,serif" font-size="14.00">&#45;hashCoor(Maths::Vec2f) : uint64_t</text>
-<text text-anchor="middle" x="7622" y="-1493.8" font-family="Times,serif" font-size="14.00">&#45;unhashCoor(uint64_t) : Maths::Vec2i</text>
-<text text-anchor="middle" x="7622" y="-1478.8" font-family="Times,serif" font-size="14.00">&#45;hashCoor(Maths::Vec2i) : uint64_t</text>
-<text text-anchor="middle" x="7622" y="-1463.8" font-family="Times,serif" font-size="14.00">&#45;addToSpacialHash(std::list&lt;Maths::Vec2i&gt;, Blob::Collision::Object *)</text>
-<text text-anchor="middle" x="7622" y="-1448.8" font-family="Times,serif" font-size="14.00">&#45;removeFromSpacialHash(std::list&lt;Maths::Vec2i&gt;, Blob::Collision::Object *)</text>
-<text text-anchor="middle" x="7622" y="-1433.8" font-family="Times,serif" font-size="14.00">&#45;targetOverlap(Blob::Collision::RectDynamic &amp;, Maths::Rectangle &amp;, const std::unordered_set&lt;Object *&gt; &amp;, std::unordered_map&lt;Object *, Reaction&gt; &amp;) : bool</text>
-<text text-anchor="middle" x="7622" y="-1418.8" font-family="Times,serif" font-size="14.00">&#45;computeLocalCollision(Blob::Collision::RectDynamic &amp;, const std::unordered_set&lt;Object *&gt; &amp;, Maths::Vec2f)</text>
-<text text-anchor="middle" x="7622" y="-1403.8" font-family="Times,serif" font-size="14.00">&#45;getPath(Maths::Vec2i, Maths::Vec2i) : std::list&lt;int64_t&gt;</text>
-<text text-anchor="middle" x="7622" y="-1388.8" font-family="Times,serif" font-size="14.00">+checkCollision(Blob::Collision::RectDynamic &amp;)</text>
+<text text-anchor="middle" x="7622" y="-1508.8" font-family="Times,serif" font-size="14.00">&#45;hashCoor(Vec2f) : uint64_t</text>
+<text text-anchor="middle" x="7622" y="-1493.8" font-family="Times,serif" font-size="14.00">&#45;unhashCoor(uint64_t) : Vec2i</text>
+<text text-anchor="middle" x="7622" y="-1478.8" font-family="Times,serif" font-size="14.00">&#45;hashCoor(Vec2i) : uint64_t</text>
+<text text-anchor="middle" x="7622" y="-1463.8" font-family="Times,serif" font-size="14.00">&#45;addToSpacialHash(std::list&lt;Vec2i&gt;, Blob::Object *)</text>
+<text text-anchor="middle" x="7622" y="-1448.8" font-family="Times,serif" font-size="14.00">&#45;removeFromSpacialHash(std::list&lt;Vec2i&gt;, Blob::Object *)</text>
+<text text-anchor="middle" x="7622" y="-1433.8" font-family="Times,serif" font-size="14.00">&#45;targetOverlap(Blob::RectDynamic &amp;, Rectangle &amp;, const std::unordered_set&lt;Object *&gt; &amp;, std::unordered_map&lt;Object *, Reaction&gt; &amp;) : bool</text>
+<text text-anchor="middle" x="7622" y="-1418.8" font-family="Times,serif" font-size="14.00">&#45;computeLocalCollision(Blob::RectDynamic &amp;, const std::unordered_set&lt;Object *&gt; &amp;, Vec2f)</text>
+<text text-anchor="middle" x="7622" y="-1403.8" font-family="Times,serif" font-size="14.00">&#45;getPath(Vec2i, Vec2i) : std::list&lt;int64_t&gt;</text>
+<text text-anchor="middle" x="7622" y="-1388.8" font-family="Times,serif" font-size="14.00">+checkCollision(Blob::RectDynamic &amp;)</text>
 <text text-anchor="middle" x="7622" y="-1373.8" font-family="Times,serif" font-size="14.00">+update()</text>
 <text text-anchor="middle" x="7622" y="-1358.8" font-family="Times,serif" font-size="14.00">+pause()</text>
 <text text-anchor="middle" x="7622" y="-1343.8" font-family="Times,serif" font-size="14.00">+unpause()</text>
@@ -1063,7 +1063,7 @@
 <g id="node47" class="node">
 <title>Blob.Collision.Object</title>
 <polygon fill="none" stroke="black" points="6631,-1369 6631,-1537 7025,-1537 7025,-1369 6631,-1369"/>
-<text text-anchor="middle" x="6828" y="-1521.8" font-family="Times,serif" font-size="14.00">Blob::Maths::Form</text>
+<text text-anchor="middle" x="6828" y="-1521.8" font-family="Times,serif" font-size="14.00">Blob::Form</text>
 <polyline fill="none" stroke="black" points="6631,-1514 7025,-1514 "/>
 <text text-anchor="middle" x="6828" y="-1498.8" font-family="Times,serif" font-size="14.00">Object</text>
 <polyline fill="none" stroke="black" points="6631,-1491 7025,-1491 "/>
@@ -1072,8 +1072,8 @@
 <polyline fill="none" stroke="black" points="6631,-1453 7025,-1453 "/>
 <text text-anchor="middle" x="6828" y="-1437.3" font-family="Times,serif" font-size="14.00">#setObjectType(int)</text>
 <text text-anchor="middle" x="6828" y="-1422.3" font-family="Times,serif" font-size="14.00">#Object(int)</text>
-<text text-anchor="middle" x="6828" y="-1407.3" font-family="Times,serif" font-size="14.00">#hit(int, Blob::Collision::Object &amp;)</text>
-<text text-anchor="middle" x="6828" y="-1392.3" font-family="Times,serif" font-size="14.00">#getImtemsHere(Maths::Vec2f) : std::list&lt;Object *&gt;</text>
+<text text-anchor="middle" x="6828" y="-1407.3" font-family="Times,serif" font-size="14.00">#hit(int, Blob::Object &amp;)</text>
+<text text-anchor="middle" x="6828" y="-1392.3" font-family="Times,serif" font-size="14.00">#getImtemsHere(Vec2f) : std::list&lt;Object *&gt;</text>
 <text text-anchor="middle" x="6828" y="-1377.3" font-family="Times,serif" font-size="14.00">+getObjectType() : int</text>
 </g>
 <!-- Blob.Collision.DynamicObject -->
@@ -1083,7 +1083,7 @@
 <text text-anchor="middle" x="7826" y="-1220.3" font-family="Times,serif" font-size="14.00">DynamicObject</text>
 <polyline fill="none" stroke="black" points="7733.5,-1212.5 7918.5,-1212.5 "/>
 <text text-anchor="middle" x="7826" y="-1197.3" font-family="Times,serif" font-size="14.00">&#45;reaction : Reaction</text>
-<text text-anchor="middle" x="7826" y="-1182.3" font-family="Times,serif" font-size="14.00">#speed : Maths::Vec2f</text>
+<text text-anchor="middle" x="7826" y="-1182.3" font-family="Times,serif" font-size="14.00">#speed : Vec2f</text>
 <polyline fill="none" stroke="black" points="7733.5,-1174.5 7918.5,-1174.5 "/>
 <text text-anchor="middle" x="7826" y="-1158.8" font-family="Times,serif" font-size="14.00">#DynamicObject(int)</text>
 <text text-anchor="middle" x="7826" y="-1143.8" font-family="Times,serif" font-size="14.00">#setReaction(Reaction)</text>
@@ -1104,7 +1104,7 @@
 <text text-anchor="middle" x="7198" y="-1212.8" font-family="Times,serif" font-size="14.00">CircleStatic</text>
 <polyline fill="none" stroke="black" points="7027.5,-1205 7368.5,-1205 "/>
 <text text-anchor="middle" x="7198" y="-1189.8" font-family="Times,serif" font-size="14.00">&#45;elementIt : std::list&lt;CircleStatic *&gt;::iterator</text>
-<text text-anchor="middle" x="7198" y="-1174.8" font-family="Times,serif" font-size="14.00">#mainCircle : Maths::Circle</text>
+<text text-anchor="middle" x="7198" y="-1174.8" font-family="Times,serif" font-size="14.00">#mainCircle : Circle</text>
 <polyline fill="none" stroke="black" points="7027.5,-1167 7368.5,-1167 "/>
 <text text-anchor="middle" x="7198" y="-1151.3" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="7198" y="-1136.3" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
@@ -1121,7 +1121,7 @@
 <g id="node50" class="node">
 <title>Blob.Collision.RectStatic</title>
 <polygon fill="none" stroke="black" points="6631,-1094 6631,-1232 7009,-1232 7009,-1094 6631,-1094"/>
-<text text-anchor="middle" x="6820" y="-1216.8" font-family="Times,serif" font-size="14.00">Blob::Maths::Rectangle</text>
+<text text-anchor="middle" x="6820" y="-1216.8" font-family="Times,serif" font-size="14.00">Blob::Rectangle</text>
 <polyline fill="none" stroke="black" points="6631,-1209 7009,-1209 "/>
 <text text-anchor="middle" x="6820" y="-1193.8" font-family="Times,serif" font-size="14.00">RectStatic</text>
 <polyline fill="none" stroke="black" points="6631,-1186 7009,-1186 "/>
@@ -1129,7 +1129,7 @@
 <polyline fill="none" stroke="black" points="6631,-1163 7009,-1163 "/>
 <text text-anchor="middle" x="6820" y="-1147.3" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="6820" y="-1132.3" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
-<text text-anchor="middle" x="6820" y="-1117.3" font-family="Times,serif" font-size="14.00">+RectStatic(Maths::Vec2f, Maths::Vec2f, const int)</text>
+<text text-anchor="middle" x="6820" y="-1117.3" font-family="Times,serif" font-size="14.00">+RectStatic(Vec2f, Vec2f, const int)</text>
 <text text-anchor="middle" x="6820" y="-1102.3" font-family="Times,serif" font-size="14.00">+~RectStatic()</text>
 </g>
 <!-- Blob.Collision.Object&#45;&gt;Blob.Collision.RectStatic -->
@@ -1145,7 +1145,7 @@
 <text text-anchor="middle" x="7551" y="-1212.8" font-family="Times,serif" font-size="14.00">LineStatic</text>
 <polyline fill="none" stroke="black" points="7386.5,-1205 7715.5,-1205 "/>
 <text text-anchor="middle" x="7551" y="-1189.8" font-family="Times,serif" font-size="14.00">&#45;elementIt : std::list&lt;LineStatic *&gt;::iterator</text>
-<text text-anchor="middle" x="7551" y="-1174.8" font-family="Times,serif" font-size="14.00">#lines : std::deque&lt;Maths::Point2f&gt;</text>
+<text text-anchor="middle" x="7551" y="-1174.8" font-family="Times,serif" font-size="14.00">#lines : std::deque&lt;Point2f&gt;</text>
 <polyline fill="none" stroke="black" points="7386.5,-1167 7715.5,-1167 "/>
 <text text-anchor="middle" x="7551" y="-1151.3" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="7551" y="-1136.3" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
@@ -1165,7 +1165,7 @@
 <text text-anchor="middle" x="7676" y="-967.8" font-family="Times,serif" font-size="14.00">CircleDynamic</text>
 <polyline fill="none" stroke="black" points="7495.5,-960 7856.5,-960 "/>
 <text text-anchor="middle" x="7676" y="-944.8" font-family="Times,serif" font-size="14.00">&#45;elementIt : std::list&lt;CircleDynamic *&gt;::iterator</text>
-<text text-anchor="middle" x="7676" y="-929.8" font-family="Times,serif" font-size="14.00">#mainCircle : Maths::Circle</text>
+<text text-anchor="middle" x="7676" y="-929.8" font-family="Times,serif" font-size="14.00">#mainCircle : Circle</text>
 <polyline fill="none" stroke="black" points="7495.5,-922 7856.5,-922 "/>
 <text text-anchor="middle" x="7676" y="-906.3" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="7676" y="-891.3" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
@@ -1182,7 +1182,7 @@
 <g id="node53" class="node">
 <title>Blob.Collision.RectDynamic</title>
 <polygon fill="none" stroke="black" points="6930,-849 6930,-987 7328,-987 7328,-849 6930,-849"/>
-<text text-anchor="middle" x="7129" y="-971.8" font-family="Times,serif" font-size="14.00">Blob::Maths::Rectangle</text>
+<text text-anchor="middle" x="7129" y="-971.8" font-family="Times,serif" font-size="14.00">Blob::Rectangle</text>
 <polyline fill="none" stroke="black" points="6930,-964 7328,-964 "/>
 <text text-anchor="middle" x="7129" y="-948.8" font-family="Times,serif" font-size="14.00">RectDynamic</text>
 <polyline fill="none" stroke="black" points="6930,-941 7328,-941 "/>
@@ -1190,7 +1190,7 @@
 <polyline fill="none" stroke="black" points="6930,-918 7328,-918 "/>
 <text text-anchor="middle" x="7129" y="-902.3" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="7129" y="-887.3" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
-<text text-anchor="middle" x="7129" y="-872.3" font-family="Times,serif" font-size="14.00">+RectDynamic(Maths::Vec2f, Maths::Vec2f, const int)</text>
+<text text-anchor="middle" x="7129" y="-872.3" font-family="Times,serif" font-size="14.00">+RectDynamic(Vec2f, Vec2f, const int)</text>
 <text text-anchor="middle" x="7129" y="-857.3" font-family="Times,serif" font-size="14.00">+~RectDynamic()</text>
 </g>
 <!-- Blob.Collision.DynamicObject&#45;&gt;Blob.Collision.RectDynamic -->
@@ -1270,7 +1270,7 @@
 <text text-anchor="middle" x="703" y="-1835.3" font-family="Times,serif" font-size="14.00">+setImage(const std::string &amp;)</text>
 <text text-anchor="middle" x="703" y="-1820.3" font-family="Times,serif" font-size="14.00">+setRGBA32data(uint8_t *, unsigned int, unsigned int, bool)</text>
 <text text-anchor="middle" x="703" y="-1805.3" font-family="Times,serif" font-size="14.00">+getTextureID() : unsigned int</text>
-<text text-anchor="middle" x="703" y="-1790.3" font-family="Times,serif" font-size="14.00">+getTextureSize() : Maths::Vec2f</text>
+<text text-anchor="middle" x="703" y="-1790.3" font-family="Times,serif" font-size="14.00">+getTextureSize() : Vec2f</text>
 </g>
 <!-- Blob.GL.Texture&#45;&gt;Blob.Core.ImGUI -->
 <g id="edge68" class="edge">
@@ -1376,16 +1376,16 @@
 <polygon fill="none" stroke="black" points="5222,-1358 5222,-1548 5632,-1548 5632,-1358 5222,-1358"/>
 <text text-anchor="middle" x="5427" y="-1532.8" font-family="Times,serif" font-size="14.00">Rectangle</text>
 <polyline fill="none" stroke="black" points="5222,-1525 5632,-1525 "/>
-<text text-anchor="middle" x="5427" y="-1509.8" font-family="Times,serif" font-size="14.00">+position : Blob::Maths::Point2f</text>
-<text text-anchor="middle" x="5427" y="-1494.8" font-family="Times,serif" font-size="14.00">+size : Blob::Maths::Vec2f</text>
+<text text-anchor="middle" x="5427" y="-1509.8" font-family="Times,serif" font-size="14.00">+position : Blob::Point2f</text>
+<text text-anchor="middle" x="5427" y="-1494.8" font-family="Times,serif" font-size="14.00">+size : Blob::Vec2f</text>
 <polyline fill="none" stroke="black" points="5222,-1487 5632,-1487 "/>
 <text text-anchor="middle" x="5427" y="-1471.3" font-family="Times,serif" font-size="14.00">+Rectangle()</text>
-<text text-anchor="middle" x="5427" y="-1456.3" font-family="Times,serif" font-size="14.00">+Rectangle(Blob::Maths::Point2f, Blob::Maths::Vec2f)</text>
+<text text-anchor="middle" x="5427" y="-1456.3" font-family="Times,serif" font-size="14.00">+Rectangle(Blob::Point2f, Blob::Vec2f)</text>
 <text text-anchor="middle" x="5427" y="-1441.3" font-family="Times,serif" font-size="14.00">+getPoints() : std::array&lt;Vec2f, 4&gt;</text>
-<text text-anchor="middle" x="5427" y="-1426.3" font-family="Times,serif" font-size="14.00">+overlapBigger(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="5427" y="-1411.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="5427" y="-1396.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Circle &amp;) : bool</text>
-<text text-anchor="middle" x="5427" y="-1381.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Line &amp;) : bool</text>
+<text text-anchor="middle" x="5427" y="-1426.3" font-family="Times,serif" font-size="14.00">+overlapBigger(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="5427" y="-1411.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="5427" y="-1396.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Circle &amp;) : bool</text>
+<text text-anchor="middle" x="5427" y="-1381.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Line &amp;) : bool</text>
 <text text-anchor="middle" x="5427" y="-1366.3" font-family="Times,serif" font-size="14.00">+rasterize() : std::list&lt;Vec2i&gt;</text>
 </g>
 <!-- Blob.Maths.Rectangle&#45;&gt;Blob.Collision.RectStatic -->
@@ -1407,13 +1407,13 @@
 <text text-anchor="middle" x="5831" y="-1510.3" font-family="Times,serif" font-size="14.00">Circle</text>
 <polyline fill="none" stroke="black" points="5650,-1502.5 6012,-1502.5 "/>
 <text text-anchor="middle" x="5831" y="-1487.3" font-family="Times,serif" font-size="14.00">+rayon : float</text>
-<text text-anchor="middle" x="5831" y="-1472.3" font-family="Times,serif" font-size="14.00">+position : Blob::Maths::Point2f</text>
+<text text-anchor="middle" x="5831" y="-1472.3" font-family="Times,serif" font-size="14.00">+position : Blob::Point2f</text>
 <polyline fill="none" stroke="black" points="5650,-1464.5 6012,-1464.5 "/>
 <text text-anchor="middle" x="5831" y="-1448.8" font-family="Times,serif" font-size="14.00">+Circle()</text>
-<text text-anchor="middle" x="5831" y="-1433.8" font-family="Times,serif" font-size="14.00">+Circle(Blob::Maths::Point2f, float)</text>
-<text text-anchor="middle" x="5831" y="-1418.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="5831" y="-1403.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Circle &amp;) : bool</text>
-<text text-anchor="middle" x="5831" y="-1388.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Line &amp;) : bool</text>
+<text text-anchor="middle" x="5831" y="-1433.8" font-family="Times,serif" font-size="14.00">+Circle(Blob::Point2f, float)</text>
+<text text-anchor="middle" x="5831" y="-1418.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="5831" y="-1403.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Circle &amp;) : bool</text>
+<text text-anchor="middle" x="5831" y="-1388.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Line &amp;) : bool</text>
 </g>
 <!-- Blob.Maths.Circle&#45;&gt;Blob.Collision.CircleStatic -->
 <g id="edge77" class="edge">
@@ -1435,20 +1435,20 @@
 <polygon fill="none" stroke="black" points="6030.5,-1320.5 6030.5,-1585.5 6501.5,-1585.5 6501.5,-1320.5 6030.5,-1320.5"/>
 <text text-anchor="middle" x="6266" y="-1570.3" font-family="Times,serif" font-size="14.00">Line</text>
 <polyline fill="none" stroke="black" points="6030.5,-1562.5 6501.5,-1562.5 "/>
-<text text-anchor="middle" x="6266" y="-1547.3" font-family="Times,serif" font-size="14.00">+pointA : Blob::Maths::Point2f</text>
-<text text-anchor="middle" x="6266" y="-1532.3" font-family="Times,serif" font-size="14.00">+pointB : Blob::Maths::Point2f</text>
+<text text-anchor="middle" x="6266" y="-1547.3" font-family="Times,serif" font-size="14.00">+pointA : Blob::Point2f</text>
+<text text-anchor="middle" x="6266" y="-1532.3" font-family="Times,serif" font-size="14.00">+pointB : Blob::Point2f</text>
 <polyline fill="none" stroke="black" points="6030.5,-1524.5 6501.5,-1524.5 "/>
 <text text-anchor="middle" x="6266" y="-1508.8" font-family="Times,serif" font-size="14.00">+Line()</text>
-<text text-anchor="middle" x="6266" y="-1493.8" font-family="Times,serif" font-size="14.00">+Line(Blob::Maths::Point2f, Blob::Maths::Point2f)</text>
-<text text-anchor="middle" x="6266" y="-1478.8" font-family="Times,serif" font-size="14.00">+getVector() : Blob::Maths::Vec2f</text>
+<text text-anchor="middle" x="6266" y="-1493.8" font-family="Times,serif" font-size="14.00">+Line(Blob::Point2f, Blob::Point2f)</text>
+<text text-anchor="middle" x="6266" y="-1478.8" font-family="Times,serif" font-size="14.00">+getVector() : Blob::Vec2f</text>
 <text text-anchor="middle" x="6266" y="-1463.8" font-family="Times,serif" font-size="14.00">+Length2() : double</text>
 <text text-anchor="middle" x="6266" y="-1448.8" font-family="Times,serif" font-size="14.00">+Length() : double</text>
 <text text-anchor="middle" x="6266" y="-1433.8" font-family="Times,serif" font-size="14.00">+getOrientation() : double</text>
-<text text-anchor="middle" x="6266" y="-1418.8" font-family="Times,serif" font-size="14.00">+closestPointTo(Blob::Maths::Point2f) : Blob::Maths::Point2f</text>
-<text text-anchor="middle" x="6266" y="-1403.8" font-family="Times,serif" font-size="14.00">+getIntersectionPoint(Blob::Maths::Line) : Blob::Maths::Point2f</text>
-<text text-anchor="middle" x="6266" y="-1388.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="6266" y="-1373.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Circle &amp;) : bool</text>
-<text text-anchor="middle" x="6266" y="-1358.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Line &amp;) : bool</text>
+<text text-anchor="middle" x="6266" y="-1418.8" font-family="Times,serif" font-size="14.00">+closestPointTo(Blob::Point2f) : Blob::Point2f</text>
+<text text-anchor="middle" x="6266" y="-1403.8" font-family="Times,serif" font-size="14.00">+getIntersectionPoint(Blob::Line) : Blob::Point2f</text>
+<text text-anchor="middle" x="6266" y="-1388.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="6266" y="-1373.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Circle &amp;) : bool</text>
+<text text-anchor="middle" x="6266" y="-1358.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Line &amp;) : bool</text>
 <text text-anchor="middle" x="6266" y="-1343.8" font-family="Times,serif" font-size="14.00">+getGradient() : float</text>
 <text text-anchor="middle" x="6266" y="-1328.8" font-family="Times,serif" font-size="14.00">+getConstant() : float</text>
 </g>
@@ -1458,9 +1458,9 @@
 <polygon fill="none" stroke="black" points="6139,-1883.5 6139,-1960.5 6501,-1960.5 6501,-1883.5 6139,-1883.5"/>
 <text text-anchor="middle" x="6320" y="-1945.3" font-family="Times,serif" font-size="14.00">Form</text>
 <polyline fill="none" stroke="black" points="6139,-1937.5 6501,-1937.5 "/>
-<text text-anchor="middle" x="6320" y="-1921.8" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="6320" y="-1906.8" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Maths::Circle &amp;) : bool</text>
-<text text-anchor="middle" x="6320" y="-1891.8" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Maths::Line &amp;) : bool</text>
+<text text-anchor="middle" x="6320" y="-1921.8" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="6320" y="-1906.8" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Circle &amp;) : bool</text>
+<text text-anchor="middle" x="6320" y="-1891.8" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Line &amp;) : bool</text>
 </g>
 <!-- Blob.Maths.Form&#45;&gt;Blob.Collision.Object -->
 <g id="edge79" class="edge">
@@ -1498,7 +1498,7 @@
 <polyline fill="none" stroke="black" points="5369.5,-1963.5 5734.5,-1963.5 "/>
 <text text-anchor="middle" x="5552" y="-1947.8" font-family="Times,serif" font-size="14.00">+setModelMatrix(const std::array&lt;float, 16&gt; &amp;)</text>
 <text text-anchor="middle" x="5552" y="-1932.8" font-family="Times,serif" font-size="14.00">+setPosition(float, float, float)</text>
-<text text-anchor="middle" x="5552" y="-1917.8" font-family="Times,serif" font-size="14.00">+setPosition(const Maths::Vec2f &amp;, float)</text>
+<text text-anchor="middle" x="5552" y="-1917.8" font-family="Times,serif" font-size="14.00">+setPosition(const Vec2f &amp;, float)</text>
 <text text-anchor="middle" x="5552" y="-1902.8" font-family="Times,serif" font-size="14.00">+move(float, float, float)</text>
 <text text-anchor="middle" x="5552" y="-1887.8" font-family="Times,serif" font-size="14.00">+setRotation(float, float, float, float)</text>
 <text text-anchor="middle" x="5552" y="-1872.8" font-family="Times,serif" font-size="14.00">+rotate(float, float, float, float)</text>

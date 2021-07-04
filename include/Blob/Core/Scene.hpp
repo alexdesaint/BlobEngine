@@ -5,7 +5,7 @@
 #include <ostream>
 #include <utility>
 
-namespace Blob::Core {
+namespace Blob {
 
 class Scene {
     friend Window;
@@ -26,7 +26,8 @@ public:
     void removeShape(const Shape *r);
     void removeAll();
 
-    std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> getDrawCallList() const;
+    std::unordered_map<const Primitive *, std::vector<Mat4>>
+    getDrawCallList() const;
 
     friend std::ostream &operator<<(std::ostream &, const Scene &);
 };
@@ -38,10 +39,10 @@ private:
     std::list<Shape2D const *> shapes;
 
 public:
-    const Maths::ViewTransform2D &camera;
-    explicit Scene2D(const Maths::ViewTransform2D &camera);
+    const ViewTransform2D &camera;
+    explicit Scene2D(const ViewTransform2D &camera);
 
-    Scene2D(const Maths::ViewTransform2D &camera, std::list<Shape2D const *> shapes);
+    Scene2D(const ViewTransform2D &camera, std::list<Shape2D const *> shapes);
 
     void addShape(const Shape2D &r);
     void addShape(const Shape2D *r);
@@ -51,4 +52,4 @@ public:
 
     friend std::ostream &operator<<(std::ostream &, const Scene2D &);
 };
-} // namespace Blob::Core
+} // namespace Blob

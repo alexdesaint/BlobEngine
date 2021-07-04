@@ -7,44 +7,48 @@ namespace Blob::VK {
 
 class pipeline {
 public:
-//     explicit pipeline(const Device &device);
+    //     explicit pipeline(const Device &device);
 
-//     void drawFrame();
+    //     void drawFrame();
 
-//     void loadModel();
+    //     void loadModel();
 
-//     void recreateSwapChain();
+    //     void recreateSwapChain();
 
-//     const Device &device;
+    //     const Device &device;
 
-//     Swapchain swapchain;
-//     std::vector<VDeleter<VkFramebuffer>> swapChainFramebuffers;
+    //     Swapchain swapchain;
+    //     std::vector<VDeleter<VkFramebuffer>> swapChainFramebuffers;
 
-//     RenderPass renderPass;
-//     DescriptorSetLayout descriptorSetLayout;
-//     VDeleter<VkPipelineLayout> pipelineLayout{device.device, vkDestroyPipelineLayout};
-//     VDeleter<VkPipeline> graphicsPipeline{device.device, vkDestroyPipeline};
+    //     RenderPass renderPass;
+    //     DescriptorSetLayout descriptorSetLayout;
+    //     VDeleter<VkPipelineLayout> pipelineLayout{device.device,
+    //     vkDestroyPipelineLayout}; VDeleter<VkPipeline>
+    //     graphicsPipeline{device.device, vkDestroyPipeline};
 
-//     VDeleter<VkCommandPool> commandPool{device.device, vkDestroyCommandPool};
+    //     VDeleter<VkCommandPool> commandPool{device.device,
+    //     vkDestroyCommandPool};
 
-//     VDeleter<VkImage> depthImage{device.device, vkDestroyImage};
-//     VDeleter<VkDeviceMemory> depthImageMemory{device.device, vkFreeMemory};
-//     VDeleter<VkImageView> depthImageView{device.device, vkDestroyImageView};
+    //     VDeleter<VkImage> depthImage{device.device, vkDestroyImage};
+    //     VDeleter<VkDeviceMemory> depthImageMemory{device.device,
+    //     vkFreeMemory}; VDeleter<VkImageView> depthImageView{device.device,
+    //     vkDestroyImageView};
 
-//     std::vector<VkCommandBuffer> maincommandBuffers;
+    //     std::vector<VkCommandBuffer> maincommandBuffers;
 
-//     VDeleter<VkSemaphore> imageAvailableSemaphore{device.device, vkDestroySemaphore};
-//     VDeleter<VkSemaphore> renderFinishedSemaphore{device.device, vkDestroySemaphore};
+    //     VDeleter<VkSemaphore> imageAvailableSemaphore{device.device,
+    //     vkDestroySemaphore}; VDeleter<VkSemaphore>
+    //     renderFinishedSemaphore{device.device, vkDestroySemaphore};
 
-// private:
-//     void createGraphicsPipeline();
+    // private:
+    //     void createGraphicsPipeline();
 
-//     void createDepthResources();
+    //     void createDepthResources();
 
-//     void createFramebuffers();
+    //     void createFramebuffers();
 
-//     void createMainCommandBuffers();
+    //     void createMainCommandBuffers();
 
-//     void createSemaphores();
+    //     void createSemaphores();
 };
-}
+} // namespace Blob::VK

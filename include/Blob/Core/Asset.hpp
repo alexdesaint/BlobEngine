@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-namespace Blob::Core {
+namespace Blob {
 
 template<class T>
 class Asset {
@@ -25,4 +25,4 @@ public:
     static auto getUseCount() { return instance.use_count(); }
 };
 
-} // namespace Blob::Core
+} // namespace Blob

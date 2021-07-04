@@ -12,7 +12,7 @@ int main() {
         Blob::GLFW::Window window({400, 400});
         Blob::VK::Instance instance(window);
 
-        //std::cout << instance;
+        // std::cout << instance;
 
     } catch (Exception &e) {
         std::cout << e.what() << std::endl;

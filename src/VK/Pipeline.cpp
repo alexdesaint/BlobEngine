@@ -5,26 +5,29 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/hash.hpp>
 
-#include <vector>
 #include <array>
 #include <set>
 #include <stdexcept>
+#include <vector>
 
+#include "CoreEngine.h"
 #include "Vertex.h"
 #include "vdeleter.h"
-#include "CoreEngine.h"
 
 #include "Pipeline.h"
 
 pipeline::pipeline(const Device &device) :
-        swapchain(), device(device),
-        renderPass(device, swapChainImageFormat,
-                   device.physicalDevice.findSupportedFormat(
-                           {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
-                           VK_IMAGE_TILING_OPTIMAL,
-                           VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
-                   )),
-        descriptorSetLayout(device) {
+    swapchain(),
+    device(device),
+    renderPass(device,
+               swapChainImageFormat,
+               device.physicalDevice.findSupportedFormat(
+                   {VK_FORMAT_D32_SFLOAT,
+                    VK_FORMAT_D32_SFLOAT_S8_UINT,
+                    VK_FORMAT_D24_UNORM_S8_UINT},
+                   VK_IMAGE_TILING_OPTIMAL,
+                   VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)),
+    descriptorSetLayout(device) {
 
     createDescriptorSetLayout();
     createGraphicsPipeline();
@@ -35,8 +38,13 @@ pipeline::pipeline(const Device &device) :
 
 void pipeline::drawFrame() {
     uint32_t imageIndex;
-    VkResult result = vkAcquireNextImageKHR(device.device, swapChain, std::numeric_limits<uint64_t>::max(),
-                                            imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+    VkResult result =
+        vkAcquireNextImageKHR(device.device,
+                              swapChain,
+                              std::numeric_limits<uint64_t>::max(),
+                              imageAvailableSemaphore,
+                              VK_NULL_HANDLE,
+                              &imageIndex);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
         recreateSwapChain();
@@ -49,7 +57,8 @@ void pipeline::drawFrame() {
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
     VkSemaphore waitSemaphores[] = {imageAvailableSemaphore};
-    VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+    VkPipelineStageFlags waitStages[] = {
+        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = waitSemaphores;
     submitInfo.pWaitDstStageMask = waitStages;
@@ -61,7 +70,8 @@ void pipeline::drawFrame() {
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+    if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) !=
+        VK_SUCCESS) {
         throw std::runtime_error("failed to submit draw command buffer!");
     }
 
@@ -108,7 +118,6 @@ void pipeline::recreateSwapChain() {
 
 inline void pipeline::createGraphicsPipeline() {
 
-
     VkGraphicsPipelineCreateInfo pipelineInfo = {};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineInfo.stageCount = 2;
@@ -125,7 +134,11 @@ inline void pipeline::createGraphicsPipeline() {
     pipelineInfo.subpass = 0;
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-    if (vkCreateGraphicsPipelines(device.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr,
+    if (vkCreateGraphicsPipelines(device.device,
+                                  VK_NULL_HANDLE,
+                                  1,
+                                  &pipelineInfo,
+                                  nullptr,
                                   graphicsPipeline.replace()) != VK_SUCCESS) {
         throw std::runtime_error("failed to create graphics pipeline!");
     }
@@ -134,20 +147,33 @@ inline void pipeline::createGraphicsPipeline() {
 inline void pipeline::createDepthResources() {
     VkFormat depthFormat = CoreEngine::getInstance().findDepthFormat();
 
-    CoreEngine::getInstance().createImage(swapChainExtent.width, swapChainExtent.height, depthFormat,
-                                          VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-                                          VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage.replace(),
-                                          depthImageMemory.replace());
-    CoreEngine::getInstance().createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT,
+    CoreEngine::getInstance().createImage(
+        swapChainExtent.width,
+        swapChainExtent.height,
+        depthFormat,
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        depthImage.replace(),
+        depthImageMemory.replace());
+    CoreEngine::getInstance().createImageView(depthImage,
+                                              depthFormat,
+                                              VK_IMAGE_ASPECT_DEPTH_BIT,
                                               depthImageView.replace());
 
-    CoreEngine::getInstance().transitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
-                                                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, this);
+    CoreEngine::getInstance().transitionImageLayout(
+        depthImage,
+        depthFormat,
+        VK_IMAGE_LAYOUT_UNDEFINED,
+        VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+        this);
 }
 
 inline void pipeline::createMainCommandBuffers() {
     if (maincommandBuffers.size() > 0) {
-        vkFreeCommandBuffers(device.device, commandPool, (uint32_t) maincommandBuffers.size(),
+        vkFreeCommandBuffers(device.device,
+                             commandPool,
+                             (uint32_t) maincommandBuffers.size(),
                              maincommandBuffers.data());
     }
 
@@ -159,7 +185,9 @@ inline void pipeline::createMainCommandBuffers() {
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = (uint32_t) maincommandBuffers.size();
 
-    if (vkAllocateCommandBuffers(device.device, &allocInfo, maincommandBuffers.data()) != VK_SUCCESS) {
+    if (vkAllocateCommandBuffers(device.device,
+                                 &allocInfo,
+                                 maincommandBuffers.data()) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate command buffers!");
     }
 
@@ -168,7 +196,7 @@ inline void pipeline::createMainCommandBuffers() {
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
-        vkBeginCommandBuffer(maincommandBuffers[i], &beginInfo);//
+        vkBeginCommandBuffer(maincommandBuffers[i], &beginInfo); //
 
         VkRenderPassBeginInfo renderPassInfo = {};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -184,9 +212,12 @@ inline void pipeline::createMainCommandBuffers() {
         renderPassInfo.clearValueCount = (uint32_t) clearValues.size();
         renderPassInfo.pClearValues = clearValues.data();
 
-        vkCmdBeginRenderPass(maincommandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+        vkCmdBeginRenderPass(maincommandBuffers[i],
+                             &renderPassInfo,
+                             VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 
-        CoreEngine::getInstance().ExecuteCommandsBuffers(maincommandBuffers[i], i);
+        CoreEngine::getInstance().ExecuteCommandsBuffers(maincommandBuffers[i],
+                                                         i);
 
         vkCmdEndRenderPass(maincommandBuffers[i]);
 
@@ -200,8 +231,14 @@ inline void pipeline::createSemaphores() {
     VkSemaphoreCreateInfo semaphoreInfo = {};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-    if (vkCreateSemaphore(device.device, &semaphoreInfo, nullptr, imageAvailableSemaphore.replace()) != VK_SUCCESS ||
-        vkCreateSemaphore(device.device, &semaphoreInfo, nullptr, renderFinishedSemaphore.replace()) != VK_SUCCESS) {
+    if (vkCreateSemaphore(device.device,
+                          &semaphoreInfo,
+                          nullptr,
+                          imageAvailableSemaphore.replace()) != VK_SUCCESS ||
+        vkCreateSemaphore(device.device,
+                          &semaphoreInfo,
+                          nullptr,
+                          renderFinishedSemaphore.replace()) != VK_SUCCESS) {
         throw std::runtime_error("failed to create semaphores!");
     }
 }

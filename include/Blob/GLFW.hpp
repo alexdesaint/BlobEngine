@@ -130,7 +130,18 @@ struct Keys {
     static const int MENU;
 };
 
-enum MouseCursor { Arrow = 0, TextInput, ResizeAll, ResizeNS, ResizeEW, ResizeNESW, ResizeNWSE, Hand, NotAllowed, COUNT };
+enum MouseCursor {
+    Arrow = 0,
+    TextInput,
+    ResizeAll,
+    ResizeNS,
+    ResizeEW,
+    ResizeNESW,
+    ResizeNWSE,
+    Hand,
+    NotAllowed,
+    COUNT
+};
 
 class Window {
 private:
@@ -139,8 +150,10 @@ private:
     static void framebufferSizeCallback(void *window, int w, int h);
     static void windowSizeCallback(void *window, int w, int h);
     static void contentScaleCallback(void *window, float w, float h);
-    static void keyCallback(void *window, int key, int scancode, int action, int mods);
-    static void mouseButtonCallback(void *window, int button, int action, int mods);
+    static void
+    keyCallback(void *window, int key, int scancode, int action, int mods);
+    static void
+    mouseButtonCallback(void *window, int button, int action, int mods);
     static void cursorPosCallback(void *window, double xpos, double ypos);
     static void scrollCallback(void *window, double xoffset, double yoffset);
     static void charCallback(void *window, unsigned int c);
@@ -150,16 +163,17 @@ private:
     bool windowFocused = true;
     // The default imputs data storage
     bool keysData[512]{false};
-    bool keyCtrlData{false}, keyShiftData{false}, keyAltData{false}, keySuperData{false};
+    bool keyCtrlData{false}, keyShiftData{false}, keyAltData{false},
+        keySuperData{false};
 
     bool mouseButtonData[5]{false};
-    Maths::Vec2<float> cursorPositionData;
+    Vec2<float> cursorPositionData;
     float scrollOffsetWData{0}, scrollOffsetHData{0};
 
     // Window info data
-    Maths::Vec2<unsigned int> windowSizeData;
-    Maths::Vec2<unsigned int> framebufferSizeData;
-    Maths::Vec2<float> contentScaleData;
+    Vec2<unsigned int> windowSizeData;
+    Vec2<unsigned int> framebufferSizeData;
+    Vec2<float> contentScaleData;
     bool fullScreenData = false;
 
     void initInputs();
@@ -174,8 +188,9 @@ protected:
 
     // Mouse Cursor
     bool (*mouseButton)[5] = &mouseButtonData;
-    Maths::Vec2<float> *cursorPosition = &cursorPositionData;
-    float *scrollOffsetW = &scrollOffsetWData, *scrollOffsetH = &scrollOffsetHData;
+    Vec2<float> *cursorPosition = &cursorPositionData;
+    float *scrollOffsetW = &scrollOffsetWData,
+          *scrollOffsetH = &scrollOffsetHData;
 
     void *cursors[MouseCursor::COUNT];
 
@@ -197,9 +212,9 @@ public:
     void *window = nullptr;
 
     // Window info
-    const Maths::Vec2<unsigned int> &windowSize = windowSizeData;
-    const Maths::Vec2<unsigned int> &framebufferSize = framebufferSizeData;
-    const Maths::Vec2<float> &contentScale = contentScaleData;
+    const Vec2<unsigned int> &windowSize = windowSizeData;
+    const Vec2<unsigned int> &framebufferSize = framebufferSizeData;
+    const Vec2<float> &contentScale = contentScaleData;
     const bool &fullScreen = fullScreenData;
 
     // Controllers
@@ -213,16 +228,16 @@ public:
 
     static double totalTimeFlow;
 
-    Window(const Maths::Vec2<unsigned int> &windowSize, int GLmajor, int GLminor);
-    explicit Window(const Maths::Vec2<unsigned int> &windowSize);
+    Window(const Vec2<unsigned int> &windowSize, int GLmajor, int GLminor);
+    explicit Window(const Vec2<unsigned int> &windowSize);
 
     ~Window();
 
     [[nodiscard]] bool isOpen() const;
 
-    // [[nodiscard]] Maths::Vec2<int> getSize() const { return {width, height}; }
+    // [[nodiscard]] Vec2<int> getSize() const { return {width, height}; }
 
-    Maths::Vec2<int> getFrameBufferSize();
+    Vec2<int> getFrameBufferSize();
 
     void setTitle(const std::string &name);
 

@@ -1,7 +1,7 @@
 #include <Blob/Core/Buffer.hpp>
 #include <Blob/Reader/FileReader.hpp>
 
-namespace Blob::Core {
+namespace Blob {
 
 Buffer::Buffer(const std::string &file) {
     Reader::FileReader fileReader(file);
@@ -15,4 +15,4 @@ Buffer::Buffer(const std::string &file) {
     setData(bytes);
 }
 
-} // namespace Blob::Core
+} // namespace Blob

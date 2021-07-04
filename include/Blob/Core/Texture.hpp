@@ -1,9 +1,11 @@
 #pragma once
 
+#include <Blob/Core/FilePath.hpp>
 #include <Blob/Core/Image.hpp>
 #include <Blob/GL/Texture.hpp>
+#include <memory>
 
-namespace Blob::Core {
+namespace Blob {
 
 class Texture : public GL::Texture {
 public:
@@ -16,4 +18,27 @@ public:
     void setImage(const Image &image);
 };
 
-} // namespace Blob::Core
+template<FilePath... filepath>
+class TextureAsset {
+private:
+    inline static std::weak_ptr<Texture> instance;
+
+public:
+    struct Instance : public std::shared_ptr<Texture> {
+        using std::shared_ptr<Texture>::operator=;
+        Instance() : std::shared_ptr<Texture>() {
+            this->operator=(instance.lock());
+            if (!*this) {
+                std::string path;
+                ((path += std::string(filepath.value)), ...);
+                this->operator=(std::make_shared<Texture>(path));
+            }
+        }
+    };
+
+    static auto isInstancied() { return (bool) instance.lock(); }
+
+    static auto getUseCount() { return instance.use_count(); }
+};
+
+} // namespace Blob

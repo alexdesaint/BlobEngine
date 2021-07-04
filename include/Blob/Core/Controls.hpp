@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace Blob::Core {
+namespace Blob {
 
 class Key {
 public:
@@ -172,7 +172,7 @@ public:
     KeyboardEvents(const KeyboardEvents &) = delete;
 };
 
-class KeyboardEvents2 {
+class KeyboardEvents2 { // TODO: move this to the Window class
     friend Window;
 
 private:
@@ -180,7 +180,11 @@ private:
     std::unordered_map<int, std::function<void(bool)>> callbacks;
 
 public:
-    explicit KeyboardEvents2(std::unordered_map<int, std::function<void(bool)>> &&callbacks) : callbacks(callbacks) { subscribers.push_back(this); }
+    explicit KeyboardEvents2(
+        std::unordered_map<int, std::function<void(bool)>> &&callbacks) :
+        callbacks(callbacks) {
+        subscribers.push_back(this);
+    }
 
     ~KeyboardEvents2() { subscribers.remove(this); }
 };
@@ -210,12 +214,18 @@ public:
 
 class Mouse {
 public:
-    Blob::Maths::Vec2<float> &position;
+    Blob::Vec2<float> &position;
     bool (&buttons)[5];
     float &scrollOffsetW, &scrollOffsetH;
 
-    Mouse(Maths::Vec2<float> &position, float &scrollOffsetW, float &scrollOffsetH, bool (&buttons)[5]) :
-        position(position), scrollOffsetW(scrollOffsetW), scrollOffsetH(scrollOffsetH), buttons(buttons) {}
+    Mouse(Vec2<float> &position,
+          float &scrollOffsetW,
+          float &scrollOffsetH,
+          bool (&buttons)[5]) :
+        position(position),
+        scrollOffsetW(scrollOffsetW),
+        scrollOffsetH(scrollOffsetH),
+        buttons(buttons) {}
 
     Mouse(const Mouse &) = delete;
 
@@ -243,4 +253,4 @@ private:
 protected:
 };
 
-} // namespace Blob::Core
+} // namespace Blob

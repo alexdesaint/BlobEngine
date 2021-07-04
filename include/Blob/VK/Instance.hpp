@@ -1,8 +1,8 @@
 #pragma once
 
 // vk
-#include <vulkan/vulkan.h>
 #include <Blob/GLFW.hpp>
+#include <vulkan/vulkan.h>
 
 // std
 #include <ostream>
@@ -24,8 +24,8 @@ private:
 #else
     const bool enableValidationLayers = true;
 #endif
-    const std::vector<const char *> validationLayers = {"VK_LAYER_LUNARG_standard_validation"};
-    std::vector<VkLayerProperties> layers;
+    const std::vector<const char *> validationLayers =
+{"VK_LAYER_LUNARG_standard_validation"}; std::vector<VkLayerProperties> layers;
     void loadLayers();
     bool checkLayerSupport();
 
@@ -36,9 +36,11 @@ private:
     VkDebugUtilsMessengerEXT debugMessenger;
     void setDebugCallback();
     void destroyDebugCallback();
-    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                        VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                        const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData, void *pUserData);
+    static VKAPI_ATTR VkBool32 VKAPI_CALL
+debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                        VkDebugUtilsMessageTypeFlagsEXT
+messageType, const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData, void
+*pUserData);
 
 public:
     Instance();
@@ -50,19 +52,26 @@ public:
 };
  */
 
-    class Instance {
-    public:
-        VkInstance instance;
+class Instance {
+public:
+    VkInstance instance;
 
-        VkDebugReportCallbackEXT debugReportCallbackEXT;
+    VkDebugReportCallbackEXT debugReportCallbackEXT;
 
-        explicit Instance(const Blob::GLFW::Window &window);
+    explicit Instance(const Blob::GLFW::Window &window);
 
-        ~Instance();
+    ~Instance();
 
-        static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj,
-                                                            size_t location, int32_t code, const char *layerPrefix, const char *msg, void *userData);
+    static VKAPI_ATTR VkBool32 VKAPI_CALL
+    debugCallback(VkDebugReportFlagsEXT flags,
+                  VkDebugReportObjectTypeEXT objType,
+                  uint64_t obj,
+                  size_t location,
+                  int32_t code,
+                  const char *layerPrefix,
+                  const char *msg,
+                  void *userData);
 
-        bool checkValidationLayerSupport();
-    };
+    bool checkValidationLayerSupport();
+};
 } // namespace Blob::VK

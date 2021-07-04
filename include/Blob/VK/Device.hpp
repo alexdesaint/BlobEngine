@@ -3,11 +3,11 @@
 #include "Exception.hpp"
 #include "Instance.hpp"
 #include <Blob/GLFW.hpp>
+#include <Blob/VK/PhysicalDevice.hpp>
 #include <memory>
 #include <stdexcept>
 #include <vector>
 #include <vulkan/vulkan.hpp>
-#include <Blob/VK/PhysicalDevice.hpp>
 
 namespace Blob::VK {
 class Device {
@@ -22,4 +22,4 @@ public:
 
     ~Device();
 };
-}
+} // namespace Blob::VK

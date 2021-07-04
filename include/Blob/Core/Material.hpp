@@ -4,10 +4,11 @@
 #include <Blob/Core/Shader.hpp>
 #include <Blob/Core/Texture.hpp>
 
-namespace Blob::Core {
+namespace Blob {
 class Window;
 
-/// A combinason of shader, color, texture or array to defines the optical properties of an object.
+/// A combinason of shader, color, texture or array to defines the optical
+/// properties of an object.
 /**
  * Detailed description.
  * - oui
@@ -16,7 +17,7 @@ class Window;
  * > Citation
  * *gras* **pas gras**
  */
-template<class ...Args>
+template<class... Args>
 class MaterialBase {
 public:
     /// This function will be called before the draw
@@ -28,7 +29,7 @@ public:
     virtual ~MaterialBase() = default;
 };
 
-typedef MaterialBase<Maths::ProjectionTransform, Maths::ViewTransform, Maths::Mat4> Material;
-typedef MaterialBase<Maths::ProjectionTransform2D, Maths::ViewTransform2D, Maths::Mat3> Material2D;
+typedef MaterialBase<ProjectionTransform, ViewTransform, Mat4> Material;
+typedef MaterialBase<ProjectionTransform2D, ViewTransform2D, Mat3> Material2D;
 
-} // namespace Blob::Core
+} // namespace Blob

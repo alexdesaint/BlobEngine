@@ -13,16 +13,17 @@
 #include <iostream>
 
 using namespace Blob;
-using namespace Blob::Core;
-using namespace Blob::Maths;
 
 static const struct {
     float x, y;
     float r, g, b;
-} vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f}, {0.5f, -0.5f, 0.f, 1.f, 1.f}, {-0.5f, 0.5f, 1.f, 0.f, 1.f}, {0.5f, 0.5f, 0.f, 0.f, 1.f}};
+} vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f},
+                 {0.5f, -0.5f, 0.f, 1.f, 1.f},
+                 {-0.5f, 0.5f, 1.f, 0.f, 1.f},
+                 {0.5f, 0.5f, 0.f, 0.f, 1.f}};
 
-using SimpleShader = Core::Shader<Core::ShaderProgram<Core::VertexShader<
-                                                          R"=====(
+using SimpleShader = Shader<ShaderProgram<VertexShader<
+                                              R"=====(
 #version 450
 
 layout(location = 0) uniform mat4 model;
@@ -39,8 +40,8 @@ void main() {
     color = vCol;
 }
 )=====">,
-                                                      Core::FragmentShader<
-                                                          R"=====(
+                                          FragmentShader<
+                                              R"=====(
 #version 450
 
 layout(location = 0) in vec3 color;
@@ -50,21 +51,25 @@ void main()  {
     FragColor = vec4(color, 1.0);
 }
 )=====">>,
-                                  Core::UniformAttribute<Maths::Mat4, 0>,
-                                  Core::UniformAttribute<Maths::ViewTransform, 1>,
-                                  Core::UniformAttribute<Maths::ProjectionTransform, 2>>;
+                            UniformAttribute<Mat4, 0>,
+                            UniformAttribute<ViewTransform, 1>,
+                            UniformAttribute<ProjectionTransform, 2>>;
 
-class SimpleMaterial : public Core::Material {
+class SimpleMaterial : public Material {
 public:
     SimpleShader::Intance shader = SimpleShader::getInstance();
 
-    void applyMaterial(const Maths::ProjectionTransform &pt, const Maths::ViewTransform &vt, const Maths::Mat4 &mt) const final { shader->setAttributes(mt, vt, pt); }
+    void applyMaterial(const ProjectionTransform &pt,
+                       const ViewTransform &vt,
+                       const Mat4 &mt) const final {
+        shader->setAttributes(mt, vt, pt);
+    }
 };
 
 int main() {
-    Core::Camera camera;
+    Camera camera;
 
-    Core::Window window;
+    Window window;
 
     SimpleMaterial material;
 
@@ -72,15 +77,21 @@ int main() {
 
     Blob::GL::VertexArrayObject vao;
     vao.setBuffer(vbo, sizeof(vertices[0]));
-    vao.setArray(2, material.shader->shaderProgram.getAttribLocation("vPos"), GL_FLOAT, 0);
-    vao.setArray(3, material.shader->shaderProgram.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
+    vao.setArray(2,
+                 material.shader->shaderProgram.getAttribLocation("vPos"),
+                 GL_FLOAT,
+                 0);
+    vao.setArray(3,
+                 material.shader->shaderProgram.getAttribLocation("vCol"),
+                 GL_FLOAT,
+                 sizeof(float) * 2);
 
-    Core::RenderOptions ro;
+    RenderOptions ro;
     //     ro.indexed = true;
     unsigned short indices[] = {2, 1, 0, 1, 2, 3};
     ro.setIndices(indices, 6);
 
-    Core::Primitive primitive(&vao, &material, &ro);
+    Primitive primitive(&vao, &material, &ro);
 
     bool show_demo_window = true;
     bool show_another_window = false;
@@ -95,33 +106,52 @@ int main() {
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+        // 2. Show a simple window that we create ourselves. We use a Begin/End
+        // pair to created a named window.
         {
             static float f = 0.0f;
             static int counter = 0;
 
-            ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+            ImGui::Begin("Hello, world!"); // Create a window called "Hello,
+                                           // world!" and append into it.
 
-            ImGui::Text("This is some useful text.");          // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our window open/close state
+            ImGui::Text(
+                "This is some useful text."); // Display some text (you can use
+                                              // a format strings too)
+            ImGui::Checkbox("Demo Window",
+                            &show_demo_window); // Edit bools storing our window
+                                                // open/close state
             ImGui::Checkbox("Another Window", &show_another_window);
 
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);              // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float *) &clear_color); // Edit 3 floats representing a color
+            ImGui::SliderFloat(
+                "float",
+                &f,
+                0.0f,
+                1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::ColorEdit3(
+                "clear color",
+                (float *) &clear_color); // Edit 3 floats representing a color
             ImGui::ColorPicker3("another color", (float *) &clear_color);
 
-            if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
+            if (ImGui::Button(
+                    "Button")) // Buttons return true when clicked (most widgets
+                               // return true when edited/activated)
                 counter++;
             ImGui::SameLine();
             ImGui::Text("counter = %d", counter);
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+                        1000.0f / ImGui::GetIO().Framerate,
+                        ImGui::GetIO().Framerate);
             ImGui::End();
         }
 
         // 3. Show another simple window.
         if (show_another_window) {
-            ImGui::Begin("Another Window", &show_another_window); // Pass a pointer to our bool variable (the window will have a closing button
+            ImGui::Begin(
+                "Another Window",
+                &show_another_window); // Pass a pointer to our bool variable
+                                       // (the window will have a closing button
             // that will clear the bool when clicked)
             ImGui::Text("Hello from another window!");
             if (ImGui::Button("Close Me"))

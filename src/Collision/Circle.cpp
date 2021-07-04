@@ -1,6 +1,6 @@
 #include <Blob/Collision/Forms.hpp>
 
-namespace Blob::Collision {
+namespace Blob {
 
 bool Circle::overlap(const Rectangle &rectangle) const {
     auto rx = rectangle.position.x - rectangle.size.x / 2.f;
@@ -24,7 +24,8 @@ bool Circle::overlap(const Rectangle &rectangle) const {
 }
 
 bool Circle::overlap(const Circle &circle) const {
-    return (position - circle.position).length2() <= (circle.rayon  + rayon) * (circle.rayon  + rayon);
+    return (position - circle.position).length2() <=
+           (circle.rayon + rayon) * (circle.rayon + rayon);
 }
 
 bool Circle::overlap(const Line &line) const {
@@ -33,8 +34,10 @@ bool Circle::overlap(const Line &line) const {
 
     auto cp = line.closestPointTo(position);
 
-    if ((line.positionA.x > cp.x && line.positionB.x > cp.x) || (line.positionA.x < cp.x && line.positionB.x < cp.x) ||
-        (line.positionA.y > cp.y && line.positionB.y > cp.y) || (line.positionA.y < cp.y && line.positionB.y < cp.y))
+    if ((line.positionA.x > cp.x && line.positionB.x > cp.x) ||
+        (line.positionA.x < cp.x && line.positionB.x < cp.x) ||
+        (line.positionA.y > cp.y && line.positionB.y > cp.y) ||
+        (line.positionA.y < cp.y && line.positionB.y < cp.y))
         return false; // cp is ont on the line
 
     return (position - cp).length() <= rayon;
@@ -44,8 +47,8 @@ bool Circle::overlap(const Point &point) const {
     return (position - point).length2() <= rayon * rayon;
 }
 
-std::unordered_set<Maths::Vec2<int32_t>> Circle::rasterize() const {
-    std::unordered_set<Maths::Vec2<int32_t>> points;
+std::unordered_set<Vec2<int32_t>> Circle::rasterize() const {
+    std::unordered_set<Vec2<int32_t>> points;
     auto startx = (int32_t) (position.x - rayon);
     auto endx = (int32_t) (position.x + rayon);
     auto starty = (int32_t) (position.y - rayon);
@@ -53,9 +56,9 @@ std::unordered_set<Maths::Vec2<int32_t>> Circle::rasterize() const {
 
     for (int i = startx; i <= endx; i++)
         for (int j = starty; j <= endy; j++)
-            points.emplace(Maths::Vec2{i, j});
+            points.emplace(Vec2{i, j});
 
     return points;
 }
 
-} // namespace Blob::Maths
+} // namespace Blob

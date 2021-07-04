@@ -54,52 +54,53 @@ void Shader::setUniform<>(const float (&val)[16], int position) const {
 }
 
 template<>
-void Shader::setUniform<>(const Maths::Vec2<float> &val, int position) const {
+void Shader::setUniform<>(const Vec2<float> &val, int position) const {
     glUniform2fv(position, 1, &val.x);
 }
 
 template<>
-void Shader::setUniform<>(const Maths::Vec3<float> &val, int position) const {
+void Shader::setUniform<>(const Vec3<float> &val, int position) const {
     glUniform3fv(position, 1, &val.x);
 }
 
 template<>
-void Shader::setUniform<>(const Maths::Mat3 &val, int position) const {
+void Shader::setUniform<>(const Mat3 &val, int position) const {
     glUniformMatrix3fv(position, 1, GL_FALSE, &val.a11);
 }
 
 template<>
-void Shader::setUniform<>(const Maths::Mat4 &val, int position) const {
+void Shader::setUniform<>(const Mat4 &val, int position) const {
     glUniformMatrix4fv(position, 1, GL_FALSE, &val.a11);
 }
 
 template<>
-void Shader::setUniform<>(const Maths::ModelTransform &val, int position) const {
+void Shader::setUniform<>(const ModelTransform &val, int position) const {
     glUniformMatrix4fv(position, 1, GL_FALSE, &val.a11);
 }
 
 template<>
-void Shader::setUniform<>(const Maths::ViewTransform &val, int position) const {
+void Shader::setUniform<>(const ViewTransform &val, int position) const {
     glUniformMatrix4fv(position, 1, GL_FALSE, &val.a11);
 }
 
 template<>
-void Shader::setUniform<>(const Maths::ProjectionTransform &val, int position) const {
+void Shader::setUniform<>(const ProjectionTransform &val, int position) const {
     glUniformMatrix4fv(position, 1, GL_FALSE, &val.a11);
 }
 
 template<>
-void Shader::setUniform<>(const Maths::ModelTransform2D &val, int position) const {
+void Shader::setUniform<>(const ModelTransform2D &val, int position) const {
     glUniformMatrix3fv(position, 1, GL_FALSE, &val.a11);
 }
 
 template<>
-void Shader::setUniform<>(const Maths::ViewTransform2D &val, int position) const {
+void Shader::setUniform<>(const ViewTransform2D &val, int position) const {
     glUniformMatrix3fv(position, 1, GL_FALSE, &val.a11);
 }
 
 template<>
-void Shader::setUniform<>(const Maths::ProjectionTransform2D &val, int position) const {
+void Shader::setUniform<>(const ProjectionTransform2D &val,
+                          int position) const {
     glUniformMatrix3fv(position, 1, GL_FALSE, &val.a11);
 }
 

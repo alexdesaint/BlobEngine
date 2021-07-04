@@ -32,7 +32,7 @@
 <text text-anchor="middle" x="284.5" y="-1333.8" font-family="Times,serif" font-size="14.00">+setUint(int32_t, int)</text>
 <text text-anchor="middle" x="284.5" y="-1318.8" font-family="Times,serif" font-size="14.00">+drawIndex(const void *, int32_t, uint32_t)</text>
 <text text-anchor="middle" x="284.5" y="-1303.8" font-family="Times,serif" font-size="14.00">+drawIndex(const void *, int32_t)</text>
-<text text-anchor="middle" x="284.5" y="-1288.8" font-family="Times,serif" font-size="14.00">+readPixel(Blob::Maths::Vec2f) : float</text>
+<text text-anchor="middle" x="284.5" y="-1288.8" font-family="Times,serif" font-size="14.00">+readPixel(Blob::Vec2f) : float</text>
 <text text-anchor="middle" x="284.5" y="-1273.8" font-family="Times,serif" font-size="14.00">+getType() : uint32_t</text>
 </g>
 <!-- Blob.GL.ShaderProgram -->
@@ -84,7 +84,7 @@
 <text text-anchor="middle" x="284.5" y="-656.8" font-family="Times,serif" font-size="14.00">+setImage(const std::string &amp;)</text>
 <text text-anchor="middle" x="284.5" y="-641.8" font-family="Times,serif" font-size="14.00">+setRGBA32data(uint8_t *, unsigned int, unsigned int, bool)</text>
 <text text-anchor="middle" x="284.5" y="-626.8" font-family="Times,serif" font-size="14.00">+getTextureID() : unsigned int</text>
-<text text-anchor="middle" x="284.5" y="-611.8" font-family="Times,serif" font-size="14.00">+getTextureSize() : Maths::Vec2f</text>
+<text text-anchor="middle" x="284.5" y="-611.8" font-family="Times,serif" font-size="14.00">+getTextureSize() : Vec2f</text>
 </g>
 <!-- Blob.GL.ShaderProgram&#45;&gt;Blob.GL.Texture -->
 <!-- Blob.GL.VertexBufferObject -->

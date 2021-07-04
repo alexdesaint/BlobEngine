@@ -9,7 +9,7 @@
 #include <stddef.h>
 #include <string>
 
-namespace Blob::Core {
+namespace Blob {
 
 template<size_t N>
 struct GlslCode {
@@ -36,7 +36,8 @@ struct VertexShader {
         ((ret += std::string(lit.value)), ...);
         return ret;
     }
-    inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Vertex;
+    inline static const GL::ShaderProgram::Type type =
+        GL::ShaderProgram::Types::Vertex;
 };
 template<GlslCode... lit>
 struct TessellationControlShader {
@@ -45,7 +46,8 @@ struct TessellationControlShader {
         ((ret += std::string(lit.value)), ...);
         return ret;
     }
-    inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::TessellationControl;
+    inline static const GL::ShaderProgram::Type type =
+        GL::ShaderProgram::Types::TessellationControl;
 };
 template<GlslCode... lit>
 struct EvaluationShader {
@@ -54,7 +56,8 @@ struct EvaluationShader {
         ((ret += std::string(lit.value)), ...);
         return ret;
     }
-    inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Evaluation;
+    inline static const GL::ShaderProgram::Type type =
+        GL::ShaderProgram::Types::Evaluation;
 };
 template<GlslCode... lit>
 struct GeometryShader {
@@ -63,7 +66,8 @@ struct GeometryShader {
         ((ret += std::string(lit.value)), ...);
         return ret;
     }
-    inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Geometry;
+    inline static const GL::ShaderProgram::Type type =
+        GL::ShaderProgram::Types::Geometry;
 };
 template<GlslCode... lit>
 struct FragmentShader {
@@ -72,7 +76,8 @@ struct FragmentShader {
         ((ret += std::string(lit.value)), ...);
         return ret;
     }
-    inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Fragment;
+    inline static const GL::ShaderProgram::Type type =
+        GL::ShaderProgram::Types::Fragment;
 };
 template<GlslCode... lit>
 struct ComputeShader {
@@ -81,7 +86,8 @@ struct ComputeShader {
         ((ret += std::string(lit.value)), ...);
         return ret;
     }
-    inline static const GL::ShaderProgram::Type type = GL::ShaderProgram::Types::Compute;
+    inline static const GL::ShaderProgram::Type type =
+        GL::ShaderProgram::Types::Compute;
 };
 
 template<class... SHADER_CODE>
@@ -100,22 +106,28 @@ public:
 };
 
 template<class SHADER_PROGRAM, class... UNIFORM_ATTRIBUTES>
-class Shader : public GL::Shader, public Core::Asset<Shader<SHADER_PROGRAM, UNIFORM_ATTRIBUTES...>> {
+class Shader :
+    public GL::Shader,
+    public Asset<Shader<SHADER_PROGRAM, UNIFORM_ATTRIBUTES...>> {
 private:
-    friend Core::Asset<Shader<SHADER_PROGRAM, UNIFORM_ATTRIBUTES...>>;
+    friend Asset<Shader<SHADER_PROGRAM, UNIFORM_ATTRIBUTES...>>;
     Shader() {}
 
 public:
     const SHADER_PROGRAM shaderProgram;
 
-    void setUniform(const Texture &texture, int position) const { GL::Shader::setTexture(texture); }
+    void setUniform(const Texture &texture, int position) const {
+        GL::Shader::setTexture(texture);
+    }
 
     using GL::Shader::setUniform;
 
-    void setAttributes(const typename UNIFORM_ATTRIBUTES::Type &...UNIFORM_ATTRIBUTES_Type) {
+    void setAttributes(
+        const typename UNIFORM_ATTRIBUTES::Type &...UNIFORM_ATTRIBUTES_Type) {
         setShaderProgram(shaderProgram);
-        (setUniform(UNIFORM_ATTRIBUTES_Type, UNIFORM_ATTRIBUTES::position), ...);
+        (setUniform(UNIFORM_ATTRIBUTES_Type, UNIFORM_ATTRIBUTES::position),
+         ...);
     }
 };
 
-} // namespace Blob::Core
+} // namespace Blob

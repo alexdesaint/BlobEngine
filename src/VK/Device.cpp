@@ -1,26 +1,28 @@
 #include <vulkan/vulkan.h>
 
-#include <iostream>
-#include <stdexcept>
-#include <functional>
-#include <fstream>
 #include <algorithm>
-#include <vector>
-#include <cstring>
-#include <set>
 #include <array>
+#include <cstring>
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <set>
+#include <stdexcept>
+#include <vector>
 
 #include <Blob/VK/Device.hpp>
+#include <Blob/VK/Pipeline.hpp>
 #include <Blob/VK/Vertex.hpp>
 #include <Blob/VK/Window.hpp>
 #include <Blob/VK/model.hpp>
-#include <Blob/VK/Pipeline.hpp>
 #include <Blob/VK/vdeleter.hpp>
 
 namespace Blob::VK {
-Device::Device(PhysicalDevice &physicalDevice) : physicalDevice(physicalDevice) {
+Device::Device(PhysicalDevice &physicalDevice) :
+    physicalDevice(physicalDevice) {
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    std::set<uint32_t> uniqueQueueFamilies = {physicalDevice.graphicsFamily, physicalDevice.presentFamily};
+    std::set<uint32_t> uniqueQueueFamilies = {physicalDevice.graphicsFamily,
+                                              physicalDevice.presentFamily};
 
     float queuePriority = 1.0f;
     for (uint32_t queueFamily : uniqueQueueFamilies) {
@@ -42,8 +44,10 @@ Device::Device(PhysicalDevice &physicalDevice) : physicalDevice(physicalDevice) 
 
     createInfo.pEnabledFeatures = &deviceFeatures;
 
-    createInfo.enabledExtensionCount = (uint32_t) PhysicalDevice::deviceExtensions.size();
-    createInfo.ppEnabledExtensionNames = PhysicalDevice::deviceExtensions.data();
+    createInfo.enabledExtensionCount =
+        (uint32_t) PhysicalDevice::deviceExtensions.size();
+    createInfo.ppEnabledExtensionNames =
+        PhysicalDevice::deviceExtensions.data();
 
     if (enableValidationLayers) {
         createInfo.enabledLayerCount = (uint32_t) validationLayers.size();
@@ -52,7 +56,10 @@ Device::Device(PhysicalDevice &physicalDevice) : physicalDevice(physicalDevice) 
         createInfo.enabledLayerCount = 0;
     }
 
-    if (vkCreateDevice(physicalDevice.physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS)
+    if (vkCreateDevice(physicalDevice.physicalDevice,
+                       &createInfo,
+                       nullptr,
+                       &device) != VK_SUCCESS)
         throw std::runtime_error("failed to create logical device !");
 
     vkGetDeviceQueue(device, physicalDevice.graphicsFamily, 0, &graphicsQueue);
@@ -63,4 +70,4 @@ Device::~Device() {
     vkDeviceWaitIdle(device);
     vkDestroyDevice(device, nullptr);
 }
-}
+} // namespace Blob::VK

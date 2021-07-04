@@ -96,25 +96,25 @@ namespace ImGui
 #include <Blob/Core/Exception.hpp>
 #include <Blob/Maths.inl>
 
-namespace Blob::Core {
+namespace Blob {
 class Texture;
 }
 
 #define IM_VEC2_CLASS_EXTRA                                                                                                                                                                            \
-    ImVec2(const Blob::Maths::Vec2<float> &f) {                                                                                                                                                        \
+    ImVec2(const Blob::Vec2<float> &f) {                                                                                                                                                        \
         x = f.x;                                                                                                                                                                                       \
         y = f.y;                                                                                                                                                                                       \
     }                                                                                                                                                                                                  \
-    operator Blob::Maths::Vec2<float>() const { return Blob::Maths::Vec2<float>(x, y); }
+    operator Blob::Vec2<float>() const { return Blob::Vec2<float>(x, y); }
 /*
 #define IM_ASSERT(expr)							\
      (static_cast <bool> (expr)						\
       ? void (0)							\
-      : throw ::Blob::Core::Exception (std::string(#expr) + std::string(__FILE__) + std::to_string(__LINE__)))
+      : throw ::Blob::Exception (std::string(#expr) + std::string(__FILE__) + std::to_string(__LINE__)))
 */
 
 #define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 
 #define ImTextureID TextureID
 
-typedef Blob::Core::Texture *TextureID;
+typedef Blob::Texture *TextureID;

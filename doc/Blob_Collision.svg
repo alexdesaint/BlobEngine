@@ -16,15 +16,15 @@
 <polyline fill="none" stroke="black" points="0,-741.5 1158,-741.5 "/>
 <text text-anchor="middle" x="579" y="-726.3" font-family="Times,serif" font-size="14.00">&#45;timeStoped : bool</text>
 <polyline fill="none" stroke="black" points="0,-718.5 1158,-718.5 "/>
-<text text-anchor="middle" x="579" y="-702.8" font-family="Times,serif" font-size="14.00">&#45;hashCoor(Maths::Vec2f) : uint64_t</text>
-<text text-anchor="middle" x="579" y="-687.8" font-family="Times,serif" font-size="14.00">&#45;unhashCoor(uint64_t) : Maths::Vec2i</text>
-<text text-anchor="middle" x="579" y="-672.8" font-family="Times,serif" font-size="14.00">&#45;hashCoor(Maths::Vec2i) : uint64_t</text>
-<text text-anchor="middle" x="579" y="-657.8" font-family="Times,serif" font-size="14.00">&#45;addToSpacialHash(std::list&lt;Maths::Vec2i&gt;, Blob::Collision::Object *)</text>
-<text text-anchor="middle" x="579" y="-642.8" font-family="Times,serif" font-size="14.00">&#45;removeFromSpacialHash(std::list&lt;Maths::Vec2i&gt;, Blob::Collision::Object *)</text>
-<text text-anchor="middle" x="579" y="-627.8" font-family="Times,serif" font-size="14.00">&#45;targetOverlap(Blob::Collision::RectDynamic &amp;, Maths::Rectangle &amp;, const std::unordered_set&lt;Object *&gt; &amp;, std::unordered_map&lt;Object *, Reaction&gt; &amp;) : bool</text>
-<text text-anchor="middle" x="579" y="-612.8" font-family="Times,serif" font-size="14.00">&#45;computeLocalCollision(Blob::Collision::RectDynamic &amp;, const std::unordered_set&lt;Object *&gt; &amp;, Maths::Vec2f)</text>
-<text text-anchor="middle" x="579" y="-597.8" font-family="Times,serif" font-size="14.00">&#45;getPath(Maths::Vec2i, Maths::Vec2i) : std::list&lt;int64_t&gt;</text>
-<text text-anchor="middle" x="579" y="-582.8" font-family="Times,serif" font-size="14.00">+checkCollision(Blob::Collision::RectDynamic &amp;)</text>
+<text text-anchor="middle" x="579" y="-702.8" font-family="Times,serif" font-size="14.00">&#45;hashCoor(Vec2f) : uint64_t</text>
+<text text-anchor="middle" x="579" y="-687.8" font-family="Times,serif" font-size="14.00">&#45;unhashCoor(uint64_t) : Vec2i</text>
+<text text-anchor="middle" x="579" y="-672.8" font-family="Times,serif" font-size="14.00">&#45;hashCoor(Vec2i) : uint64_t</text>
+<text text-anchor="middle" x="579" y="-657.8" font-family="Times,serif" font-size="14.00">&#45;addToSpacialHash(std::list&lt;Vec2i&gt;, Blob::Object *)</text>
+<text text-anchor="middle" x="579" y="-642.8" font-family="Times,serif" font-size="14.00">&#45;removeFromSpacialHash(std::list&lt;Vec2i&gt;, Blob::Object *)</text>
+<text text-anchor="middle" x="579" y="-627.8" font-family="Times,serif" font-size="14.00">&#45;targetOverlap(Blob::RectDynamic &amp;, Rectangle &amp;, const std::unordered_set&lt;Object *&gt; &amp;, std::unordered_map&lt;Object *, Reaction&gt; &amp;) : bool</text>
+<text text-anchor="middle" x="579" y="-612.8" font-family="Times,serif" font-size="14.00">&#45;computeLocalCollision(Blob::RectDynamic &amp;, const std::unordered_set&lt;Object *&gt; &amp;, Vec2f)</text>
+<text text-anchor="middle" x="579" y="-597.8" font-family="Times,serif" font-size="14.00">&#45;getPath(Vec2i, Vec2i) : std::list&lt;int64_t&gt;</text>
+<text text-anchor="middle" x="579" y="-582.8" font-family="Times,serif" font-size="14.00">+checkCollision(Blob::RectDynamic &amp;)</text>
 <text text-anchor="middle" x="579" y="-567.8" font-family="Times,serif" font-size="14.00">+update()</text>
 <text text-anchor="middle" x="579" y="-552.8" font-family="Times,serif" font-size="14.00">+pause()</text>
 <text text-anchor="middle" x="579" y="-537.8" font-family="Times,serif" font-size="14.00">+unpause()</text>
@@ -33,7 +33,7 @@
 <g id="node2" class="node">
 <title>Blob.Collision.Object</title>
 <polygon fill="none" stroke="black" points="1176,-563 1176,-731 1570,-731 1570,-563 1176,-563"/>
-<text text-anchor="middle" x="1373" y="-715.8" font-family="Times,serif" font-size="14.00">Blob::Maths::Form</text>
+<text text-anchor="middle" x="1373" y="-715.8" font-family="Times,serif" font-size="14.00">Blob::Form</text>
 <polyline fill="none" stroke="black" points="1176,-708 1570,-708 "/>
 <text text-anchor="middle" x="1373" y="-692.8" font-family="Times,serif" font-size="14.00">Object</text>
 <polyline fill="none" stroke="black" points="1176,-685 1570,-685 "/>
@@ -42,8 +42,8 @@
 <polyline fill="none" stroke="black" points="1176,-647 1570,-647 "/>
 <text text-anchor="middle" x="1373" y="-631.3" font-family="Times,serif" font-size="14.00">#setObjectType(int)</text>
 <text text-anchor="middle" x="1373" y="-616.3" font-family="Times,serif" font-size="14.00">#Object(int)</text>
-<text text-anchor="middle" x="1373" y="-601.3" font-family="Times,serif" font-size="14.00">#hit(int, Blob::Collision::Object &amp;)</text>
-<text text-anchor="middle" x="1373" y="-586.3" font-family="Times,serif" font-size="14.00">#getImtemsHere(Maths::Vec2f) : std::list&lt;Object *&gt;</text>
+<text text-anchor="middle" x="1373" y="-601.3" font-family="Times,serif" font-size="14.00">#hit(int, Blob::Object &amp;)</text>
+<text text-anchor="middle" x="1373" y="-586.3" font-family="Times,serif" font-size="14.00">#getImtemsHere(Vec2f) : std::list&lt;Object *&gt;</text>
 <text text-anchor="middle" x="1373" y="-571.3" font-family="Times,serif" font-size="14.00">+getObjectType() : int</text>
 </g>
 <!-- Blob.Collision.DynamicObject -->
@@ -53,7 +53,7 @@
 <text text-anchor="middle" x="993" y="-478.3" font-family="Times,serif" font-size="14.00">DynamicObject</text>
 <polyline fill="none" stroke="black" points="900.5,-470.5 1085.5,-470.5 "/>
 <text text-anchor="middle" x="993" y="-455.3" font-family="Times,serif" font-size="14.00">&#45;reaction : Reaction</text>
-<text text-anchor="middle" x="993" y="-440.3" font-family="Times,serif" font-size="14.00">#speed : Maths::Vec2f</text>
+<text text-anchor="middle" x="993" y="-440.3" font-family="Times,serif" font-size="14.00">#speed : Vec2f</text>
 <polyline fill="none" stroke="black" points="900.5,-432.5 1085.5,-432.5 "/>
 <text text-anchor="middle" x="993" y="-416.8" font-family="Times,serif" font-size="14.00">#DynamicObject(int)</text>
 <text text-anchor="middle" x="993" y="-401.8" font-family="Times,serif" font-size="14.00">#setReaction(Reaction)</text>
@@ -74,7 +74,7 @@
 <text text-anchor="middle" x="1274" y="-470.8" font-family="Times,serif" font-size="14.00">CircleStatic</text>
 <polyline fill="none" stroke="black" points="1103.5,-463 1444.5,-463 "/>
 <text text-anchor="middle" x="1274" y="-447.8" font-family="Times,serif" font-size="14.00">&#45;elementIt : std::list&lt;CircleStatic *&gt;::iterator</text>
-<text text-anchor="middle" x="1274" y="-432.8" font-family="Times,serif" font-size="14.00">#mainCircle : Maths::Circle</text>
+<text text-anchor="middle" x="1274" y="-432.8" font-family="Times,serif" font-size="14.00">#mainCircle : Circle</text>
 <polyline fill="none" stroke="black" points="1103.5,-425 1444.5,-425 "/>
 <text text-anchor="middle" x="1274" y="-409.3" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="1274" y="-394.3" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
@@ -91,7 +91,7 @@
 <g id="node5" class="node">
 <title>Blob.Collision.RectStatic</title>
 <polygon fill="none" stroke="black" points="1284,-174.5 1284,-312.5 1662,-312.5 1662,-174.5 1284,-174.5"/>
-<text text-anchor="middle" x="1473" y="-297.3" font-family="Times,serif" font-size="14.00">Blob::Maths::Rectangle</text>
+<text text-anchor="middle" x="1473" y="-297.3" font-family="Times,serif" font-size="14.00">Blob::Rectangle</text>
 <polyline fill="none" stroke="black" points="1284,-289.5 1662,-289.5 "/>
 <text text-anchor="middle" x="1473" y="-274.3" font-family="Times,serif" font-size="14.00">RectStatic</text>
 <polyline fill="none" stroke="black" points="1284,-266.5 1662,-266.5 "/>
@@ -99,7 +99,7 @@
 <polyline fill="none" stroke="black" points="1284,-243.5 1662,-243.5 "/>
 <text text-anchor="middle" x="1473" y="-227.8" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="1473" y="-212.8" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
-<text text-anchor="middle" x="1473" y="-197.8" font-family="Times,serif" font-size="14.00">+RectStatic(Maths::Vec2f, Maths::Vec2f, const int)</text>
+<text text-anchor="middle" x="1473" y="-197.8" font-family="Times,serif" font-size="14.00">+RectStatic(Vec2f, Vec2f, const int)</text>
 <text text-anchor="middle" x="1473" y="-182.8" font-family="Times,serif" font-size="14.00">+~RectStatic()</text>
 </g>
 <!-- Blob.Collision.Object&#45;&gt;Blob.Collision.RectStatic -->
@@ -115,7 +115,7 @@
 <text text-anchor="middle" x="1690" y="-119.3" font-family="Times,serif" font-size="14.00">LineStatic</text>
 <polyline fill="none" stroke="black" points="1525.5,-111.5 1854.5,-111.5 "/>
 <text text-anchor="middle" x="1690" y="-96.3" font-family="Times,serif" font-size="14.00">&#45;elementIt : std::list&lt;LineStatic *&gt;::iterator</text>
-<text text-anchor="middle" x="1690" y="-81.3" font-family="Times,serif" font-size="14.00">#lines : std::deque&lt;Maths::Point2f&gt;</text>
+<text text-anchor="middle" x="1690" y="-81.3" font-family="Times,serif" font-size="14.00">#lines : std::deque&lt;Point2f&gt;</text>
 <polyline fill="none" stroke="black" points="1525.5,-73.5 1854.5,-73.5 "/>
 <text text-anchor="middle" x="1690" y="-57.8" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="1690" y="-42.8" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
@@ -135,7 +135,7 @@
 <text text-anchor="middle" x="889" y="-293.3" font-family="Times,serif" font-size="14.00">CircleDynamic</text>
 <polyline fill="none" stroke="black" points="708.5,-285.5 1069.5,-285.5 "/>
 <text text-anchor="middle" x="889" y="-270.3" font-family="Times,serif" font-size="14.00">&#45;elementIt : std::list&lt;CircleDynamic *&gt;::iterator</text>
-<text text-anchor="middle" x="889" y="-255.3" font-family="Times,serif" font-size="14.00">#mainCircle : Maths::Circle</text>
+<text text-anchor="middle" x="889" y="-255.3" font-family="Times,serif" font-size="14.00">#mainCircle : Circle</text>
 <polyline fill="none" stroke="black" points="708.5,-247.5 1069.5,-247.5 "/>
 <text text-anchor="middle" x="889" y="-231.8" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="889" y="-216.8" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
@@ -152,7 +152,7 @@
 <g id="node8" class="node">
 <title>Blob.Collision.RectDynamic</title>
 <polygon fill="none" stroke="black" points="898,-0.5 898,-138.5 1296,-138.5 1296,-0.5 898,-0.5"/>
-<text text-anchor="middle" x="1097" y="-123.3" font-family="Times,serif" font-size="14.00">Blob::Maths::Rectangle</text>
+<text text-anchor="middle" x="1097" y="-123.3" font-family="Times,serif" font-size="14.00">Blob::Rectangle</text>
 <polyline fill="none" stroke="black" points="898,-115.5 1296,-115.5 "/>
 <text text-anchor="middle" x="1097" y="-100.3" font-family="Times,serif" font-size="14.00">RectDynamic</text>
 <polyline fill="none" stroke="black" points="898,-92.5 1296,-92.5 "/>
@@ -160,7 +160,7 @@
 <polyline fill="none" stroke="black" points="898,-69.5 1296,-69.5 "/>
 <text text-anchor="middle" x="1097" y="-53.8" font-family="Times,serif" font-size="14.00">#enableCollision()</text>
 <text text-anchor="middle" x="1097" y="-38.8" font-family="Times,serif" font-size="14.00">#disableCollision()</text>
-<text text-anchor="middle" x="1097" y="-23.8" font-family="Times,serif" font-size="14.00">+RectDynamic(Maths::Vec2f, Maths::Vec2f, const int)</text>
+<text text-anchor="middle" x="1097" y="-23.8" font-family="Times,serif" font-size="14.00">+RectDynamic(Vec2f, Vec2f, const int)</text>
 <text text-anchor="middle" x="1097" y="-8.8" font-family="Times,serif" font-size="14.00">+~RectDynamic()</text>
 </g>
 <!-- Blob.Collision.DynamicObject&#45;&gt;Blob.Collision.RectDynamic -->

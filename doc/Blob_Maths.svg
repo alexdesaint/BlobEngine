@@ -64,7 +64,7 @@
 <polyline fill="none" stroke="black" points="65,-817.5 430,-817.5 "/>
 <text text-anchor="middle" x="247.5" y="-801.8" font-family="Times,serif" font-size="14.00">+setModelMatrix(const std::array&lt;float, 16&gt; &amp;)</text>
 <text text-anchor="middle" x="247.5" y="-786.8" font-family="Times,serif" font-size="14.00">+setPosition(float, float, float)</text>
-<text text-anchor="middle" x="247.5" y="-771.8" font-family="Times,serif" font-size="14.00">+setPosition(const Maths::Vec2f &amp;, float)</text>
+<text text-anchor="middle" x="247.5" y="-771.8" font-family="Times,serif" font-size="14.00">+setPosition(const Vec2f &amp;, float)</text>
 <text text-anchor="middle" x="247.5" y="-756.8" font-family="Times,serif" font-size="14.00">+move(float, float, float)</text>
 <text text-anchor="middle" x="247.5" y="-741.8" font-family="Times,serif" font-size="14.00">+setRotation(float, float, float, float)</text>
 <text text-anchor="middle" x="247.5" y="-726.8" font-family="Times,serif" font-size="14.00">+rotate(float, float, float, float)</text>
@@ -127,9 +127,9 @@
 <polygon fill="none" stroke="black" points="704.5,-1181 704.5,-1258 1066.5,-1258 1066.5,-1181 704.5,-1181"/>
 <text text-anchor="middle" x="885.5" y="-1242.8" font-family="Times,serif" font-size="14.00">Form</text>
 <polyline fill="none" stroke="black" points="704.5,-1235 1066.5,-1235 "/>
-<text text-anchor="middle" x="885.5" y="-1219.3" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="885.5" y="-1204.3" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Maths::Circle &amp;) : bool</text>
-<text text-anchor="middle" x="885.5" y="-1189.3" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Maths::Line &amp;) : bool</text>
+<text text-anchor="middle" x="885.5" y="-1219.3" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="885.5" y="-1204.3" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Circle &amp;) : bool</text>
+<text text-anchor="middle" x="885.5" y="-1189.3" font-family="Times,serif" font-size="14.00">#overlap(const Blob::Line &amp;) : bool</text>
 </g>
 <!-- Blob.Maths.Rectangle -->
 <g id="node7" class="node">
@@ -137,16 +137,16 @@
 <polygon fill="none" stroke="black" points="447.5,-681 447.5,-871 857.5,-871 857.5,-681 447.5,-681"/>
 <text text-anchor="middle" x="652.5" y="-855.8" font-family="Times,serif" font-size="14.00">Rectangle</text>
 <polyline fill="none" stroke="black" points="447.5,-848 857.5,-848 "/>
-<text text-anchor="middle" x="652.5" y="-832.8" font-family="Times,serif" font-size="14.00">+position : Blob::Maths::Point2f</text>
-<text text-anchor="middle" x="652.5" y="-817.8" font-family="Times,serif" font-size="14.00">+size : Blob::Maths::Vec2f</text>
+<text text-anchor="middle" x="652.5" y="-832.8" font-family="Times,serif" font-size="14.00">+position : Blob::Point2f</text>
+<text text-anchor="middle" x="652.5" y="-817.8" font-family="Times,serif" font-size="14.00">+size : Blob::Vec2f</text>
 <polyline fill="none" stroke="black" points="447.5,-810 857.5,-810 "/>
 <text text-anchor="middle" x="652.5" y="-794.3" font-family="Times,serif" font-size="14.00">+Rectangle()</text>
-<text text-anchor="middle" x="652.5" y="-779.3" font-family="Times,serif" font-size="14.00">+Rectangle(Blob::Maths::Point2f, Blob::Maths::Vec2f)</text>
+<text text-anchor="middle" x="652.5" y="-779.3" font-family="Times,serif" font-size="14.00">+Rectangle(Blob::Point2f, Blob::Vec2f)</text>
 <text text-anchor="middle" x="652.5" y="-764.3" font-family="Times,serif" font-size="14.00">+getPoints() : std::array&lt;Vec2f, 4&gt;</text>
-<text text-anchor="middle" x="652.5" y="-749.3" font-family="Times,serif" font-size="14.00">+overlapBigger(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="652.5" y="-734.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="652.5" y="-719.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Circle &amp;) : bool</text>
-<text text-anchor="middle" x="652.5" y="-704.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Line &amp;) : bool</text>
+<text text-anchor="middle" x="652.5" y="-749.3" font-family="Times,serif" font-size="14.00">+overlapBigger(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="652.5" y="-734.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="652.5" y="-719.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Circle &amp;) : bool</text>
+<text text-anchor="middle" x="652.5" y="-704.3" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Line &amp;) : bool</text>
 <text text-anchor="middle" x="652.5" y="-689.3" font-family="Times,serif" font-size="14.00">+rasterize() : std::list&lt;Vec2i&gt;</text>
 </g>
 <!-- Blob.Maths.Form&#45;&gt;Blob.Maths.Rectangle -->
@@ -162,13 +162,13 @@
 <text text-anchor="middle" x="885.5" y="-592.3" font-family="Times,serif" font-size="14.00">Circle</text>
 <polyline fill="none" stroke="black" points="704.5,-584.5 1066.5,-584.5 "/>
 <text text-anchor="middle" x="885.5" y="-569.3" font-family="Times,serif" font-size="14.00">+rayon : float</text>
-<text text-anchor="middle" x="885.5" y="-554.3" font-family="Times,serif" font-size="14.00">+position : Blob::Maths::Point2f</text>
+<text text-anchor="middle" x="885.5" y="-554.3" font-family="Times,serif" font-size="14.00">+position : Blob::Point2f</text>
 <polyline fill="none" stroke="black" points="704.5,-546.5 1066.5,-546.5 "/>
 <text text-anchor="middle" x="885.5" y="-530.8" font-family="Times,serif" font-size="14.00">+Circle()</text>
-<text text-anchor="middle" x="885.5" y="-515.8" font-family="Times,serif" font-size="14.00">+Circle(Blob::Maths::Point2f, float)</text>
-<text text-anchor="middle" x="885.5" y="-500.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="885.5" y="-485.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Circle &amp;) : bool</text>
-<text text-anchor="middle" x="885.5" y="-470.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Line &amp;) : bool</text>
+<text text-anchor="middle" x="885.5" y="-515.8" font-family="Times,serif" font-size="14.00">+Circle(Blob::Point2f, float)</text>
+<text text-anchor="middle" x="885.5" y="-500.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="885.5" y="-485.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Circle &amp;) : bool</text>
+<text text-anchor="middle" x="885.5" y="-470.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Line &amp;) : bool</text>
 </g>
 <!-- Blob.Maths.Form&#45;&gt;Blob.Maths.Circle -->
 <g id="edge6" class="edge">
@@ -182,20 +182,20 @@
 <polygon fill="none" stroke="black" points="859,-146.5 859,-411.5 1330,-411.5 1330,-146.5 859,-146.5"/>
 <text text-anchor="middle" x="1094.5" y="-396.3" font-family="Times,serif" font-size="14.00">Line</text>
 <polyline fill="none" stroke="black" points="859,-388.5 1330,-388.5 "/>
-<text text-anchor="middle" x="1094.5" y="-373.3" font-family="Times,serif" font-size="14.00">+pointA : Blob::Maths::Point2f</text>
-<text text-anchor="middle" x="1094.5" y="-358.3" font-family="Times,serif" font-size="14.00">+pointB : Blob::Maths::Point2f</text>
+<text text-anchor="middle" x="1094.5" y="-373.3" font-family="Times,serif" font-size="14.00">+pointA : Blob::Point2f</text>
+<text text-anchor="middle" x="1094.5" y="-358.3" font-family="Times,serif" font-size="14.00">+pointB : Blob::Point2f</text>
 <polyline fill="none" stroke="black" points="859,-350.5 1330,-350.5 "/>
 <text text-anchor="middle" x="1094.5" y="-334.8" font-family="Times,serif" font-size="14.00">+Line()</text>
-<text text-anchor="middle" x="1094.5" y="-319.8" font-family="Times,serif" font-size="14.00">+Line(Blob::Maths::Point2f, Blob::Maths::Point2f)</text>
-<text text-anchor="middle" x="1094.5" y="-304.8" font-family="Times,serif" font-size="14.00">+getVector() : Blob::Maths::Vec2f</text>
+<text text-anchor="middle" x="1094.5" y="-319.8" font-family="Times,serif" font-size="14.00">+Line(Blob::Point2f, Blob::Point2f)</text>
+<text text-anchor="middle" x="1094.5" y="-304.8" font-family="Times,serif" font-size="14.00">+getVector() : Blob::Vec2f</text>
 <text text-anchor="middle" x="1094.5" y="-289.8" font-family="Times,serif" font-size="14.00">+Length2() : double</text>
 <text text-anchor="middle" x="1094.5" y="-274.8" font-family="Times,serif" font-size="14.00">+Length() : double</text>
 <text text-anchor="middle" x="1094.5" y="-259.8" font-family="Times,serif" font-size="14.00">+getOrientation() : double</text>
-<text text-anchor="middle" x="1094.5" y="-244.8" font-family="Times,serif" font-size="14.00">+closestPointTo(Blob::Maths::Point2f) : Blob::Maths::Point2f</text>
-<text text-anchor="middle" x="1094.5" y="-229.8" font-family="Times,serif" font-size="14.00">+getIntersectionPoint(Blob::Maths::Line) : Blob::Maths::Point2f</text>
-<text text-anchor="middle" x="1094.5" y="-214.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Rectangle &amp;) : bool</text>
-<text text-anchor="middle" x="1094.5" y="-199.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Circle &amp;) : bool</text>
-<text text-anchor="middle" x="1094.5" y="-184.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Maths::Line &amp;) : bool</text>
+<text text-anchor="middle" x="1094.5" y="-244.8" font-family="Times,serif" font-size="14.00">+closestPointTo(Blob::Point2f) : Blob::Point2f</text>
+<text text-anchor="middle" x="1094.5" y="-229.8" font-family="Times,serif" font-size="14.00">+getIntersectionPoint(Blob::Line) : Blob::Point2f</text>
+<text text-anchor="middle" x="1094.5" y="-214.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Rectangle &amp;) : bool</text>
+<text text-anchor="middle" x="1094.5" y="-199.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Circle &amp;) : bool</text>
+<text text-anchor="middle" x="1094.5" y="-184.8" font-family="Times,serif" font-size="14.00">+overlap(const Blob::Line &amp;) : bool</text>
 <text text-anchor="middle" x="1094.5" y="-169.8" font-family="Times,serif" font-size="14.00">+getGradient() : float</text>
 <text text-anchor="middle" x="1094.5" y="-154.8" font-family="Times,serif" font-size="14.00">+getConstant() : float</text>
 </g>

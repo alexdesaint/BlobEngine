@@ -18,13 +18,17 @@ public:
 
     constexpr RGB() noexcept = default;
 
-    constexpr RGB(uint8_t R, uint8_t G, uint8_t B) noexcept : R(R / 255.f), G(G / 255.f), B(B / 255.f) {}
+    constexpr RGB(uint8_t R, uint8_t G, uint8_t B) noexcept :
+        R(R / 255.f), G(G / 255.f), B(B / 255.f) {}
 
     constexpr RGB(float rgb[3]) noexcept : R(rgb[0]), G(rgb[1]), B(rgb[2]) {}
 
     /// Hex Color Code Constructor
     /// \param RGB Hexadecimal color representation
-    constexpr explicit RGB(uint32_t RGB) noexcept : R(((RGB >> 16) & 0xFF) / 255.f), G(((RGB >> 8) & 0xFF) / 255.f), B((RGB & 0xFF) / 255.f) {}
+    constexpr explicit RGB(uint32_t RGB) noexcept :
+        R(((RGB >> 16) & 0xFF) / 255.f),
+        G(((RGB >> 8) & 0xFF) / 255.f),
+        B((RGB & 0xFF) / 255.f) {}
 
     /// Float Color Constructor. Values range is from 0.f to 1.f.
     /// \param R Red channel
@@ -47,16 +51,19 @@ public:
 
     constexpr RGBA() noexcept = default;
 
-    constexpr RGBA(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 0) noexcept : R(R / 255.f), G(G / 255.f), B(B / 255.f), A(A / 255.f) {}
+    constexpr RGBA(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 0) noexcept :
+        R(R / 255.f), G(G / 255.f), B(B / 255.f), A(A / 255.f) {}
 
-    constexpr RGBA(RGB rgb, float A = 0) noexcept : R(rgb.R), G(rgb.G), B(rgb.B), A(A) {}
+    constexpr RGBA(RGB rgb, float A = 0) noexcept :
+        R(rgb.R), G(rgb.G), B(rgb.B), A(A) {}
 
     /// Float Color Constructor. Values range is from 0.f to 1.f.
     /// \param R Red channel
     /// \param G Green channel
     /// \param B Blue channel
     /// \param A Alpha channel (transparency)
-    constexpr RGBA(float R, float G, float B, float A = 0) noexcept : R(R), G(G), B(B), A(A) {}
+    constexpr RGBA(float R, float G, float B, float A = 0) noexcept :
+        R(R), G(G), B(B), A(A) {}
 
     operator RGB() { return {R, G, B}; }
 

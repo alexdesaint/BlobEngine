@@ -38,12 +38,12 @@ int32_t = NativeType("int")
 uint16_t = NativeType("uint16_t")
 string_t = NativeType("std::string")
 
-Buffer_t = NativeType("Blob::Core::Buffer")
+Buffer_t = NativeType("Blob::Buffer")
 Attribute_t = NativeType("Blob::GL::VertexArrayObject")
-RenderOptions_t = NativeType("Blob::Core::RenderOptions")
-Shape_t = NativeType("Blob::Core::Shape")
-Scene_t = NativeType("Blob::Core::Scene")
-Primitive_t = NativeType("Blob::Core::Primitive")
+RenderOptions_t = NativeType("Blob::RenderOptions")
+Shape_t = NativeType("Blob::Shape")
+Scene_t = NativeType("Blob::Scene")
+Primitive_t = NativeType("Blob::Primitive")
 
 
 def getIndent(size):
@@ -224,7 +224,7 @@ def codeMesh(mesh):
                 Parameter('morph%dnz' % col_i, float_t)
             ]
 
-    attributes = Struct("Attributes", content=[], parents={"Blob::Core::Asset<Attributes>": "public"})
+    attributes = Struct("Attributes", content=[], parents={"Blob::Asset<Attributes>": "public"})
     dataStruct.namespace.append(name)
     dataStruct.namespace.append("Attributes")
     if attributes.content:
@@ -278,16 +278,16 @@ def codeMesh(mesh):
         "renderOptions", RenderOptions_t, "indices, " + str(len(indice)) + ""))
     constructorCode = [
         "attribute.setBuffer(buffer, sizeof(data[0]));",
-        "attribute.setArray<float>(3, Blob::Core::AttributeLocation::POSITION, offsetof(Data, x));",
-        "attribute.setArray<float>(3, Blob::Core::AttributeLocation::NORMAL, offsetof(Data, nx));"
+        "attribute.setArray<float>(3, Blob::AttributeLocation::POSITION, offsetof(Data, x));",
+        "attribute.setArray<float>(3, Blob::AttributeLocation::NORMAL, offsetof(Data, nx));"
     ]
     if color_max:
         constructorCode.append(
-            "attribute.setArray<float>(4, Blob::Core::AttributeLocation::COLOR_0, offsetof(Data, color0r));")
+            "attribute.setArray<float>(4, Blob::AttributeLocation::COLOR_0, offsetof(Data, color0r));")
 
     attributes.content.append(Function("Attributes", content=constructorCode))
 
-    meshStruct = Struct(name, {"Blob::Core::Mesh": "public"}, [
+    meshStruct = Struct(name, {"Blob::Mesh": "public"}, [
         attributes, 
         Parameter("attributes", NativeType("Attributes::Intance"), "Attributes::getInstance()"),
         Parameter("primitive", Primitive_t)])
@@ -306,7 +306,7 @@ def codeMesh(mesh):
             meshStruct.content.append(Parameter("material",  NativeType("Blob::Materials::" + material.name), "{albedo}"))
         else:
             meshStruct.content.append(Parameter("material", NativeType("Blob::Materials::" + material.name)))
-    meshStruct.content.append(Function(name, None, [], ["Blob::Core::Mesh(primitive)"], [
+    meshStruct.content.append(Function(name, None, [], ["Blob::Mesh(primitive)"], [
         "primitive.material = &material;",
         "primitive.renderOptions = &attributes->renderOptions;",
         "primitive.vertexArrayObject = &attributes->attribute;"
@@ -369,7 +369,7 @@ for object in bpy.data.objects:
             childName = child.name.replace('.', '_')
             constructor.content.append(
                 shapeName + ".addChild(" + childName + ");")
-    args.append("Blob::Maths::ModelTransform{" + ", ".join(
+    args.append("Blob::ModelTransform{" + ", ".join(
         ['{' + ", ".join(map(str, vec)) + '}' for vec in object.matrix_local]) + "}")
     project.content.append(Parameter(shapeName, Shape_t, init=", ".join(args)))
 

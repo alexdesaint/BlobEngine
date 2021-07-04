@@ -4,7 +4,7 @@
 #include <Blob/Core/RenderOptions.hpp>
 #include <Blob/GL/VertexArrayObject.hpp>
 
-namespace Blob::Core {
+namespace Blob {
 
 struct Primitive {
     const Material *material = nullptr;
@@ -14,8 +14,12 @@ struct Primitive {
     Primitive() = default;
     Primitive(const Primitive &) = delete;
     Primitive(Primitive &&) = delete;
-    Primitive(GL::VertexArrayObject *vertexArrayObject, const Material *material, RenderOptions *renderOptions) :
-        material(material), vertexArrayObject(vertexArrayObject), renderOptions(renderOptions) {}
+    Primitive(GL::VertexArrayObject *vertexArrayObject,
+              const Material *material,
+              RenderOptions *renderOptions) :
+        material(material),
+        vertexArrayObject(vertexArrayObject),
+        renderOptions(renderOptions) {}
 };
 
 struct Primitive2D {
@@ -26,8 +30,12 @@ struct Primitive2D {
     Primitive2D() = default;
     Primitive2D(const Primitive2D &) = delete;
     Primitive2D(Primitive2D &&) = delete;
-    Primitive2D(GL::VertexArrayObject *vertexArrayObject, const Material2D *material, RenderOptions *renderOptions) :
-        material(material), vertexArrayObject(vertexArrayObject), renderOptions(renderOptions) {}
+    Primitive2D(GL::VertexArrayObject *vertexArrayObject,
+                const Material2D *material,
+                RenderOptions *renderOptions) :
+        material(material),
+        vertexArrayObject(vertexArrayObject),
+        renderOptions(renderOptions) {}
 };
 
-} // namespace Blob::Core
+} // namespace Blob

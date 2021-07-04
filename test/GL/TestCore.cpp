@@ -10,12 +10,14 @@
 #include <iostream>
 
 using namespace Blob;
-using namespace Blob::GL;
 
 static const struct {
     float x, y;
     float r, g, b;
-} vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f}, {0.5f, -0.5f, 0.f, 1.f, 1.f}, {-0.5f, 0.5f, 1.f, 0.f, 1.f}, {0.5f, 0.5f, 0.f, 0.f, 1.f}};
+} vertices[4] = {{-0.5f, -0.5f, 1.f, 1.f, 0.f},
+                 {0.5f, -0.5f, 0.f, 1.f, 1.f},
+                 {-0.5f, 0.5f, 1.f, 0.f, 1.f},
+                 {0.5f, 0.5f, 0.f, 0.f, 1.f}};
 
 static const char *vertex_shader_text = R"=====(
 #version 110
@@ -35,18 +37,19 @@ void main() {
 }
 )=====";
 
-static const char *fragment_shader_text = "#version 110\n"
-                                          "varying vec3 color;\n"
-                                          "void main()\n"
-                                          "{\n"
-                                          "    gl_FragColor = vec4(color, 1.0);\n"
-                                          "}\n";
+static const char *fragment_shader_text =
+    "#version 110\n"
+    "varying vec3 color;\n"
+    "void main()\n"
+    "{\n"
+    "    gl_FragColor = vec4(color, 1.0);\n"
+    "}\n";
 
 int main() {
     unsigned int width = 640, height = 480;
 
-    Window window{{width, height}};
-    Shader shader;
+    GL::Window window{{width, height}};
+    GL::Shader shader;
 
     GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
@@ -60,9 +63,9 @@ int main() {
     vao.setArray(2, sp.getAttribLocation("vPos"), GL_FLOAT, 0);
     vao.setArray(3, sp.getAttribLocation("vCol"), GL_FLOAT, sizeof(float) * 2);
 
-    Maths::ProjectionTransform pt(PI / 4, {width, height}, 0.1, 10);
-    Maths::ViewTransform vt;
-    Maths::ModelTransform mt;
+    ProjectionTransform pt(PI / 4, {width, height}, 0.1, 10);
+    ViewTransform vt;
+    ModelTransform mt;
 
     int model = sp.getUniformLocation("model");
     int view = sp.getUniformLocation("view");
@@ -73,7 +76,7 @@ int main() {
 
     while (window.isOpen()) {
 
-        pt.setRatio({width,height});
+        pt.setRatio({width, height});
 
         window.setViewport({width, height});
 

@@ -9,11 +9,11 @@
 
 namespace Blob::Shaders2D {
 
-using UniformModel = Core::UniformAttribute<Maths::Mat3, 0>;
-using UniformView = Core::UniformAttribute<Maths::ViewTransform2D, 1>;
-using UniformProjection = Core::UniformAttribute<Maths::ProjectionTransform2D, 2>;
+using UniformModel = UniformAttribute<Mat3, 0>;
+using UniformView = UniformAttribute<ViewTransform2D, 1>;
+using UniformProjection = UniformAttribute<ProjectionTransform2D, 2>;
 
-using SingleColor = Core::Shader<Core::ShaderProgram<Core::VertexShader<R"=====(#version 450
+using SingleColor = Shader<ShaderProgram<VertexShader<R"=====(#version 450
 layout(location = 0) in vec2 Position;
 
 layout(location = 0) uniform mat3 model;
@@ -26,7 +26,7 @@ void main() {
     pos = projection * pos;
     gl_Position = vec4(pos.xy, 0, 1);
 })=====">,
-                                                     Core::FragmentShader<R"=====(#version 450
+                                         FragmentShader<R"=====(#version 450
 layout(location=0) out vec4 color;
 
 layout(location = 3) uniform vec4 albedo;
@@ -34,12 +34,13 @@ layout(location = 3) uniform vec4 albedo;
 void main() {
     color = albedo;
 })=====">>,
-                                 UniformModel,
-                                 UniformView,
-                                 UniformProjection,
-                                 Core::UniformAttribute<Color::RGBA, 3>>;
+                           UniformModel,
+                           UniformView,
+                           UniformProjection,
+                           UniformAttribute<Color::RGBA, 3>>;
 
-using SingleColorSingleTexture = Core::Shader<Core::ShaderProgram<Core::VertexShader<R"=====(#version 450
+using SingleColorSingleTexture =
+    Shader<ShaderProgram<VertexShader<R"=====(#version 450
 layout(location = 0) in vec2 Position;
 layout(location = 3) in vec2 TexturePosition;
 
@@ -57,7 +58,7 @@ void main() {
     pos = projection * pos;
     gl_Position = vec4(pos.xy, 0, 1);
 })=====">,
-                                                                  Core::FragmentShader<R"=====(#version 450
+                         FragmentShader<R"=====(#version 450
 layout(location=0) out vec4 color;
 
 layout(location = 1) in vec2 texCoord;
@@ -68,13 +69,14 @@ uniform sampler2D Texture;
 void main() {
     color = albedo * texture(Texture, texCoord.st);
 })=====">>,
-                                              UniformModel,
-                                              UniformView,
-                                              UniformProjection,
-                                              Core::UniformAttribute<Color::RGBA, 3>,
-                                              Core::UniformAttribute<Core::Texture, 0>>;
+           UniformModel,
+           UniformView,
+           UniformProjection,
+           UniformAttribute<Color::RGBA, 3>,
+           UniformAttribute<Texture, 0>>;
 
-using ColorArraySingleTexture = Core::Shader<Core::ShaderProgram<Core::VertexShader<R"=====(#version 450
+using ColorArraySingleTexture =
+    Shader<ShaderProgram<VertexShader<R"=====(#version 450
 layout(location = 0) in vec2 Position;
 layout(location = 3) in vec2 TexturePosition;
 layout(location = 5) in vec4 Color;
@@ -91,7 +93,7 @@ void main() {
     color_0 = Color;
     gl_Position = vec4((projection * view * model * vec3(Position.xy, 1)).xy, 0, 1);
 })=====">,
-                                                                 Core::FragmentShader<R"=====(#version 450
+                         FragmentShader<R"=====(#version 450
 layout(location=0) out vec4 color;
 
 layout(location = 1) in vec2 texCoord;
@@ -102,19 +104,19 @@ uniform sampler2D Texture;
 void main() {
     color = color_0 * texture(Texture, texCoord.st);
 })=====">>,
-                                             UniformModel,
-                                             UniformView,
-                                             UniformProjection,
-                                             Core::UniformAttribute<Core::Texture, 0>>;
+           UniformModel,
+           UniformView,
+           UniformProjection,
+           UniformAttribute<Texture, 0>>;
 
 } // namespace Blob::Shaders2D
 
 namespace Blob::Shaders {
-using UniformModel = Core::UniformAttribute<Maths::Mat4, 0>;
-using UniformView = Core::UniformAttribute<Maths::ViewTransform, 1>;
-using UniformProjection = Core::UniformAttribute<Maths::ProjectionTransform, 2>;
+using UniformModel = UniformAttribute<Mat4, 0>;
+using UniformView = UniformAttribute<ViewTransform, 1>;
+using UniformProjection = UniformAttribute<ProjectionTransform, 2>;
 
-using SingleColor = Core::Shader<Core::ShaderProgram<Core::VertexShader<R"=====(#version 450
+using SingleColor = Shader<ShaderProgram<VertexShader<R"=====(#version 450
 
 layout(location = 0) in vec3 POSITION;
 
@@ -125,7 +127,7 @@ layout(location = 2) uniform mat4 projection;
 void main() {
     gl_Position = projection * view * model * vec4(POSITION, 1.0);
 })=====">,
-                                                     Core::FragmentShader<R"=====(#version 450
+                                         FragmentShader<R"=====(#version 450
 layout(location=0) out vec4 color;
 
 layout(location = 3) uniform vec3 albedo;
@@ -134,12 +136,13 @@ void main()
 {
     color = vec4(albedo, 1.0);
 })=====">>,
-                                 UniformModel,
-                                 UniformView,
-                                 UniformProjection,
-                                 Core::UniformAttribute<Color::RGB, 3>>;
+                           UniformModel,
+                           UniformView,
+                           UniformProjection,
+                           UniformAttribute<Color::RGB, 3>>;
 
-using SingleColorTransparent = Core::Shader<Core::ShaderProgram<Core::VertexShader<R"=====(#version 450
+using SingleColorTransparent =
+    Shader<ShaderProgram<VertexShader<R"=====(#version 450
 layout(location = 0) in vec3 POSITION;
 
 layout(location = 0) uniform mat4 model;
@@ -149,7 +152,7 @@ layout(location = 2) uniform mat4 projection;
 void main() {
     gl_Position =  projection * view * model * vec4(POSITION, 1.0);
 })=====">,
-                                                                Core::FragmentShader<R"=====(#version 450
+                         FragmentShader<R"=====(#version 450
 layout(location=0) out vec4 color;
 
 layout(location = 3) uniform vec4 albedo;
@@ -158,12 +161,12 @@ void main()
 {
     color = albedo;
 })=====">>,
-                                            UniformModel,
-                                            UniformView,
-                                            UniformProjection,
-                                            Core::UniformAttribute<Color::RGBA, 3>>;
+           UniformModel,
+           UniformView,
+           UniformProjection,
+           UniformAttribute<Color::RGBA, 3>>;
 
-using SingleTexture = Core::Shader<Core::ShaderProgram<Core::VertexShader<R"=====(#version 450
+using SingleTexture = Shader<ShaderProgram<VertexShader<R"=====(#version 450
 layout(location = 0) in vec3 POSITION;
 layout(location = 3) in vec2 texCoord;
 
@@ -177,7 +180,7 @@ void main() {
     texCoord_ = texCoord;
     gl_Position =  projection * view * model * vec4(POSITION, 1.0);
 })=====">,
-                                                       Core::FragmentShader<R"=====(#version 450
+                                           FragmentShader<R"=====(#version 450
 layout(location=0) out vec4 color;
 
 layout(location = 1) in vec2 texCoord;
@@ -189,13 +192,13 @@ void main()
     vec3 albedo = texture(Texture, texCoord * texScale).rgb;
     color = vec4(albedo, 1.0);
 })=====">>,
-                                   UniformModel,
-                                   UniformView,
-                                   UniformProjection,
-                                   Core::UniformAttribute<Maths::Vec2<float>, 3>,
-                                   Core::UniformAttribute<Core::Texture, 0>>;
+                             UniformModel,
+                             UniformView,
+                             UniformProjection,
+                             UniformAttribute<Vec2<float>, 3>,
+                             UniformAttribute<Texture, 0>>;
 
-using PerFaceNormal = Core::Shader<Core::ShaderProgram<Core::VertexShader<R"=====(#version 450
+using PerFaceNormal = Shader<ShaderProgram<VertexShader<R"=====(#version 450
 layout(location = 0) in vec3 POSITION;
 layout(location = 1) in vec3 NORMAL;
 
@@ -205,7 +208,7 @@ void main() {
     normal = NORMAL;
     gl_Position =  vec4(POSITION, 1.0);
 })=====">,
-                                                       Core::GeometryShader<R"=====(#version 450
+                                           GeometryShader<R"=====(#version 450
 layout(triangles) in;
 layout(line_strip, max_vertices=2) out;
 
@@ -236,7 +239,7 @@ void main()
 
     EndPrimitive();
 })=====">,
-                                                       Core::FragmentShader<R"=====(#version 450
+                                           FragmentShader<R"=====(#version 450
 layout(location=0) out vec4 color;
 
 layout(location = 3) uniform vec3 albedo;
@@ -245,13 +248,13 @@ void main()
 {
     color = vec4(albedo, 1.0);
 })=====">>,
-                                   UniformModel,
-                                   UniformView,
-                                   UniformProjection,
-                                   Core::UniformAttribute<Color::RGB, 3>,
-                                   Core::UniformAttribute<float, 4>>;
+                             UniformModel,
+                             UniformView,
+                             UniformProjection,
+                             UniformAttribute<Color::RGB, 3>,
+                             UniformAttribute<float, 4>>;
 
-using Deferred = Core::Shader<Core::ShaderProgram<Core::VertexShader<R"=====(#version 450
+using Deferred = Shader<ShaderProgram<VertexShader<R"=====(#version 450
 
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec3 gNormal;
@@ -278,17 +281,17 @@ void main()
 
 namespace PBR {
 
-using UniformMetallic = Core::UniformAttribute<float, 3>;
-using UniformRoughness = Core::UniformAttribute<float, 4>;
-using UniformAo = Core::UniformAttribute<float, 5>;
+using UniformMetallic = UniformAttribute<float, 3>;
+using UniformRoughness = UniformAttribute<float, 4>;
+using UniformAo = UniformAttribute<float, 5>;
 
-using UniformCameraPosition = Core::UniformAttribute<Maths::Vec3<float>, 6>;
-using UniformLightPosition = Core::UniformAttribute<Maths::Vec3<float>, 7>;
-using UniformLightColor = Core::UniformAttribute<Color::RGB, 8>;
-using UniformLightRadius = Core::UniformAttribute<float, 9>;
-using UniformLightPower = Core::UniformAttribute<float, 10>;
+using UniformCameraPosition = UniformAttribute<Vec3<float>, 6>;
+using UniformLightPosition = UniformAttribute<Vec3<float>, 7>;
+using UniformLightColor = UniformAttribute<Color::RGB, 8>;
+using UniformLightRadius = UniformAttribute<float, 9>;
+using UniformLightPower = UniformAttribute<float, 10>;
 
-using Vertex = Core::VertexShader<R"=====(#version 450
+using Vertex = VertexShader<R"=====(#version 450
 layout(location = 0) in vec3 POSITION;
 layout(location = 1) in vec3 NORMAL;
 layout(location = 2) in vec3 TANGENT;
@@ -320,7 +323,7 @@ void main() {
     gl_Position =  projection * view * model * vec4(POSITION, 1.0);
 })=====">;
 
-using VertexInstanced = Core::VertexShader<R"=====(#version 450
+using VertexInstanced = VertexShader<R"=====(#version 450
 layout(location = 0) in vec3 POSITION;
 layout(location = 1) in vec3 NORMAL;
 layout(location = 2) in vec3 TANGENT;
@@ -452,7 +455,8 @@ float lightAttenuationLocale(float lightPower, float lightRadius, vec3 lightPosi
 }
 )=====";
 
-using SingleColor = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
+using SingleColor = Shader<
+    ShaderProgram<Vertex, FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform float metallic;
 layout(location = 4) uniform float roughness;
@@ -472,20 +476,22 @@ void main()
 //limunance = albedo;
     color = vec4(limunance, 1.0);
 })=====">>,
-                                 UniformModel,
-                                 UniformView,
-                                 UniformProjection,
-                                 UniformMetallic,
-                                 UniformRoughness,
-                                 UniformAo,
-                                 UniformCameraPosition,
-                                 UniformLightPosition,
-                                 UniformLightColor,
-                                 UniformLightRadius,
-                                 UniformLightPower,
-                                 Core::UniformAttribute<Color::RGB, 11>>;
+    UniformModel,
+    UniformView,
+    UniformProjection,
+    UniformMetallic,
+    UniformRoughness,
+    UniformAo,
+    UniformCameraPosition,
+    UniformLightPosition,
+    UniformLightColor,
+    UniformLightRadius,
+    UniformLightPower,
+    UniformAttribute<Color::RGB, 11>>;
 
-using SingleColorInstanced = Core::Shader<Core::ShaderProgram<VertexInstanced, Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
+using SingleColorInstanced =
+    Shader<ShaderProgram<VertexInstanced,
+                         FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform float metallic;
 layout(location = 4) uniform float roughness;
@@ -505,19 +511,20 @@ void main()
 //limunance = albedo;
     color = vec4(limunance, 1.0);
 })=====">>,
-                                          UniformView,
-                                          UniformProjection,
-                                          UniformMetallic,
-                                          UniformRoughness,
-                                          UniformAo,
-                                          UniformCameraPosition,
-                                          UniformLightPosition,
-                                          UniformLightColor,
-                                          UniformLightRadius,
-                                          UniformLightPower,
-                                          Core::UniformAttribute<Color::RGB, 11>>;
+           UniformView,
+           UniformProjection,
+           UniformMetallic,
+           UniformRoughness,
+           UniformAo,
+           UniformCameraPosition,
+           UniformLightPosition,
+           UniformLightColor,
+           UniformLightRadius,
+           UniformLightPower,
+           UniformAttribute<Color::RGB, 11>>;
 
-using SingleTransparentColor = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
+using SingleTransparentColor = Shader<
+    ShaderProgram<Vertex, FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform float metallic;
 layout(location = 4) uniform float roughness;
@@ -536,20 +543,21 @@ void main()
     vec3 limunance = albedo.xyz * lightAttenuation(lightPower, lightPosition, position, normal);
     color = vec4(limunance, albedo.w);
 })=====">>,
-                                            UniformModel,
-                                            UniformView,
-                                            UniformProjection,
-                                            UniformMetallic,
-                                            UniformRoughness,
-                                            UniformAo,
-                                            UniformCameraPosition,
-                                            UniformLightPosition,
-                                            UniformLightColor,
-                                            UniformLightRadius,
-                                            UniformLightPower,
-                                            Core::UniformAttribute<Color::RGBA, 11>>;
+    UniformModel,
+    UniformView,
+    UniformProjection,
+    UniformMetallic,
+    UniformRoughness,
+    UniformAo,
+    UniformCameraPosition,
+    UniformLightPosition,
+    UniformLightColor,
+    UniformLightRadius,
+    UniformLightPower,
+    UniformAttribute<Color::RGBA, 11>>;
 
-using SingleTexture = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
+using SingleTexture = Shader<
+    ShaderProgram<Vertex, FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform float metallic;
 layout(location = 4) uniform float roughness;
@@ -571,20 +579,21 @@ void main()
     vec3 limunance = albedo * lightAttenuation(lightPower, lightPosition, position, normal);
     color = vec4(limunance, 1.0);
 })=====">>,
-                                   UniformModel,
-                                   UniformView,
-                                   UniformProjection,
-                                   UniformMetallic,
-                                   UniformRoughness,
-                                   UniformAo,
-                                   UniformCameraPosition,
-                                   UniformLightPosition,
-                                   UniformLightColor,
-                                   UniformLightRadius,
-                                   UniformLightPower,
-                                   Core::UniformAttribute<Core::Texture, 0>>;
+    UniformModel,
+    UniformView,
+    UniformProjection,
+    UniformMetallic,
+    UniformRoughness,
+    UniformAo,
+    UniformCameraPosition,
+    UniformLightPosition,
+    UniformLightColor,
+    UniformLightRadius,
+    UniformLightPower,
+    UniformAttribute<Texture, 0>>;
 
-using ColorArray = Core::Shader<Core::ShaderProgram<Vertex, Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
+using ColorArray = Shader<
+    ShaderProgram<Vertex, FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform float metallic;
 layout(location = 4) uniform float roughness;
@@ -603,19 +612,20 @@ void main()
     vec3 limunance = COLOR_0 * lightAttenuation(lightPower, lightPosition, position, normal);
     color = vec4(limunance, 1.0);
 })=====">>,
-                                UniformModel,
-                                UniformView,
-                                UniformProjection,
-                                UniformMetallic,
-                                UniformRoughness,
-                                UniformAo,
-                                UniformCameraPosition,
-                                UniformLightPosition,
-                                UniformLightColor,
-                                UniformLightRadius,
-                                UniformLightPower>;
+    UniformModel,
+    UniformView,
+    UniformProjection,
+    UniformMetallic,
+    UniformRoughness,
+    UniformAo,
+    UniformCameraPosition,
+    UniformLightPosition,
+    UniformLightColor,
+    UniformLightRadius,
+    UniformLightPower>;
 
-using Water = Core::Shader<Core::ShaderProgram<Core::VertexShader<R"=====(#version 450
+using Water =
+    Shader<ShaderProgram<VertexShader<R"=====(#version 450
 #define PI 3.1415926535897932384626433832795
 
 layout(location = 0) in vec3 POSITION;
@@ -630,7 +640,7 @@ void main() {
     p.z += cos(p.x * PI + timeStep) * sin(p.y * PI + timeStep)/4;
     gl_Position =  p;
 })=====">,
-                                               Core::GeometryShader<R"=====(#version 450
+                         GeometryShader<R"=====(#version 450
 layout(triangles) in;
 layout(triangle_strip, max_vertices=3) out;
 
@@ -657,7 +667,7 @@ void main()
 
     EndPrimitive();
 })=====">,
-                                               Core::FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
+                         FragmentShader<PBR_HEAD, PBR_FUNCTIONS, R"=====(
 // material parameters
 layout(location = 3) uniform vec4 albedo;
 layout(location = 4) uniform float metallic;
@@ -678,18 +688,18 @@ void main()
 //limunance = albedo;
     color = vec4(limunance, albedo.w);
 })=====">>,
-                           UniformModel,
-                           UniformView,
-                           UniformProjection,
-                           UniformMetallic,
-                           UniformRoughness,
-                           UniformAo,
-                           UniformCameraPosition,
-                           UniformLightPosition,
-                           UniformLightColor,
-                           UniformLightRadius,
-                           UniformLightPower,
-                           Core::UniformAttribute<float, 11>>;
+           UniformModel,
+           UniformView,
+           UniformProjection,
+           UniformMetallic,
+           UniformRoughness,
+           UniformAo,
+           UniformCameraPosition,
+           UniformLightPosition,
+           UniformLightColor,
+           UniformLightRadius,
+           UniformLightPower,
+           UniformAttribute<float, 11>>;
 
 } // namespace PBR
 

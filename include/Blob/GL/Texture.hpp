@@ -14,7 +14,13 @@ struct Sampler {
         NEAREST_MIPMAP_LINEAR = 0x2702,
         LINEAR_MIPMAP_LINEAR = 0x2703
     };
-    enum WRAP { CLAMP_TO_EDGE = 0x812F, CLAMP_TO_BORDER = 0x812D, MIRRORED_REPEAT = 0x8370, REPEAT = 0x2901, MIRROR_CLAMP_TO_EDGE = 0x8743 };
+    enum WRAP {
+        CLAMP_TO_EDGE = 0x812F,
+        CLAMP_TO_BORDER = 0x812D,
+        MIRRORED_REPEAT = 0x8370,
+        REPEAT = 0x2901,
+        MIRROR_CLAMP_TO_EDGE = 0x8743
+    };
 
     FILTER magFilter = LINEAR;
     FILTER minFilter = NEAREST_MIPMAP_LINEAR;
@@ -22,9 +28,14 @@ struct Sampler {
     WRAP wrapT = REPEAT;
 
     Sampler() = default;
-    Sampler(FILTER magFilter, FILTER minFilter) : magFilter(magFilter), minFilter(minFilter) {}
+    Sampler(FILTER magFilter, FILTER minFilter) :
+        magFilter(magFilter), minFilter(minFilter) {}
     Sampler(WRAP wrapS, WRAP wrapT) : wrapS(wrapS), wrapT(wrapT) {}
-    Sampler(FILTER magFilter, FILTER minFilter, WRAP wrapS, WRAP wrapT) : magFilter(magFilter), minFilter(minFilter), wrapS(wrapS), wrapT(wrapT) {}
+    Sampler(FILTER magFilter, FILTER minFilter, WRAP wrapS, WRAP wrapT) :
+        magFilter(magFilter),
+        minFilter(minFilter),
+        wrapS(wrapS),
+        wrapT(wrapT) {}
 };
 
 class Texture {
@@ -32,9 +43,8 @@ class Texture {
     friend class FrameBuffer;
 
 private:
-
 protected:
-    Maths::Vec2<unsigned int> size;
+    Vec2<size_t> size;
 
 public:
     Texture() = default;
@@ -47,14 +57,14 @@ public:
 
     void applySampler(const Sampler &sampler);
 
-    void setRGB8data(uint8_t *pixels, Maths::Vec2<unsigned int> size);
+    void setRGB8data(uint8_t *pixels, Vec2<size_t> size);
 
-    void setRGBA8data(uint8_t *pixels, Maths::Vec2<unsigned int> size);
+    void setRGBA8data(uint8_t *pixels, Vec2<size_t> size);
 
-    void setRGBA16data(uint8_t *pixels, Maths::Vec2<unsigned int> size);
+    void setRGBA16data(uint8_t *pixels, Vec2<size_t> size);
 
-    [[nodiscard]] Maths::Vec2<unsigned int> getTextureSize() const;
-    
+    [[nodiscard]] Vec2<size_t> getTextureSize() const;
+
     uint32_t texture = 0; // the opengl texture
 };
 } // namespace Blob::GL

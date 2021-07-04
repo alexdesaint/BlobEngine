@@ -9,9 +9,9 @@
 namespace Blob::VK {
 
 struct UniformBufferObject {
-    Blob::Maths::Mat4 model;
-    Blob::Maths::Mat4 view;
-    Blob::Maths::Mat4 proj;
+    Blob::Mat4 model;
+    Blob::Mat4 view;
+    Blob::Mat4 proj;
 };
 
 class model {
@@ -22,7 +22,9 @@ private:
 public:
     void updateUniformBuffer(){};
 
-    model(const Window &coreEngine, const std::string &textPath, const std::string &modelPath);
+    model(const Window &coreEngine,
+          const std::string &textPath,
+          const std::string &modelPath);
     model(const model &) = delete;
     model(model &&) = delete;
     ~model();
@@ -50,7 +52,7 @@ public:
 
     std::vector<CommandBuffer> commandBuffers;
 
-    Blob::Maths::Vec3<float> position;
+    Blob::Vec3<float> position;
 
 private:
     /*    void createTextureSampler();
@@ -67,4 +69,4 @@ private:
 
         void createDescriptorSet();*/
 };
-}
+} // namespace Blob::VK

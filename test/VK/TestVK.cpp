@@ -9,9 +9,10 @@ using namespace Blob::VK;
 
 class perso : public model {
 public:
-    perso(const Window &coreEngine) : model(coreEngine, "textures/blob.bmp", "models/cube.obj") {
+    perso(const Window &coreEngine) :
+        model(coreEngine, "textures/blob.bmp", "models/cube.obj") {
         // updateUniformBuffer();
-        //SDL_AddTimer(25, deplacement, (void *) this);
+        // SDL_AddTimer(25, deplacement, (void *) this);
         // interval the timer delay(ms) passed to callback
         // callback the function to call when the specified
         // interval elapses; see Remarks for details param a
@@ -37,20 +38,23 @@ private:
         }
     };
 
-    //SDL_TimerID timer;
+    // SDL_TimerID timer;
     vecteur vitesse;
 
     static uint32_t deplacement(uint32_t interval, void *xthis) {
-        ((perso *) xthis)->position.x = ((perso *) xthis)->position.x + ((perso *) xthis)->vitesse.x;
-        ((perso *) xthis)->position.y = ((perso *) xthis)->position.y + ((perso *) xthis)->vitesse.y;
+        ((perso *) xthis)->position.x =
+            ((perso *) xthis)->position.x + ((perso *) xthis)->vitesse.x;
+        ((perso *) xthis)->position.y =
+            ((perso *) xthis)->position.y + ((perso *) xthis)->vitesse.y;
         return 25;
     }
 };
 
 class fond : public model {
 public:
-    fond(const Window &coreEngine) : model(coreEngine, "textures/fenetre.bmp", "models/world.obj") {
-        position = Blob::Maths::Vec3<float>(0, 0, 1);
+    fond(const Window &coreEngine) :
+        model(coreEngine, "textures/fenetre.bmp", "models/world.obj") {
+        position = Blob::Vec3<float>(0, 0, 1);
         updateUniformBuffer();
     }
 };
@@ -62,7 +66,8 @@ public:
     perso blob;
     fond fonde;
 
-    jeu(const Window &coreEngine) : coreEngine(coreEngine), blob(coreEngine), fonde(coreEngine) {
+    jeu(const Window &coreEngine) :
+        coreEngine(coreEngine), blob(coreEngine), fonde(coreEngine) {
         // coreEngine.pipe.loadModel();
 
         std::cout << "YAY" << std::endl;
@@ -83,7 +88,9 @@ int main() {
         while (give_me_a_name.isOpen()) {
             give_me_a_name.updateInputs();
         }
-    } catch (const Blob::VK::Exception &e) { std::cout << "Vulkan error : " << std::endl << e.what(); } catch (const std::runtime_error &e) {
+    } catch (const Blob::VK::Exception &e) {
+        std::cout << "Vulkan error : " << std::endl << e.what();
+    } catch (const std::runtime_error &e) {
         std::cout << "Game error : " << std::endl << e.what();
     }
 

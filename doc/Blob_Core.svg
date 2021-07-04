@@ -90,8 +90,8 @@
 <text text-anchor="middle" x="504" y="-679.8" font-family="Times,serif" font-size="14.00">#WindowCore(bool, unsigned int, unsigned int)</text>
 <text text-anchor="middle" x="504" y="-664.8" font-family="Times,serif" font-size="14.00">#~WindowCore()</text>
 <text text-anchor="middle" x="504" y="-649.8" font-family="Times,serif" font-size="14.00">+isOpen() : bool</text>
-<text text-anchor="middle" x="504" y="-634.8" font-family="Times,serif" font-size="14.00">+getSize() : Blob::Maths::Vec2f</text>
-<text text-anchor="middle" x="504" y="-619.8" font-family="Times,serif" font-size="14.00">+getFrameBufferSize() : Blob::Maths::Vec2f</text>
+<text text-anchor="middle" x="504" y="-634.8" font-family="Times,serif" font-size="14.00">+getSize() : Blob::Vec2f</text>
+<text text-anchor="middle" x="504" y="-619.8" font-family="Times,serif" font-size="14.00">+getFrameBufferSize() : Blob::Vec2f</text>
 <text text-anchor="middle" x="504" y="-604.8" font-family="Times,serif" font-size="14.00">+setTitle(const std::string &amp;)</text>
 <text text-anchor="middle" x="504" y="-589.8" font-family="Times,serif" font-size="14.00">+resize(unsigned int, unsigned int)</text>
 <text text-anchor="middle" x="504" y="-574.8" font-family="Times,serif" font-size="14.00">+close()</text>
@@ -101,19 +101,19 @@
 <g id="node8" class="node">
 <title>Blob.Core.Window</title>
 <polygon fill="none" stroke="black" points="285,-287.5 285,-515.5 773,-515.5 773,-287.5 285,-287.5"/>
-<text text-anchor="middle" x="529" y="-500.3" font-family="Times,serif" font-size="14.00">Blob::Maths::ProjectionTransform</text>
+<text text-anchor="middle" x="529" y="-500.3" font-family="Times,serif" font-size="14.00">Blob::ProjectionTransform</text>
 <polyline fill="none" stroke="black" points="285,-492.5 773,-492.5 "/>
 <text text-anchor="middle" x="529" y="-477.3" font-family="Times,serif" font-size="14.00">Window</text>
 <polyline fill="none" stroke="black" points="285,-469.5 773,-469.5 "/>
 <text text-anchor="middle" x="529" y="-454.3" font-family="Times,serif" font-size="14.00">&#45;lastFrameTime : std::chrono::high_resolution_clock::time_point</text>
 <text text-anchor="middle" x="529" y="-439.3" font-family="Times,serif" font-size="14.00">&#45;fpsCouner : std::chrono::duration&lt;float&gt;</text>
 <polyline fill="none" stroke="black" points="285,-431.5 773,-431.5 "/>
-<text text-anchor="middle" x="529" y="-415.8" font-family="Times,serif" font-size="14.00">+Window(Blob::Core::Camera &amp;, bool, unsigned int, unsigned int)</text>
+<text text-anchor="middle" x="529" y="-415.8" font-family="Times,serif" font-size="14.00">+Window(Blob::Camera &amp;, bool, unsigned int, unsigned int)</text>
 <text text-anchor="middle" x="529" y="-400.8" font-family="Times,serif" font-size="14.00">+~Window()</text>
-<text text-anchor="middle" x="529" y="-385.8" font-family="Times,serif" font-size="14.00">+draw(const Blob::Core::Mesh &amp;, glm::mat4)</text>
-<text text-anchor="middle" x="529" y="-370.8" font-family="Times,serif" font-size="14.00">+draw(const Blob::Core::Shape &amp;, glm::mat4)</text>
-<text text-anchor="middle" x="529" y="-355.8" font-family="Times,serif" font-size="14.00">+draw(const Blob::Core::Scene &amp;)</text>
-<text text-anchor="middle" x="529" y="-340.8" font-family="Times,serif" font-size="14.00">+setCamera(Blob::Core::Camera &amp;)</text>
+<text text-anchor="middle" x="529" y="-385.8" font-family="Times,serif" font-size="14.00">+draw(const Blob::Mesh &amp;, glm::mat4)</text>
+<text text-anchor="middle" x="529" y="-370.8" font-family="Times,serif" font-size="14.00">+draw(const Blob::Shape &amp;, glm::mat4)</text>
+<text text-anchor="middle" x="529" y="-355.8" font-family="Times,serif" font-size="14.00">+draw(const Blob::Scene &amp;)</text>
+<text text-anchor="middle" x="529" y="-340.8" font-family="Times,serif" font-size="14.00">+setCamera(Blob::Camera &amp;)</text>
 <text text-anchor="middle" x="529" y="-325.8" font-family="Times,serif" font-size="14.00">+display() : float</text>
 <text text-anchor="middle" x="529" y="-310.8" font-family="Times,serif" font-size="14.00">+getWorldPosition() : std::array&lt;float, 3&gt;</text>
 <text text-anchor="middle" x="529" y="-295.8" font-family="Times,serif" font-size="14.00">+resize(unsigned int, unsigned int)</text>
@@ -154,7 +154,7 @@
 <g id="node10" class="node">
 <title>Blob.Core.Camera</title>
 <polygon fill="none" stroke="black" points="791.5,-668 791.5,-715 1012.5,-715 1012.5,-668 791.5,-668"/>
-<text text-anchor="middle" x="902" y="-699.8" font-family="Times,serif" font-size="14.00">Blob::Maths::ViewTransform</text>
+<text text-anchor="middle" x="902" y="-699.8" font-family="Times,serif" font-size="14.00">Blob::ViewTransform</text>
 <polyline fill="none" stroke="black" points="791.5,-692 1012.5,-692 "/>
 <text text-anchor="middle" x="902" y="-676.3" font-family="Times,serif" font-size="14.00">Camera</text>
 </g>
@@ -173,8 +173,8 @@
 <polyline fill="none" stroke="black" points="791.5,-421 1116.5,-421 "/>
 <text text-anchor="middle" x="954" y="-405.8" font-family="Times,serif" font-size="14.00">&#45;shapes : std::list&lt;const Shape *&gt;</text>
 <polyline fill="none" stroke="black" points="791.5,-398 1116.5,-398 "/>
-<text text-anchor="middle" x="954" y="-382.3" font-family="Times,serif" font-size="14.00">+addShape(const Blob::Core::Shape &amp;)</text>
-<text text-anchor="middle" x="954" y="-367.3" font-family="Times,serif" font-size="14.00">+removeShape(const Blob::Core::Shape &amp;)</text>
+<text text-anchor="middle" x="954" y="-382.3" font-family="Times,serif" font-size="14.00">+addShape(const Blob::Shape &amp;)</text>
+<text text-anchor="middle" x="954" y="-367.3" font-family="Times,serif" font-size="14.00">+removeShape(const Blob::Shape &amp;)</text>
 </g>
 <!-- Blob.Core.Camera&#45;&gt;Blob.Core.Scene -->
 <g id="edge9" class="edge">
@@ -222,19 +222,19 @@
 <g id="node14" class="node">
 <title>Blob.Core.Shape</title>
 <polygon fill="none" stroke="black" points="1135,-306.5 1135,-496.5 1723,-496.5 1723,-306.5 1135,-306.5"/>
-<text text-anchor="middle" x="1429" y="-481.3" font-family="Times,serif" font-size="14.00">Blob::Maths::ModelTransform</text>
+<text text-anchor="middle" x="1429" y="-481.3" font-family="Times,serif" font-size="14.00">Blob::ModelTransform</text>
 <polyline fill="none" stroke="black" points="1135,-473.5 1723,-473.5 "/>
 <text text-anchor="middle" x="1429" y="-458.3" font-family="Times,serif" font-size="14.00">Shape</text>
 <polyline fill="none" stroke="black" points="1135,-450.5 1723,-450.5 "/>
-<text text-anchor="middle" x="1429" y="-434.8" font-family="Times,serif" font-size="14.00">+Shape(Blob::Core::Mesh &amp;, float, float, float, float, float, float, float, float, float)</text>
+<text text-anchor="middle" x="1429" y="-434.8" font-family="Times,serif" font-size="14.00">+Shape(Blob::Mesh &amp;, float, float, float, float, float, float, float, float, float)</text>
 <text text-anchor="middle" x="1429" y="-419.8" font-family="Times,serif" font-size="14.00">+Shape(float, float, float, float, float, float, float, float, float)</text>
-<text text-anchor="middle" x="1429" y="-404.8" font-family="Times,serif" font-size="14.00">+setMesh(Blob::Core::Mesh &amp;)</text>
-<text text-anchor="middle" x="1429" y="-389.8" font-family="Times,serif" font-size="14.00">+setMesh(Blob::Core::Mesh *)</text>
-<text text-anchor="middle" x="1429" y="-374.8" font-family="Times,serif" font-size="14.00">+setChild(Blob::Core::Shape &amp;)</text>
-<text text-anchor="middle" x="1429" y="-359.8" font-family="Times,serif" font-size="14.00">+setChild(Blob::Core::Shape *)</text>
+<text text-anchor="middle" x="1429" y="-404.8" font-family="Times,serif" font-size="14.00">+setMesh(Blob::Mesh &amp;)</text>
+<text text-anchor="middle" x="1429" y="-389.8" font-family="Times,serif" font-size="14.00">+setMesh(Blob::Mesh *)</text>
+<text text-anchor="middle" x="1429" y="-374.8" font-family="Times,serif" font-size="14.00">+setChild(Blob::Shape &amp;)</text>
+<text text-anchor="middle" x="1429" y="-359.8" font-family="Times,serif" font-size="14.00">+setChild(Blob::Shape *)</text>
 <text text-anchor="middle" x="1429" y="-344.8" font-family="Times,serif" font-size="14.00">+removeMesh()</text>
-<text text-anchor="middle" x="1429" y="-329.8" font-family="Times,serif" font-size="14.00">+removeChild(Blob::Core::Shape &amp;)</text>
-<text text-anchor="middle" x="1429" y="-314.8" font-family="Times,serif" font-size="14.00">+removeChild(Blob::Core::Shape *)</text>
+<text text-anchor="middle" x="1429" y="-329.8" font-family="Times,serif" font-size="14.00">+removeChild(Blob::Shape &amp;)</text>
+<text text-anchor="middle" x="1429" y="-314.8" font-family="Times,serif" font-size="14.00">+removeChild(Blob::Shape *)</text>
 </g>
 <!-- Blob.Core.Mesh&#45;&gt;Blob.Core.Shape -->
 <g id="edge11" class="edge">

@@ -1,5 +1,3 @@
 #include <Blob/VK/Semaphore.hpp>
 
-namespace Blob::VK {
-
-}
+namespace Blob::VK {}

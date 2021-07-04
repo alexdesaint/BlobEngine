@@ -3,7 +3,7 @@
 // #include <imgui.h>
 #include <Blob/GLFW.hpp>
 
-namespace Blob::Core {
+namespace Blob {
 
 std::string Key::getName() const {
     const char *name = nullptr; // glfwGetKeyName(id - 1, 0);
@@ -274,12 +274,12 @@ void Controller::controllerOut() const {
     ImGui::Begin(name.c_str());
 
     for (int i = 0; i < joystickAxesCount; i++)
-        ImGui::SliderFloat((std::string("Axe :") + std::to_string(i)).c_str(), (float *) &joystickAxes[i], -1.0f, 1.0f, "%.2f");
+        ImGui::SliderFloat((std::string("Axe :") + std::to_string(i)).c_str(),
+(float *) &joystickAxes[i], -1.0f, 1.0f, "%.2f");
 
     for (int i = 0; i < buttonsCount; i++) {
-        ImGui::Checkbox((std::string("B") + std::to_string(i + 1)).c_str(), (bool *) &buttons[i]);
-        if ((i + 1) % 5 != 0)
-            ImGui::SameLine();
+        ImGui::Checkbox((std::string("B") + std::to_string(i + 1)).c_str(),
+(bool *) &buttons[i]); if ((i + 1) % 5 != 0) ImGui::SameLine();
     }
 
     ImGui::End();
@@ -292,4 +292,4 @@ Controller::Controller(size_t num) :
     buttons(GLFW::Window::joystickButtons[num]),
     joystickAxesCount(GLFW::Window::joystickAxesCount[num]),
     joystickAxes(GLFW::Window::joystickAxes[num]) {}
-} // namespace Blob::Core
+} // namespace Blob

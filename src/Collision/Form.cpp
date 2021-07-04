@@ -1,8 +1,8 @@
 #include <Blob/Collision/Forms.hpp>
 
-namespace Blob::Collision {
+namespace Blob {
 
-typedef Maths::Vec2<float> vec2;
+typedef Vec2<float> vec2;
 
 //-----------------------------------------------------------------------------
 // Triple product expansion is used to calculate perpendicular normal vectors
@@ -10,14 +10,14 @@ typedef Maths::Vec2<float> vec2;
 
 vec2 tripleProduct(vec2 a, vec2 b, vec2 c) {
 
-//    vec2 r;
+    //    vec2 r;
 
-//    float ac = a.x * c.x + a.y * c.y; // perform a.dot(c)
-//    float bc = b.x * c.x + b.y * c.y; // perform b.dot(c)
+    //    float ac = a.x * c.x + a.y * c.y; // perform a.dot(c)
+    //    float bc = b.x * c.x + b.y * c.y; // perform b.dot(c)
 
     // perform b * a.dot(c) - a * b.dot(c)
-//    r.x = b.x * ac - a.x * bc;
-//    r.y = b.y * ac - a.y * bc;
+    //    r.x = b.x * ac - a.x * bc;
+    //    r.y = b.y * ac - a.y * bc;
     return b * a.dot(c) - a * b.dot(c);
 }
 
@@ -54,7 +54,11 @@ size_t indexOfFurthestPoint(const vec2 *vertices, size_t count, vec2 d) {
 //-----------------------------------------------------------------------------
 // Minkowski sum support function for GJK
 
-vec2 support(const vec2 *vertices1, size_t count1, const vec2 *vertices2, size_t count2, vec2 d) {
+vec2 support(const vec2 *vertices1,
+             size_t count1,
+             const vec2 *vertices2,
+             size_t count2,
+             vec2 d) {
 
     // get furthest point of first body along an arbitrary direction
     size_t i = indexOfFurthestPoint(vertices1, count1, d);
@@ -78,7 +82,7 @@ bool Form::overlap(const Form &form) const {
     size_t index = 0; // index of current vertex of simplex
     vec2 a, b, c, d, ao, ab, ac, abperp, acperp, simplex[3];
 
-    vec2 position1 = average(); // not a CoG but
+    vec2 position1 = average();      // not a CoG but
     vec2 position2 = form.average(); // it's ok for GJK )
 
     // initial direction from the center of 1st body to the center of 2nd body
@@ -94,7 +98,8 @@ bool Form::overlap(const Form &form) const {
     if (a.dot(d) <= 0)
         return false; // no collision
 
-    d = a.negate(); // The next search direction is always towards the origin, so the next search direction is negate(a)
+    d = a.negate(); // The next search direction is always towards the origin,
+                    // so the next search direction is negate(a)
 
     while (true) {
         //        iter_count++;
@@ -146,4 +151,4 @@ bool Form::overlap(const Form &form) const {
     return 0;
 }
 
-} // namespace Blob::Collision
+} // namespace Blob

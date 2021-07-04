@@ -2,7 +2,7 @@
 
 #include <Blob/Core/Exception.hpp>
 
-namespace Blob::Core {
+namespace Blob {
 
 Texture::Texture(const std::string &path) {
     setImage(path);
@@ -25,21 +25,21 @@ Texture::Texture(const Image &image) {
 void Texture::setImage(const std::string &path) {
     Image image(path);
 
-    if(image.channel == Image::Channel::RGB)
-        setRGB8data(image.data, image.size.cast<unsigned int>());
-    else if(image.channel == Image::Channel::RGBA)
-        setRGBA8data(image.data, image.size.cast<unsigned int>());
+    if (image.channel == Image::Channel::RGB)
+        setRGB8data(image.data, image.size);
+    else if (image.channel == Image::Channel::RGBA)
+        setRGBA8data(image.data, image.size);
     else
-        throw Blob::Core::Exception("Image format not supported");
+        throw Blob::Exception("Image format not supported");
 }
 
 void Texture::setImage(const Image &image) {
-    if(image.channel == Image::Channel::RGB)
-        setRGB8data(image.data, image.size.cast<unsigned int>());
-    else if(image.channel == Image::Channel::RGBA)
-        setRGBA8data(image.data, image.size.cast<unsigned int>());
+    if (image.channel == Image::Channel::RGB)
+        setRGB8data(image.data, image.size);
+    else if (image.channel == Image::Channel::RGBA)
+        setRGBA8data(image.data, image.size);
     else
-        throw Blob::Core::Exception("Image format not supported");
+        throw Blob::Exception("Image format not supported");
 }
 
-} // namespace Blob::Core
+} // namespace Blob

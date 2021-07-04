@@ -44,9 +44,13 @@ public:
 
     friend std::ostream &operator<<(std::ostream &s, FileReader &a);
 
-    static std::string getFileExtention(const std::string &file) { return file.substr(file.find_last_of('.') + 1); }
+    static std::string getFileExtention(const std::string &file) {
+        return file.substr(file.find_last_of('.') + 1);
+    }
 
-    static std::string getFilePath(const std::string &file) { return file.substr(0, file.find_last_of("/\\") + 1); }
+    static std::string getFilePath(const std::string &file) {
+        return file.substr(0, file.find_last_of("/\\") + 1);
+    }
 
     static std::string getFileName(const std::string &file) {
         auto b = file.find_last_of("/\\") + 1;

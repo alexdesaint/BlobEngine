@@ -2,11 +2,13 @@
 
 #include <Blob/Maths.inl>
 
-namespace Blob::Core {
-class Camera : public Maths::ViewTransform {
+namespace Blob {
+class Camera : public ViewTransform {
 public:
     Camera() = default;
-    Camera(const Maths::Vec3<float> &cameraPosition, const Maths::Vec3<float> &cameraLookAt, const Maths::Vec3<float> &cameraUp) :
-        Maths::ViewTransform(cameraPosition, cameraLookAt, cameraUp) {}
+    Camera(const Vec3<float> &cameraPosition,
+           const Vec3<float> &cameraLookAt,
+           const Vec3<float> &cameraUp) :
+        ViewTransform(cameraPosition, cameraLookAt, cameraUp) {}
 };
-} // namespace Blob::Core
+} // namespace Blob

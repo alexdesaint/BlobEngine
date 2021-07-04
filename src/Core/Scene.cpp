@@ -1,9 +1,10 @@
 #include <Blob/Core/Scene.hpp>
 #include <iostream>
 
-namespace Blob::Core {
+namespace Blob {
 Scene::Scene(std::list<Shape const *> shapes) : shapes(std::move(shapes)) {}
-Scene::Scene(const Camera &camera, std::list<Shape const *> shapes) : camera(camera), shapes(std::move(shapes)) {}
+Scene::Scene(const Camera &camera, std::list<Shape const *> shapes) :
+    camera(camera), shapes(std::move(shapes)) {}
 
 void Scene::addShape(const Shape &r) {
     shapes.emplace_back(&r);
@@ -20,8 +21,9 @@ void Scene::removeShape(const Shape *r) {
 void Scene::removeAll() {
     shapes.clear();
 }
-std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> Scene::getDrawCallList() const {
-    std::unordered_map<const Primitive *, std::vector<Maths::Mat4>> list;
+std::unordered_map<const Primitive *, std::vector<Mat4>>
+Scene::getDrawCallList() const {
+    std::unordered_map<const Primitive *, std::vector<Mat4>> list;
     for (auto shape : shapes)
         shape->getDrawCallList(list);
     return list;
@@ -33,8 +35,10 @@ std::ostream &operator<<(std::ostream &os, const Scene &s) {
     return os;
 }
 
-Scene2D::Scene2D(const Blob::Maths::ViewTransform2D &camera) : camera(camera) {}
-Scene2D::Scene2D(const Blob::Maths::ViewTransform2D &camera, std::list<Shape2D const *> shapes) : camera(camera), shapes(std::move(shapes)) {}
+Scene2D::Scene2D(const Blob::ViewTransform2D &camera) : camera(camera) {}
+Scene2D::Scene2D(const Blob::ViewTransform2D &camera,
+                 std::list<Shape2D const *> shapes) :
+    camera(camera), shapes(std::move(shapes)) {}
 
 void Scene2D::addShape(const Shape2D &r) {
     shapes.emplace_back(&r);
@@ -58,4 +62,4 @@ std::ostream &operator<<(std::ostream &os, const Scene2D &s) {
     return os;
 }
 
-} // namespace Blob::Core
+} // namespace Blob

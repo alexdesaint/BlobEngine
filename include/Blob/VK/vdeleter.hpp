@@ -13,15 +13,25 @@ public:
         deleter = [=](T obj) { deletef(obj, nullptr); };
     }
 
-    VDeleter(const VDeleter<VkInstance> &instance, std::function<void(VkInstance, T, VkAllocationCallbacks *)> deletef) {
-        deleter = [&instance, deletef](T obj) { deletef(instance, obj, nullptr); };
+    VDeleter(
+        const VDeleter<VkInstance> &instance,
+        std::function<void(VkInstance, T, VkAllocationCallbacks *)> deletef) {
+        deleter = [&instance, deletef](T obj) {
+            deletef(instance, obj, nullptr);
+        };
     }
 
-    VDeleter(const Device &device, std::function<void(VkDevice, T, VkAllocationCallbacks *)> deletef) {
-        deleter = [&device, deletef](T obj) { deletef(device.device, obj, nullptr); };
+    VDeleter(
+        const Device &device,
+        std::function<void(VkDevice, T, VkAllocationCallbacks *)> deletef) {
+        deleter = [&device, deletef](T obj) {
+            deletef(device.device, obj, nullptr);
+        };
     }
 
-    VDeleter(VkDevice device, std::function<void(VkDevice, T, VkAllocationCallbacks *)> deletef) {
+    VDeleter(
+        VkDevice device,
+        std::function<void(VkDevice, T, VkAllocationCallbacks *)> deletef) {
         deleter = [device, deletef](T obj) { deletef(device, obj, nullptr); };
     }
 
@@ -59,4 +69,4 @@ private:
         object = VK_NULL_HANDLE;
     }
 };
-}
+} // namespace Blob::VK

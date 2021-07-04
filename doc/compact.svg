@@ -38,12 +38,12 @@
 <polygon fill="none" stroke="black" points="12,-235 12,-256 166,-256 166,-235 12,-235"/>
 <text text-anchor="start" x="50" y="-241.8" font-family="Times,serif" font-size="14.00">Vec2&lt;int&gt;</text>
 </g>
-<!-- Blob::Core -->
+<!-- Blob -->
 <g id="node2" class="node">
-<title>Blob::Core</title>
+<title>Blob</title>
 <polygon fill="none" stroke="black" points="378.5,-851 252.5,-851 252.5,-855 240.5,-855 240.5,-481 378.5,-481 378.5,-851"/>
 <polyline fill="none" stroke="black" points="240.5,-851 252.5,-851 "/>
-<text text-anchor="start" x="271.5" y="-833.8" font-family="Times,serif" font-size="14.00">Blob::Core</text>
+<text text-anchor="start" x="271.5" y="-833.8" font-family="Times,serif" font-size="14.00">Blob</text>
 <polygon fill="none" stroke="black" points="252.5,-803 252.5,-824 366.5,-824 366.5,-803 252.5,-803"/>
 <text text-anchor="start" x="279" y="-809.8" font-family="Times,serif" font-size="14.00">Controls</text>
 <polygon fill="none" stroke="black" points="252.5,-780 252.5,-801 366.5,-801 366.5,-780 252.5,-780"/>
@@ -74,18 +74,18 @@
 <polygon fill="none" stroke="black" points="252.5,-489 252.5,-510 366.5,-510 366.5,-489 252.5,-489"/>
 <text text-anchor="start" x="282" y="-495.8" font-family="Times,serif" font-size="14.00">Texture</text>
 </g>
-<!-- Blob::Maths&#45;&gt;Blob::Core -->
+<!-- Blob::Maths&#45;&gt;Blob -->
 <g id="edge1" class="edge">
-<title>Blob::Maths&#45;&gt;Blob::Core</title>
+<title>Blob::Maths&#45;&gt;Blob</title>
 <path fill="none" stroke="black" d="M184.34,-504.05C203.2,-528.66 222.67,-554.04 240.43,-577.21"/>
 <polygon fill="none" stroke="black" points="187.1,-501.91 178.24,-496.1 181.55,-506.16 187.1,-501.91"/>
 </g>
-<!-- Blob::Collision -->
+<!-- Blob -->
 <g id="node3" class="node">
-<title>Blob::Collision</title>
+<title>Blob</title>
 <polygon fill="none" stroke="black" points="386.5,-462.5 244.5,-462.5 244.5,-466.5 232.5,-466.5 232.5,-245.5 386.5,-245.5 386.5,-462.5"/>
 <polyline fill="none" stroke="black" points="232.5,-462.5 244.5,-462.5 "/>
-<text text-anchor="start" x="258" y="-444.8" font-family="Times,serif" font-size="14.00">Blob::Collision</text>
+<text text-anchor="start" x="258" y="-444.8" font-family="Times,serif" font-size="14.00">Blob</text>
 <polygon fill="none" stroke="black" points="244.5,-414 244.5,-435 374.5,-435 374.5,-414 244.5,-414"/>
 <text text-anchor="start" x="247.5" y="-420.8" font-family="Times,serif" font-size="14.00">CollisionDetector</text>
 <polygon fill="none" stroke="black" points="244.5,-391 244.5,-412 374.5,-412 374.5,-391 244.5,-391"/>
@@ -103,9 +103,9 @@
 <polygon fill="none" stroke="black" points="244.5,-253 244.5,-274 374.5,-274 374.5,-253 244.5,-253"/>
 <text text-anchor="start" x="273" y="-259.8" font-family="Times,serif" font-size="14.00">LineStatic</text>
 </g>
-<!-- Blob::Maths&#45;&gt;Blob::Collision -->
+<!-- Blob::Maths&#45;&gt;Blob -->
 <g id="edge2" class="edge">
-<title>Blob::Maths&#45;&gt;Blob::Collision</title>
+<title>Blob::Maths&#45;&gt;Blob</title>
 <path fill="none" stroke="black" d="M188.37,-368.84C203.08,-367.03 218.06,-365.18 232.22,-363.43"/>
 <polygon fill="none" stroke="black" points="187.74,-365.4 178.24,-370.1 188.6,-372.34 187.74,-365.4"/>
 </g>
@@ -124,9 +124,9 @@
 <polygon fill="none" stroke="black" points="477,-611 477,-632 598,-632 598,-611 477,-611"/>
 <text text-anchor="start" x="520.5" y="-617.8" font-family="Times,serif" font-size="14.00">Data</text>
 </g>
-<!-- Blob::Core&#45;&gt;Blob::Shapes -->
+<!-- Blob&#45;&gt;Blob::Shapes -->
 <g id="edge3" class="edge">
-<title>Blob::Core&#45;&gt;Blob::Shapes</title>
+<title>Blob&#45;&gt;Blob::Shapes</title>
 <path fill="none" stroke="black" d="M388.78,-666C413.36,-666 440.35,-666 464.44,-666"/>
 <polygon fill="none" stroke="black" points="388.77,-662.5 378.77,-666 388.77,-669.5 388.77,-662.5"/>
 </g>
@@ -175,9 +175,9 @@
 <polygon fill="none" stroke="black" points="453,-8 453,-29 621,-29 621,-8 453,-8"/>
 <text text-anchor="start" x="505.5" y="-14.8" font-family="Times,serif" font-size="14.00">TypeInfo</text>
 </g>
-<!-- Blob::Core&#45;&gt;Blob::glTF2 -->
+<!-- Blob&#45;&gt;Blob::glTF2 -->
 <g id="edge4" class="edge">
-<title>Blob::Core&#45;&gt;Blob::glTF2</title>
+<title>Blob&#45;&gt;Blob::glTF2</title>
 <path fill="none" stroke="black" d="M383.48,-526.52C401.75,-491.59 421.63,-453.6 440.81,-416.94"/>
 <polygon fill="none" stroke="black" points="380.15,-525.33 378.62,-535.81 386.35,-528.57 380.15,-525.33"/>
 </g>
@@ -200,9 +200,9 @@
 <polygon fill="none" stroke="black" points="17,-588 17,-609 161,-609 161,-588 17,-588"/>
 <text text-anchor="start" x="20" y="-594.8" font-family="Times,serif" font-size="14.00">FrameBufferObject</text>
 </g>
-<!-- Blob::GL&#45;&gt;Blob::Core -->
+<!-- Blob::GL&#45;&gt;Blob -->
 <g id="edge5" class="edge">
-<title>Blob::GL&#45;&gt;Blob::Core</title>
+<title>Blob::GL&#45;&gt;Blob</title>
 <path fill="none" stroke="black" d="M183.46,-666C202.59,-666 222.37,-666 240.4,-666"/>
 <polygon fill="none" stroke="black" points="183.23,-662.5 173.23,-666 183.23,-669.5 183.23,-662.5"/>
 </g>

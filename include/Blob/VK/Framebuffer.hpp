@@ -9,8 +9,12 @@ public:
     VkFramebuffer framebuffer = nullptr;
     const Device &device;
 
-    Framebuffer(const Device &device, unsigned int width, unsigned int height, VkRenderPass renderPass, std::array<VkImageView, 2> attachments)
-        : device(device) {
+    Framebuffer(const Device &device,
+                unsigned int width,
+                unsigned int height,
+                VkRenderPass renderPass,
+                std::array<VkImageView, 2> attachments) :
+        device(device) {
         VkFramebufferCreateInfo framebufferInfo = {};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferInfo.renderPass = renderPass;
@@ -20,11 +24,16 @@ public:
         framebufferInfo.height = height;
         framebufferInfo.layers = 1;
 
-        if (vkCreateFramebuffer(device.device, &framebufferInfo, nullptr, &framebuffer) != VK_SUCCESS)
+        if (vkCreateFramebuffer(device.device,
+                                &framebufferInfo,
+                                nullptr,
+                                &framebuffer) != VK_SUCCESS)
             throw Blob::VK::Exception(this, "failed to create framebuffer!");
     }
 
-    ~Framebuffer() { vkDestroyFramebuffer(device.device, framebuffer, nullptr); }
+    ~Framebuffer() {
+        vkDestroyFramebuffer(device.device, framebuffer, nullptr);
+    }
 };
-}
-#endif //BLOBATTACK_FRAMEBUFFER_HPP
+} // namespace Blob::VK
+#endif // BLOBATTACK_FRAMEBUFFER_HPP

@@ -72,7 +72,7 @@ size_t getTypeSize(uint32_t type) {
         typeSize = sizeof(GLfloat);
         break;
     default:
-        throw Core::Exception("incorrect Type of data");
+        throw Exception("incorrect Type of data");
     }
 
     return typeSize;

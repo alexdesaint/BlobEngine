@@ -23,7 +23,7 @@ void Texture::applySampler(const Sampler &sampler) {
     glTextureParameteri(texture, GL_TEXTURE_WRAP_T, sampler.wrapT);
 }
 
-void Texture::setRGB8data(uint8_t *pixels, Maths::Vec2<unsigned int> size) {
+void Texture::setRGB8data(uint8_t *pixels, Vec2<size_t> size) {
     if (texture != 0)
         glDeleteTextures(1, &texture);
 
@@ -33,10 +33,18 @@ void Texture::setRGB8data(uint8_t *pixels, Maths::Vec2<unsigned int> size) {
 
     glTextureStorage2D(texture, 1, GL_RGB8, size.x, size.y);
     if (pixels != nullptr)
-        glTextureSubImage2D(texture, 0, 0, 0, size.x, size.y, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+        glTextureSubImage2D(texture,
+                            0,
+                            0,
+                            0,
+                            size.x,
+                            size.y,
+                            GL_RGB,
+                            GL_UNSIGNED_BYTE,
+                            pixels);
 }
 
-void Texture::setRGBA8data(uint8_t *pixels, Maths::Vec2<unsigned int> size) {
+void Texture::setRGBA8data(uint8_t *pixels, Vec2<size_t> size) {
     if (texture != 0)
         glDeleteTextures(1, &texture);
 
@@ -46,10 +54,18 @@ void Texture::setRGBA8data(uint8_t *pixels, Maths::Vec2<unsigned int> size) {
 
     glTextureStorage2D(texture, 1, GL_RGBA8, size.x, size.y);
     if (pixels != nullptr)
-        glTextureSubImage2D(texture, 0, 0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        glTextureSubImage2D(texture,
+                            0,
+                            0,
+                            0,
+                            size.x,
+                            size.y,
+                            GL_RGBA,
+                            GL_UNSIGNED_BYTE,
+                            pixels);
 }
 
-void Texture::setRGBA16data(uint8_t *pixels, Maths::Vec2<unsigned int> size) {
+void Texture::setRGBA16data(uint8_t *pixels, Vec2<size_t> size) {
     if (texture != 0)
         glDeleteTextures(1, &texture);
 
@@ -59,10 +75,18 @@ void Texture::setRGBA16data(uint8_t *pixels, Maths::Vec2<unsigned int> size) {
 
     glTextureStorage2D(texture, 1, GL_RGBA16, size.x, size.y);
     if (pixels != nullptr)
-        glTextureSubImage2D(texture, 0, 0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_SHORT, pixels);
+        glTextureSubImage2D(texture,
+                            0,
+                            0,
+                            0,
+                            size.x,
+                            size.y,
+                            GL_RGBA,
+                            GL_UNSIGNED_SHORT,
+                            pixels);
 }
 
-Maths::Vec2<unsigned int> Texture::getTextureSize() const {
+Vec2<size_t> Texture::getTextureSize() const {
     return size;
 }
 

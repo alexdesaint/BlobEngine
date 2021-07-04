@@ -12,7 +12,7 @@
 <g id="node1" class="node">
 <title>Blob.Shapes.Cube</title>
 <polygon fill="none" stroke="black" points="39,-340.5 39,-410.5 305,-410.5 305,-340.5 39,-340.5"/>
-<text text-anchor="middle" x="172" y="-395.3" font-family="Times,serif" font-size="14.00">Blob::Core::Mesh</text>
+<text text-anchor="middle" x="172" y="-395.3" font-family="Times,serif" font-size="14.00">Blob::Mesh</text>
 <polyline fill="none" stroke="black" points="39,-387.5 305,-387.5 "/>
 <text text-anchor="middle" x="172" y="-372.3" font-family="Times,serif" font-size="14.00">Cube</text>
 <polyline fill="none" stroke="black" points="39,-364.5 305,-364.5 "/>
@@ -22,7 +22,7 @@
 <g id="node2" class="node">
 <title>Blob.Shapes.Plane</title>
 <polygon fill="none" stroke="black" points="37.5,-234.5 37.5,-304.5 306.5,-304.5 306.5,-234.5 37.5,-234.5"/>
-<text text-anchor="middle" x="172" y="-289.3" font-family="Times,serif" font-size="14.00">Blob::Core::Mesh</text>
+<text text-anchor="middle" x="172" y="-289.3" font-family="Times,serif" font-size="14.00">Blob::Mesh</text>
 <polyline fill="none" stroke="black" points="37.5,-281.5 306.5,-281.5 "/>
 <text text-anchor="middle" x="172" y="-266.3" font-family="Times,serif" font-size="14.00">Plane</text>
 <polyline fill="none" stroke="black" points="37.5,-258.5 306.5,-258.5 "/>
@@ -33,7 +33,7 @@
 <g id="node3" class="node">
 <title>Blob.Shapes.OctagonalPrism</title>
 <polygon fill="none" stroke="black" points="0,-128.5 0,-198.5 344,-198.5 344,-128.5 0,-128.5"/>
-<text text-anchor="middle" x="172" y="-183.3" font-family="Times,serif" font-size="14.00">Blob::Core::Mesh</text>
+<text text-anchor="middle" x="172" y="-183.3" font-family="Times,serif" font-size="14.00">Blob::Mesh</text>
 <polyline fill="none" stroke="black" points="0,-175.5 344,-175.5 "/>
 <text text-anchor="middle" x="172" y="-160.3" font-family="Times,serif" font-size="14.00">OctagonalPrism</text>
 <polyline fill="none" stroke="black" points="0,-152.5 344,-152.5 "/>

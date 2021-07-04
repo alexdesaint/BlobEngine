@@ -5,11 +5,10 @@
 #ifndef BLOBATTACK_RENDERPASS_HPP
 #define BLOBATTACK_RENDERPASS_HPP
 
-
-#include <vulkan/vulkan.h>
+#include "Device.hpp"
 #include <array>
 #include <stdexcept>
-#include "Device.hpp"
+#include <vulkan/vulkan.h>
 namespace Blob::VK {
 
 class RenderPass {
@@ -17,7 +16,10 @@ public:
     VkRenderPass renderPass = nullptr;
     const Device &device;
 
-    RenderPass(const Device &device, VkFormat swapChainImageFormat, VkFormat depthImageFormat) : device(device) {
+    RenderPass(const Device &device,
+               VkFormat swapChainImageFormat,
+               VkFormat depthImageFormat) :
+        device(device) {
         VkAttachmentDescription colorAttachment = {};
         colorAttachment.format = swapChainImageFormat;
         colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -29,14 +31,16 @@ public:
         colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
         VkAttachmentDescription depthAttachment = {};
-        depthAttachment.format = depthImageFormat; // CoreEngine::getInstance().findDepthFormat();
+        depthAttachment.format =
+            depthImageFormat; // CoreEngine::getInstance().findDepthFormat();
         depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
         depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        depthAttachment.finalLayout =
+            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         VkAttachmentReference colorAttachmentRef = {};
         colorAttachmentRef.attachment = 0;
@@ -44,7 +48,8 @@ public:
 
         VkAttachmentReference depthAttachmentRef = {};
         depthAttachmentRef.attachment = 1;
-        depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        depthAttachmentRef.layout =
+            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         VkSubpassDescription subpass = {};
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -58,9 +63,11 @@ public:
         dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         dependency.srcAccessMask = 0;
         dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                                   VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-        std::array<VkAttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
+        std::array<VkAttachmentDescription, 2> attachments = {colorAttachment,
+                                                              depthAttachment};
         VkRenderPassCreateInfo renderPassInfo = {};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
         renderPassInfo.attachmentCount = (uint32_t) attachments.size();
@@ -70,12 +77,15 @@ public:
         renderPassInfo.dependencyCount = 1;
         renderPassInfo.pDependencies = &dependency;
 
-        if (vkCreateRenderPass(device.device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
+        if (vkCreateRenderPass(device.device,
+                               &renderPassInfo,
+                               nullptr,
+                               &renderPass) != VK_SUCCESS)
             throw std::runtime_error("failed to create render pass!");
     }
 
     ~RenderPass() { vkDestroyRenderPass(device.device, renderPass, nullptr); }
 };
-}
+} // namespace Blob::VK
 
-#endif //BLOBATTACK_RENDERPASS_HPP
+#endif // BLOBATTACK_RENDERPASS_HPP

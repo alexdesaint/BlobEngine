@@ -7,19 +7,19 @@
 #include <Blob/Core/Scene.hpp>
 #include <Blob/Core/Shape.hpp>
 #include <Blob/GL/FrameBuffer.hpp>
-#include <Blob/GLFW.hpp>
 #include <Blob/GL/Window.hpp>
+#include <Blob/GLFW.hpp>
 #include <Blob/Time.hpp>
 
 // std
 #include <chrono>
 #include <ostream>
 
-namespace Blob::Core {
+namespace Blob {
 
 class Window : private GL::Window {
 private:
-    //ImGui::Context imgui;
+    // ImGui::Context imgui;
 
     // time counting
     Time::TimePoint lastFrameTime;
@@ -38,8 +38,8 @@ private:
     void keyboardUpdate(int key, bool pressed) final;
 
     void mouseButtonUpdate(int button, bool pressed) final;
-    void cursorPositionUpdate(double xpos, double ypos) final ;
-    void scrollUpdate(double xoffset, double yoffset) final ;
+    void cursorPositionUpdate(double xpos, double ypos) final;
+    void scrollUpdate(double xoffset, double yoffset) final;
 
 public:
     Keyboard keyboard;
@@ -49,24 +49,40 @@ public:
     using GLFW::Window::isOpen;
     using GLFW::Window::totalTimeFlow;
     using GLFW::Window::windowSize;
-    Maths::ProjectionTransform projectionTransform;
-    Maths::ProjectionTransform2D projectionTransform2D;
+    ProjectionTransform projectionTransform;
+    ProjectionTransform2D projectionTransform2D;
 
-    explicit Window(const Maths::Vec2<unsigned int>& size = {640, 480});
+    explicit Window(const Vec2<unsigned int> &size = {640, 480});
     ~Window();
 
-    void draw(const Primitive2D &primitive, const Maths::ViewTransform2D &camera, const Maths::Mat3 &modelTransform = Maths::Mat3()) const;
-    void draw(const Mesh2D &mesh, const Maths::ViewTransform2D &camera, const Maths::Mat3 &modelTransform = Maths::Mat3()) const;
-    void draw(const Shape2D &shape, const Maths::ViewTransform2D &camera, const Maths::Mat3 &modelTransform = Maths::Mat3()) const;
+    void draw(const Primitive2D &primitive,
+              const ViewTransform2D &camera,
+              const Mat3 &modelTransform = Mat3()) const;
+    void draw(const Mesh2D &mesh,
+              const ViewTransform2D &camera,
+              const Mat3 &modelTransform = Mat3()) const;
+    void draw(const Shape2D &shape,
+              const ViewTransform2D &camera,
+              const Mat3 &modelTransform = Mat3()) const;
     void draw(const Scene2D &scene) const;
 
-    void draw(const Primitive &primitive, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
-    void draw(const Mesh &mesh, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
-    void draw(const Shape &shape, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
-    void drawTransparent(const Mesh &mesh, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
-    void drawTransparent(const Shape &shape, const Maths::ViewTransform &camera, const Maths::Mat4 &modelTransform = Maths::Mat4()) const;
-    void draw(const Scene &scene, const Maths::Mat4 &modelTransform) const;
-    void draw(const Scene &scene, const Maths::ViewTransform &camera) const;
+    void draw(const Primitive &primitive,
+              const ViewTransform &camera,
+              const Mat4 &modelTransform = Mat4()) const;
+    void draw(const Mesh &mesh,
+              const ViewTransform &camera,
+              const Mat4 &modelTransform = Mat4()) const;
+    void draw(const Shape &shape,
+              const ViewTransform &camera,
+              const Mat4 &modelTransform = Mat4()) const;
+    void drawTransparent(const Mesh &mesh,
+                         const ViewTransform &camera,
+                         const Mat4 &modelTransform = Mat4()) const;
+    void drawTransparent(const Shape &shape,
+                         const ViewTransform &camera,
+                         const Mat4 &modelTransform = Mat4()) const;
+    void draw(const Scene &scene, const Mat4 &modelTransform) const;
+    void draw(const Scene &scene, const ViewTransform &camera) const;
     void draw(const Scene &scene) const;
 
     void disableMouseCursor();
@@ -74,7 +90,7 @@ public:
 
     float display();
 
-    Maths::Vec3<float> getWorldPosition(const Camera &camera);
+    Vec3<float> getWorldPosition(const Camera &camera);
 };
 
-} // namespace Blob::Core
+} // namespace Blob

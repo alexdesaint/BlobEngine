@@ -11,7 +11,6 @@
 #include <string>
 // #include "pipeline.h"
 
-
 namespace Blob::VK {
 class model;
 
@@ -50,8 +49,8 @@ public:
        VkImageLayout oldLayout, VkImageLayout newLayout, const CommandPool
        &commandPool);
 
-        static void copyImage(VkImage srcImage, VkImage dstImage, uint32_t width,
-       uint32_t height, const CommandPool &commandPool);
+        static void copyImage(VkImage srcImage, VkImage dstImage, uint32_t
+       width, uint32_t height, const CommandPool &commandPool);
 
         static void createShaderModule(const std::vector<char> &code,
        VDeleter<VkShaderModule> &shaderModule);
@@ -63,11 +62,12 @@ public:
 
     ~Window();
 
-    /*  std::vector<Framebuffer> createFramebuffers(unsigned int width, unsigned int height) {
-        std::vector<Framebuffer> swapChainFramebuffers;
+    /*  std::vector<Framebuffer> createFramebuffers(unsigned int width, unsigned
+      int height) { std::vector<Framebuffer> swapChainFramebuffers;
 
         for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-          swapChainFramebuffers.emplace_back(device, width, height, renderPass.renderPass, {swapChainImageViews[i], depthImageView});
+          swapChainFramebuffers.emplace_back(device, width, height,
+      renderPass.renderPass, {swapChainImageViews[i], depthImageView});
         }
 
         return swapChainFramebuffers;
