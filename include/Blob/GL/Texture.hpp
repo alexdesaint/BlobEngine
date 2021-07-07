@@ -63,7 +63,7 @@ public:
 
     void setRGBA16data(uint8_t *pixels, Vec2<size_t> size);
 
-    [[nodiscard]] Vec2<size_t> getTextureSize() const;
+    Vec2<size_t> getTextureSize() const;
 
     uint32_t texture = 0; // the opengl texture
 };

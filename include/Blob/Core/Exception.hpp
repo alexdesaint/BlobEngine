@@ -14,7 +14,7 @@ public:
 
     explicit Exception(std::string errorMsg) : errorMsg(std::move(errorMsg)) {}
 
-    [[nodiscard]] const char *what() const noexcept override {
+    const char *what() const noexcept override {
         return errorMsg.c_str();
     }
 };

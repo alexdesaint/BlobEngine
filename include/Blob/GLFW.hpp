@@ -233,9 +233,9 @@ public:
 
     ~Window();
 
-    [[nodiscard]] bool isOpen() const;
+    bool isOpen() const;
 
-    // [[nodiscard]] Vec2<int> getSize() const { return {width, height}; }
+    // Vec2<int> getSize() const { return {width, height}; }
 
     Vec2<int> getFrameBufferSize();
 

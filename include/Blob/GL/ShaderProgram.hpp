@@ -44,7 +44,7 @@ public:
 
     int32_t getAttribLocation(const char *name) const;
 
-    [[nodiscard]] bool isValid() const { return program != 0; }
+    bool isValid() const { return program != 0; }
 };
 
 } // namespace Blob::GL

@@ -24,7 +24,7 @@ public:
 
     Color::RGBA getPixel(const Blob::Vec2<size_t> &position);
 
-    [[nodiscard]] Image getSubImage(const Blob::Vec2<size_t> &size,
+    Image getSubImage(const Blob::Vec2<size_t> &size,
                                     const Blob::Vec2<size_t> &position) const;
 };
 

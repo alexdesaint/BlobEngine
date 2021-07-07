@@ -18,7 +18,7 @@ public:
     explicit operator bool() const { return pressed; }
     bool operator==(const int &i) const { return i == id; }
 
-    [[nodiscard]] std::string getName() const;
+    std::string getName() const;
 };
 
 class Keyboard {

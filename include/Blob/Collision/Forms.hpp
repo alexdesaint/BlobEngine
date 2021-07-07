@@ -10,19 +10,17 @@
 #include <utility>
 #include <vector>
 
-template<>
-struct std::hash<Blob::Vec2<int32_t>> {
-    inline std::size_t operator()(const Blob::Vec2<int32_t> &k) const {
-        return *reinterpret_cast<const std::size_t *>(&k);
-    }
-};
-
 namespace Blob {
 
 class Circle;
 class Line;
 class Rectangle;
 class RasterArea;
+
+struct CollisionResolution {
+    bool collision = false;
+    Vec2<> collisionPoint, normal;
+};
 
 class Point : public Vec2<float> {
 public:
@@ -35,19 +33,17 @@ public:
 
     Point(const Vec2<float> &v) : Vec2<float>(v) {}
 
-    [[nodiscard]] bool overlap(const Rectangle &rectangle) const;
+    bool overlap(const Rectangle &rectangle) const;
 
-    [[nodiscard]] static bool overlap(const Line &rectangle) { return false; }
+    constexpr static bool overlap(const Line &rectangle) { return false; }
 
-    [[nodiscard]] static bool overlap(const Point &rectangle) { return false; }
+    constexpr static bool overlap(const Point &rectangle) { return false; }
 
-    [[nodiscard]] bool overlap(const Circle &circle) const;
+    bool overlap(const Circle &circle) const;
 
-    [[nodiscard]] static bool overlap(const RasterArea &rasterArea) {
-        return true;
-    }
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
-    [[nodiscard]] std::unordered_set<Vec2<int32_t>> rasterize() const;
+    std::unordered_set<Vec2<int32_t>> rasterize() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Point &p) {
         return os << "Point: " << (Vec2<float>) p;
@@ -67,19 +63,21 @@ public:
     Circle(const Vec2<float> &position, float rayon) :
         rayon(rayon), position(position) {}
 
-    [[nodiscard]] bool overlap(const Rectangle &rectangle) const;
+    bool overlap(const Rectangle &rectangle) const;
 
-    [[nodiscard]] bool overlap(const Circle &circle) const;
+    bool overlap(const Circle &circle) const;
 
-    [[nodiscard]] bool overlap(const Line &line) const;
+    bool overlap(const Line &line) const;
 
-    [[nodiscard]] bool overlap(const Point &point) const;
+    bool overlap(const Point &point) const;
 
-    [[nodiscard]] static bool overlap(const RasterArea &rasterArea) {
-        return true;
-    }
+    CollisionResolution resolve(const Circle &circle, Vec2<> destination) const;
 
-    [[nodiscard]] std::unordered_set<Vec2<int32_t>> rasterize() const;
+    CollisionResolution resolve(const Line &circle, Vec2<> destination) const;
+
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
+
+    std::unordered_set<Vec2<int32_t>> rasterize() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Circle &p) {
         return os << "Circle: {position: " << (Vec2<float>) p.position
@@ -92,37 +90,35 @@ public:
     Point positionA;
     Point positionB;
 
-    Line(Point &a, Point &b) : positionA(a), positionB(b) {}
+    Line(Vec2<> &a, Vec2<> &b) : positionA(a), positionB(b) {}
 
-    //        [[nodiscard]] double Length2() const { return vector.length2(); }
+    double length2() const { return Vec2<>{positionA, positionB}.length2(); }
 
-    //        [[nodiscard]] double Length() const { return vector.length(); }
+    double length() const { return Vec2<>{positionA, positionB}.length(); }
 
-    //        [[nodiscard]] double getOrientation() const { return
+    //        double getOrientation() const { return
     //        vector.getOrientation(); }
 
-    [[nodiscard]] Point closestPointTo(Point point) const;
+    Point closestPointTo(Point point) const;
 
-    [[nodiscard]] Point getIntersectionPoint(Line B) const;
+    Point getIntersectionPoint(Line B) const;
 
-    [[nodiscard]] bool overlap(const Rectangle &rectangle) const;
+    bool overlap(const Rectangle &rectangle) const;
 
-    [[nodiscard]] bool overlap(const Circle &circle) const;
+    bool overlap(const Circle &circle) const;
 
-    [[nodiscard]] bool overlap(const Line &line) const;
+    bool overlap(const Line &line) const;
 
-    [[nodiscard]] bool overlap(const Point &point) const;
+    bool overlap(const Point &point) const;
 
-    [[nodiscard]] static bool overlap(const RasterArea &rasterArea) {
-        return true;
-    }
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
-    [[nodiscard]] std::unordered_set<Vec2<int32_t>> rasterize() const;
+    std::unordered_set<Vec2<int32_t>> rasterize() const;
 
-    //        [[nodiscard]] double getGradient() const { return vector.y /
+    //        double getGradient() const { return vector.y /
     //        vector.x; }
 
-    //        [[nodiscard]] double getConstant() const { return position.y -
+    //        double getConstant() const { return position.y -
     //        vector.y / vector.x * position.x; }
 
     friend std::ostream &operator<<(std::ostream &os, const Line &p) {
@@ -138,21 +134,21 @@ public:
     Rectangle(const Vec2<float> &position, const Vec2<float> &size) :
         position(position), size(size) {}
 
-    [[nodiscard]] std::array<Vec2<>, 4> getPoints() const;
+    std::array<Vec2<>, 4> getPoints() const;
 
-    [[nodiscard]] bool overlap(const Rectangle &rectangle) const;
+    bool overlap(const Rectangle &rectangle) const;
 
-    [[nodiscard]] bool overlap(const Circle &circle) const;
+    bool overlap(const Circle &circle) const;
 
-    [[nodiscard]] bool overlap(const Line &line) const;
+    bool overlap(const Line &line) const;
 
-    [[nodiscard]] bool overlap(const Point &point) const;
+    bool overlap(const Point &point) const;
 
-    [[nodiscard]] static bool overlap(const RasterArea &rasterArea) {
-        return true;
-    }
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
-    [[nodiscard]] std::unordered_set<Vec2<int32_t>> rasterize() const;
+    CollisionResolution resolve(const Rectangle &rectangle, Vec2<> destination) const;
+
+    std::unordered_set<Vec2<int32_t>> rasterize() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Rectangle &p) {
         return os << "Rectangle: {position: " << (Vec2<float>) p.position
@@ -203,23 +199,17 @@ public:
         setArea(center - size2, center + size - size2 - 1);
     }
 
-    [[nodiscard]] static bool overlap(const Rectangle &rectangle) {
-        return true;
-    }
+    constexpr static bool overlap(const Rectangle &rectangle) { return true; }
 
-    [[nodiscard]] static bool overlap(const Circle &circle) { return true; }
+    constexpr static bool overlap(const Circle &circle) { return true; }
 
-    [[nodiscard]] static bool overlap(const Line &line) { return true; }
+    constexpr static bool overlap(const Line &line) { return true; }
 
-    [[nodiscard]] static bool overlap(const Point &point) { return true; }
+    constexpr static bool overlap(const Point &point) { return true; }
 
-    [[nodiscard]] static bool overlap(const RasterArea &rasterArea) {
-        return true;
-    }
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
-    [[nodiscard]] std::unordered_set<Vec2<int32_t>> rasterize() const {
-        return area;
-    };
+    std::unordered_set<Vec2<int32_t>> rasterize() const { return area; };
 
     friend std::ostream &operator<<(std::ostream &os, const RasterArea &p) {
         return os << "RasterArea: ";

@@ -1,4 +1,5 @@
 #include <Blob/Collision/Forms.hpp>
+#include <vcruntime.h>
 
 namespace Blob {
 std::unordered_set<Vec2<int32_t>> Rectangle::rasterize() const {
@@ -39,6 +40,13 @@ bool Rectangle::overlap(const Rectangle &rectangle) const {
         return true;
     }
     return false;
+
+    Vec2<> AB{position, rectangle.position};
+    Vec2<> totalSize{size + rectangle.size};
+    if (std::abs(AB.x) > std::abs(totalSize.x / 2) ||
+        std::abs(AB.y) > std::abs(totalSize.y / 2))
+        return false;
+    return true;
 }
 
 bool Rectangle::overlap(const Circle &circle) const {
@@ -51,6 +59,60 @@ bool Rectangle::overlap(const Line &line) const {
 
 bool Rectangle::overlap(const Point &point) const {
     return point.overlap(*this);
+}
+
+CollisionResolution Rectangle::resolve(const Rectangle &rectangle,
+                                       Vec2<> destination) const {
+
+    Vec2<> AB{position, rectangle.position};
+    Vec2<> totalSize{size + rectangle.size};
+    Vec2<> D = destination;
+    Vec2<> AD(position, D);
+
+    if (std::abs(AB.x) > std::abs(AD.x) + totalSize.x / 2 ||
+        std::abs(AB.y) > std::abs(AD.y) + totalSize.y / 2)
+        return {};
+
+    float x1 = rectangle.position.x + totalSize.x / 2;
+    float x2 = rectangle.position.x - totalSize.x / 2;
+    float y1 = rectangle.position.y + totalSize.y / 2;
+    float y2 = rectangle.position.y - totalSize.y / 2;
+
+    float slope = (position.y - destination.y) / (position.x - destination.x);
+
+    CollisionResolution res;
+    if (AD.x > 0) {
+        if (D.x > x2)
+            res.collisionPoint.x = x2;
+    } else {
+        if (D.x < x1)
+            res.collisionPoint.x = x1;
+    }
+    res.collisionPoint.y =
+        res.collisionPoint.x * slope + (position.y - position.x * slope);
+    if (std::abs(res.collisionPoint.y - rectangle.position.y) <
+        totalSize.y / 2) {
+        res.collision = true;
+        return res;
+    }
+    if (AD.y > 0) {
+        if (D.y > y2) {
+            res.collisionPoint.y = y2;
+        }
+    } else {
+        if (D.y < y1) {
+            res.collisionPoint.y = y1;
+        }
+    }
+    res.collisionPoint.x =
+        (res.collisionPoint.y - (position.y - position.x * slope)) / slope;
+    if (std::abs(res.collisionPoint.x - rectangle.position.x) <
+        totalSize.x / 2) {
+        res.collision = true;
+        return res;
+    }
+
+    return res;
 }
 
 } // namespace Blob

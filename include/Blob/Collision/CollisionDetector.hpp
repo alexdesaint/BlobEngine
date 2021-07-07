@@ -315,6 +315,53 @@ public:
         }
     }
 
+    constexpr static float zoomIn = 20;
+
+    void draw(const Circle &c, ImDrawList *draw_list, Vec2<> offset) {
+        draw_list->AddCircleFilled(offset + c.position * zoomIn,
+                                   c.rayon * zoomIn,
+                                   ImColor(ImVec4(1.0f, 1.0f, 0.4f, 1.0f)),
+                                   10.f);
+    }
+
+    void draw(const RasterArea &c, ImDrawList *draw_list, Vec2<> offset) {}
+
+    void draw(const Rectangle &c, ImDrawList *draw_list, Vec2<> offset) {}
+
+    void draw(const Point &c, ImDrawList *draw_list, Vec2<> offset) {}
+
+    void draw(const Line &c, ImDrawList *draw_list, Vec2<> offset) {}
+
+    template<class T>
+    void drawSpacialHash(ImDrawList *draw_list, Vec2<> offset) {
+        for (const auto &[pos, colliders] :
+             FormDatabase<T>::staticSpacialHash) {
+            if (!colliders.empty())
+                draw_list->AddRect(
+                    offset + pos.template cast<float>() * zoomIn,
+                    offset + pos.template cast<float>() * zoomIn + zoomIn,
+                    ImColor(ImVec4(0.8f, 0.8f, 0.4f, 1.0f)),
+                    0.0f,
+                    ImDrawFlags_None,
+                    1.f);
+            for (const auto &c : colliders)
+                draw(c->form, draw_list, offset);
+        }
+        for (const auto &[pos, colliders] :
+             FormDatabase<T>::dynamicSpacialHash) {
+            if (!colliders.empty())
+                draw_list->AddRect(
+                    offset + pos.template cast<float>() * zoomIn,
+                    offset + pos.template cast<float>() * zoomIn + zoomIn,
+                    ImColor(ImVec4(0.0f, 1.0f, 0.4f, 1.0f)),
+                    0.0f,
+                    ImDrawFlags_None,
+                    1.f);
+            for (const auto &c : colliders)
+                draw(c->form, draw_list, offset);
+        }
+    }
+
     void ImGuiDebugWindow() {
         ImGui::Begin("CollisionDetector Debug", &ImGuiDebugWindowVisible);
         ImGui::BeginTable("ImGuiDebugWindow Dynamics", 2);
@@ -333,6 +380,9 @@ public:
             ImGui::Text("%llu", f);
         }
 
+        ImDrawList *draw_list = ImGui::GetWindowDrawList();
+        const ImVec2 p = ImGui::GetCursorScreenPos();
+        (drawSpacialHash<Types>(draw_list, p), ...);
         ImGui::End();
     }
 #endif

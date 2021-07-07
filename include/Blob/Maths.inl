@@ -6,6 +6,7 @@
 #include <ostream>
 
 #include <cstring>
+#include <functional>
 
 #define PI 3.141592653589793238462643383279502884L
 
@@ -1557,3 +1558,38 @@ public:
 };
 
 }; // namespace Blob
+
+template<>
+struct std::hash<Blob::Vec2<uint32_t>> {
+    inline std::size_t operator()(const Blob::Vec2<uint32_t> &k) const {
+        return *reinterpret_cast<const std::size_t *>(&k);
+    }
+};
+
+template<>
+struct std::hash<Blob::Vec2<int32_t>> {
+    inline std::size_t operator()(const Blob::Vec2<int32_t> &k) const {
+        return *reinterpret_cast<const std::size_t *>(&k);
+    }
+};
+
+template<>
+struct std::hash<Blob::Vec4<int16_t>> {
+    inline std::size_t operator()(const Blob::Vec4<int16_t> &k) const {
+        return *reinterpret_cast<const std::size_t *>(&k);
+    }
+};
+
+template<>
+struct std::hash<Blob::Vec4<uint16_t>> {
+    inline std::size_t operator()(const Blob::Vec4<uint16_t> &k) const {
+        return *reinterpret_cast<const std::size_t *>(&k);
+    }
+};
+
+template<>
+struct std::hash<Blob::Vec2<float>> {
+    inline std::size_t operator()(const Blob::Vec2<float> &k) const {
+        return *reinterpret_cast<const std::size_t *>(&k);
+    }
+};

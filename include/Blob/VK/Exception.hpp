@@ -29,7 +29,7 @@ public:
     explicit Exception(T *t, std::string errorMsg) :
         errorMsg(std::string("VK::") + typeid(T).name() + " : " + errorMsg) {}
 #endif
-    [[nodiscard]] const char *what() const noexcept override {
+    const char *what() const noexcept override {
         return errorMsg.c_str();
     }
 };

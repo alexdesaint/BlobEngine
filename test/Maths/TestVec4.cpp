@@ -179,7 +179,7 @@ public:
         return ret;
     }
 
-    [[nodiscard]] Mat4SSE inverse() const {
+    Mat4SSE inverse() const {
         float Coef00 = (a33 * a44 - a43 * a34);
         float Coef02 = (a23 * a44 - a43 * a24);
         float Coef03 = (a23 * a34 - a33 * a24);
@@ -345,7 +345,7 @@ public:
         return a[0];
     }
 
-    [[nodiscard]] Vec4SSE normalize() const {
+    Vec4SSE normalize() const {
         __m128 data = _mm_loadu_ps(&x);
         __m128 temp = _mm_dp_ps(data, data, 0xFF);
         temp = _mm_rsqrt_ps(temp);
@@ -389,7 +389,7 @@ public:
         return (_mm_dp_ps(data, data, 0xFF))[0];
     }
 
-    [[nodiscard]] Vec4SSEE normalize() const {
+    Vec4SSEE normalize() const {
         __m128 temp = _mm_dp_ps(data, data, 0xFF);
         temp = _mm_rsqrt_ps(temp);
         return Vec4SSEE(_mm_mul_ps(data, temp));
@@ -445,7 +445,7 @@ public:
         return a[0];
     }
 
-    [[nodiscard]] Vec3SSE normalize() const {
+    Vec3SSE normalize() const {
         __m128 data = _mm_loadu_ps(&x);
         __m128 temp = _mm_dp_ps(data, data, 0x7F);
         temp = _mm_rsqrt_ps(temp);
@@ -504,7 +504,7 @@ public:
         return (_mm_dp_ps(data, data, 0x7F))[0];
     }
 
-    [[nodiscard]] Vec3SSEE normalize() const {
+    Vec3SSEE normalize() const {
         __m128 temp = _mm_dp_ps(data, data, 0x7F);
         temp = _mm_rsqrt_ps(temp);
         return Vec3SSEE(_mm_mul_ps(data, temp));

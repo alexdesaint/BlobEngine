@@ -113,4 +113,5 @@ std::unordered_set<Vec2<int32_t>> Line::rasterize() const {
 
     return points;
 }
+
 } // namespace Blob
