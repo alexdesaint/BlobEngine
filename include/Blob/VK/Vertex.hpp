@@ -6,7 +6,7 @@
 struct Vertex {
     Blob::Vec3<float> pos;
     Blob::Vec3<float> color;
-    Blob::Vec2<float> texCoord;
+    Blob::Vec2<> texCoord;
 
     static VkVertexInputBindingDescription getBindingDescription() {
         VkVertexInputBindingDescription bindingDescription = {};

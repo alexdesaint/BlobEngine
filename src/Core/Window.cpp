@@ -30,7 +30,7 @@ Window::Window(const Vec2<unsigned int> &size) :
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    cursorPosition = (Vec2<float> *) &io.MousePos;
+    cursorPosition = (Vec2<> *) &io.MousePos;
     mouseButton = &io.MouseDown;
     scrollOffsetW = &io.MouseWheel;
     scrollOffsetH = &io.MouseWheelH;
@@ -125,8 +125,7 @@ Vec3<float> Window::getWorldPosition(const Camera &camera) {
        testPos.z, testPos.w); ImGui::End();*/
     //
 
-    Vec2<float> mousePos = *cursorPosition,
-                size = framebufferSize.cast<float>();
+    Vec2<> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
     Vec4<float> pos(mousePos / size * 2 - 1,

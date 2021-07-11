@@ -126,12 +126,10 @@ public:
 
     constexpr inline T length() const { return std::sqrt(x * x + y * y); };
 
-    // constexpr inline T scalar(const Vec2 &B) const { return x * B.x + y *
-    // B.y; }
-
+    constexpr inline T scalar(const Vec2 &B) const { return x * B.x + y * B.y; }
     constexpr inline T dot(const Vec2 &B) const { return x * B.x + y * B.y; }
 
-    // constexpr inline Vec2 cross(const Vec2 &B) const { return {y, -x}; }
+    constexpr inline T cross(const Vec2 &B) const { return x * B.y - y * B.x; }
 
     constexpr inline Vec2 normalize() const {
         return operator/(std::sqrt(x * x + y * y));
@@ -1028,7 +1026,7 @@ public:
 
 class ModelTransform2D : public Mat3 {
 private:
-    Vec2<float> scale = {1, 1};
+    Vec2<> scale = {1, 1};
     Mat2<float> rotation;
 
     void compute() {
@@ -1043,23 +1041,20 @@ public:
 
     explicit ModelTransform2D(const Mat3 &mat3) : Mat3(mat3) {}
 
-    explicit ModelTransform2D(const Vec2<float> &position) {
-        setPosition(position);
-    }
-    explicit ModelTransform2D(const Vec2<float> &position,
-                              const Vec2<float> &scale) {
+    explicit ModelTransform2D(const Vec2<> &position) { setPosition(position); }
+    explicit ModelTransform2D(const Vec2<> &position, const Vec2<> &scale) {
         setPosition(position);
         setScale(scale);
     }
-    explicit ModelTransform2D(const Vec2<float> &position,
-                              const Vec2<float> &scale,
+    explicit ModelTransform2D(const Vec2<> &position,
+                              const Vec2<> &scale,
                               float angle) :
         scale(scale) {
         setPosition(position);
         setRotation(angle);
     }
 
-    void setPosition(const Vec2<float> &xy) {
+    void setPosition(const Vec2<> &xy) {
         a31 = xy.x;
         a32 = xy.y;
     }
@@ -1084,7 +1079,7 @@ public:
         compute();
     }
 
-    void setScale(const Vec2<float> &xy) {
+    void setScale(const Vec2<> &xy) {
         scale = xy;
         compute();
     }
@@ -1094,7 +1089,7 @@ public:
         compute();
     }
 
-    void rescale(const Vec2<float> &xy) {
+    void rescale(const Vec2<> &xy) {
         scale = xy;
         compute();
     }
@@ -1116,15 +1111,13 @@ public:
 
     explicit ViewTransform2D() = default;
     explicit ViewTransform2D(const Mat3 &mat3) : Mat3(mat3) {}
-    explicit ViewTransform2D(const Vec2<float> &position) {
-        setPosition(position);
-    }
-    explicit ViewTransform2D(const Vec2<float> &position, float angle) {
+    explicit ViewTransform2D(const Vec2<> &position) { setPosition(position); }
+    explicit ViewTransform2D(const Vec2<> &position, float angle) {
         setPosition(position);
         setRotation(angle);
     }
 
-    void setPosition(const Vec2<float> &xy) {
+    void setPosition(const Vec2<> &xy) {
         a31 = -xy.x;
         a32 = -xy.y;
     }
@@ -1151,8 +1144,8 @@ private:
 
 public:
     ProjectionTransform2D() = default;
-    explicit ProjectionTransform2D(const Vec2<float> &size) { setRatio(size); }
-    void setRatio(const Vec2<float> &size) {
+    explicit ProjectionTransform2D(const Vec2<> &size) { setRatio(size); }
+    void setRatio(const Vec2<> &size) {
         ratio = size.x / (float) size.y;
         a11 = 2.f / (height * ratio);
         a22 = 2.f / height;
@@ -1200,7 +1193,7 @@ public:
         a43 = xyz.z;
     }
 
-    void setPosition(const Vec2<float> &xy) {
+    void setPosition(const Vec2<> &xy) {
         a41 = xy.x;
         a42 = xy.y;
     }
@@ -1343,7 +1336,7 @@ public:
         compute();
     }
 
-    void setScale(const Vec2<float> &xyz) {
+    void setScale(const Vec2<> &xyz) {
         scale = xyz;
         compute();
     }
@@ -1588,8 +1581,8 @@ struct std::hash<Blob::Vec4<uint16_t>> {
 };
 
 template<>
-struct std::hash<Blob::Vec2<float>> {
-    inline std::size_t operator()(const Blob::Vec2<float> &k) const {
+struct std::hash<Blob::Vec2<>> {
+    inline std::size_t operator()(const Blob::Vec2<> &k) const {
         return *reinterpret_cast<const std::size_t *>(&k);
     }
 };

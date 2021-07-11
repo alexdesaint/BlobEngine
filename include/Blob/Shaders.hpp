@@ -195,7 +195,7 @@ void main()
                              UniformModel,
                              UniformView,
                              UniformProjection,
-                             UniformAttribute<Vec2<float>, 3>,
+                             UniformAttribute<Vec2<>, 3>,
                              UniformAttribute<Texture, 0>>;
 
 using PerFaceNormal = Shader<ShaderProgram<VertexShader<R"=====(#version 450

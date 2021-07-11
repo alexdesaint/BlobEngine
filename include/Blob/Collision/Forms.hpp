@@ -19,10 +19,10 @@ class RasterArea;
 
 struct CollisionResolution {
     bool collision = false;
-    Vec2<> collisionPoint, normal;
+    Vec2<> collisionPoint, normal, bounce, shift;
 };
 
-class Point : public Vec2<float> {
+class Point : public Vec2<> {
 public:
     using Vec2<>::Vec2;
     using Vec2<>::operator=;
@@ -31,13 +31,13 @@ public:
 
     Point(const Point &v) = default;
 
-    Point(const Vec2<float> &v) : Vec2<float>(v) {}
+    Point(const Vec2<> &v) : Vec2<>(v) {}
 
     bool overlap(const Rectangle &rectangle) const;
 
-    constexpr static bool overlap(const Line &rectangle) { return false; }
+    constexpr static bool overlap(const Line &line) { return false; }
 
-    constexpr static bool overlap(const Point &rectangle) { return false; }
+    constexpr static bool overlap(const Point &point) { return false; }
 
     bool overlap(const Circle &circle) const;
 
@@ -46,21 +46,21 @@ public:
     std::unordered_set<Vec2<int32_t>> rasterize() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Point &p) {
-        return os << "Point: " << (Vec2<float>) p;
+        return os << "Point: " << (Vec2<>) p;
     }
 };
 
 class Circle {
 public:
-    float rayon = 0;
     Point position;
+    float rayon;
 
     Circle() = default;
 
     Circle(const Point &position, float rayon) :
         rayon(rayon), position(position) {}
 
-    Circle(const Vec2<float> &position, float rayon) :
+    Circle(const Vec2<> &position, float rayon) :
         rayon(rayon), position(position) {}
 
     bool overlap(const Rectangle &rectangle) const;
@@ -73,14 +73,19 @@ public:
 
     CollisionResolution resolve(const Circle &circle, Vec2<> destination) const;
 
-    CollisionResolution resolve(const Line &circle, Vec2<> destination) const;
+    CollisionResolution resolve(const Line &line, Vec2<> destination) const;
+
+    CollisionResolution resolve(const Point &point, Vec2<> destination) const;
+
+    CollisionResolution resolve(const Rectangle &rectangle,
+                                Vec2<> destination) const;
 
     constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
     std::unordered_set<Vec2<int32_t>> rasterize() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Circle &p) {
-        return os << "Circle: {position: " << (Vec2<float>) p.position
+        return os << "Circle: {position: " << (Vec2<>) p.position
                   << ", rayon: " << p.rayon << "}";
     }
 };
@@ -101,7 +106,7 @@ public:
 
     Point closestPointTo(Point point) const;
 
-    Point getIntersectionPoint(Line B) const;
+    Point getIntersection(Line B) const;
 
     bool overlap(const Rectangle &rectangle) const;
 
@@ -122,8 +127,8 @@ public:
     //        vector.y / vector.x * position.x; }
 
     friend std::ostream &operator<<(std::ostream &os, const Line &p) {
-        return os << "Line: {positionA: " << (Vec2<float>) p.positionA
-                  << ", positionB: " << (Vec2<float>) p.positionB << "}";
+        return os << "Line: {positionA: " << (Vec2<>) p.positionA
+                  << ", positionB: " << (Vec2<>) p.positionB << "}";
     }
 };
 
@@ -131,7 +136,7 @@ class Rectangle {
 public:
     Point position, size;
 
-    Rectangle(const Vec2<float> &position, const Vec2<float> &size) :
+    Rectangle(const Vec2<> &position, const Vec2<> &size) :
         position(position), size(size) {}
 
     std::array<Vec2<>, 4> getPoints() const;
@@ -146,13 +151,16 @@ public:
 
     constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
-    CollisionResolution resolve(const Rectangle &rectangle, Vec2<> destination) const;
+    CollisionResolution resolve(const Rectangle &rectangle,
+                                Vec2<> destination) const;
+
+    CollisionResolution resolve(const Point &point, Vec2<> destination) const;
 
     std::unordered_set<Vec2<int32_t>> rasterize() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Rectangle &p) {
-        return os << "Rectangle: {position: " << (Vec2<float>) p.position
-                  << ", size: " << (Vec2<float>) p.size << "}";
+        return os << "Rectangle: {position: " << (Vec2<>) p.position
+                  << ", size: " << (Vec2<>) p.size << "}";
     }
 };
 

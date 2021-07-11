@@ -5,42 +5,32 @@
 namespace Blob {
 
 Point Line::closestPointTo(Point point) const {
-    double A1 = positionB.y - positionA.y;
-    double B1 = positionA.x - positionB.x;
+    float A1 = positionB.y - positionA.y;
+    float B1 = positionA.x - positionB.x;
 
-    double C1 = A1 * positionA.x + B1 * positionA.y;
-    double C2 = -B1 * point.x + A1 * point.y;
+    float C1 = A1 * positionA.x + B1 * positionA.y;
+    float C2 = -B1 * point.x + A1 * point.y;
 
-    double det = A1 * A1 - -B1 * B1;
+    float det = A1 * A1 - -B1 * B1;
 
-    if (det != 0) {
-        return {static_cast<float>((A1 * C1 - B1 * C2) / det),
-                static_cast<float>((A1 * C2 - -B1 * C1) / det)};
-    } else {
+    if (det == 0)
         return point;
-    }
+
+    return {(A1 * C1 - B1 * C2) / det, (A1 * C2 + B1 * C1) / det};
 }
 
-Point Line::getIntersectionPoint(Line B) const {
-    double A1 = positionA.x - positionB.x;
+Point Line::getIntersection(Line line) const {
+    Vec2<> A = positionA - positionB;
+    Vec2<> B = line.positionA - line.positionB;
 
-    double B1 = B.positionA.x - B.positionB.x;
-
-    double A2 = positionA.y - positionB.y;
-
-    double B2 = B.positionA.y - B.positionB.y;
-
-    double det = A1 * B2 - A2 * B1;
+    float det = A.cross(B);
 
     if (det == 0)
         return {};
 
-    double C1 = positionB.y * positionA.x - positionB.x * positionA.y;
-
-    double C2 = B.positionB.y * B.positionA.x - B.positionB.x * B.positionA.y;
-
-    return {static_cast<float>((C1 * B1 - A1 * C2) / det),
-            static_cast<float>((C1 * B2 - A2 * C2) / det)};
+    return (B * positionA.cross(positionB) -
+            A * line.positionA.cross(line.positionB)) /
+           det;
 }
 
 bool Line::overlap(const Rectangle &rectangle) const {

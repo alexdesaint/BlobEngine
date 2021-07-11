@@ -214,11 +214,11 @@ public:
 
 class Mouse {
 public:
-    Blob::Vec2<float> &position;
+    Blob::Vec2<> &position;
     bool (&buttons)[5];
     float &scrollOffsetW, &scrollOffsetH;
 
-    Mouse(Vec2<float> &position,
+    Mouse(Vec2<> &position,
           float &scrollOffsetW,
           float &scrollOffsetH,
           bool (&buttons)[5]) :

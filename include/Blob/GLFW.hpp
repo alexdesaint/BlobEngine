@@ -167,13 +167,13 @@ private:
         keySuperData{false};
 
     bool mouseButtonData[5]{false};
-    Vec2<float> cursorPositionData;
+    Vec2<> cursorPositionData;
     float scrollOffsetWData{0}, scrollOffsetHData{0};
 
     // Window info data
     Vec2<unsigned int> windowSizeData;
     Vec2<unsigned int> framebufferSizeData;
-    Vec2<float> contentScaleData;
+    Vec2<> contentScaleData;
     bool fullScreenData = false;
 
     void initInputs();
@@ -188,7 +188,7 @@ protected:
 
     // Mouse Cursor
     bool (*mouseButton)[5] = &mouseButtonData;
-    Vec2<float> *cursorPosition = &cursorPositionData;
+    Vec2<> *cursorPosition = &cursorPositionData;
     float *scrollOffsetW = &scrollOffsetWData,
           *scrollOffsetH = &scrollOffsetHData;
 
@@ -214,7 +214,7 @@ public:
     // Window info
     const Vec2<unsigned int> &windowSize = windowSizeData;
     const Vec2<unsigned int> &framebufferSize = framebufferSizeData;
-    const Vec2<float> &contentScale = contentScaleData;
+    const Vec2<> &contentScale = contentScaleData;
     const bool &fullScreen = fullScreenData;
 
     // Controllers

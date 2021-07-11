@@ -16,8 +16,8 @@ class Shapes : public Asset<Shapes> {
 private:
     static const std::array<const uint8_t, 2880> data;
     struct Data {
-        Blob::Vec2<float> position;
-        Blob::Vec2<float> texturePosition;
+        Blob::Vec2<> position;
+        Blob::Vec2<> texturePosition;
     };
     inline static const std::array<Data, 6> data2D{
         Data{{-0.5, -0.5}, {0, 1}},

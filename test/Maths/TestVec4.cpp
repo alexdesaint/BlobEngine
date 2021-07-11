@@ -9,11 +9,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iomanip>
 #include <iostream>
-#include <nmmintrin.h>
 #include <vector>
+
+#include <nmmintrin.h>
 #include <xmmintrin.h>
 
-using namespace Blob::Maths;
+using namespace Blob;
 
 class Mat4SSE {
 private:
@@ -562,7 +563,7 @@ bool eq(float v, float u) {
     return u == v || (v < u + 0.001f && v > u - 0.001f);
 }
 
-bool eq(const Vec2<float> &v, const glm::vec2 &u) {
+bool eq(const Vec2<> &v, const glm::vec2 &u) {
     if (eq(v.x, u.x) && eq(v.y, u.y))
         return true;
     std::cout << std::setprecision(15) << "Blob::{" << v << "} \n glm::{" << u
@@ -694,13 +695,13 @@ TEST
         std::cout << "|";                                                      \
         std::cout << std::setw(13) << NAME " |";                               \
         auto dglm = TESTFUNC<glm::vec2, N>(INIT, &glm::FUNC);                  \
-        auto d2 = TESTFUNC<Vec2<float>, N>(INIT, &Vec2<float>::FUNC);          \
+        auto d2 = TESTFUNC<Vec2<>, N>(INIT, &Vec2<>::FUNC);                    \
         std::cout << "           |";                                           \
         std::cout << "           |";                                           \
         std::cout << std::endl;                                                \
         for (unsigned int i = 0; i < dglm.size(); i++) {                       \
             if (!eq(d2[i], dglm[i])) {                                         \
-                std::cout << "ERROR ON Vec2<float>" << std::endl;              \
+                std::cout << "ERROR ON Vec2<>" << std::endl;                   \
                 break;                                                         \
             }                                                                  \
         }                                                                      \
@@ -799,7 +800,7 @@ TEST
     std::cout << "|";
     std::cout << std::setw(13) << "Vec2 |";
     std::cout << std::setw(10) << sizeof(glm::vec2) << " |";
-    std::cout << std::setw(10) << sizeof(Vec2<float>) << " |";
+    std::cout << std::setw(10) << sizeof(Vec2<>) << " |";
     std::cout << "           |           |" << std::endl;
     std::cout
         << "|------------|-----------|-----------|-----------|-----------|"

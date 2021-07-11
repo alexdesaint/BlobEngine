@@ -54,7 +54,7 @@ void Shader::setUniform<>(const float (&val)[16], int position) const {
 }
 
 template<>
-void Shader::setUniform<>(const Vec2<float> &val, int position) const {
+void Shader::setUniform<>(const Vec2<> &val, int position) const {
     glUniform2fv(position, 1, &val.x);
 }
 

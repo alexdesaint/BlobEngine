@@ -105,7 +105,7 @@ private:
                        const Mat4 &mt) const final;
 
 public:
-    Vec2<float> texScale = {1.f, 1.f};
+    Vec2<> texScale = {1.f, 1.f};
 
     explicit SingleTexture(const Texture &texture) : texture(texture) {}
 };
@@ -201,7 +201,7 @@ private:
                        const Mat4 &mt) const final;
 
 public:
-    Vec2<float> texScale = {1.f, 1.f};
+    Vec2<> texScale = {1.f, 1.f};
 
     explicit PBRSingleTexture(const Texture &texture) : texture(texture) {}
 };

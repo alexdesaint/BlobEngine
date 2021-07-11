@@ -2,7 +2,7 @@
 
 namespace Blob {
 
-typedef Vec2<float> vec2;
+typedef Vec2<> vec2;
 
 //-----------------------------------------------------------------------------
 // Triple product expansion is used to calculate perpendicular normal vectors

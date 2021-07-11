@@ -69,7 +69,10 @@ public:
                     SDL_GetError());
             return;
         }
-        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        renderer = SDL_CreateRenderer(window,
+                                      -1,
+                                      SDL_RENDERER_ACCELERATED |
+                                          SDL_RENDERER_PRESENTVSYNC);
     }
 
     void draw(const RectangleShape &rectangleShape) {
@@ -78,11 +81,12 @@ public:
                                rectangleShape.color.G * 255,
                                rectangleShape.color.B * 255,
                                255);
-        SDL_Rect rect{
-            (int) (rectangleShape.shapePosition.x - rectangleShape.shapeSize.x / 2),
-            (int) (rectangleShape.shapePosition.y - rectangleShape.shapeSize.y / 2),
-            (int) rectangleShape.shapeSize.x,
-            (int) rectangleShape.shapeSize.y};
+        SDL_Rect rect{(int) (rectangleShape.shapePosition.x -
+                             rectangleShape.shapeSize.x / 2),
+                      (int) (rectangleShape.shapePosition.y -
+                             rectangleShape.shapeSize.y / 2),
+                      (int) rectangleShape.shapeSize.x,
+                      (int) rectangleShape.shapeSize.y};
         SDL_RenderFillRect(renderer, &rect);
     }
 
@@ -162,7 +166,7 @@ public:
     float getFrameTime() {
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
-        return ((NOW - LAST) * 1000.f / (float) SDL_GetPerformanceFrequency());
+        return ((NOW - LAST) / (float) SDL_GetPerformanceFrequency());
     }
 
     void clear() {
@@ -218,9 +222,35 @@ public:
     }
 };
 
+template<class CursorT, class TargetT>
+bool testCollision(const CursorT &cursor,
+                   const std::list<TargetT> &targets,
+                   const Vec2<> &D,
+                   SdlWindow &window) {
+    bool hit = false;
+    for (const auto &t : targets) {
+        auto cr = cursor.resolve(t, D);
+        if (cr.collision) {
+            hit = true;
+            auto shape = cursor;
+            shape.shapePosition = cr.collisionPoint;
+            shape.color = Color::HotPink;
+            window.draw(shape);
+            shape.shapePosition = cr.bounce;
+            shape.color = Color::DeepPink;
+            window.draw(shape);
+            shape.shapePosition = cr.shift;
+            shape.color = Color::LightPink;
+            window.draw(shape);
+        }
+    }
+    return hit;
+}
+
 class Game {
 private:
     unsigned int tick;
+    double totalTime = 0;
     SdlWindow window;
     Vec2<> move{80, 80};
     CircleShape destination{5.f, {}, Color::DarkCyan};
@@ -276,35 +306,27 @@ public:
             Vec2<int> cursorPosition;
             SDL_GetMouseState(&cursorPosition.x, &cursorPosition.y);
             destination.shapePosition = cursorPosition.cast<float>() + move;
-            bool hit = false;
+            size_t hit = 0;
             CollisionResolution cr;
             switch (state) {
             case 0:
                 circleCursor.setPosition(cursorPosition.cast<float>());
-                for (const auto &c : circles) {
-                    cr = circleCursor.resolve(c, destination.shapePosition);
-                    if (cr.collision) {
-                        hit = true;
-                        window.draw(CircleShape{circleCursor.rayon,
-                                                cr.collisionPoint,
-                                                Color::HotPink});
-                    }
-                }
-                for (const auto &c : rectangles)
-                    if (circleCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : lines) {
-                    cr = circleCursor.resolve(c, destination.shapePosition);
-                    if (cr.collision) {
-                        hit = true;
-                        window.draw(CircleShape{circleCursor.rayon,
-                                                cr.collisionPoint,
-                                                Color::HotPink});
-                    }
-                }
-                for (const auto &c : points)
-                    if (circleCursor.overlap(c))
-                        hit = true;
+                hit += testCollision(circleCursor,
+                                     circles,
+                                     destination.shapePosition,
+                                     window);
+                hit += testCollision(circleCursor,
+                                     rectangles,
+                                     destination.shapePosition,
+                                     window);
+                hit += testCollision(circleCursor,
+                                     lines,
+                                     destination.shapePosition,
+                                     window);
+                hit += testCollision(circleCursor,
+                                     points,
+                                     destination.shapePosition,
+                                     window);
                 if (hit)
                     circleCursor.color = Color::Red;
                 else
@@ -316,21 +338,17 @@ public:
                 for (const auto &c : circles)
                     if (rectangleCursor.overlap(c))
                         hit = true;
-                for (const auto &c : rectangles){
-                    cr = rectangleCursor.resolve(c, destination.shapePosition);
-                    if (cr.collision) {
-                        hit = true;
-                        window.draw(RectangleShape{rectangleCursor.size,
-                                                cr.collisionPoint,
-                                                Color::HotPink});
-                    }
-                }
+                hit += testCollision(rectangleCursor,
+                                     rectangles,
+                                     destination.shapePosition,
+                                     window);
                 for (const auto &c : lines)
                     if (rectangleCursor.overlap(c))
                         hit = true;
-                for (const auto &c : points)
-                    if (rectangleCursor.overlap(c))
-                        hit = true;
+                hit += testCollision(rectangleCursor,
+                                     points,
+                                     destination.shapePosition,
+                                     window);
                 if (hit)
                     rectangleCursor.color = Color::Red;
                 else
@@ -393,13 +411,13 @@ public:
                     quit = true;
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    if(e.button.button == SDL_BUTTON_LEFT){
+                    if (e.button.button == SDL_BUTTON_LEFT) {
                         state++;
                         if (state > 3)
                             state = 0;
                         break;
                     } else {
-                    move = move.rotate();
+                        move = move.rotate();
                     }
                 case SDL_MOUSEWHEEL:
                     mouseOrientation += e.wheel.y;
@@ -410,14 +428,13 @@ public:
             }
 
             tick++;
+            totalTime += window.getFrameTime();
 
             if (tick >= 60) {
                 char szFps[200];
-                sprintf(szFps,
-                        "%s : %f FPS",
-                        "Game Title",
-                        tick / window.getFrameTime());
+                sprintf(szFps, "%s : %f FPS", "Game Title", tick / totalTime);
                 tick = 0;
+                totalTime = 0;
                 window.setTitle(szFps);
             }
             window.draw(destination);

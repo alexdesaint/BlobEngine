@@ -1,5 +1,4 @@
 #include <Blob/Collision/Forms.hpp>
-#include <vcruntime.h>
 
 namespace Blob {
 std::unordered_set<Vec2<int32_t>> Rectangle::rasterize() const {
@@ -24,23 +23,6 @@ std::array<Vec2<>, 4> Rectangle::getPoints() const {
 }
 
 bool Rectangle::overlap(const Rectangle &rectangle) const {
-    auto r1x = position.x - size.x / 2;
-    auto r1y = position.y - size.y / 2;
-    auto r2x = rectangle.position.x - rectangle.size.x / 2;
-    auto r2y = rectangle.position.y - rectangle.size.y / 2;
-    auto r1w = size.x;
-    auto r1h = size.y;
-    auto r2w = rectangle.size.x;
-    auto r2h = rectangle.size.y;
-
-    if (r1x + r1w >= r2x && // r1 right edge past r2 left
-        r1x <= r2x + r2w && // r1 left edge past r2 right
-        r1y + r1h >= r2y && // r1 top edge past r2 bottom
-        r1y <= r2y + r2h) { // r1 bottom edge past r2 top
-        return true;
-    }
-    return false;
-
     Vec2<> AB{position, rectangle.position};
     Vec2<> totalSize{size + rectangle.size};
     if (std::abs(AB.x) > std::abs(totalSize.x / 2) ||
@@ -62,57 +44,56 @@ bool Rectangle::overlap(const Point &point) const {
 }
 
 CollisionResolution Rectangle::resolve(const Rectangle &rectangle,
-                                       Vec2<> destination) const {
-
-    Vec2<> AB{position, rectangle.position};
+                                       Vec2<> D) const {
+    Vec2<> A = position, B = rectangle.position;
+    Vec2<> AB{A, B};
     Vec2<> totalSize{size + rectangle.size};
-    Vec2<> D = destination;
-    Vec2<> AD(position, D);
+    Vec2<> AD(A, D);
 
     if (std::abs(AB.x) > std::abs(AD.x) + totalSize.x / 2 ||
         std::abs(AB.y) > std::abs(AD.y) + totalSize.y / 2)
         return {};
 
-    float x1 = rectangle.position.x + totalSize.x / 2;
-    float x2 = rectangle.position.x - totalSize.x / 2;
-    float y1 = rectangle.position.y + totalSize.y / 2;
-    float y2 = rectangle.position.y - totalSize.y / 2;
-
-    float slope = (position.y - destination.y) / (position.x - destination.x);
+    float slope = (A.y - D.y) / (A.x - D.x);
 
     CollisionResolution res;
-    if (AD.x > 0) {
-        if (D.x > x2)
-            res.collisionPoint.x = x2;
-    } else {
-        if (D.x < x1)
-            res.collisionPoint.x = x1;
-    }
-    res.collisionPoint.y =
-        res.collisionPoint.x * slope + (position.y - position.x * slope);
-    if (std::abs(res.collisionPoint.y - rectangle.position.y) <
-        totalSize.y / 2) {
-        res.collision = true;
+    if (AD.x > 0)
+        res.bounce.x = res.shift.x = res.collisionPoint.x =
+            B.x - totalSize.x / 2;
+    else
+        res.bounce.x = res.shift.x = res.collisionPoint.x =
+            B.x + totalSize.x / 2;
+
+    res.bounce.y = res.shift.y = D.y;
+    res.collisionPoint.y = res.collisionPoint.x * slope + (A.y - A.x * slope);
+    res.bounce.x -= D.x - res.bounce.x;
+    if (std::abs(res.collisionPoint.y - B.y) <= totalSize.y / 2) {
+        if (AD.dot({A, res.collisionPoint}) > 0 || overlap(rectangle))
+            res.collision = true;
         return res;
     }
-    if (AD.y > 0) {
-        if (D.y > y2) {
-            res.collisionPoint.y = y2;
-        }
-    } else {
-        if (D.y < y1) {
-            res.collisionPoint.y = y1;
-        }
-    }
-    res.collisionPoint.x =
-        (res.collisionPoint.y - (position.y - position.x * slope)) / slope;
-    if (std::abs(res.collisionPoint.x - rectangle.position.x) <
-        totalSize.x / 2) {
-        res.collision = true;
+
+    if (AD.y > 0)
+        res.bounce.y = res.shift.y = res.collisionPoint.y =
+            B.y - totalSize.y / 2;
+    else
+        res.bounce.y = res.shift.y = res.collisionPoint.y =
+            B.y + totalSize.y / 2;
+
+    res.bounce.x = res.shift.x = D.x;
+    res.collisionPoint.x = (res.collisionPoint.y - (A.y - A.x * slope)) / slope;
+    res.bounce.y -= D.y - res.bounce.y;
+    if (std::abs(res.collisionPoint.x - B.x) <= totalSize.x / 2) {
+        if (AD.dot({A, res.collisionPoint}) > 0 || overlap(rectangle))
+            res.collision = true;
         return res;
     }
 
     return res;
+}
+
+CollisionResolution Rectangle::resolve(const Point &point, Vec2<> D) const {
+    return resolve(Rectangle{point, {}}, D);
 }
 
 } // namespace Blob
