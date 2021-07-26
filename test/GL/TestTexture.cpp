@@ -134,7 +134,7 @@ int main() {
     GL::Texture texture;
     GL::Sampler sample(GL::Sampler::NEAREST, GL::Sampler::NEAREST);
 
-    texture.setRGBA8data((uint8_t *) image, Vec2<unsigned int>{2, 2});
+    texture.setRGBA8data((uint8_t *) image, Vec2<size_t>{2, 2});
     texture.applySampler(sample);
 
     model_location = sp.getUniformLocation("MVP");
