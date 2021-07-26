@@ -335,9 +335,10 @@ public:
                 break;
             case 1:
                 rectangleCursor.setPosition(cursorPosition.cast<float>());
-                for (const auto &c : circles)
-                    if (rectangleCursor.overlap(c))
-                        hit = true;
+                hit += testCollision(rectangleCursor,
+                                     circles,
+                                     destination.shapePosition,
+                                     window);
                 hit += testCollision(rectangleCursor,
                                      rectangles,
                                      destination.shapePosition,

@@ -47,45 +47,37 @@ CollisionResolution Rectangle::resolve(const Rectangle &rectangle,
                                        Vec2<> D) const {
     Vec2<> A = position, B = rectangle.position;
     Vec2<> AB{A, B};
-    Vec2<> totalSize{size + rectangle.size};
+    Vec2<> totalSize{(size + rectangle.size) / 2};
     Vec2<> AD(A, D);
 
-    if (std::abs(AB.x) > std::abs(AD.x) + totalSize.x / 2 ||
-        std::abs(AB.y) > std::abs(AD.y) + totalSize.y / 2)
+    if (std::abs(AB.x) > std::abs(AD.x) + totalSize.x ||
+        std::abs(AB.y) > std::abs(AD.y) + totalSize.y)
         return {};
 
     float slope = (A.y - D.y) / (A.x - D.x);
 
     CollisionResolution res;
-    if (AD.x > 0)
-        res.bounce.x = res.shift.x = res.collisionPoint.x =
-            B.x - totalSize.x / 2;
-    else
-        res.bounce.x = res.shift.x = res.collisionPoint.x =
-            B.x + totalSize.x / 2;
-
-    res.bounce.y = res.shift.y = D.y;
+    res.collisionPoint.x = (AD.x > 0) ? B.x - totalSize.x : B.x + totalSize.x;
     res.collisionPoint.y = res.collisionPoint.x * slope + (A.y - A.x * slope);
-    res.bounce.x -= D.x - res.bounce.x;
-    if (std::abs(res.collisionPoint.y - B.y) <= totalSize.y / 2) {
+
+    if (std::abs(res.collisionPoint.y - B.y) <= totalSize.y) {
         if (AD.dot({A, res.collisionPoint}) > 0 || overlap(rectangle))
             res.collision = true;
+        res.shift.x = res.collisionPoint.x;
+        res.bounce.y = res.shift.y = D.y;
+        res.bounce.x = res.shift.x * 2 - D.x;
         return res;
     }
 
-    if (AD.y > 0)
-        res.bounce.y = res.shift.y = res.collisionPoint.y =
-            B.y - totalSize.y / 2;
-    else
-        res.bounce.y = res.shift.y = res.collisionPoint.y =
-            B.y + totalSize.y / 2;
+    res.collisionPoint.y = (AD.y > 0) ? B.y - totalSize.y : B.y + totalSize.y;
+    res.collisionPoint.x = (res.collisionPoint.y - A.y + A.x * slope) / slope;
 
-    res.bounce.x = res.shift.x = D.x;
-    res.collisionPoint.x = (res.collisionPoint.y - (A.y - A.x * slope)) / slope;
-    res.bounce.y -= D.y - res.bounce.y;
-    if (std::abs(res.collisionPoint.x - B.x) <= totalSize.x / 2) {
+    if (std::abs(res.collisionPoint.x - B.x) <= totalSize.x) {
         if (AD.dot({A, res.collisionPoint}) > 0 || overlap(rectangle))
             res.collision = true;
+        res.shift.y = res.collisionPoint.y;
+        res.bounce.x = res.shift.x = D.x;
+        res.bounce.y = res.shift.y * 2 - D.y;
         return res;
     }
 
@@ -94,6 +86,18 @@ CollisionResolution Rectangle::resolve(const Rectangle &rectangle,
 
 CollisionResolution Rectangle::resolve(const Point &point, Vec2<> D) const {
     return resolve(Rectangle{point, {}}, D);
+}
+
+CollisionResolution Rectangle::resolve(const Circle &circle, Vec2<> D) const {
+    Vec2<> A = position, B = circle.position;
+    Vec2<> AD(A, D);
+    auto res = circle.resolve(*this, B - AD);
+
+    res.collisionPoint = A - Vec2(B, res.collisionPoint);
+    res.shift = A - Vec2(B, res.shift);
+    res.bounce = A - Vec2(B, res.bounce);
+
+    return res;
 }
 
 } // namespace Blob

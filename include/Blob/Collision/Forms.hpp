@@ -156,6 +156,8 @@ public:
 
     CollisionResolution resolve(const Point &point, Vec2<> destination) const;
 
+    CollisionResolution resolve(const Circle &circle, Vec2<> destination) const;
+
     std::unordered_set<Vec2<int32_t>> rasterize() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Rectangle &p) {

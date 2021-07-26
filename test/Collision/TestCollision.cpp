@@ -7,6 +7,15 @@
 
 using namespace Blob;
 
+using CollisionDetector = GeneralCollisionDetector<class CircleObject,
+                                                   class CircleCursor,
+                                                   class PointObject,
+                                                   class PointCursor,
+                                                   class LineObject,
+                                                   class LineCursor,
+                                                   class RectangleObject,
+                                                   class RectangleCursor>;
+
 class CircleShape {
 public:
     float rayon;
@@ -181,10 +190,13 @@ public:
         CircleShape(rayon, position) {}
 };
 
-class CircleCursor : public DynamicCollider<Circle>, public CircleShape {
+class CircleCursor :
+    public CollisionDetector::DynamicCollider<Circle>,
+    public CircleShape {
 public:
     CircleCursor(const Point &position, float rayon) :
-        DynamicCollider<Circle>(typeid(CircleCursor), Circle(position, rayon)),
+        CollisionDetector::DynamicCollider<Circle>(typeid(CircleCursor),
+                                                   Circle(position, rayon)),
         CircleShape(rayon, position) {}
 
     Circle preCollisionUpdate(Circle currentForm, float timeFlow) final {
@@ -194,9 +206,9 @@ public:
 
     void setPosition(const Point &p) { position = p; }
 
-    void hitStart(PhysicalObject *object) final { color = Color::Red; }
+    void hitStart(const OneForm &object) final { color = Color::Red; }
 
-    void hitEnd(PhysicalObject *object) final { color = Color::Green; }
+    void hitEnd(const OneForm &object) final { color = Color::Green; }
 };
 
 class PointObject : public StaticCollider<Point>, public CircleShape {
@@ -206,10 +218,13 @@ public:
         CircleShape(2, position) {}
 };
 
-class PointCursor : public DynamicCollider<Point>, public CircleShape {
+class PointCursor :
+    public CollisionDetector::DynamicCollider<Point>,
+    public CircleShape {
 public:
     explicit PointCursor(const Point &position) :
-        DynamicCollider<Point>(typeid(PointCursor), Point(position)),
+        CollisionDetector::DynamicCollider<Point>(typeid(PointCursor),
+                                                  Point(position)),
         CircleShape(2, position) {}
 
     Point preCollisionUpdate(Point currentForm, float timeFlow) final {
@@ -219,9 +234,9 @@ public:
 
     void setPosition(const Point &p) { position = p; }
 
-    void hitStart(PhysicalObject *object) final { color = Color::Red; }
+    void hitStart(const OneForm &object) final { color = Color::Red; }
 
-    void hitEnd(PhysicalObject *object) final { color = Color::Green; }
+    void hitEnd(const OneForm &object) final { color = Color::Green; }
 };
 
 class RectangleObject :
@@ -236,14 +251,15 @@ public:
 };
 
 class RectangleCursor :
-    public DynamicCollider<Rectangle>,
+    public CollisionDetector::DynamicCollider<Rectangle>,
     public RectangleShape {
 public:
     RectangleCursor(const Point &position,
                     const Point &size,
                     Color::RGB fillColor = Color::White) :
-        DynamicCollider<Rectangle>(typeid(CircleCursor),
-                                   Rectangle(position, size)),
+        CollisionDetector::DynamicCollider<Rectangle>(
+            typeid(CircleCursor),
+            Rectangle(position, size)),
         RectangleShape(size, position, fillColor) {}
 
     Rectangle preCollisionUpdate(Rectangle currentForm, float timeFlow) final {
@@ -253,9 +269,9 @@ public:
 
     void setPosition(const Point &p) { position = p; }
 
-    void hitStart(PhysicalObject *object) final { color = Color::Red; }
+    void hitStart(const OneForm &object) final { color = Color::Red; }
 
-    void hitEnd(PhysicalObject *object) final { color = Color::Green; }
+    void hitEnd(const OneForm &object) final { color = Color::Green; }
 };
 
 class LineObject : public StaticCollider<Line>, public LineShape {
@@ -265,10 +281,13 @@ public:
         LineShape(position1, position2) {}
 };
 
-class LineCursor : public DynamicCollider<Line>, public LineShape {
+class LineCursor :
+    public CollisionDetector::DynamicCollider<Line>,
+    public LineShape {
 public:
     LineCursor(Point position1, Point position2) :
-        DynamicCollider<Line>(typeid(LineCursor), Line(position1, position2)),
+        CollisionDetector::DynamicCollider<Line>(typeid(LineCursor),
+                                                 Line(position1, position2)),
         LineShape(position1, position2) {}
 
     Line preCollisionUpdate(Line currentForm, float timeFlow) final {
@@ -282,9 +301,9 @@ public:
         LineShape::position2 = position2;
     }
 
-    void hitStart(PhysicalObject *object) final { color = Color::Red; }
+    void hitStart(const OneForm &object) final { color = Color::Red; }
 
-    void hitEnd(PhysicalObject *object) final { color = Color::Green; }
+    void hitEnd(const OneForm &object) final { color = Color::Green; }
 };
 
 class Game {
