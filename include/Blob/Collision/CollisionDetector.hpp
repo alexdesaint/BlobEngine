@@ -257,7 +257,7 @@ public:
     void draw(const Circle &c, ImDrawList *draw_list, Vec2<> offset) {
         draw_list->AddCircleFilled(offset + c.position * zoomIn,
                                    c.rayon * zoomIn,
-                                   ImColor(ImVec4(1.0f, 1.0f, 0.4f, 1.0f)),
+                                   ImColor(ImVec4(0.0f, 1.0f, 0.4f, 1.0f)),
                                    10.f);
     }
 
