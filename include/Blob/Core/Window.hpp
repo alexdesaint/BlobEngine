@@ -90,7 +90,8 @@ public:
 
     float display();
 
-    Vec3<float> getWorldPosition(const Camera &camera);
+    Vec3<float> getMousePositionInWorld(const Camera &camera);
+    Vec3<float> getMousePositionInWorld(const Camera &camera, float z);
 };
 
 } // namespace Blob

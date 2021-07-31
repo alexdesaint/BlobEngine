@@ -1,4 +1,6 @@
 #include <Blob/Maths.inl>
+#include <glm/fwd.hpp>
+#include <glm/geometric.hpp>
 #ifdef _WIN32
 #include <intrin.h>
 #else
@@ -7,6 +9,7 @@
 #define GLM_FORCE_INLINE
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iomanip>
 #include <iostream>
 #include <vector>
@@ -235,7 +238,7 @@ public:
         return Inverse * OneOverDeterminant;
     }
 
-    operator Mat4() {
+    operator Mat4() const {
         return {
             a11,
             a12,
@@ -356,7 +359,7 @@ public:
         return ret;
     }
 
-    explicit operator Vec4<float>() const { return {x, y, z, w}; }
+    operator Vec4<>() const { return {x, y, z, w}; }
 
     // Print operator
     friend std::ostream &operator<<(std::ostream &os, const Vec4SSE &dt) {
@@ -396,9 +399,7 @@ public:
         return Vec4SSEE(_mm_mul_ps(data, temp));
     }
 
-    explicit operator Vec4<float>() const {
-        return {data[0], data[1], data[2], data[3]};
-    }
+    operator Vec4<>() const { return {data[0], data[1], data[2], data[3]}; }
 
     // Print operator
     friend std::ostream &operator<<(std::ostream &os, const Vec4SSEE &dt) {
@@ -471,7 +472,7 @@ public:
         return ret;
     }
 
-    explicit operator Vec3<float>() const { return {x, y, z}; }
+    operator Vec3<>() const { return {x, y, z}; }
 
     // Print operator
     friend std::ostream &operator<<(std::ostream &os, const Vec3SSE &dt) {
@@ -522,7 +523,7 @@ public:
             _mm_shuffle_ps(result, result, _MM_SHUFFLE(3, 0, 2, 1)));
     }
 
-    explicit operator Vec3<float>() { return {data[0], data[1], data[2]}; }
+    operator Vec3<>() const { return {data[0], data[1], data[2]}; }
 
     // Print operator
     friend std::ostream &operator<<(std::ostream &os, const Vec3SSEE &dt) {
@@ -547,15 +548,22 @@ std::ostream &operator<<(std::ostream &os, const glm::vec4 &dt) {
     return os;
 }
 
+std::ostream &operator<<(std::ostream &os, const glm::mat3 &gm) {
+    os << gm[0][0] << ", " << gm[1][0] << ", " << gm[2][0] << ", " << std::endl;
+    os << gm[0][1] << ", " << gm[1][1] << ", " << gm[2][1] << ", " << std::endl;
+    os << gm[0][2] << ", " << gm[1][2] << ", " << gm[2][2] << ", " << std::endl;
+    return os;
+}
+
 std::ostream &operator<<(std::ostream &os, const glm::mat4 &gm) {
     os << gm[0][0] << ", " << gm[1][0] << ", " << gm[2][0] << ", " << gm[3][0]
-       << std::endl;
+       << ", " << std::endl;
     os << gm[0][1] << ", " << gm[1][1] << ", " << gm[2][1] << ", " << gm[3][1]
-       << std::endl;
+       << ", " << std::endl;
     os << gm[0][2] << ", " << gm[1][2] << ", " << gm[2][2] << ", " << gm[3][2]
-       << std::endl;
+       << ", " << std::endl;
     os << gm[0][3] << ", " << gm[1][3] << ", " << gm[2][3] << ", " << gm[3][3]
-       << std::endl;
+       << ", " << std::endl;
     return os;
 }
 
@@ -571,7 +579,7 @@ bool eq(const Vec2<> &v, const glm::vec2 &u) {
     return false;
 }
 
-bool eq(const Vec3<float> &v, const glm::vec3 &u) {
+bool eq(const Vec3<> &v, const glm::vec3 &u) {
     if (eq(v.x, u.x) && eq(v.y, u.y) && eq(v.z, u.z))
         return true;
     std::cout << std::setprecision(15) << "Blob::{" << v << "} \n glm::{" << u
@@ -579,7 +587,7 @@ bool eq(const Vec3<float> &v, const glm::vec3 &u) {
     return false;
 }
 
-bool eq(const Vec4<float> &v, const glm::vec4 &u) {
+bool eq(const Vec4<> &v, const glm::vec4 &u) {
     if (eq(v.x, u.x) && eq(v.y, u.y) && eq(v.z, u.z) && eq(v.w, u.w))
         return true;
     std::cout << std::setprecision(10) << "Blob::{" << v << "} \n glm::{" << u
@@ -588,205 +596,155 @@ bool eq(const Vec4<float> &v, const glm::vec4 &u) {
 }
 
 bool eq(const Mat3 &v, const glm::mat3 &u) {
-    if (eq(v.a11, u[0][0]) && eq(v.a12, u[0][1]) && eq(v.a13, u[0][2]) &&
-        eq(v.a21, u[1][0]) && eq(v.a22, u[1][1]) && eq(v.a23, u[1][2]) &&
-        eq(v.a31, u[2][0]) && eq(v.a32, u[2][1]) && eq(v.a33, u[2][2]))
-        return true;
-    std::cout << std::setprecision(15) << "Blob:" << std::endl
-              << v << "!=" << std::endl
-              << "glm:" << std::endl
-              << u << std::endl;
-    return false;
+    const float *mat3 = &v.a11;
+    const float *glmMat3 = glm::value_ptr(u);
+
+    for (int i = 0; i < 9; i++) {
+        if (!eq(mat3[i], glmMat3[i])) {
+            std::cout << std::setprecision(15) << "Blob:" << std::endl
+                      << v << "!=" << std::endl
+                      << "glm:" << std::endl
+                      << u << std::endl;
+            return false;
+        }
+    }
+    return true;
 }
 
 bool eq(const Mat4 &v, const glm::mat4 &u) {
-    if (eq(v.a11, u[0][0]) && eq(v.a12, u[0][1]) && eq(v.a13, u[0][2]) &&
-        eq(v.a14, u[0][3]) && eq(v.a21, u[1][0]) && eq(v.a22, u[1][1]) &&
-        eq(v.a23, u[1][2]) && eq(v.a24, u[1][3]) && eq(v.a31, u[2][0]) &&
-        eq(v.a32, u[2][1]) && eq(v.a33, u[2][2]) && eq(v.a34, u[2][3]) &&
-        eq(v.a41, u[3][0]) && eq(v.a42, u[3][1]) && eq(v.a43, u[3][2]) &&
-        eq(v.a44, u[3][3]))
-        return true;
-    std::cout << std::setprecision(15) << "Blob:" << std::endl
-              << v << "!=" << std::endl
-              << "glm:" << std::endl
-              << u << std::endl;
-    return false;
+    const float *mat = &v.a11;
+    const float *glmMat = glm::value_ptr(u);
+
+    for (int i = 0; i < 16; i++) {
+        if (!eq(mat[i], glmMat[i])) {
+            std::cout << std::setprecision(15) << "Blob:" << std::endl
+                      << v << "!=" << std::endl
+                      << "glm:" << std::endl
+                      << u << std::endl;
+            return false;
+        }
+    }
+    return true;
 }
 
-#define TEST                                                                   \
-    template<typename T, const unsigned int N>                                 \
-    std::vector<T> TEST_NAME(const T &init, FN) {                              \
-        std::vector<T> data(N / sizeof(T));                                    \
-                                                                               \
-        for (T & t : data)                                                     \
-            t = init;                                                          \
-                                                                               \
-        auto t1 = __rdtsc();                                                   \
-        for (T & t : data)                                                     \
-            ASSIGN;                                                            \
-        auto t2 = __rdtsc();                                                   \
-                                                                               \
-        std::cout << std::setw(10) << std::setprecision(4)                     \
-                  << (t2 - t1) / ((float) data.size()) << " |";                \
-                                                                               \
-        return data;                                                           \
-        for (T & t : data)                                                     \
-            std::cout << t << std::endl;                                       \
+constexpr unsigned int N = 5000;
+
+template<typename R, typename T, typename U>
+std::array<R, N>
+test2op(const T &i1, const U &i2, R(fn)(const T &, const U &)) {
+    std::array<T, N> data;
+    std::array<U, N> d2;
+    std::array<R, N> ret;
+    for (T &t : data)
+        t = i1;
+    for (U &t : d2)
+        t = i2;
+    auto t1 = __rdtsc();
+    for (size_t i = 0; i < N; i++)
+        ret[i] = fn(data[i], d2[i]);
+    auto t2 = __rdtsc();
+    std::cout << std::setw(10) << std::setprecision(4)
+              << (t2 - t1) / ((float) data.size()) << " |";
+    return ret;
+}
+
+template<typename R, typename T, typename U>
+std::array<R, N>
+test2op(const T &i1, const U &i2, R (T::*fn)(const U &) const) {
+    std::array<T, N> data;
+    std::array<U, N> d2;
+    std::array<R, N> ret;
+    for (T &t : data)
+        t = i1;
+    for (U &t : d2)
+        t = i2;
+    auto t1 = __rdtsc();
+    for (size_t i = 0; i < N; i++)
+        ret[i] = ((data[i]).*(fn))(d2[i]);
+    auto t2 = __rdtsc();
+    std::cout << std::setw(10) << std::setprecision(4)
+              << (t2 - t1) / ((float) data.size()) << " |";
+    return ret;
+}
+
+template<typename R, typename T>
+std::array<R, N> test1op(const T &init, R(fn)(const T &)) {
+    std::array<T, N> data;
+    std::array<R, N> ret;
+    for (T &t : data)
+        t = init;
+    auto t1 = __rdtsc();
+    for (size_t i = 0; i < N; i++)
+        ret[i] = fn(data[i]);
+    auto t2 = __rdtsc();
+    std::cout << std::setw(10) << std::setprecision(4)
+              << (t2 - t1) / ((float) data.size()) << " |";
+    return ret;
+}
+
+template<typename R, typename T>
+std::array<R, N> test1op(const T &init, R (T::*fn)() const) {
+    std::array<T, N> data;
+    std::array<R, N> ret;
+    for (T &t : data)
+        t = init;
+    auto t1 = __rdtsc();
+    for (size_t i = 0; i < N; i++)
+        ret[i] = ((data[i]).*(fn))();
+    auto t2 = __rdtsc();
+    std::cout << std::setw(10) << std::setprecision(4)
+              << (t2 - t1) / ((float) data.size()) << " |";
+    return ret;
+}
+
+template<class T1, class T2, size_t Size>
+void testEq(const std::array<T1, Size> &dglm, const std::array<T2, Size> &d2) {
+    for (unsigned int i = 0; i < Size; i++) {
+        if (!eq(d2[i], dglm[i])) {
+            std::cout << "ERROR ON " << typeid(T2).name() << " " << i
+                      << std::endl;
+            break;
+        }
     }
+}
 
-#define TEST_NAME test2op
-
-#define FN T(fn)(const T &, const T &)
-#define ASSIGN t = fn(t, t)
-TEST
-#undef FN
-#undef ASSIGN
-
-#define FN T (T::*fn)(const T &) const
-#define ASSIGN t = ((t).*(fn))(t)
-    TEST
-#undef FN
-#undef ASSIGN
-
-#define FN float (T::*fn)(const T &) const
-#define ASSIGN t = T(((t).*(fn))(t))
-        TEST
-#undef FN
-#undef ASSIGN
-
-#define FN float(fn)(const T &, const T &)
-#define ASSIGN t = T(fn(t, t))
-            TEST
-#undef FN
-#undef ASSIGN
-
-#undef TEST_NAME
-#define TEST_NAME test1op
-
-#define FN T(fn)(const T &)
-#define ASSIGN t = fn(t)
-                TEST
-#undef FN
-#undef ASSIGN
-
-#define FN T (T::*fn)() const
-#define ASSIGN t = ((t).*(fn))()
-                    TEST
-#undef FN
-#undef ASSIGN
-
-#define FN float (T::*fn)() const
-#define ASSIGN t = T(((t).*(fn))())
-                        TEST
-#undef FN
-#undef ASSIGN
-
-#define FN float(fn)(const T &)
-#define ASSIGN t = T(fn(t))
-                            TEST
-#undef FN
-#undef ASSIGN
-
-#undef TEST_NAME
-
-#define TEST_VEC2                                                              \
-    {                                                                          \
-        std::cout << "|";                                                      \
-        std::cout << std::setw(13) << NAME " |";                               \
-        auto dglm = TESTFUNC<glm::vec2, N>(INIT, &glm::FUNC);                  \
-        auto d2 = TESTFUNC<Vec2<>, N>(INIT, &Vec2<>::FUNC);                    \
-        std::cout << "           |";                                           \
-        std::cout << "           |";                                           \
-        std::cout << std::endl;                                                \
-        for (unsigned int i = 0; i < dglm.size(); i++) {                       \
-            if (!eq(d2[i], dglm[i])) {                                         \
-                std::cout << "ERROR ON Vec2<>" << std::endl;                   \
-                break;                                                         \
-            }                                                                  \
-        }                                                                      \
+template<class T1, class T2, class T3, size_t Size>
+void testEq(const std::array<T1, Size> &dglm,
+            const std::array<T2, Size> &d2,
+            const std::array<T3, Size> &d1) {
+    for (unsigned int i = 0; i < Size; i++) {
+        if (!eq(d2[i], dglm[i])) {
+            std::cout << "ERROR ON " << typeid(T2).name() << " " << i
+                      << std::endl;
+            break;
+        } // else if (!eq((Mat4) d1[i], dglm[i])) {
+        //     std::cout << "ERROR ON " << typeid(T3).name() << std::endl;
+        //     break;
+        // }
     }
+}
 
-#define TEST_VEC3                                                              \
-    {                                                                          \
-        std::cout << "|";                                                      \
-        std::cout << std::setw(13) << NAME " |";                               \
-        auto dglm = TESTFUNC<glm::vec3, N>(INIT, &glm::FUNC);                  \
-        auto d2 = TESTFUNC<Vec3<float>, N>(INIT, &Vec3<float>::FUNC);          \
-        auto d1 = TESTFUNC<Vec3SSE, N>(INIT, &Vec3SSE::FUNC);                  \
-        auto d3 = TESTFUNC<Vec3SSEE, N>(INIT, &Vec3SSEE::FUNC);                \
-        std::cout << std::endl;                                                \
-        for (unsigned int i = 0; i < d1.size(); i++) {                         \
-            if (!eq((Vec3<float>) d1[i], dglm[i])) {                           \
-                std::cout << "ERROR ON VEC3SSE " << i << std::endl;            \
-                break;                                                         \
-            } else if (!eq(d2[i], dglm[i])) {                                  \
-                std::cout << "ERROR ON Vec3<float>" << std::endl;              \
-                break;                                                         \
-            }                                                                  \
-        }                                                                      \
+template<class T, class T1, class T2, class T3, size_t Size>
+void testEq(const std::array<T, Size> &dglm,
+            const std::array<T1, Size> &d1,
+            const std::array<T2, Size> &d2,
+            const std::array<T3, Size> &d3) {
+    for (unsigned int i = 0; i < Size; i++) {
+        if (!eq(d1[i], dglm[i])) {
+            std::cout << "ERROR ON " << typeid(T1).name() << " " << i
+                      << std::endl;
+            break;
+        } // else if (!eq(d2[i], dglm[i])) {
+        //     std::cout << "ERROR ON " << typeid(T2).name() << std::endl;
+        //     break;
+        // } else if (!eq(d3[i], dglm[i])) {
+        //     std::cout << "ERROR ON " << typeid(T3).name() << std::endl;
+        //     break;
+        // }
     }
+}
 
-#define TEST_VEC4                                                              \
-    {                                                                          \
-        std::cout << "|";                                                      \
-        std::cout << std::setw(13) << NAME " |";                               \
-        auto dglm = TESTFUNC<glm::vec4, N>(INIT, &glm::FUNC);                  \
-        auto d2 = TESTFUNC<Vec4<float>, N>(INIT, &Vec4<float>::FUNC);          \
-        auto d1 = TESTFUNC<Vec4SSE, N>(INIT, &Vec4SSE::FUNC);                  \
-        auto d3 = TESTFUNC<Vec4SSEE, N>(INIT, &Vec4SSEE::FUNC);                \
-        std::cout << std::endl;                                                \
-        for (unsigned int i = 0; i < dglm.size(); i++) {                       \
-            if (!eq((Vec4<float>) d1[i], dglm[i])) {                           \
-                std::cout << "ERROR ON VEC4SSE " << i << std::endl;            \
-                break;                                                         \
-            } else if (!eq(d2[i], dglm[i])) {                                  \
-                std::cout << "ERROR ON Vec4<float>" << std::endl;              \
-                break;                                                         \
-            }                                                                  \
-        }                                                                      \
-    }
-
-#define TEST_MAT3                                                              \
-    {                                                                          \
-        std::cout << "|";                                                      \
-        std::cout << std::setw(13) << NAME " |";                               \
-        auto dglm = TESTFUNC<glm::mat3, N>(INIT, &glm::FUNC);                  \
-        auto d2 = TESTFUNC<Mat3, N>(INIT, &Mat3::FUNC);                        \
-        std::cout << "           |";                                           \
-        std::cout << "           |";                                           \
-        std::cout << std::endl;                                                \
-        for (unsigned int i = 0; i < dglm.size(); i++) {                       \
-            if (!eq(d2[i], dglm[i])) {                                         \
-                std::cout << "ERROR ON Mat3" << std::endl;                     \
-                break;                                                         \
-            }                                                                  \
-        }                                                                      \
-    }
-
-#define TEST_MAT4                                                              \
-    {                                                                          \
-        std::cout << "|";                                                      \
-        std::cout << std::setw(13) << NAME " |";                               \
-        auto dglm = TESTFUNC<glm::mat4, N>(INIT, &glm::FUNC);                  \
-        auto d2 = TESTFUNC<Mat4, N>(INIT, &Mat4::FUNC);                        \
-        auto d1 = TESTFUNC<Mat4SSE, N>(INIT, &Mat4SSE::FUNC);                  \
-        std::cout << "           |";                                           \
-        std::cout << std::endl;                                                \
-        for (unsigned int i = 0; i < dglm.size(); i++) {                       \
-            if (!eq(d2[i], dglm[i])) {                                         \
-                std::cout << "ERROR ON Mat4" << std::endl;                     \
-                break;                                                         \
-            } else if (!eq((Mat4) d1[i], dglm[i])) {                           \
-                std::cout << "ERROR ON MAT4SSE " << i << std::endl;            \
-                break;                                                         \
-            }                                                                  \
-        }                                                                      \
-    }
-
-    int
-    main() {
-    static const unsigned int N = 2304 * 500;
+int main() {
 
     std::cout
         << "|------------|-----------|-----------|-----------|-----------|"
@@ -806,45 +764,46 @@ TEST
         << "|------------|-----------|-----------|-----------|-----------|"
         << std::endl;
 
-#define INIT                                                                   \
-    { 1, 2 }
-#define TESTFUNC test2op
+    const glm::vec2 glmVec2_1{1, 2};
+    const Vec2<> vec2_1{1, 2};
 
-#define FUNC operator+
-#define NAME "+"
-    TEST_VEC2
-#undef FUNC
-#undef NAME
+    const glm::vec2 glmVec2_2{4, 3};
+    const Vec2<> vec2_2{4, 3};
 
-#define FUNC operator-
-#define NAME "-"
-    TEST_VEC2
-#undef NAME
-#undef FUNC
+    std::cout << "|" << std::setw(13) << "+ |";
+    testEq(test2op<glm::vec2>(glmVec2_1, glmVec2_2, &glm::operator+),
+           test2op(vec2_1, vec2_2, &Vec2<>::operator+));
+    std::cout << "           |";
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#define FUNC dot
-#define NAME "dot"
-    TEST_VEC2
-#undef NAME
-#undef FUNC
+    std::cout << "|" << std::setw(13) << "- |";
+    testEq(test2op<glm::vec2>(glmVec2_1, glmVec2_2, &glm::operator-),
+           test2op(vec2_1, vec2_2, &Vec2<>::operator-));
+    std::cout << "           |";
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#undef TESTFUNC
-#define TESTFUNC test1op
+    std::cout << "|" << std::setw(13) << "dot |";
+    testEq(test2op<float>(glmVec2_1, glmVec2_2, &glm::dot),
+           test2op(vec2_1, vec2_2, &Vec2<>::dot));
+    std::cout << "           |";
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#define FUNC normalize
-#define NAME "normalize"
-    TEST_VEC2
-#undef NAME
-#undef FUNC
+    std::cout << "|" << std::setw(13) << "normalize |";
+    testEq(test1op<glm::vec2>(glmVec2_1, &glm::normalize),
+           test1op(vec2_1, &Vec2<>::normalize));
+    std::cout << "           |";
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#define FUNC length
-#define NAME "length"
-    TEST_VEC2
-#undef FUNC
-#undef NAME
-
-#undef TESTFUNC
-#undef INIT
+    std::cout << "|" << std::setw(13) << "length |";
+    testEq(test1op<float>(glmVec2_1, &glm::length),
+           test1op(vec2_1, &Vec2<>::length));
+    std::cout << "           |";
+    std::cout << "           |";
+    std::cout << std::endl;
 
     std::cout
         << "|------------|-----------|-----------|-----------|-----------|"
@@ -859,60 +818,50 @@ TEST
         << "|------------|-----------|-----------|-----------|-----------|"
         << std::endl;
 
-#define FUNC operator+
-#define INIT                                                                   \
-    { 1, 2, 3 }
-#define NAME "+"
-#define TESTFUNC test2op
-    TEST_VEC3
-#undef TESTFUNC
-#undef FUNC
-#undef INIT
-#undef NAME
+    const glm::vec3 glmVec3_1{1, 2, 3};
+    const Vec3<> vec3_1{1, 2, 3};
+    const Vec3SSE vec3SSE_1{1, 2, 3};
+    const Vec3SSEE vec3SSEE_1{1, 2, 3};
 
-#define FUNC operator-
-#define INIT                                                                   \
-    { 1, 2, 3 }
-#define NAME "-"
-#define TESTFUNC test2op
-    TEST_VEC3
-#undef TESTFUNC
-#undef FUNC
-#undef INIT
-#undef NAME
+    const glm::vec3 glmVec3_2{8, 2, 5};
+    const Vec3<> vec3_2{8, 2, 5};
+    const Vec3SSE vec3SSE_2{8, 2, 5};
+    const Vec3SSEE vec3SSEE_2{8, 2, 5};
 
-#define FUNC cross
-#define INIT                                                                   \
-    { 1, 2, 3 }
-#define NAME "cross"
-#define TESTFUNC test2op
-    TEST_VEC3
-#undef TESTFUNC
-#undef FUNC
-#undef INIT
-#undef NAME
+    std::cout << "|" << std::setw(13) << "+ |";
+    testEq(test2op<glm::vec3>(glmVec3_1, glmVec3_2, &glm::operator+),
+           test2op(vec3_1, vec3_2, &Vec3<>::operator+),
+           test2op(vec3SSE_1, vec3SSE_2, &Vec3SSE::operator+),
+           test2op(vec3SSEE_1, vec3SSEE_2, &Vec3SSEE::operator+));
+    std::cout << std::endl;
 
-#define FUNC dot
-#define INIT                                                                   \
-    { 1, 2, 3 }
-#define NAME "dot"
-#define TESTFUNC test2op
-    TEST_VEC3
-#undef TESTFUNC
-#undef FUNC
-#undef INIT
-#undef NAME
+    std::cout << "|" << std::setw(13) << "- |";
+    testEq(test2op<glm::vec3>(glmVec3_1, glmVec3_2, &glm::operator-),
+           test2op(vec3_1, vec3_2, &Vec3<>::operator-),
+           test2op(vec3SSE_1, vec3SSE_2, &Vec3SSE::operator-),
+           test2op(vec3SSEE_1, vec3SSEE_2, &Vec3SSEE::operator-));
+    std::cout << std::endl;
 
-#define FUNC normalize
-#define INIT                                                                   \
-    { 1, 2, 3 }
-#define NAME "normalize"
-#define TESTFUNC test1op
-    TEST_VEC3
-#undef TESTFUNC
-#undef FUNC
-#undef INIT
-#undef NAME
+    std::cout << "|" << std::setw(13) << "cross |";
+    testEq(test2op<glm::vec3>(glmVec3_1, glmVec3_2, &glm::cross),
+           test2op(vec3_1, vec3_2, &Vec3<>::cross),
+           test2op(vec3SSE_1, vec3SSE_2, &Vec3SSE::cross),
+           test2op(vec3SSEE_1, vec3SSEE_2, &Vec3SSEE::cross));
+    std::cout << std::endl;
+
+    std::cout << "|" << std::setw(13) << "dot |";
+    testEq(test2op<float>(glmVec3_1, glmVec3_2, &glm::dot),
+           test2op(vec3_1, vec3_2, &Vec3<float>::dot),
+           test2op(vec3SSE_1, vec3SSE_2, &Vec3SSE::dot),
+           test2op(vec3SSEE_1, vec3SSEE_2, &Vec3SSEE::dot));
+    std::cout << std::endl;
+
+    std::cout << "|" << std::setw(13) << "normalize |";
+    testEq(test1op<glm::vec3>(glmVec3_1, &glm::normalize),
+           test1op(vec3_1, &Vec3<>::normalize),
+           test1op(vec3SSE_1, &Vec3SSE::normalize),
+           test1op(vec3SSEE_1, &Vec3SSEE::normalize));
+    std::cout << std::endl;
 
     std::cout
         << "|------------|-----------|-----------|-----------|-----------|"
@@ -927,50 +876,43 @@ TEST
         << "|------------|-----------|-----------|-----------|-----------|"
         << std::endl;
 
-#define INIT                                                                   \
-    { 1, 2, 3, 4 }
+    const glm::vec4 glmVec4_1{1, 2, 3, 4};
+    const Vec4<> vec4_1{1, 2, 3, 4};
+    const Vec4SSE vec4SSE_1{1, 2, 3, 4};
+    const Vec4SSEE vec4SSEE_1{1, 2, 3, 4};
 
-#define FUNC operator+
-#define NAME "+"
-#define TESTFUNC test2op
-    TEST_VEC4
-#undef TESTFUNC
-#undef FUNC
-#undef INIT
-#undef NAME
+    const glm::vec4 glmVec4_2{6, 3, 4, 9};
+    const Vec4<> vec4_2{6, 3, 4, 9};
+    const Vec4SSE vec4SSE_2{6, 3, 4, 9};
+    const Vec4SSEE vec4SSEE_2{6, 3, 4, 9};
 
-#define FUNC operator-
-#define INIT                                                                   \
-    { 1, 2, 3, 4 }
-#define NAME "-"
-#define TESTFUNC test2op
-    TEST_VEC4
-#undef TESTFUNC
-#undef FUNC
-#undef INIT
-#undef NAME
+    std::cout << "|" << std::setw(13) << "+ |";
+    testEq(test2op<glm::vec4>(glmVec4_1, glmVec4_2, &glm::operator+),
+           test2op(vec4_1, vec4_2, &Vec4<float>::operator+),
+           test2op(vec4SSE_1, vec4SSE_2, &Vec4SSE::operator+),
+           test2op(vec4SSEE_1, vec4SSEE_2, &Vec4SSEE::operator+));
+    std::cout << std::endl;
 
-#define FUNC dot
-#define INIT                                                                   \
-    { 1, 2, 3, 4 }
-#define NAME "dot"
-#define TESTFUNC test2op
-    TEST_VEC4
-#undef TESTFUNC
-#undef FUNC
-#undef INIT
-#undef NAME
+    std::cout << "|" << std::setw(13) << "- |";
+    testEq(test2op<glm::vec4>(glmVec4_1, glmVec4_2, &glm::operator-),
+           test2op(vec4_1, vec4_2, &Vec4<float>::operator-),
+           test2op(vec4SSE_1, vec4SSE_2, &Vec4SSE::operator-),
+           test2op(vec4SSEE_1, vec4SSEE_2, &Vec4SSEE::operator-));
+    std::cout << std::endl;
 
-#define FUNC normalize
-#define INIT                                                                   \
-    { 1, 2, 3, 4 }
-#define NAME "normalize"
-#define TESTFUNC test1op
-    TEST_VEC4
-#undef TESTFUNC
-#undef FUNC
-#undef INIT
-#undef NAME
+    std::cout << "|" << std::setw(13) << "dot |";
+    testEq(test2op<float>(glmVec4_1, glmVec4_2, &glm::dot),
+           test2op(vec4_1, vec4_2, &Vec4<float>::dot),
+           test2op(vec4SSE_1, vec4SSE_2, &Vec4SSE::dot),
+           test2op(vec4SSEE_1, vec4SSEE_2, &Vec4SSEE::dot));
+    std::cout << std::endl;
+
+    std::cout << "|" << std::setw(13) << "normalize |";
+    testEq(test1op<glm::vec4>(glmVec4_1, &glm::normalize),
+           test1op(vec4_1, &Vec4<>::normalize),
+           test1op(vec4SSE_1, &Vec4SSE::normalize),
+           test1op(vec4SSEE_1, &Vec4SSEE::normalize));
+    std::cout << std::endl;
 
     std::cout
         << "|------------|-----------|-----------|-----------|-----------|"
@@ -986,30 +928,32 @@ TEST
         << "|------------|-----------|-----------|-----------|-----------|"
         << std::endl;
 
-#define INIT                                                                   \
-    { 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-#define TESTFUNC test2op
+    const glm::mat3 glmMat3_1{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    const Mat3 mat3_1{1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-#define FUNC operator+
-#define NAME "+"
-    TEST_MAT3
-#undef FUNC
-#undef NAME
+    const glm::mat3 glmMat3_2{1, 6, 2, 5, 8, 4, 2, 3, 7};
+    const Mat3 mat3_2{1, 6, 2, 5, 8, 4, 2, 3, 7};
 
-#define FUNC operator-
-#define NAME "-"
-    TEST_MAT3
-#undef FUNC
-#undef NAME
+    std::cout << "|" << std::setw(13) << "+ |";
+    testEq(test2op<glm::mat3>(glmMat3_1, glmMat3_1, &glm::operator+),
+           test2op(mat3_1, mat3_1, &Mat3::operator+));
+    std::cout << "           |";
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#define FUNC operator*
-#define NAME "*"
-    TEST_MAT3
-#undef FUNC
-#undef NAME
+    std::cout << "|" << std::setw(13) << "- |";
+    testEq(test2op<glm::mat3>(glmMat3_1, glmMat3_1, &glm::operator-),
+           test2op(mat3_1, mat3_1, &Mat3::operator-));
+    std::cout << "           |";
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#undef TESTFUNC
-#undef INIT
+    std::cout << "|" << std::setw(13) << "* |";
+    testEq(test2op<glm::mat3>(glmMat3_1, glmMat3_1, &glm::operator*),
+           test2op(mat3_1, mat3_1, &Mat3::operator*));
+    std::cout << "           |";
+    std::cout << "           |";
+    std::cout << std::endl;
 
     std::cout
         << "|------------|-----------|-----------|-----------|-----------|"
@@ -1020,44 +964,71 @@ TEST
     std::cout << std::setw(10) << sizeof(Mat4) << " |";
     std::cout << std::setw(10) << sizeof(Mat4SSE) << " |";
     std::cout << "           |" << std::endl;
-    // std::cout << std::setw(10) << " |" << std::endl;
     std::cout
         << "|------------|-----------|-----------|-----------|-----------|"
         << std::endl;
 
-#define INIT                                                                   \
-    { 1, 2, 3, 4, 2, 1, 2, 3, 3, 2, 1, 2, 4, 3, 2, 1 }
-#define TESTFUNC test2op
+    const glm::mat4 glmMat4_1 = glm::transpose(glm::mat4{
+        {0, -1, 0, 4},
+        {1, 0, 1, -4},
+        {-1, -0, 1, -15},
+        {0, 0, 0, 1},
+    });
+    const Mat4 mat4_1{
+        {0, -1, 0, 4},
+        {1, 0, 1, -4},
+        {-1, -0, 1, -15},
+        {0, 0, 0, 1},
+    };
+    eq(mat4_1, glmMat4_1);
+    const Mat4SSE mat4SSE_1{
+        {0, -1, 0, 4},
+        {1, 0, 1, -4},
+        {-1, -0, 1, -15},
+        {0, 0, 0, 1},
+    };
 
-#define FUNC operator+
-#define NAME "+"
-    TEST_MAT4
-#undef FUNC
-#undef NAME
+    const glm::mat4 glmMat4_2 = glm::transpose(
+        glm::mat4{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+    const Mat4 mat4_2{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    eq(mat4_2, glmMat4_2);
+    const Mat4SSE
+        mat4SSE_2{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 
-#define FUNC operator-
-#define NAME "-"
-    TEST_MAT4
-#undef FUNC
-#undef NAME
+    std::cout << "|" << std::setw(13) << "+ |";
+    testEq(test2op<glm::mat4>(glmMat4_1, glmMat4_2, &glm::operator+),
+           test2op(mat4_1, mat4_2, &Mat4::operator+),
+           test2op(mat4SSE_1, mat4SSE_2, &Mat4SSE::operator+));
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#define FUNC operator*
-#define NAME "*"
-    TEST_MAT4
-#undef FUNC
-#undef NAME
+    std::cout << "|" << std::setw(13) << "- |";
+    testEq(test2op<glm::mat4>(glmMat4_1, glmMat4_2, &glm::operator-),
+           test2op(mat4_1, mat4_2, &Mat4::operator-),
+           test2op(mat4SSE_1, mat4SSE_2, &Mat4SSE::operator-));
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#undef TESTFUNC
-#define TESTFUNC test1op
+    std::cout << "|" << std::setw(13) << "* |";
+    testEq(test2op<glm::mat4>(glmMat4_1, glmMat4_2, &glm::operator*),
+           test2op(mat4_1, mat4_2, &Mat4::operator*),
+           test2op(mat4SSE_1, mat4SSE_2, &Mat4SSE::operator*));
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#define FUNC inverse
-#define NAME "inverse"
-    TEST_MAT4
-#undef FUNC
-#undef NAME
+    std::cout << "|" << std::setw(13) << "vec4 * |";
+    testEq(test2op<glm::vec4>(glmVec4_2, glmMat4_2, &glm::operator*),
+           test2op(mat4_2, vec4_2, &Mat4::operator*));
+    std::cout << "           |";
+    std::cout << "           |";
+    std::cout << std::endl;
 
-#undef TESTFUNC
-#undef INIT
+    std::cout << "|" << std::setw(13) << "inverse |";
+    testEq(test1op<glm::mat4>(glmMat4_1, &glm::inverse),
+           test1op(mat4_1, &Mat4::inverse),
+           test1op(mat4SSE_1, &Mat4SSE::inverse));
+    std::cout << "           |";
+    std::cout << std::endl;
 
     std::cout
         << "|------------|-----------|-----------|-----------|-----------|"
@@ -1071,6 +1042,7 @@ TEST
     std::cout
         << "|------------|-----------|-----------|-----------|-----------|"
         << std::endl;
+
     {
         ModelTransform mt;
         glm::mat4 glmMt(1);

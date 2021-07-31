@@ -43,10 +43,13 @@ int main() {
         scene.camera.setPosition({10, 0, 10});
 
         Time::TimePoint start = Time::now();
+        float rotation = 0;
         while (window.isOpen()) {
             Time::Duration flow = start - Time::now();
 
             ImGui::Begin("Hello, world!");
+            if (ImGui::SliderFloat("rotation", &rotation, -PI, PI))
+                cubeBlue.setRotation(rotation, {0, 0, 1});
             ImGui::Text("Material");
             ImGui::ColorEdit3("albedo", &orange.albedo.R);
             ImGui::SliderFloat("metallic", &orange.metallic, 0.0f, 1.0f);

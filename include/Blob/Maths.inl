@@ -608,6 +608,17 @@ public:
         a32(a32),
         a33(a33) {}
 
+    Mat3(Vec3<> v1, Vec3<> v2, Vec3<> v3) noexcept :
+        a11(v1.x),
+        a12(v1.y),
+        a13(v1.z),
+        a21(v2.x),
+        a22(v2.y),
+        a23(v2.z),
+        a31(v3.x),
+        a32(v3.y),
+        a33(v3.z) {}
+
     explicit Mat3(const std::array<float, 9> &mat) noexcept :
         a11(mat[0]),
         a12(mat[1]),
@@ -683,52 +694,61 @@ public:
     }
 };
 
+/**
+ * OpenGL is column major (xyz for rotation and p for position):
+ * x.x x.y x.z 0
+ * y.x y.y y.z 0
+ * z.x z.y z.z 0
+ * p.x p.y p.z 1
+ * but we still want to use the matrix like row major one
+ */
 class Mat4 {
 public:
-    float a11 = 1, a12 = 0, a13 = 0, a14 = 0;
-    float a21 = 0, a22 = 1, a23 = 0, a24 = 0;
-    float a31 = 0, a32 = 0, a33 = 1, a34 = 0;
-    float a41 = 0, a42 = 0, a43 = 0, a44 = 1;
+    float a11 = 1, a21 = 0, a31 = 0, a41 = 0;
+    float a12 = 0, a22 = 1, a32 = 0, a42 = 0;
+    float a13 = 0, a23 = 0, a33 = 1, a43 = 0;
+    float a14 = 0, a24 = 0, a34 = 0, a44 = 1;
 
     Mat4() noexcept = default;
 
     explicit Mat4(float val) :
         a11(val),
-        a12(val),
-        a13(val),
-        a14(val),
         a21(val),
-        a22(val),
-        a23(val),
-        a24(val),
         a31(val),
-        a32(val),
-        a33(val),
-        a34(val),
         a41(val),
+        a12(val),
+        a22(val),
+        a32(val),
         a42(val),
+        a13(val),
+        a23(val),
+        a33(val),
         a43(val),
+        a14(val),
+        a24(val),
+        a34(val),
         a44(val) {}
 
-    Mat4(const Vec4<float> &a1,
-         const Vec4<float> &a2,
-         const Vec4<float> &a3,
-         const Vec4<float> &a4) :
+    Mat4(const Vec4<> &a1,
+         const Vec4<> &a2,
+         const Vec4<> &a3,
+         const Vec4<> &a4) :
+        // the default convention is row-major for matrix contruction
         a11(a1.x),
-        a21(a1.y),
-        a31(a1.z),
-        a41(a1.w),
-        a12(a2.x),
+        a12(a1.y),
+        a13(a1.z),
+        a14(a1.w),
+        a21(a2.x),
         a22(a2.y),
-        a32(a2.z),
-        a42(a2.w),
-        a13(a3.x),
-        a23(a3.y),
+        a23(a2.z),
+        a24(a2.w),
+        a31(a3.x),
+        a32(a3.y),
         a33(a3.z),
-        a43(a3.w),
-        a14(a4.x),
-        a24(a4.y),
-        a34(a4.z),
+        a34(a3.w),
+        a41(a4.x),
+        a42(a4.y),
+        a43(a4.z),
         a44(a4.w) {}
 
     Mat4(float a11,
@@ -784,242 +804,258 @@ public:
         a43(mat[14]),
         a44(mat[15]) {}
 
-    void load(const std::array<float, 16> &mat) {
-        a11 = mat[0];
-        a12 = mat[1];
-        a13 = mat[2];
-        a14 = mat[3];
-        a21 = mat[4];
-        a22 = mat[5];
-        a23 = mat[6];
-        a24 = mat[7];
-        a31 = mat[8];
-        a32 = mat[9];
-        a33 = mat[10];
-        a34 = mat[11];
-        a41 = mat[12];
-        a42 = mat[13];
-        a43 = mat[14];
-        a44 = mat[15];
-    }
-
     Mat4 operator+(float val) const {
-        return {a11 + val,
-                a12 + val,
-                a13 + val,
-                a14 + val,
-                a21 + val,
-                a22 + val,
-                a23 + val,
-                a24 + val,
-                a31 + val,
-                a32 + val,
-                a33 + val,
-                a34 + val,
-                a41 + val,
-                a42 + val,
-                a43 + val,
-                a44 + val};
+        Mat4 ret;
+        ret.a11 = a11 + val;
+        ret.a12 = a12 + val;
+        ret.a13 = a13 + val;
+        ret.a14 = a14 + val;
+        ret.a21 = a21 + val;
+        ret.a22 = a22 + val;
+        ret.a23 = a23 + val;
+        ret.a24 = a24 + val;
+        ret.a31 = a31 + val;
+        ret.a32 = a32 + val;
+        ret.a33 = a33 + val;
+        ret.a34 = a34 + val;
+        ret.a41 = a41 + val;
+        ret.a42 = a42 + val;
+        ret.a43 = a43 + val;
+        ret.a44 = a44 + val;
+        return ret;
     }
+
     Mat4 operator-(float val) const {
-        return {a11 - val,
-                a12 - val,
-                a13 - val,
-                a14 - val,
-                a21 - val,
-                a22 - val,
-                a23 - val,
-                a24 - val,
-                a31 - val,
-                a32 - val,
-                a33 - val,
-                a34 - val,
-                a41 - val,
-                a42 - val,
-                a43 - val,
-                a44 - val};
+        Mat4 ret;
+        ret.a11 = a11 - val;
+        ret.a12 = a12 - val;
+        ret.a13 = a13 - val;
+        ret.a14 = a14 - val;
+        ret.a21 = a21 - val;
+        ret.a22 = a22 - val;
+        ret.a23 = a23 - val;
+        ret.a24 = a24 - val;
+        ret.a31 = a31 - val;
+        ret.a32 = a32 - val;
+        ret.a33 = a33 - val;
+        ret.a34 = a34 - val;
+        ret.a41 = a41 - val;
+        ret.a42 = a42 - val;
+        ret.a43 = a43 - val;
+        ret.a44 = a44 - val;
+        return ret;
     }
+
     Mat4 operator*(float val) const {
-        return {a11 * val,
-                a12 * val,
-                a13 * val,
-                a14 * val,
-                a21 * val,
-                a22 * val,
-                a23 * val,
-                a24 * val,
-                a31 * val,
-                a32 * val,
-                a33 * val,
-                a34 * val,
-                a41 * val,
-                a42 * val,
-                a43 * val,
-                a44 * val};
+        Mat4 ret;
+        ret.a11 = a11 * val;
+        ret.a12 = a12 * val;
+        ret.a13 = a13 * val;
+        ret.a14 = a14 * val;
+        ret.a21 = a21 * val;
+        ret.a22 = a22 * val;
+        ret.a23 = a23 * val;
+        ret.a24 = a24 * val;
+        ret.a31 = a31 * val;
+        ret.a32 = a32 * val;
+        ret.a33 = a33 * val;
+        ret.a34 = a34 * val;
+        ret.a41 = a41 * val;
+        ret.a42 = a42 * val;
+        ret.a43 = a43 * val;
+        ret.a44 = a44 * val;
+        return ret;
     }
+
     Mat4 operator/(float val) const {
-        return {a11 / val,
-                a12 / val,
-                a13 / val,
-                a14 / val,
-                a21 / val,
-                a22 / val,
-                a23 / val,
-                a24 / val,
-                a31 / val,
-                a32 / val,
-                a33 / val,
-                a34 / val,
-                a41 / val,
-                a42 / val,
-                a43 / val,
-                a44 / val};
+        Mat4 ret;
+        ret.a11 = a11 / val;
+        ret.a12 = a12 / val;
+        ret.a13 = a13 / val;
+        ret.a14 = a14 / val;
+        ret.a21 = a21 / val;
+        ret.a22 = a22 / val;
+        ret.a23 = a23 / val;
+        ret.a24 = a24 / val;
+        ret.a31 = a31 / val;
+        ret.a32 = a32 / val;
+        ret.a33 = a33 / val;
+        ret.a34 = a34 / val;
+        ret.a41 = a41 / val;
+        ret.a42 = a42 / val;
+        ret.a43 = a43 / val;
+        ret.a44 = a44 / val;
+        return ret;
     }
 
-    Vec4<float> operator*(const Vec3<float> &val) const {
-        return {
-            a11 * val.x + a21 * val.y + a31 * val.z + a41,
-            a12 * val.x + a22 * val.y + a32 * val.z + a42,
-            a13 * val.x + a23 * val.y + a33 * val.z + a43,
-            a14 * val.x + a24 * val.y + a34 * val.z + a44,
-        };
+    Vec4<> operator*(const Vec3<> &val) const {
+        Vec4<> ret;
+        ret.x = a11 * val.x + a21 * val.y + a31 * val.z + a41;
+        ret.y = a12 * val.x + a22 * val.y + a32 * val.z + a42;
+        ret.z = a13 * val.x + a23 * val.y + a33 * val.z + a43;
+        ret.w = a14 * val.x + a24 * val.y + a34 * val.z + a44;
+        return ret;
     }
 
-    Vec4<float> operator*(const Vec4<float> &val) const {
-        return {
-            a11 * val.x + a21 * val.y + a31 * val.z + a41 * val.w,
-            a12 * val.x + a22 * val.y + a32 * val.z + a42 * val.w,
-            a13 * val.x + a23 * val.y + a33 * val.z + a43 * val.w,
-            a14 * val.x + a24 * val.y + a34 * val.z + a44 * val.w,
-        };
+    Vec4<> operator*(const Vec4<> &val) const {
+        Vec4<> ret;
+        ret.x = a11 * val.x + a21 * val.y + a31 * val.z + a41 * val.w;
+        ret.y = a12 * val.x + a22 * val.y + a32 * val.z + a42 * val.w;
+        ret.z = a13 * val.x + a23 * val.y + a33 * val.z + a43 * val.w;
+        ret.w = a14 * val.x + a24 * val.y + a34 * val.z + a44 * val.w;
+        return ret;
     }
 
     Mat4 operator+(const Mat4 &v) const {
-        return {a11 + v.a11,
-                a12 + v.a12,
-                a13 + v.a13,
-                a14 + v.a14,
-                a21 + v.a21,
-                a22 + v.a22,
-                a23 + v.a23,
-                a24 + v.a24,
-                a31 + v.a31,
-                a32 + v.a32,
-                a33 + v.a33,
-                a34 + v.a34,
-                a41 + v.a41,
-                a42 + v.a42,
-                a43 + v.a43,
-                a44 + v.a44};
+        Mat4 ret;
+        ret.a11 = a11 + v.a11;
+        ret.a12 = a12 + v.a12;
+        ret.a13 = a13 + v.a13;
+        ret.a14 = a14 + v.a14;
+        ret.a21 = a21 + v.a21;
+        ret.a22 = a22 + v.a22;
+        ret.a23 = a23 + v.a23;
+        ret.a24 = a24 + v.a24;
+        ret.a31 = a31 + v.a31;
+        ret.a32 = a32 + v.a32;
+        ret.a33 = a33 + v.a33;
+        ret.a34 = a34 + v.a34;
+        ret.a41 = a41 + v.a41;
+        ret.a42 = a42 + v.a42;
+        ret.a43 = a43 + v.a43;
+        ret.a44 = a44 + v.a44;
+        return ret;
     }
 
     Mat4 operator-(const Mat4 &v) const {
-        return {a11 - v.a11,
-                a12 - v.a12,
-                a13 - v.a13,
-                a14 - v.a14,
-                a21 - v.a21,
-                a22 - v.a22,
-                a23 - v.a23,
-                a24 - v.a24,
-                a31 - v.a31,
-                a32 - v.a32,
-                a33 - v.a33,
-                a34 - v.a34,
-                a41 - v.a41,
-                a42 - v.a42,
-                a43 - v.a43,
-                a44 - v.a44};
+        Mat4 ret;
+        ret.a11 = a11 - v.a11;
+        ret.a12 = a12 - v.a12;
+        ret.a13 = a13 - v.a13;
+        ret.a14 = a14 - v.a14;
+        ret.a21 = a21 - v.a21;
+        ret.a22 = a22 - v.a22;
+        ret.a23 = a23 - v.a23;
+        ret.a24 = a24 - v.a24;
+        ret.a31 = a31 - v.a31;
+        ret.a32 = a32 - v.a32;
+        ret.a33 = a33 - v.a33;
+        ret.a34 = a34 - v.a34;
+        ret.a41 = a41 - v.a41;
+        ret.a42 = a42 - v.a42;
+        ret.a43 = a43 - v.a43;
+        ret.a44 = a44 - v.a44;
+        return ret;
     }
+
+    /**
+     * Post-multiplying with column-major is the same as pre-multiplying with
+     * row-major.
+     */
     Mat4 operator*(const Mat4 &v) const {
-        return {
-            a11 * v.a11 + a12 * v.a21 + a13 * v.a31 + a14 * v.a41,
-            a11 * v.a12 + a12 * v.a22 + a13 * v.a32 + a14 * v.a42,
-            a11 * v.a13 + a12 * v.a23 + a13 * v.a33 + a14 * v.a43,
-            a11 * v.a14 + a12 * v.a24 + a13 * v.a34 + a14 * v.a44,
+        Mat4 ret;
+        ret.a11 = a11 * v.a11 + a12 * v.a21 + a13 * v.a31 + a14 * v.a41;
+        ret.a12 = a11 * v.a12 + a12 * v.a22 + a13 * v.a32 + a14 * v.a42;
+        ret.a13 = a11 * v.a13 + a12 * v.a23 + a13 * v.a33 + a14 * v.a43;
+        ret.a14 = a11 * v.a14 + a12 * v.a24 + a13 * v.a34 + a14 * v.a44;
+        ret.a21 = a21 * v.a11 + a22 * v.a21 + a23 * v.a31 + a24 * v.a41;
+        ret.a22 = a21 * v.a12 + a22 * v.a22 + a23 * v.a32 + a24 * v.a42;
+        ret.a23 = a21 * v.a13 + a22 * v.a23 + a23 * v.a33 + a24 * v.a43;
+        ret.a24 = a21 * v.a14 + a22 * v.a24 + a23 * v.a34 + a24 * v.a44;
+        ret.a31 = a31 * v.a11 + a32 * v.a21 + a33 * v.a31 + a34 * v.a41;
+        ret.a32 = a31 * v.a12 + a32 * v.a22 + a33 * v.a32 + a34 * v.a42;
+        ret.a33 = a31 * v.a13 + a32 * v.a23 + a33 * v.a33 + a34 * v.a43;
+        ret.a34 = a31 * v.a14 + a32 * v.a24 + a33 * v.a34 + a34 * v.a44;
+        ret.a41 = a41 * v.a11 + a42 * v.a21 + a43 * v.a31 + a44 * v.a41;
+        ret.a42 = a41 * v.a12 + a42 * v.a22 + a43 * v.a32 + a44 * v.a42;
+        ret.a43 = a41 * v.a13 + a42 * v.a23 + a43 * v.a33 + a44 * v.a43;
+        ret.a44 = a41 * v.a14 + a42 * v.a24 + a43 * v.a34 + a44 * v.a44;
+        return ret;
+    }
 
-            a21 * v.a11 + a22 * v.a21 + a23 * v.a31 + a24 * v.a41,
-            a21 * v.a12 + a22 * v.a22 + a23 * v.a32 + a24 * v.a42,
-            a21 * v.a13 + a22 * v.a23 + a23 * v.a33 + a24 * v.a43,
-            a21 * v.a14 + a22 * v.a24 + a23 * v.a34 + a24 * v.a44,
+    bool operator==(const Mat4 &v) const {
+        return a11 == v.a11 && a12 == v.a12 && a13 == v.a13 && a14 == v.a14 &&
+               a21 == v.a21 && a22 == v.a22 && a23 == v.a23 && a24 == v.a24 &&
+               a31 == v.a31 && a32 == v.a32 && a33 == v.a33 && a34 == v.a34 &&
+               a41 == v.a41 && a42 == v.a42 && a43 == v.a43 && a44 == v.a44;
+    }
 
-            a31 * v.a11 + a32 * v.a21 + a33 * v.a31 + a34 * v.a41,
-            a31 * v.a12 + a32 * v.a22 + a33 * v.a32 + a34 * v.a42,
-            a31 * v.a13 + a32 * v.a23 + a33 * v.a33 + a34 * v.a43,
-            a31 * v.a14 + a32 * v.a24 + a33 * v.a34 + a34 * v.a44,
-
-            a41 * v.a11 + a42 * v.a21 + a43 * v.a31 + a44 * v.a41,
-            a41 * v.a12 + a42 * v.a22 + a43 * v.a32 + a44 * v.a42,
-            a41 * v.a13 + a42 * v.a23 + a43 * v.a33 + a44 * v.a43,
-            a41 * v.a14 + a42 * v.a24 + a43 * v.a34 + a44 * v.a44,
-        };
+    Mat4 transpose() const {
+        return {a11,
+                a21,
+                a31,
+                a41,
+                a12,
+                a22,
+                a32,
+                a42,
+                a13,
+                a23,
+                a33,
+                a43,
+                a14,
+                a24,
+                a34,
+                a44};
     }
 
     Mat4 inverse() const {
         float Coef00 = (a33 * a44 - a43 * a34);
         float Coef02 = (a23 * a44 - a43 * a24);
         float Coef03 = (a23 * a34 - a33 * a24);
-
         float Coef04 = (a32 * a44 - a42 * a34);
         float Coef06 = (a22 * a44 - a42 * a24);
         float Coef07 = (a22 * a34 - a32 * a24);
-
         float Coef08 = (a32 * a43 - a42 * a33);
         float Coef10 = (a22 * a43 - a42 * a23);
         float Coef11 = (a22 * a33 - a32 * a23);
-
         float Coef12 = (a31 * a44 - a41 * a34);
         float Coef14 = (a21 * a44 - a41 * a24);
         float Coef15 = (a21 * a34 - a31 * a24);
-
         float Coef16 = (a31 * a43 - a41 * a33);
         float Coef18 = (a21 * a43 - a41 * a23);
         float Coef19 = (a21 * a33 - a31 * a23);
-
         float Coef20 = (a31 * a42 - a41 * a32);
         float Coef22 = (a21 * a42 - a41 * a22);
         float Coef23 = (a21 * a32 - a31 * a22);
 
-        Vec4<float> Fac0(Coef00, Coef00, Coef02, Coef03);
-        Vec4<float> Fac1(Coef04, Coef04, Coef06, Coef07);
-        Vec4<float> Fac2(Coef08, Coef08, Coef10, Coef11);
-        Vec4<float> Fac3(Coef12, Coef12, Coef14, Coef15);
-        Vec4<float> Fac4(Coef16, Coef16, Coef18, Coef19);
-        Vec4<float> Fac5(Coef20, Coef20, Coef22, Coef23);
+        Mat4 Inverse;
+        Inverse.a11 = +a22 * Coef00 - a23 * Coef04 + a24 * Coef08;
+        Inverse.a12 = -a12 * Coef00 + a13 * Coef04 - a14 * Coef08;
+        Inverse.a13 = +a12 * Coef02 - a13 * Coef06 + a14 * Coef10;
+        Inverse.a14 = -a12 * Coef03 + a13 * Coef07 - a14 * Coef11;
 
-        Vec4<float> vec0(a21, a11, a11, a11);
-        Vec4<float> vec1(a22, a12, a12, a12);
-        Vec4<float> vec2(a23, a13, a13, a13);
-        Vec4<float> vec3(a24, a14, a14, a14);
+        float Det = a11 * Inverse.a11 + a21 * Inverse.a12 + a31 * Inverse.a13 +
+                    a41 * Inverse.a14;
 
-        Vec4<float> Inv0(vec1 * Fac0 - vec2 * Fac1 + vec3 * Fac2);
-        Vec4<float> Inv1(vec0 * Fac0 - vec2 * Fac3 + vec3 * Fac4);
-        Vec4<float> Inv2(vec0 * Fac1 - vec1 * Fac3 + vec3 * Fac5);
-        Vec4<float> Inv3(vec0 * Fac2 - vec1 * Fac4 + vec2 * Fac5);
+        Inverse.a11 /= Det;
+        Inverse.a12 /= Det;
+        Inverse.a13 /= Det;
+        Inverse.a14 /= Det;
 
-        Vec4<float> SignA(+1, -1, +1, -1);
-        Vec4<float> SignB(-1, +1, -1, +1);
-        Mat4 Inverse(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
+        Inverse.a21 = (-a21 * Coef00 + a23 * Coef12 - a24 * Coef16) / Det;
+        Inverse.a22 = (+a11 * Coef00 - a13 * Coef12 + a14 * Coef16) / Det;
+        Inverse.a23 = (-a11 * Coef02 + a13 * Coef14 - a14 * Coef18) / Det;
+        Inverse.a24 = (+a11 * Coef03 - a13 * Coef15 + a14 * Coef19) / Det;
 
-        Vec4<float> Row0(Inverse.a11, Inverse.a21, Inverse.a31, Inverse.a41);
+        Inverse.a31 = (+a21 * Coef04 - a22 * Coef12 + a24 * Coef20) / Det;
+        Inverse.a32 = (-a11 * Coef04 + a12 * Coef12 - a14 * Coef20) / Det;
+        Inverse.a33 = (+a11 * Coef06 - a12 * Coef14 + a14 * Coef22) / Det;
+        Inverse.a34 = (-a11 * Coef07 + a12 * Coef15 - a14 * Coef23) / Det;
 
-        Vec4<float> Dot0(Vec4<float>(a11, a21, a31, a41) * Row0);
-        float Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
+        Inverse.a41 = (-a21 * Coef08 + a22 * Coef16 - a23 * Coef20) / Det;
+        Inverse.a42 = (+a11 * Coef08 - a12 * Coef16 + a13 * Coef20) / Det;
+        Inverse.a43 = (-a11 * Coef10 + a12 * Coef18 - a13 * Coef22) / Det;
+        Inverse.a44 = (+a11 * Coef11 - a12 * Coef19 + a13 * Coef23) / Det;
 
-        float OneOverDeterminant = 1.f / Dot1;
-
-        return Inverse * OneOverDeterminant;
+        return Inverse;
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Mat4 &m) {
-        os << m.a11 << ", " << m.a21 << ", " << m.a31 << ", " << m.a41 << ", "
-           << std::endl;
-        os << m.a12 << ", " << m.a22 << ", " << m.a32 << ", " << m.a42 << ", "
-           << std::endl;
-        os << m.a13 << ", " << m.a23 << ", " << m.a33 << ", " << m.a43 << ", "
-           << std::endl;
-        os << m.a14 << ", " << m.a24 << ", " << m.a34 << ", " << m.a44
-           << std::endl;
+        os << Vec4({m.a11, m.a12, m.a13, m.a14}) << std::endl;
+        os << Vec4({m.a21, m.a22, m.a23, m.a24}) << std::endl;
+        os << Vec4({m.a31, m.a32, m.a33, m.a34}) << std::endl;
+        os << Vec4({m.a41, m.a42, m.a43, m.a44}) << std::endl;
         return os;
     }
 };
@@ -1165,21 +1201,14 @@ private:
 
     void compute() {
         a11 = rotation.a11 * scale.x;
-        a12 = rotation.a12 * scale.x;
-        a13 = rotation.a13 * scale.x;
-        // a14 = 0.f
-        a21 = rotation.a21 * scale.y;
+        a21 = rotation.a12 * scale.x;
+        a31 = rotation.a13 * scale.x;
+        a12 = rotation.a21 * scale.y;
         a22 = rotation.a22 * scale.y;
-        a23 = rotation.a23 * scale.y;
-        // a24 = 0.f;
-        a31 = rotation.a31 * scale.z;
-        a32 = rotation.a32 * scale.z;
+        a32 = rotation.a23 * scale.y;
+        a13 = rotation.a31 * scale.z;
+        a23 = rotation.a32 * scale.z;
         a33 = rotation.a33 * scale.z;
-        // a34 = 0.f;
-        // a41 = translation.x;
-        // a42 = translation.y;
-        // a43 = translation.z;
-        // a44 = 1.f;
     }
 
 public:
@@ -1188,20 +1217,20 @@ public:
     explicit ModelTransform(const Mat4 &mat4) : Mat4(mat4) {}
 
     void setPosition(const Vec3<float> &xyz) {
-        a41 = xyz.x;
-        a42 = xyz.y;
-        a43 = xyz.z;
+        a14 = xyz.x;
+        a24 = xyz.y;
+        a34 = xyz.z;
     }
 
     void setPosition(const Vec2<> &xy) {
-        a41 = xy.x;
-        a42 = xy.y;
+        a14 = xy.x;
+        a24 = xy.y;
     }
 
     void move(const Vec3<float> &xyz) {
-        a41 += xyz.x;
-        a42 += xyz.y;
-        a43 += xyz.z;
+        a14 += xyz.x;
+        a24 += xyz.y;
+        a34 += xyz.z;
     }
 
     void setRotation(const Mat3 &rotation) {
@@ -1371,17 +1400,17 @@ private:
         const Vec3<float> up = right.cross(forward).getNormal();
 
         a11 = right.x;
-        a21 = right.y;
-        a31 = right.z;
-        a12 = up.x;
+        a12 = right.y;
+        a13 = right.z;
+        a21 = up.x;
         a22 = up.y;
-        a32 = up.z;
-        a13 = -forward.x;
-        a23 = -forward.y;
+        a23 = up.z;
+        a31 = -forward.x;
+        a32 = -forward.y;
         a33 = -forward.z;
-        a41 = -right.dot(cameraPosition);
-        a42 = -up.dot(cameraPosition);
-        a43 = forward.dot(cameraPosition);
+        a14 = -right.dot(cameraPosition);
+        a24 = -up.dot(cameraPosition);
+        a34 = forward.dot(cameraPosition);
     }
 
 public:
@@ -1482,15 +1511,14 @@ public:
         longRange = _longRange;
 
         if (ortho) {
-            a43 = (longRange + closeRange) / (longRange - closeRange);
+            a34 = (longRange + closeRange) / (longRange - closeRange);
             a33 = -2 / (longRange - closeRange);
-            a34 = 0;
+            a43 = 0;
             a44 = 1;
         } else {
             a33 = -(longRange + closeRange) / (longRange - closeRange);
-            a43 = -(2 * longRange * closeRange) / (longRange - closeRange);
-
-            a34 = -1.f;
+            a34 = -(2 * longRange * closeRange) / (longRange - closeRange);
+            a43 = -1.f;
             a44 = 0;
         }
     }
@@ -1529,9 +1557,9 @@ public:
         a11 = 1.f / (cameraAngle * ratio); // 2 / width
         a22 = 1.f / cameraAngle;           // 2 / height
 
-        a43 = closeRange / (closeRange - longRange);
+        a34 = closeRange / (closeRange - longRange);
         a33 = 1 / (closeRange - longRange);
-        a34 = 0;
+        a43 = 0;
     }
 
     friend std::ostream &operator<<(std::ostream &out,

@@ -109,22 +109,42 @@ void Window::characterInput(unsigned int c) {
     // imgui.addInputCharacter(c);
 }
 
-Vec3<float> Window::getWorldPosition(const Camera &camera) {
-
-    //
-    /*        ImGui::Begin("getWorldPosition");
-            Vec4<float> testPos(1, 1, 0, 1);
-            ImGui::Text("world :  %f %f %f %f", testPos.x, testPos.y, testPos.z,
-       testPos.w); testPos = camera->operator*(testPos); ImGui::Text("Camera :
-       %f %f %f %f", testPos.x, testPos.y, testPos.z, testPos.w); testPos =
-       operator*(testPos); testPos = testPos / testPos.w; ImGui::Text("window :
-       %f %f %f %f", testPos.x, testPos.y, testPos.z, testPos.w); testPos =
-       (*camera * *this).inverse() * testPos; ImGui::Text("testPos4 :  %f %f %f
-       %f", testPos.x, testPos.y, testPos.z, testPos.w); testPos = testPos /
-       testPos.w; ImGui::Text("testPos5 :  %f %f %f %f", testPos.x, testPos.y,
-       testPos.z, testPos.w); ImGui::End();*/
-    //
-
+Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
+    /*
+        ImGui::Begin("TestWorldPosition");
+        Vec4<float> testPos(1, 1, 0, 1);
+        ImGui::Text("world :  %f %f %f %f",
+                    testPos.x,
+                    testPos.y,
+                    testPos.z,
+                    testPos.w);
+        testPos = camera * testPos;
+        ImGui::Text("Camera : %f %f %f %f",
+                    testPos.x,
+                    testPos.y,
+                    testPos.z,
+                    testPos.w);
+        testPos = projectionTransform * testPos;
+        testPos = testPos / testPos.w;
+        ImGui::Text("window : %f %f %f %f",
+                    testPos.x,
+                    testPos.y,
+                    testPos.z,
+                    testPos.w);
+        testPos = (camera * projectionTransform).inverse() * testPos;
+        ImGui::Text("testPos4 : %f %f %f %f",
+                    testPos.x,
+                    testPos.y,
+                    testPos.z,
+                    testPos.w);
+        testPos = testPos / testPos.w;
+        ImGui::Text("testPos5 : %f %f %f %f",
+                    testPos.x,
+                    testPos.y,
+                    testPos.z,
+                    testPos.w);
+        ImGui::End();
+    */
     Vec2<> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
@@ -132,17 +152,31 @@ Vec3<float> Window::getWorldPosition(const Camera &camera) {
                     readPixel(mousePos.cast<int>()) * 2 - 1);
 
     //
-    /*        ImGui::Begin("getWorldPosition");
-            ImGui::Text("Window :  %f %f %f %f", pos.x, pos.y, pos.z, pos.w);*/
+    // ImGui::Begin("getWorldPosition");
+    // ImGui::Text("Window :  %f %f %f %f", pos.x, pos.y, pos.z, pos.w);
     //
 
     pos = (camera * projectionTransform).inverse() * pos;
 
     //
-    /*        ImGui::Text("World :  %f %f %f %f", pos.x / pos.w, pos.y / pos.w,
-       pos.z / pos.w, pos.w); ImGui::End();*/
+    // ImGui::Text("World :  %f %f %f %f",
+    //            pos.x / pos.w,
+    //            pos.y / pos.w,
+    //            pos.z / pos.w,
+    //            pos.w);
+    // ImGui::End();
     //
 
+    return pos / pos.w;
+}
+
+Vec3<float> Window::getMousePositionInWorld(const Camera &camera, float z) {
+    Vec2<> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
+    mousePos.y = size.y - mousePos.y;
+
+    Vec4<float> pos(mousePos / size * 2 - 1,
+                    readPixel(mousePos.cast<int>()) * 2 - 1);
+    pos = (camera * projectionTransform).inverse() * pos;
     return pos / pos.w;
 }
 
