@@ -218,7 +218,8 @@ void Window::draw(const Mesh2D &mesh,
 void Window::draw(const Shape2D &shape,
                   const ViewTransform2D &camera,
                   const Mat3 &sceneModel) const {
-    Mat3 modelMatrix = shape * sceneModel;
+    // Mat3 modelMatrix = shape * sceneModel;
+    Mat3 modelMatrix = sceneModel * shape;
 
     if (shape.mesh != nullptr)
         draw(*shape.mesh, camera, modelMatrix);
@@ -272,7 +273,8 @@ void Window::draw(const Mesh &mesh,
 void Window::draw(const Shape &shape,
                   const ViewTransform &camera,
                   const Mat4 &sceneModel) const {
-    Mat4 modelMatrix = shape * sceneModel;
+    // Mat4 modelMatrix = shape * sceneModel;
+    Mat4 modelMatrix = sceneModel * shape;
 
     if (shape.mesh != nullptr)
         draw(*shape.mesh, camera, modelMatrix);
@@ -312,7 +314,8 @@ void Window::drawTransparent(const Mesh &mesh,
 void Window::drawTransparent(const Shape &shape,
                              const ViewTransform &camera,
                              const Mat4 &sceneModel) const {
-    Mat4 modelMatrix = shape * sceneModel;
+    // Mat4 modelMatrix = shape * sceneModel;
+    Mat4 modelMatrix = sceneModel * shape;
 
     if (shape.mesh != nullptr)
         drawTransparent(*shape.mesh, camera, modelMatrix);

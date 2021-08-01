@@ -43,7 +43,7 @@ void Shape::removeChild(Shape *r) {
 void Shape::getDrawCallList(
     std::unordered_map<const Primitive *, std::vector<Mat4>> &drawCallList,
     Mat4 transform) const {
-    Mat4 modelMatrix = *this * transform;
+    Mat4 modelMatrix = transform * *this;
     for (auto shape : shapes)
         shape->getDrawCallList(drawCallList, modelMatrix);
 
@@ -56,10 +56,10 @@ std::ostream &operator<<(std::ostream &s, const Shape &a) {
 
     s << (ModelTransform) a << std::endl;
 
-    s << a.mesh << std::endl;
+    // s << a.mesh << std::endl;
 
-    for (const auto &r : a.shapes)
-        s << *r;
+    // for (const auto &r : a.shapes)
+    //    s << *r;
 
     s << "}" << std::endl;
     return s;
