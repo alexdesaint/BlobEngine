@@ -145,6 +145,7 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
                     testPos.w);
         ImGui::End();
     */
+
     Vec2<> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
@@ -153,31 +154,97 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
 
     //
     // ImGui::Begin("getWorldPosition");
-    // ImGui::Text("Window :  %f %f %f %f", pos.x, pos.y, pos.z, pos.w);
+    // ImGui::Text("Window : %f %f %f %f", pos.x, pos.y, pos.z, pos.w);
     //
 
-    pos = (camera * projectionTransform).inverse() * pos;
+    pos = (projectionTransform * camera).inverse() * pos;
 
     //
-    // ImGui::Text("World :  %f %f %f %f",
-    //            pos.x / pos.w,
-    //            pos.y / pos.w,
-    //            pos.z / pos.w,
-    //            pos.w);
+    // ImGui::Text("World non div : %f %f %f %f", pos.x, pos.y, pos.z, pos.w);
+    // ImGui::Text("World : %f %f %f %f",
+    //             pos.x / pos.w,
+    //             pos.y / pos.w,
+    //             pos.z / pos.w,
+    //             pos.w / pos.w);
     // ImGui::End();
     //
 
     return pos / pos.w;
 }
 
-Vec3<float> Window::getMousePositionInWorld(const Camera &camera, float z) {
+Vec3<float> Window::getMousePositionInWorld(const Camera &camera,
+                                            float zWorld) {
     Vec2<> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
-    Vec4<float> pos(mousePos / size * 2 - 1,
-                    readPixel(mousePos.cast<int>()) * 2 - 1);
-    pos = (camera * projectionTransform).inverse() * pos;
-    return pos / pos.w;
+    Vec4<> screenPos{mousePos / size * 2 - 1, 0, 1};
+
+    const auto MVP = projectionTransform * camera;
+    const auto MVPinv = MVP.inverse();
+
+    screenPos.z =
+        (MVPinv.a34 - screenPos.x * (MVPinv.a41 * zWorld - MVPinv.a31) -
+         screenPos.y * (MVPinv.a42 * zWorld - MVPinv.a32) -
+         MVPinv.a44 * zWorld) /
+        (MVPinv.a43 * zWorld - MVPinv.a33);
+
+    auto const worldPos = MVPinv * screenPos;
+
+    /*
+    ImGui::Begin("getWorldPosition");
+    ImGui::Text("MVP :\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f",
+                MVP.a11,
+                MVP.a12,
+                MVP.a13,
+                MVP.a14,
+                MVP.a21,
+                MVP.a22,
+                MVP.a23,
+                MVP.a24,
+                MVP.a31,
+                MVP.a32,
+                MVP.a33,
+                MVP.a34,
+                MVP.a41,
+                MVP.a42,
+                MVP.a43,
+                MVP.a44);
+    ImGui::Text("MVPinv :\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f",
+                MVPinv.a11,
+                MVPinv.a12,
+                MVPinv.a13,
+                MVPinv.a14,
+                MVPinv.a21,
+                MVPinv.a22,
+                MVPinv.a23,
+                MVPinv.a24,
+                MVPinv.a31,
+                MVPinv.a32,
+                MVPinv.a33,
+                MVPinv.a34,
+                MVPinv.a41,
+                MVPinv.a42,
+                MVPinv.a43,
+                MVPinv.a44);
+    ImGui::Text("screenPos : %f %f %f %f",
+                screenPos.x,
+                screenPos.y,
+                screenPos.z,
+                screenPos.w);
+    ImGui::Text("worldPos non div : %f %f %f %f",
+                worldPos.x,
+                worldPos.y,
+                worldPos.z,
+                worldPos.w);
+    ImGui::Text("World : %f %f %f %f",
+                worldPos.x / worldPos.w,
+                worldPos.y / worldPos.w,
+                worldPos.z / worldPos.w,
+                worldPos.w / worldPos.w);
+    ImGui::End();
+    */
+
+    return worldPos / worldPos.w;
 }
 
 void Window::draw(const Primitive2D &primitive,

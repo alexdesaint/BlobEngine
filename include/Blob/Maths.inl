@@ -890,19 +890,19 @@ public:
 
     Vec4<> operator*(const Vec3<> &val) const {
         Vec4<> ret;
-        ret.x = a11 * val.x + a21 * val.y + a31 * val.z + a41;
-        ret.y = a12 * val.x + a22 * val.y + a32 * val.z + a42;
-        ret.z = a13 * val.x + a23 * val.y + a33 * val.z + a43;
-        ret.w = a14 * val.x + a24 * val.y + a34 * val.z + a44;
+        ret.x = a11 * val.x + a12 * val.y + a13 * val.z + a14;
+        ret.y = a21 * val.x + a22 * val.y + a23 * val.z + a24;
+        ret.z = a31 * val.x + a32 * val.y + a33 * val.z + a34;
+        ret.w = a41 * val.x + a42 * val.y + a43 * val.z + a44;
         return ret;
     }
 
     Vec4<> operator*(const Vec4<> &val) const {
         Vec4<> ret;
-        ret.x = a11 * val.x + a21 * val.y + a31 * val.z + a41 * val.w;
-        ret.y = a12 * val.x + a22 * val.y + a32 * val.z + a42 * val.w;
-        ret.z = a13 * val.x + a23 * val.y + a33 * val.z + a43 * val.w;
-        ret.w = a14 * val.x + a24 * val.y + a34 * val.z + a44 * val.w;
+        ret.x = a11 * val.x + a12 * val.y + a13 * val.z + a14 * val.w;
+        ret.y = a21 * val.x + a22 * val.y + a23 * val.z + a24 * val.w;
+        ret.z = a31 * val.x + a32 * val.y + a33 * val.z + a34 * val.w;
+        ret.w = a41 * val.x + a42 * val.y + a43 * val.z + a44 * val.w;
         return ret;
     }
 

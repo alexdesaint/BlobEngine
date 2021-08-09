@@ -4,26 +4,55 @@
 using namespace Blob;
 
 int main() {
-    Vec4<> n1{1, 2, 3, 4};
-    Vec4<> n2{5, 6, 7, 8};
-    Vec4<> n3{9, 10, 11, 12};
-    Vec4<> n4{13, 14, 15, 16};
-    std::cout << '{' << n1 << '}' << std::endl;
-    std::cout << '{' << n2 << '}' << std::endl;
-    std::cout << '{' << n3 << '}' << std::endl;
-    std::cout << '{' << n4 << '}' << std::endl;
-    std::cout << Mat4{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
-              << std::endl;
-    Mat4 mat{n1, n2, n3, n4};
-    std::cout << "mat" << std::endl;
-    std::cout << mat << std::endl;
+    {
+        std::cout << "test matrix construction" << std::endl;
 
-    Mat4 camera{0, -1, 0, 4, 1, 0, 1, -4, -1, -0, 1, -15, 0, 0, 0, 1};
-    std::cout << "camera" << std::endl;
-    std::cout << camera << std::endl;
-    std::cout << camera.inverse() << std::endl;
-    std::cout << "mat * camera" << std::endl;
-    std::cout << mat * camera << std::endl;
-    std::cout << "camera * mat" << std::endl;
-    std::cout << camera * mat << std::endl;
+        std::cout << Mat4{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
+                  << std::endl;
+        std::cout << Mat4{{1, 2, 3, 4},
+                          {5, 6, 7, 8},
+                          {9, 10, 11, 12},
+                          {13, 14, 15, 16}}
+                  << std::endl;
+    }
+    {
+        std::cout << "test matrix multiplication" << std::endl;
+        Mat4 m1{
+            {4, 0, 0, 0},
+            {0, 1, 0, 0},
+            {0, 0, 2, 0},
+            {0, 0, 0, 1},
+        };
+        Mat4 m2{
+            {1, 0, 0, 1},
+            {0, 1, 0, 2},
+            {0, 0, 1, 3},
+            {0, 0, 0, 1},
+        };
+        Mat4 m3{
+            {0, 1, 0, 0},
+            {1, 0, 0, 0},
+            {0, 0, 1, 0},
+            {0, 0, 0, 1},
+        };
+        std::cout << "m1 * m2" << std::endl;
+        std::cout << m1 * m2 << std::endl;
+        std::cout << "m3 * m1 * m2" << std::endl;
+        std::cout << m3 * m1 * m2 << std::endl;
+        Vec4<> v{3, 2, 1, 1};
+        std::cout << "m2 * v" << std::endl;
+        std::cout << m2 * v << std::endl;
+    }
+    {
+        std::cout << "test matrix inverse" << std::endl;
+        Mat4 m1{
+            {0, -1, 0, 4},
+            {1, 0, 1, -4},
+            {-1, -0, 1, -15},
+            {0, 0, 0, 1},
+        };
+        std::cout << "camera" << std::endl;
+        std::cout << m1 << std::endl;
+        std::cout << m1.inverse() << std::endl;
+    }
 }
