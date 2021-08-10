@@ -25,6 +25,8 @@ struct CollisionResolution {
 
 class Raster : public Vec2<int32_t> {
 public:
+    using Vec2::Vec2;
+
     constexpr static bool overlap(const Rectangle &rectangle) { return true; }
 
     constexpr static bool overlap(const Circle &circle) { return true; }
