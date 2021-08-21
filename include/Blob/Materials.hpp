@@ -105,9 +105,11 @@ private:
                        const Mat4 &mt) const final;
 
 public:
-    Vec2<> texScale = {1.f, 1.f};
+    Vec2<> texScale;
 
-    explicit SingleTexture(const Texture &texture) : texture(texture) {}
+    explicit SingleTexture(const Texture &texture,
+                           const Vec2<> &texScale = {1.f, 1.f}) :
+        texture(texture) {}
 };
 
 class PerFaceNormal : public Material {
