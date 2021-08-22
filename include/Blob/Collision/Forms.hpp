@@ -27,6 +27,8 @@ class Raster : public Vec2<int32_t> {
 public:
     using Vec2::Vec2;
 
+    Raster(const Vec2<int32_t> &raster) : Vec2<int32_t>(raster) {}
+
     constexpr static bool overlap(const Rectangle &rectangle) { return true; }
 
     constexpr static bool overlap(const Circle &circle) { return true; }
