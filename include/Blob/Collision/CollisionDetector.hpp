@@ -110,9 +110,33 @@ public:
     using AllColliders = std::tuple<std::unordered_set<Colliders *>...>;
 
     template<class Collider>
+    void staticTest() {
+        static_assert(
+            std::is_convertible_v<
+                Collider *,
+                DynamicCollider<typename Collider::FormType> *> ||
+                std::is_convertible_v<
+                    Collider *,
+                    StaticCollider<typename Collider::FormType> *>,
+            "Colliders need to have DynamicCollider or StaticCollider as "
+            "accessible parent. ");
+    }
+
+    GeneralCollisionDetector() { (staticTest<Colliders>(), ...); }
+
+    template<class Collider>
     void enableCollision(Collider &collider) {
         static_assert(!std::is_const_v<Collider>,
-                      "enableCollision called with a const qualified Collider");
+                      "enableCollision called with a const qualified Collider. "
+                      "Collider need to be modified by the CollisionDetector.");
+        static_assert(
+            std::is_base_of<DynamicCollider<typename Collider::FormType>,
+                            Collider>() ||
+                std::is_base_of<StaticCollider<typename Collider::FormType>,
+                                Collider>(),
+            "Colliders need to have DynamicCollider or StaticCollider as "
+            "accessible parent.");
+
         static_assert(
             (std::is_same_v<Collider, Colliders> || ...),
             "enableCollision called with type not in the collision detector");

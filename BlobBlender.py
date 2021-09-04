@@ -19,6 +19,10 @@ def print1dData(data):
     return ", ".join(map(str, data))
 
 
+def nameFormat(name):
+    return name.replace('.', '_').replace(' ', '_')
+
+
 class NativeType:
     def __init__(self, name):
         self.name = name
@@ -51,6 +55,7 @@ def getIndent(size):
     for i in range(size):
         ret += "    "
     return ret
+
 
 class Parameter:
     def __init__(self, name, type, init=None, preQualif="", midQualif="", postQualif="", static=False):
@@ -104,13 +109,14 @@ class Struct:
 
         if self.parents:
             ret += " : "
-        ret += ", ".join([str(access) + " " + str(parent) for parent, access in self.parents.items()])
+        ret += ", ".join([str(access) + " " + str(parent)
+                         for parent, access in self.parents.items()])
         ret += " {\n"
         ret += "".join([c.getHeader(indent + 1) for c in self.content])
         ret += getIndent(indent) + "};\n"
         return ret
 
-    def getCore(self, namespace = None):
+    def getCore(self, namespace=None):
         if namespace:
             return "".join([c.getCore(namespace + self.name + "::") for c in self.content])
         else:
@@ -153,7 +159,7 @@ class Function:
 def codeMesh(mesh):
     mesh.calc_loop_triangles()
     dataSize = len(mesh.loop_triangles) * 3
-    name = mesh.name.replace('.', '_')
+    name = nameFormat(mesh.name)
 
     use_normals = True
     if use_normals:
@@ -180,7 +186,8 @@ def codeMesh(mesh):
 
     use_morph_normals = False
 
-    dataType = [('x', np.float32), ('y', np.float32), ('z', np.float32)]
+    dataType = [('material', np.int64), ('x', np.float32),
+                ('y', np.float32), ('z', np.float32)]
     dataStruct = Struct("Data", {}, [Parameter("x", float_t), Parameter(
         "y", float_t), Parameter("z", float_t)], [])
     if use_normals:
@@ -224,18 +231,21 @@ def codeMesh(mesh):
                 Parameter('morph%dnz' % col_i, float_t)
             ]
 
-    attributes = Struct("Attributes", content=[], parents={"Blob::Asset<Attributes>": "public"})
+    attributes = Struct("Attributes", content=[], parents={
+                        "Blob::Asset<Attributes>": "public"})
     dataStruct.namespace.append(name)
     dataStruct.namespace.append("Attributes")
-    if attributes.content:
-        print("Not empty")
     attributes.content.append(dataStruct)
 
-    data = np.empty(dataSize, dtype=np.dtype(dataType))
+    # ⋊> ~/D/kenney_citykitroads rm -r kenney_citykitroads/ ~/projects/JustOneMoreTime/assets/kenney_citykitroads && blender -b kenney_citykitroads.blend -P ~/projects/JustOneMoreTime/libs/BlobEngine/BlobBlender.py && cp -r kenney_citykitroads ~/projects/JustOneMoreTime/assets/
 
+    data = np.empty(dataSize, dtype=np.dtype(dataType))
+    materialIndices = {}
     cursor = 0
     for loop_triangle in mesh.loop_triangles:
+        materialIndices[loop_triangle.material_index] = loop_triangle.material_index
         for loop_index in loop_triangle.loops:
+            data[cursor]['material'] = loop_triangle.material_index
             data[cursor]['x'] = mesh.vertices[mesh.loops[loop_index].vertex_index].co[0]
             data[cursor]['y'] = mesh.vertices[mesh.loops[loop_index].vertex_index].co[1]
             data[cursor]['z'] = mesh.vertices[mesh.loops[loop_index].vertex_index].co[2]
@@ -265,11 +275,17 @@ def codeMesh(mesh):
 
     indiceData, indice = np.unique(data, return_inverse=True, axis=0)
 
+    indicePerMaterial = {}
+    for matId in materialIndices:
+        indicePerMaterial[matId] = indice[indiceData[indice]
+                                          ['material'] == matId]
+
     attributes.content.append(Parameter("data", dataStruct, '\n' + print2dData(
         indiceData), preQualif="const", postQualif='[' + str(dataSize) + ']', static=True))
 
-    attributes.content.append(Parameter("indices", uint16_t, print1dData(
-        indice), preQualif="const", postQualif='[' + str(len(indice)) + ']', static=True))
+    for matId, indices in materialIndices.values():
+        attributes.content.append(Parameter("indices" + str(matId), uint16_t, print1dData(
+            indices), preQualif="const", postQualif='[' + str(len(indices)) + ']', static=True))
 
     attributes.content.append(
         Parameter("buffer", Buffer_t, init="(const uint8_t *) data, sizeof(data)"))
@@ -288,8 +304,9 @@ def codeMesh(mesh):
     attributes.content.append(Function("Attributes", content=constructorCode))
 
     meshStruct = Struct(name, {"Blob::Mesh": "public"}, [
-        attributes, 
-        Parameter("attributes", NativeType("Attributes::Intance"), "Attributes::getInstance()"),
+        attributes,
+        Parameter("attributes", NativeType("Attributes::Intance"),
+                  "Attributes::getInstance()"),
         Parameter("primitive", Primitive_t)])
     albedo = False
     for keyName, prop in mesh.items():
@@ -297,15 +314,19 @@ def codeMesh(mesh):
         if type(prop) == idprop.types.IDPropertyArray:
             if keyName == "albedo":
                 albedo = True
-            meshStruct.content.append(Parameter(keyName, propType, print1dData(prop.to_list()), postQualif='[' + str(len(prop.to_list())) + ']'))
+            meshStruct.content.append(Parameter(keyName, propType, print1dData(
+                prop.to_list()), postQualif='[' + str(len(prop.to_list())) + ']'))
         if type(prop) == idprop.types.IDPropertyGroup:
             continue
 
     for material in mesh.materials:
+        matName = nameFormat(material.name)
         if "SingleColor" in material.name and albedo:
-            meshStruct.content.append(Parameter("material",  NativeType("Blob::Materials::" + material.name), "{albedo}"))
+            meshStruct.content.append(
+                Parameter(matName,  NativeType("Materials::" + matName), "{albedo}"))
         else:
-            meshStruct.content.append(Parameter("material", NativeType("Blob::Materials::" + material.name)))
+            meshStruct.content.append(
+                Parameter(matName, NativeType("Materials::" + matName)))
     meshStruct.content.append(Function(name, None, [], ["Blob::Mesh(primitive)"], [
         "primitive.material = &material;",
         "primitive.renderOptions = &attributes->renderOptions;",
@@ -328,8 +349,19 @@ Path(srcFolder).mkdir(parents=True, exist_ok=True)
 cppFiles = []
 headerFiles = []
 
+
+with open(headerFolder + "Materials.hpp", "w") as f:
+    f.write("#include <Blob/Materials.hpp>\n")
+    f.write("namespace Materials {\n")
+    for material in bpy.data.materials:
+        name = nameFormat(material.name)
+        struct = Struct(name, content=[], parents={
+            "Blob::Materials::PBRColorArray": "public"})
+        f.write(struct.getHeader())
+    f.write("}\n")
+
 for mesh in bpy.data.meshes:
-    name = mesh.name.replace('.', '_')
+    name = nameFormat(mesh.name)
     headerCode, coreCode = codeMesh(mesh)
     with open(headerFolder + name + ".hpp", "w") as f:
         headerFiles.append(name + ".hpp")
@@ -337,36 +369,37 @@ for mesh in bpy.data.meshes:
         f.write("#include <Blob/Core/AttributeLocation.hpp>\n")
         f.write("#include <Blob/Core/Mesh.hpp>\n")
         f.write("#include <Blob/Core/Buffer.hpp>\n")
-        f.write("#include <Blob/Materials.hpp>\n")
-        f.write("namespace Project" + projectName +"::Meshes {\n")
+        f.write("#include <Materials.hpp>\n")
+        f.write("namespace Project" + projectName + "::Meshes {\n")
         f.write(headerCode)
         f.write("}\n")
     with open(srcFolder + name + ".cpp", "w") as f:
         cppFiles.append("src/" + name + ".cpp")
         f.write("#include <" + name + ".hpp>\n")
-        f.write("namespace Project" + projectName +"::Meshes {\n")
+        f.write("namespace Project" + projectName + "::Meshes {\n")
         f.write(coreCode)
         f.write("}\n")
 
 allMeshesType = Struct("AllMeshes")
 for mesh in bpy.data.meshes:
-    name = mesh.name.replace('.', '_')
-    allMeshesType.content.append(Parameter(name, NativeType("Meshes::" + name)))
+    name = nameFormat(mesh.name)
+    allMeshesType.content.append(
+        Parameter(name, NativeType("Meshes::" + name)))
 project = Struct("Project" + projectName,
-                content=[Parameter("meshes", allMeshesType)])
+                 content=[Parameter("meshes", allMeshesType)])
 constructor = Function(project.name)
 for object in bpy.data.objects:
     args = []
-    shapeName = object.name.replace('.', '_')
+    shapeName = nameFormat(object.name)
     for child in object.children:
-        childName = child.name.replace('.', '_')
+        childName = nameFormat(child.name)
         constructor.content.append(shapeName + ".addChild(" + childName + ");")
     if type(object.data) == bpy.types.Mesh:
-        meshName = object.data.name.replace('.', '_')
+        meshName = nameFormat(object.data.name)
         args.append("meshes." + meshName)
     if object.instance_collection:
         for child in object.instance_collection.objects:
-            childName = child.name.replace('.', '_')
+            childName = nameFormat(child.name)
             constructor.content.append(
                 shapeName + ".addChild(" + childName + ");")
     args.append("Blob::ModelTransform{" + ", ".join(
@@ -374,11 +407,11 @@ for object in bpy.data.objects:
     project.content.append(Parameter(shapeName, Shape_t, init=", ".join(args)))
 
 for scene in bpy.data.scenes:
-    sceneName = scene.name.replace('.', '_')
+    sceneName = nameFormat(scene.name)
     for object in scene.objects:
         if object.parent != None:
             continue
-        objectName = object.name.replace('.', '_')
+        objectName = nameFormat(object.name)
         constructor.content.append(
             sceneName + ".addShape(" + objectName + ");")
     project.content.append(Parameter(sceneName, Scene_t))
@@ -394,7 +427,7 @@ with open(mainHeader, "w") as f:
     for h in headerFiles:
         f.write("#include <" + h + ">\n")
 
-    f.write("namespace Project" + projectName +" {\n")
+    f.write("namespace Project" + projectName + " {\n")
 
     f.write(allMeshesType.getHeader())
     f.write(project.getHeader())
@@ -402,8 +435,8 @@ with open(mainHeader, "w") as f:
 
 with open(mainCore, "w") as f:
     f.write("#include <" + projectName + ".hpp>\n")
-    
-    f.write("namespace Project" + projectName +" {\n")
+
+    f.write("namespace Project" + projectName + " {\n")
     cppFiles.append("src/" + projectName + ".cpp")
     f.write(project.getCore())
     f.write("}\n")
