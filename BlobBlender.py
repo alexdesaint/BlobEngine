@@ -15,10 +15,6 @@ def print2dData(data):
     return ",\n".join(['{' + ", ".join(map(str, d)) + '}' for d in data]) + '\n'
 
 
-def print2dDataNot0(data):
-    return ",\n".join(['{' + ", ".join(map(str, d[d != 'material'])) + '}' for d in data]) + '\n'
-
-
 def print1dData(data):
     return ", ".join(map(str, data))
 
