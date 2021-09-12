@@ -15,6 +15,10 @@ def print2dData(data):
     return ",\n".join(['{' + ", ".join(map(str, d)) + '}' for d in data]) + '\n'
 
 
+def print2dDataNot0(data):
+    return ",\n".join(['{' + ", ".join(map(str, d[d != 'material'])) + '}' for d in data]) + '\n'
+
+
 def print1dData(data):
     return ", ".join(map(str, data))
 
@@ -281,17 +285,19 @@ def codeMesh(mesh):
                                           ['material'] == matId]
 
     attributes.content.append(Parameter("data", dataStruct, '\n' + print2dData(
-        indiceData), preQualif="const", postQualif='[' + str(dataSize) + ']', static=True))
+        indiceData[list(indiceData.dtype.names)[1:]]), preQualif="const", postQualif='[' + str(dataSize) + ']', static=True))
 
-    for matId, indices in materialIndices.values():
-        attributes.content.append(Parameter("indices" + str(matId), uint16_t, print1dData(
-            indices), preQualif="const", postQualif='[' + str(len(indices)) + ']', static=True))
+    for matId, indices in indicePerMaterial.items():
+        lenIndices = str(len(indices))
+        idStr = str(matId)
+        attributes.content.append(Parameter("indices" + idStr, uint16_t, print1dData(
+            indices), preQualif="const", postQualif='[' + lenIndices + ']', static=True))
+        attributes.content.append(Parameter(
+            "renderOptions" + str(matId), RenderOptions_t, "indices" + idStr + ", " + lenIndices))
 
     attributes.content.append(
         Parameter("buffer", Buffer_t, init="(const uint8_t *) data, sizeof(data)"))
     attributes.content.append(Parameter("attribute", Attribute_t))
-    attributes.content.append(Parameter(
-        "renderOptions", RenderOptions_t, "indices, " + str(len(indice)) + ""))
     constructorCode = [
         "attribute.setBuffer(buffer, sizeof(data[0]));",
         "attribute.setArray<float>(3, Blob::AttributeLocation::POSITION, offsetof(Data, x));",
@@ -305,9 +311,8 @@ def codeMesh(mesh):
 
     meshStruct = Struct(name, {"Blob::Mesh": "public"}, [
         attributes,
-        Parameter("attributes", NativeType("Attributes::Intance"),
-                  "Attributes::getInstance()"),
-        Parameter("primitive", Primitive_t)])
+        Parameter("attributes", NativeType("Attributes::Intance"), "Attributes::getInstance()")])
+
     albedo = False
     for keyName, prop in mesh.items():
         propType = float_t
@@ -327,11 +332,23 @@ def codeMesh(mesh):
         else:
             meshStruct.content.append(
                 Parameter(matName, NativeType("Materials::" + matName)))
-    meshStruct.content.append(Function(name, None, [], ["Blob::Mesh(primitive)"], [
-        "primitive.material = &material;",
-        "primitive.renderOptions = &attributes->renderOptions;",
-        "primitive.vertexArrayObject = &attributes->attribute;"
-    ]))
+
+    meshConstructor = Function(name, None, [], [], [])
+
+    for matId, indices in indicePerMaterial.items():
+        primitiveName = "primitive" + str(matId)
+        meshStruct.content.append(Parameter(primitiveName, Primitive_t))
+        meshConstructor.content.append(
+            primitiveName + ".material = &" + nameFormat(mesh.materials[matId].name) + ";")
+        meshConstructor.content.append(
+            primitiveName + ".renderOptions = &attributes->renderOptions" + str(matId) + ";")
+        meshConstructor.content.append(
+            primitiveName + ".vertexArrayObject = &attributes->attribute;")
+        meshConstructor.content.append(
+            "addPrimitive(" + primitiveName + ");")
+
+    meshStruct.content.append(meshConstructor)
+
     return meshStruct.getHeader(), meshStruct.getCore()
 
 
@@ -349,16 +366,29 @@ Path(srcFolder).mkdir(parents=True, exist_ok=True)
 cppFiles = []
 headerFiles = []
 
+materialsStruct = []
+for material in bpy.data.materials:
+    name = nameFormat(material.name)
+    constructor = Function(
+        name, None, [], ["Blob::Materials::SingleColor(Blob::Color::RGBA{" + print1dData(material.diffuse_color) + "})"], [])
+    materialsStruct.append(Struct(name, content=[constructor], parents={
+        "Blob::Materials::SingleColor": "public"}))
 
 with open(headerFolder + "Materials.hpp", "w") as f:
+    f.write("#pragma once\n")
     f.write("#include <Blob/Materials.hpp>\n")
     f.write("namespace Materials {\n")
-    for material in bpy.data.materials:
-        name = nameFormat(material.name)
-        struct = Struct(name, content=[], parents={
-            "Blob::Materials::PBRColorArray": "public"})
-        f.write(struct.getHeader())
+    for material in materialsStruct:
+        f.write(material.getHeader())
     f.write("}\n")
+
+with open(srcFolder + "Materials.cpp", "w") as f:
+    f.write("#include <Materials.hpp>\n")
+    f.write("namespace Materials {\n")
+    for material in materialsStruct:
+        f.write(material.getCore())
+    f.write("}\n")
+    cppFiles.append("src/Materials.cpp")
 
 for mesh in bpy.data.meshes:
     name = nameFormat(mesh.name)

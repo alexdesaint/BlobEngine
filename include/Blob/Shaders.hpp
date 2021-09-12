@@ -117,7 +117,6 @@ using UniformView = UniformAttribute<ViewTransform, 1>;
 using UniformProjection = UniformAttribute<ProjectionTransform, 2>;
 
 using SingleColor = Shader<ShaderProgram<VertexShader<R"=====(#version 450
-
 layout(location = 0) in vec3 POSITION;
 
 layout(location = 0) uniform mat4 model;
