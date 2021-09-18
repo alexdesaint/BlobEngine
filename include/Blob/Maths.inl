@@ -1201,13 +1201,13 @@ private:
 
     void compute() {
         a11 = rotation.a11 * scale.x;
-        a12 = rotation.a12 * scale.x;
-        a13 = rotation.a13 * scale.x;
-        a21 = rotation.a21 * scale.y;
+        a21 = rotation.a21 * scale.x;
+        a31 = rotation.a31 * scale.x;
+        a12 = rotation.a12 * scale.y;
         a22 = rotation.a22 * scale.y;
-        a23 = rotation.a23 * scale.y;
-        a31 = rotation.a31 * scale.z;
-        a32 = rotation.a32 * scale.z;
+        a32 = rotation.a32 * scale.y;
+        a13 = rotation.a13 * scale.z;
+        a23 = rotation.a23 * scale.z;
         a33 = rotation.a33 * scale.z;
     }
 

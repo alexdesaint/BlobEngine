@@ -6,8 +6,10 @@
 
 namespace Blob::GL {
 
+class Window;
+
 class VertexArrayObject {
-    friend class Window;
+    friend Window;
 
 private:
     uint32_t vertexArrayObject = 0;

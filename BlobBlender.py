@@ -20,7 +20,10 @@ def print1dData(data):
 
 
 def nameFormat(name):
-    return name.replace('.', '_').replace(' ', '_')
+    ret= name.replace('.', '_').replace(' ', '_').replace('(', '_').replace(')', '_').replace('-', '_')
+    if ret[0].isdigit():
+        ret = '_' + ret
+    return ret
 
 
 class NativeType:
@@ -349,6 +352,7 @@ def codeMesh(mesh):
 
 
 projectName = bpy.path.display_name_from_filepath(bpy.data.filepath)
+projectName = nameFormat(projectName)
 mainFolder = bpy.path.abspath("//") + projectName + "/"
 headerFolder = mainFolder + "include/"
 srcFolder = mainFolder + "src/"
@@ -366,25 +370,25 @@ materialsStruct = []
 for material in bpy.data.materials:
     name = nameFormat(material.name)
     constructor = Function(
-        name, None, [], ["Blob::Materials::SingleColor(Blob::Color::RGBA{" + print1dData(material.diffuse_color) + "})"], [])
+        name, None, [], ["Blob::Materials::PBRSingleColor(Blob::Color::RGBA{" + print1dData(material.diffuse_color) + "})"], [])
     materialsStruct.append(Struct(name, content=[constructor], parents={
-        "Blob::Materials::SingleColor": "public"}))
+        "Blob::Materials::PBRSingleColor": "public"}))
 
-with open(headerFolder + "Materials.hpp", "w") as f:
+with open(headerFolder + projectName + "Materials.hpp", "w") as f:
     f.write("#pragma once\n")
     f.write("#include <Blob/Materials.hpp>\n")
-    f.write("namespace Materials {\n")
+    f.write("namespace " + projectName + "::Materials {\n")
     for material in materialsStruct:
         f.write(material.getHeader())
     f.write("}\n")
 
-with open(srcFolder + "Materials.cpp", "w") as f:
-    f.write("#include <Materials.hpp>\n")
-    f.write("namespace Materials {\n")
+with open(srcFolder + projectName + "Materials.cpp", "w") as f:
+    f.write("#include <" + projectName + "Materials.hpp>\n")
+    f.write("namespace " + projectName + "::Materials {\n")
     for material in materialsStruct:
         f.write(material.getCore())
     f.write("}\n")
-    cppFiles.append("src/Materials.cpp")
+    cppFiles.append("src/" + projectName + "Materials.cpp")
 
 for mesh in bpy.data.meshes:
     name = nameFormat(mesh.name)
@@ -395,14 +399,14 @@ for mesh in bpy.data.meshes:
         f.write("#include <Blob/Core/AttributeLocation.hpp>\n")
         f.write("#include <Blob/Core/Mesh.hpp>\n")
         f.write("#include <Blob/Core/Buffer.hpp>\n")
-        f.write("#include <Materials.hpp>\n")
-        f.write("namespace Project" + projectName + "::Meshes {\n")
+        f.write("#include <" + projectName + "Materials.hpp>\n")
+        f.write("namespace " + projectName + "::Meshes {\n")
         f.write(headerCode)
         f.write("}\n")
     with open(srcFolder + name + ".cpp", "w") as f:
         cppFiles.append("src/" + name + ".cpp")
         f.write("#include <" + name + ".hpp>\n")
-        f.write("namespace Project" + projectName + "::Meshes {\n")
+        f.write("namespace " + projectName + "::Meshes {\n")
         f.write(coreCode)
         f.write("}\n")
 
@@ -411,8 +415,7 @@ for mesh in bpy.data.meshes:
     name = nameFormat(mesh.name)
     allMeshesType.content.append(
         Parameter(name, NativeType("Meshes::" + name)))
-project = Struct("Project" + projectName,
-                 content=[Parameter("meshes", allMeshesType)])
+project = Struct(projectName, content=[Parameter("meshes", allMeshesType)])
 constructor = Function(project.name)
 for object in bpy.data.objects:
     args = []
@@ -453,7 +456,7 @@ with open(mainHeader, "w") as f:
     for h in headerFiles:
         f.write("#include <" + h + ">\n")
 
-    f.write("namespace Project" + projectName + " {\n")
+    f.write("namespace " + projectName + " {\n")
 
     f.write(allMeshesType.getHeader())
     f.write(project.getHeader())
@@ -462,7 +465,7 @@ with open(mainHeader, "w") as f:
 with open(mainCore, "w") as f:
     f.write("#include <" + projectName + ".hpp>\n")
 
-    f.write("namespace Project" + projectName + " {\n")
+    f.write("namespace " + projectName + " {\n")
     cppFiles.append("src/" + projectName + ".cpp")
     f.write(project.getCore())
     f.write("}\n")

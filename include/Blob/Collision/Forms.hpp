@@ -14,6 +14,7 @@
 namespace Blob {
 
 class Circle;
+class RasterArea;
 class Line;
 class Rectangle;
 class Point;
@@ -29,6 +30,8 @@ public:
 
     Raster(const Vec2<int32_t> &raster) : Vec2<int32_t>(raster) {}
 
+    Raster(Vec2<int32_t> &&raster) : Vec2<int32_t>(raster) {}
+
     constexpr static bool overlap(const Rectangle &rectangle) { return true; }
 
     constexpr static bool overlap(const Circle &circle) { return true; }
@@ -37,12 +40,79 @@ public:
 
     constexpr static bool overlap(const Point &point) { return true; }
 
-    constexpr static bool overlap(const Raster &rasterArea) { return true; }
+    constexpr static bool overlap(const Raster &raster) { return true; }
+
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
     std::unordered_set<Vec2<int32_t>> rasterize() const { return {*this}; };
 
     friend std::ostream &operator<<(std::ostream &os, const Raster &p) {
-        return os << "RasterArea: " << (const Vec2<int32_t> &) p;
+        return os << "Raster: " << (const Vec2<int32_t> &) p;
+    }
+};
+
+class RasterArea {
+public:
+    std::unordered_set<Vec2<int32_t>> rasters;
+
+    RasterArea() = default;
+
+    RasterArea(const std::unordered_set<Vec2<int32_t>> &rasters) : rasters(rasters) {}
+
+    RasterArea(std::unordered_set<Vec2<int32_t>> &&rasters) : rasters(rasters) {}
+
+    RasterArea(const Vec2<int32_t> &start, const Vec2<int32_t> &end) {
+        setArea(start, end);
+    }
+
+    RasterArea(const Vec2<int32_t> &center, int32_t sizeX, int32_t sizeY) {
+        setArea(center, sizeX, sizeY);
+    }
+
+    void setArea(const Vec2<int32_t> &start, const Vec2<int32_t> &end) {
+        rasters.clear();
+        int startX, endX, startY, endY;
+        if (start.x < end.x) {
+            startX = start.x;
+            endX = end.x;
+        } else {
+            startX = end.x;
+            endX = start.x;
+        }
+        if (start.y < end.y) {
+            startY = start.y;
+            endY = end.y;
+        } else {
+            startY = end.y;
+            endY = start.y;
+        }
+
+        for (int i = startX; i <= endX; i++)
+            for (int j = startY; j <= endY; j++)
+                rasters.emplace(Vec2{i, j});
+    }
+
+    void setArea(const Vec2<int32_t> &center, int32_t sizeX, int32_t sizeY) {
+        Vec2<int32_t> size(sizeX, sizeY), size2(size / 2);
+        setArea(center - size2, center + size - size2 - 1);
+    }
+
+    constexpr static bool overlap(const Rectangle &rectangle) { return true; }
+
+    constexpr static bool overlap(const Circle &circle) { return true; }
+
+    constexpr static bool overlap(const Line &line) { return true; }
+
+    constexpr static bool overlap(const Point &point) { return true; }
+
+    constexpr static bool overlap(const Raster &raster) { return true; }
+
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
+
+    std::unordered_set<Vec2<int32_t>> rasterize() const { return rasters; };
+
+    friend std::ostream &operator<<(std::ostream &os, const RasterArea &p) {
+        return os << "RasterArea";
     }
 };
 
@@ -65,7 +135,9 @@ public:
 
     bool overlap(const Circle &circle) const;
 
-    constexpr static bool overlap(const Raster &rasterArea) { return true; }
+    constexpr static bool overlap(const Raster &raster) { return true; }
+
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
     std::unordered_set<Vec2<int32_t>> rasterize() const;
 
@@ -104,7 +176,9 @@ public:
     CollisionResolution resolve(const Rectangle &rectangle,
                                 Vec2<> destination) const;
 
-    constexpr static bool overlap(const Raster &rasterArea) { return true; }
+    constexpr static bool overlap(const Raster &raster) { return true; }
+
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
     std::unordered_set<Vec2<int32_t>> rasterize() const;
 
@@ -140,7 +214,9 @@ public:
 
     bool overlap(const Point &point) const;
 
-    constexpr static bool overlap(const Raster &rasterArea) { return true; }
+    constexpr static bool overlap(const Raster &raster) { return true; }
+
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
     std::unordered_set<Vec2<int32_t>> rasterize() const;
 
@@ -173,7 +249,9 @@ public:
 
     bool overlap(const Point &point) const;
 
-    constexpr static bool overlap(const Raster &rasterArea) { return true; }
+    constexpr static bool overlap(const Raster &raster) { return true; }
+
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
     CollisionResolution resolve(const Rectangle &rectangle,
                                 Vec2<> destination) const;
