@@ -141,6 +141,11 @@ public:
 
     constexpr inline Vec2 rotate() const { return {y, -x}; }
 
+    constexpr inline Vec2 rotate(T angle) const {
+        return {std::cos(angle) * x - std::sin(angle) * y,
+                std::sin(angle) * x + std::cos(angle) * y};
+    }
+
     constexpr inline Vec2 negate() const { return {-x, -y}; }
 
     constexpr inline Vec2 abs() const { return {std::abs(x), std::abs(y)}; }
@@ -1225,6 +1230,12 @@ public:
     void setPosition(const Vec2<> &xy) {
         a14 = xy.x;
         a24 = xy.y;
+    }
+
+    void setPosition(const Vec2<> &xy, float z) {
+        a14 = xy.x;
+        a24 = xy.y;
+        a34 = z;
     }
 
     void move(const Vec3<float> &xyz) {
