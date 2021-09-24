@@ -9,11 +9,11 @@
 #include <Blob/GL/FrameBuffer.hpp>
 #include <Blob/GL/Window.hpp>
 #include <Blob/GLFW.hpp>
-#include <Blob/Time.hpp>
 
 // std
 #include <chrono>
 #include <ostream>
+#include <ratio>
 
 namespace Blob {
 
@@ -22,8 +22,8 @@ private:
     // ImGui::Context imgui;
 
     // time counting
-    Time::TimePoint lastFrameTime;
-    Time::Duration fpsCouner{0};
+    std::chrono::steady_clock::time_point lastFrameTime;
+    std::chrono::duration<float, std::milli> fpsCounter{0};
 
     // GBuffer
     GL::FrameBuffer gFrameBuffer;

@@ -25,9 +25,5 @@ add_library(BlobShapes STATIC Shapes.cpp)
 target_link_libraries(BlobShapes Blob::Materials)
 add_library(Blob::Shapes ALIAS BlobShapes)
 
-add_library(BlobTime STATIC Time.cpp)
-target_link_libraries(BlobTime Blob::Includes)
-add_library(Blob::Time ALIAS BlobTime)
-
 add_library(Blob INTERFACE)
 target_link_libraries(Blob INTERFACE Blob::Core Blob::Materials Blob::Shapes)

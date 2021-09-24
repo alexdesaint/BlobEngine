@@ -10,5 +10,5 @@ add_library(BlobCore STATIC
         Primitive.cpp
         Buffer.cpp
         Texture.cpp Image.cpp)
-target_link_libraries(BlobCore Blob::Includes Blob::GL imgui Blob::Time Blob::FileReader libs)
+target_link_libraries(BlobCore Blob::Includes Blob::GL imgui Blob::FileReader libs)
 add_library(Blob::Core ALIAS BlobCore)

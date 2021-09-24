@@ -81,11 +81,11 @@ float Window::display() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    auto now = std::chrono::high_resolution_clock::now();
-    Time::Duration diff = now - lastFrameTime;
+    std::chrono::steady_clock::time_point now = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float, std::ratio<1, 1>> diff = now - lastFrameTime;
     ImGui::GetIO().DeltaTime = diff.count();
     timeFlow = diff.count();
-    fpsCouner = fpsCouner + diff;
+    fpsCounter += now - lastFrameTime;
     lastFrameTime = now;
 
     return timeFlow;
