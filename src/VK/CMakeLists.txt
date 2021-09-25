@@ -19,6 +19,6 @@ add_library(BlobVK STATIC
         Swapchain.cpp
         Window.cpp)
 
-target_link_libraries(BlobVK Blob::GLFW Vulkan::Vulkan)
+target_link_libraries(BlobVK gladVulkan Blob::GLFW)
 target_include_directories(BlobVK PUBLIC ${INCLUDE_FOLDER})
 add_library(Blob::VK ALIAS BlobVK)

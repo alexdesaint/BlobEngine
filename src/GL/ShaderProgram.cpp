@@ -3,7 +3,7 @@
 #include <Blob/Core/Exception.hpp>
 #include <Blob/GL/Shader.hpp>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <vector>
 
 namespace Blob::GL {

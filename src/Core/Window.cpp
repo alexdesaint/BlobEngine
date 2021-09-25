@@ -5,6 +5,8 @@
 #include <backends/imgui_impl_opengl3.h>
 
 // Blob
+#include <chrono>
+#include <cstddef>
 #include <imgui.h>
 #include <iostream>
 
@@ -81,7 +83,9 @@ float Window::display() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    std::chrono::steady_clock::time_point now = std::chrono::high_resolution_clock::now();
+    std::chrono::time_point<std::chrono::system_clock> now =
+        std::chrono::system_clock::now();
+
     std::chrono::duration<float, std::ratio<1, 1>> diff = now - lastFrameTime;
     ImGui::GetIO().DeltaTime = diff.count();
     timeFlow = diff.count();

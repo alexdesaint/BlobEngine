@@ -1,5 +1,5 @@
 #include <Blob/GL/VertexArrayObject.hpp>
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 namespace Blob::GL {
 

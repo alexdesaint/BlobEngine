@@ -1,5 +1,5 @@
 #include <GLFW/glfw3.h>
-#include <vulkan/vulkan.h>
+#include <glad/vulkan.h>
 
 #include <cstring>
 #include <stdexcept>

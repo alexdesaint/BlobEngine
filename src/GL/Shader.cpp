@@ -2,7 +2,7 @@
 #include <Blob/GL/Shader.hpp>
 
 // GLAD
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 namespace Blob::GL {
 

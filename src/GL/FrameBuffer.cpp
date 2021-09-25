@@ -1,6 +1,6 @@
 #include <Blob/GL/FrameBuffer.hpp>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 namespace Blob::GL {
 

@@ -3,7 +3,7 @@
 #include <Blob/GL/Window.hpp>
 
 // GLAD
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 // std
 #include <iostream>
@@ -95,19 +95,19 @@ void GLAPIENTRY openglCallbackFunction(GLenum source,
 
 Window::Window(const Vec2<unsigned int> &windowSize, int GLmajor, int GLminor) :
     GLFW::Window(windowSize, GLmajor, GLminor) {
-    if (!gladLoadGLLoader((GLADloadproc) GLFW::Window::getProcAddress))
+    if (!gladLoadGL((GLADloadfunc) GLFW::Window::getProcAddress))
         throw Blob::Exception("Fail to load openGL");
 
-    if (GLmajor != GLVersion.major || GLminor > GLVersion.minor)
-        throw Blob::Exception(
-            "Fail to load the right version of OpenGL. Loaded version : " +
-            std::to_string(GLVersion.major) + "." +
-            std::to_string(GLVersion.minor) + " instead of " +
-            std::to_string(GLmajor) + "\n" + std::to_string(GLminor) +
-            ". System version : " + (char *) glGetString(GL_VERSION));
+    // if (GLmajor != GLVersion.major || GLminor > GLVersion.minor)
+    //    throw Blob::Exception(
+    //        "Fail to load the right version of OpenGL. Loaded version : " +
+    //        std::to_string(GLVersion.major) + "." +
+    //        std::to_string(GLVersion.minor) + " instead of " +
+    //        std::to_string(GLmajor) + "\n" + std::to_string(GLminor) +
+    //        ". System version : " + (char *) glGetString(GL_VERSION));
 
-    std::cout << "init OpenGL " << GLVersion.major << "." << GLVersion.minor
-              << std::endl;
+    // std::cout << "init OpenGL " << GLVersion.major << "." << GLVersion.minor
+    //          << std::endl;
     // Enable the debug callback
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);

@@ -1,12 +1,13 @@
 #include "Blob/GL/ShaderProgram.hpp"
 #include <Blob/GLFW.hpp>
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 #include <Blob/GL/Shader.hpp>
 #include <Blob/Maths.inl>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 
 using namespace Blob;
 
@@ -39,7 +40,8 @@ static std::string fragment_shader_text = "#version 110\n"
 int main() {
     GLFW::Window window({400, 400}, 3, 0);
 
-    if (!gladLoadGLLoader((GLADloadproc) GLFW::Window::getProcAddress)) {}
+    if (!gladLoadGL((GLADloadfunc) GLFW::Window::getProcAddress))
+        throw std::runtime_error("Fail to load openGL");
     GLuint vertex_buffer;
     GLint mvp_location, vpos_location, vcol_location;
 

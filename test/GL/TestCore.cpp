@@ -1,5 +1,5 @@
 #include "Blob/GL/ShaderProgram.hpp"
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 #include <Blob/GL/Shader.hpp>
 #include <Blob/GL/VertexBufferObject.hpp>

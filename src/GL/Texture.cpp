@@ -1,6 +1,6 @@
 #include <Blob/GL/Texture.hpp>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 namespace Blob::GL {
 

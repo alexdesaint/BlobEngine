@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Blob/Maths.inl>
-#include <vulkan/vulkan.h>
+#include <glad/vulkan.h>
 
 struct Vertex {
     Blob::Vec3<float> pos;

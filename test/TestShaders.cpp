@@ -2,7 +2,6 @@
 #include <Blob/Core/Window.hpp>
 #include <Blob/Materials.hpp>
 #include <Blob/Shapes.hpp>
-#include <Blob/Time.hpp>
 #include <imgui.h>
 #include <iostream>
 
@@ -42,10 +41,12 @@ int main() {
 
         scene.camera.setPosition({10, 0, 10});
 
-        Time::TimePoint start = Time::now();
+        std::chrono::time_point<std::chrono::system_clock> now =
+            std::chrono::system_clock::now();
         float rotation = 0;
         while (window.isOpen()) {
-            Time::Duration flow = start - Time::now();
+            std::chrono::duration<float, std::ratio<1, 1>> flow =
+                now - std::chrono::system_clock::now();
 
             ImGui::Begin("Hello, world!");
             if (ImGui::SliderFloat("rotation", &rotation, -PI, PI))

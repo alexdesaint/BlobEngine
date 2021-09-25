@@ -59,8 +59,8 @@
  *    khronos_uint64_t            unsigned 64 bit
  *    khronos_intptr_t            signed   same number of bits as a pointer
  *    khronos_uintptr_t           unsigned same number of bits as a pointer
- *    khronos_ssize_t             signed   numberOfElements
- *    khronos_usize_t             unsigned numberOfElements
+ *    khronos_ssize_t             signed   size
+ *    khronos_usize_t             unsigned size
  *    khronos_float_t             signed   32 bit floating point
  *    khronos_time_ns_t           unsigned 64 bit time in nanoseconds
  *    khronos_utime_nanoseconds_t unsigned time interval or absolute time in
@@ -90,12 +90,20 @@
  *                                  int arg2) KHRONOS_APIATTRIBUTES;
  */
 
+#if defined(__SCITECH_SNAP__) && !defined(KHRONOS_STATIC)
+#   define KHRONOS_STATIC 1
+#endif
+
 /*-------------------------------------------------------------------------
  * Definition of KHRONOS_APICALL
  *-------------------------------------------------------------------------
  * This precedes the return type of the function in the function prototype.
  */
-#if defined(_WIN32) && !defined(__SCITECH_SNAP__)
+#if defined(KHRONOS_STATIC)
+    /* If the preprocessor constant KHRONOS_STATIC is defined, make the
+     * header compatible with static linking. */
+#   define KHRONOS_APICALL
+#elif defined(_WIN32)
 #   define KHRONOS_APICALL __declspec(dllimport)
 #elif defined (__SYMBIAN32__)
 #   define KHRONOS_APICALL IMPORT_C

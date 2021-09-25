@@ -1,5 +1,5 @@
 #include "Blob/GL/ShaderProgram.hpp"
-#include <glad/glad.h>
+#include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -81,7 +81,8 @@ int main() {
     glfwSetKeyCallback(window, key_callback);
 
     glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {}
+    if (!gladLoadGL((GLADloadfunc) glfwGetProcAddress))
+        throw std::runtime_error("Fail to load openGL");
 
     // Enable the debug callback
     glEnable(GL_DEBUG_OUTPUT);

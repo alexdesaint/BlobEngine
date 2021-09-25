@@ -4,10 +4,10 @@
 #include "Instance.hpp"
 #include <Blob/GLFW.hpp>
 #include <Blob/VK/PhysicalDevice.hpp>
+#include <glad/vulkan.h>
 #include <memory>
 #include <stdexcept>
 #include <vector>
-#include <vulkan/vulkan.hpp>
 
 namespace Blob::VK {
 class Device {

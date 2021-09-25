@@ -1,6 +1,6 @@
 #include "Blob/GL/ShaderProgram.hpp"
 #include <Blob/GL/Texture.hpp>
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <stdint.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -97,7 +97,7 @@ int main() {
     glfwSetKeyCallback(window, key_callback);
 
     glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {}
+    if (!gladLoadGL((GLADloadfunc) glfwGetProcAddress)) {}
 
     // Enable the debug callback
     glEnable(GL_DEBUG_OUTPUT);

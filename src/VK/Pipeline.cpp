@@ -1,6 +1,6 @@
 #include <SDL2/SDL_syswm.h>
 
-#include <vulkan/vulkan.h>
+#include <glad/vulkan.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/hash.hpp>

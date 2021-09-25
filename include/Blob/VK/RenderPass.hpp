@@ -7,8 +7,8 @@
 
 #include "Device.hpp"
 #include <array>
+#include <glad/vulkan.h>
 #include <stdexcept>
-#include <vulkan/vulkan.h>
 namespace Blob::VK {
 
 class RenderPass {

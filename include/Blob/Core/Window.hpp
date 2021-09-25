@@ -22,7 +22,7 @@ private:
     // ImGui::Context imgui;
 
     // time counting
-    std::chrono::steady_clock::time_point lastFrameTime;
+    std::chrono::time_point<std::chrono::system_clock> lastFrameTime;
     std::chrono::duration<float, std::milli> fpsCounter{0};
 
     // GBuffer
