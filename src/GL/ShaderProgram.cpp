@@ -1,4 +1,7 @@
+#include <cstddef>
+#include <cstdio>
 #include <iostream>
+#include <sstream>
 
 #include <Blob/Core/Exception.hpp>
 #include <Blob/GL/Shader.hpp>
@@ -28,8 +31,6 @@ void ShaderProgram::destroy() {
 
 void ShaderProgram::addShader(Type type, const std::string &src) {
     shaders[type] = glCreateShader(type);
-    std::cout << "Shader " << shaders[type] << std::endl;
-    std::cout << src << std::endl;
     try {
         const GLchar *source = src.c_str();
 
@@ -37,8 +38,16 @@ void ShaderProgram::addShader(Type type, const std::string &src) {
 
         glCompileShader(shaders[type]);
     } catch (Blob::Exception &exception) {
+        std::cout << "Shader " << shaders[type] << std::endl;
+        std::istringstream f(src);
+        std::string line;
+        size_t lineNumber = 1;
+        while (std::getline(f, line)) {
+            std::printf("%4lu| ", lineNumber);
+            std::cout << line << std::endl;
+            lineNumber++;
+        }
         std::cout << exception.what() << std::endl;
-        std::cout << src << std::endl;
         glDeleteShader(shaders[type]);
         shaders[type] = 0;
     }
@@ -59,12 +68,16 @@ void ShaderProgram::addFragmentShader(const std::string &src) {
 void ShaderProgram::linkShaders() {
     try {
         program = glCreateProgram();
-        std::cout << "Program " << program << "(";
         for (auto &[type, shader] : shaders) {
-            std::cout << " " << shader;
+            if (shader == 0) {
+                std::cout << "Program " << program
+                          << " have uncompiled shader, this program will not "
+                             "get linked"
+                          << std::endl;
+                return;
+            }
             glAttachShader(program, shader);
         }
-        std::cout << ") " << std::endl;
 
         glLinkProgram(program);
 
@@ -87,12 +100,12 @@ void ShaderProgram::linkShaders() {
             program = 0;
         }
     } catch (Blob::Exception &exception) {
+        std::cout << "Shader linking Exception" << std::endl;
         std::cout << exception.what() << std::endl;
         for (auto &[type, shader] : shaders)
             glDetachShader(program, shader);
         glDeleteProgram(program);
         program = 0;
-        return;
     }
 }
 
