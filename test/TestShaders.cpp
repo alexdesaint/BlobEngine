@@ -10,23 +10,24 @@ using namespace Blob;
 
 int main() {
     try {
-
         Window window;
 
-        Materials::PBRSingleColor blue, orange, white;
-        blue.albedo = Color::DeepSkyBlue;
+        Materials::SingleColor testShader;
+
+        Materials::PBRSingleColor orange, white;
         orange.albedo = Color::Coral;
         white.albedo = Color::White;
 
         Scene scene;
-        Shapes::Cube cubeOrange(orange), cubeBlue(blue), cubeDm(orange);
+        Shapes::Cube cubeOrange(orange), cubeBlue(testShader), cubeDm(white);
         scene.addShape(cubeOrange);
         cubeOrange.setPosition({4, 4});
         scene.addShape(cubeBlue);
         cubeBlue.setPosition({4, 0});
         scene.addShape(cubeDm);
         cubeDm.setPosition({4, -4});
-        Shapes::OctagonalPrism opOrange(orange), opBlue(blue), opDm(orange);
+        Shapes::OctagonalPrism opOrange(orange), opBlue(testShader),
+            opDm(white);
         scene.addShape(opOrange);
         opOrange.setPosition({-4, 4});
         scene.addShape(opBlue);
@@ -52,10 +53,10 @@ int main() {
             if (ImGui::SliderFloat("rotation", &rotation, -PI, PI))
                 cubeBlue.setRotation(rotation, {0, 0, 1});
             ImGui::Text("Material");
-            ImGui::ColorEdit3("albedo", &orange.albedo.R);
-            ImGui::SliderFloat("metallic", &orange.metallic, 0.0f, 1.0f);
-            ImGui::SliderFloat("roughness", &orange.roughness, 0.0f, 1.0f);
-            ImGui::SliderFloat("ao", &orange.ao, 0.0f, 1.f);
+            ImGui::ColorEdit4("albedo", &testShader.albedo.R);
+            // ImGui::SliderFloat("metallic", &orange.metallic, 0.0f, 1.0f);
+            // ImGui::SliderFloat("roughness", &orange.roughness, 0.0f, 1.0f);
+            // ImGui::SliderFloat("ao", &orange.ao, 0.0f, 1.f);
 
             ImGui::Text("Light");
             ImGui::ColorEdit3("Light color", &Materials::PBR::light.color.R);

@@ -9,7 +9,7 @@ namespace Blob {
 class Buffer : public GL::VertexBufferObject {
 public:
     Buffer() = default;
-    explicit Buffer(const std::string &file);
+
     Buffer(const uint8_t *data, size_t dataSize) :
         GL::VertexBufferObject(data, dataSize) {}
 

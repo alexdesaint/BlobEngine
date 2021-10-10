@@ -24,10 +24,5 @@ target_link_libraries(imgui Blob::Includes glfw gladGL)
 target_include_directories(imgui PUBLIC imgui/ imguiConfig/)
 
 # libs
-add_library(libs INTERFACE)
-target_include_directories(libs INTERFACE stb/ include/)
-
-#json
-if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp)
-    file(DOWNLOAD https://raw.githubusercontent.com/nlohmann/json/master/single_include/nlohmann/json.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp SHOW_PROGRESS)
-endif ()
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE stb/)

@@ -1,4 +1,4 @@
-#include <Blob/Reader/FileReader.hpp>
+#include <Blob/FileReader.hpp>
 
 #include <Blob/Core/Exception.hpp>
 #include <iomanip>

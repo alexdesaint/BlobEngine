@@ -38,6 +38,7 @@ int GLAD_GL_VERSION_4_2 = 0;
 int GLAD_GL_VERSION_4_3 = 0;
 int GLAD_GL_VERSION_4_4 = 0;
 int GLAD_GL_VERSION_4_5 = 0;
+int GLAD_GL_VERSION_4_6 = 0;
 
 
 static void _pre_call_gl_callback_default(const char *name, GLADapiproc apiproc, int len_args, ...) {
@@ -4168,6 +4169,14 @@ static void GLAD_API_PTR glad_debug_impl_glMultiDrawArraysIndirect(GLenum mode, 
     
 }
 PFNGLMULTIDRAWARRAYSINDIRECTPROC glad_debug_glMultiDrawArraysIndirect = glad_debug_impl_glMultiDrawArraysIndirect;
+PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC glad_glMultiDrawArraysIndirectCount = NULL;
+static void GLAD_API_PTR glad_debug_impl_glMultiDrawArraysIndirectCount(GLenum mode, const void * indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride) {
+    _pre_call_gl_callback("glMultiDrawArraysIndirectCount", (GLADapiproc) glad_glMultiDrawArraysIndirectCount, 5, mode, indirect, drawcount, maxdrawcount, stride);
+    glad_glMultiDrawArraysIndirectCount(mode, indirect, drawcount, maxdrawcount, stride);
+    _post_call_gl_callback(NULL, "glMultiDrawArraysIndirectCount", (GLADapiproc) glad_glMultiDrawArraysIndirectCount, 5, mode, indirect, drawcount, maxdrawcount, stride);
+    
+}
+PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC glad_debug_glMultiDrawArraysIndirectCount = glad_debug_impl_glMultiDrawArraysIndirectCount;
 PFNGLMULTIDRAWELEMENTSPROC glad_glMultiDrawElements = NULL;
 static void GLAD_API_PTR glad_debug_impl_glMultiDrawElements(GLenum mode, const GLsizei * count, GLenum type, const void *const* indices, GLsizei drawcount) {
     _pre_call_gl_callback("glMultiDrawElements", (GLADapiproc) glad_glMultiDrawElements, 5, mode, count, type, indices, drawcount);
@@ -4192,6 +4201,14 @@ static void GLAD_API_PTR glad_debug_impl_glMultiDrawElementsIndirect(GLenum mode
     
 }
 PFNGLMULTIDRAWELEMENTSINDIRECTPROC glad_debug_glMultiDrawElementsIndirect = glad_debug_impl_glMultiDrawElementsIndirect;
+PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC glad_glMultiDrawElementsIndirectCount = NULL;
+static void GLAD_API_PTR glad_debug_impl_glMultiDrawElementsIndirectCount(GLenum mode, GLenum type, const void * indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride) {
+    _pre_call_gl_callback("glMultiDrawElementsIndirectCount", (GLADapiproc) glad_glMultiDrawElementsIndirectCount, 6, mode, type, indirect, drawcount, maxdrawcount, stride);
+    glad_glMultiDrawElementsIndirectCount(mode, type, indirect, drawcount, maxdrawcount, stride);
+    _post_call_gl_callback(NULL, "glMultiDrawElementsIndirectCount", (GLADapiproc) glad_glMultiDrawElementsIndirectCount, 6, mode, type, indirect, drawcount, maxdrawcount, stride);
+    
+}
+PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC glad_debug_glMultiDrawElementsIndirectCount = glad_debug_impl_glMultiDrawElementsIndirectCount;
 PFNGLMULTITEXCOORD1DPROC glad_glMultiTexCoord1d = NULL;
 static void GLAD_API_PTR glad_debug_impl_glMultiTexCoord1d(GLenum target, GLdouble s) {
     _pre_call_gl_callback("glMultiTexCoord1d", (GLADapiproc) glad_glMultiTexCoord1d, 2, target, s);
@@ -4896,6 +4913,14 @@ static void GLAD_API_PTR glad_debug_impl_glPolygonOffset(GLfloat factor, GLfloat
     
 }
 PFNGLPOLYGONOFFSETPROC glad_debug_glPolygonOffset = glad_debug_impl_glPolygonOffset;
+PFNGLPOLYGONOFFSETCLAMPPROC glad_glPolygonOffsetClamp = NULL;
+static void GLAD_API_PTR glad_debug_impl_glPolygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat clamp) {
+    _pre_call_gl_callback("glPolygonOffsetClamp", (GLADapiproc) glad_glPolygonOffsetClamp, 3, factor, units, clamp);
+    glad_glPolygonOffsetClamp(factor, units, clamp);
+    _post_call_gl_callback(NULL, "glPolygonOffsetClamp", (GLADapiproc) glad_glPolygonOffsetClamp, 3, factor, units, clamp);
+    
+}
+PFNGLPOLYGONOFFSETCLAMPPROC glad_debug_glPolygonOffsetClamp = glad_debug_impl_glPolygonOffsetClamp;
 PFNGLPOLYGONSTIPPLEPROC glad_glPolygonStipple = NULL;
 static void GLAD_API_PTR glad_debug_impl_glPolygonStipple(const GLubyte * mask) {
     _pre_call_gl_callback("glPolygonStipple", (GLADapiproc) glad_glPolygonStipple, 1, mask);
@@ -6073,6 +6098,14 @@ static void GLAD_API_PTR glad_debug_impl_glShaderStorageBlockBinding(GLuint prog
     
 }
 PFNGLSHADERSTORAGEBLOCKBINDINGPROC glad_debug_glShaderStorageBlockBinding = glad_debug_impl_glShaderStorageBlockBinding;
+PFNGLSPECIALIZESHADERPROC glad_glSpecializeShader = NULL;
+static void GLAD_API_PTR glad_debug_impl_glSpecializeShader(GLuint shader, const GLchar * pEntryPoint, GLuint numSpecializationConstants, const GLuint * pConstantIndex, const GLuint * pConstantValue) {
+    _pre_call_gl_callback("glSpecializeShader", (GLADapiproc) glad_glSpecializeShader, 5, shader, pEntryPoint, numSpecializationConstants, pConstantIndex, pConstantValue);
+    glad_glSpecializeShader(shader, pEntryPoint, numSpecializationConstants, pConstantIndex, pConstantValue);
+    _post_call_gl_callback(NULL, "glSpecializeShader", (GLADapiproc) glad_glSpecializeShader, 5, shader, pEntryPoint, numSpecializationConstants, pConstantIndex, pConstantValue);
+    
+}
+PFNGLSPECIALIZESHADERPROC glad_debug_glSpecializeShader = glad_debug_impl_glSpecializeShader;
 PFNGLSTENCILFUNCPROC glad_glStencilFunc = NULL;
 static void GLAD_API_PTR glad_debug_impl_glStencilFunc(GLenum func, GLint ref, GLuint mask) {
     _pre_call_gl_callback("glStencilFunc", (GLADapiproc) glad_glStencilFunc, 3, func, ref, mask);
@@ -9579,6 +9612,13 @@ static void glad_gl_load_GL_VERSION_4_5( GLADuserptrloadfunc load, void* userptr
     glad_glVertexArrayVertexBuffer = (PFNGLVERTEXARRAYVERTEXBUFFERPROC) load(userptr, "glVertexArrayVertexBuffer");
     glad_glVertexArrayVertexBuffers = (PFNGLVERTEXARRAYVERTEXBUFFERSPROC) load(userptr, "glVertexArrayVertexBuffers");
 }
+static void glad_gl_load_GL_VERSION_4_6( GLADuserptrloadfunc load, void* userptr) {
+    if(!GLAD_GL_VERSION_4_6) return;
+    glad_glMultiDrawArraysIndirectCount = (PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC) load(userptr, "glMultiDrawArraysIndirectCount");
+    glad_glMultiDrawElementsIndirectCount = (PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC) load(userptr, "glMultiDrawElementsIndirectCount");
+    glad_glPolygonOffsetClamp = (PFNGLPOLYGONOFFSETCLAMPPROC) load(userptr, "glPolygonOffsetClamp");
+    glad_glSpecializeShader = (PFNGLSPECIALIZESHADERPROC) load(userptr, "glSpecializeShader");
+}
 
 
 
@@ -9735,6 +9775,7 @@ static int glad_gl_find_core_gl(void) {
     GLAD_GL_VERSION_4_3 = (major == 4 && minor >= 3) || major > 4;
     GLAD_GL_VERSION_4_4 = (major == 4 && minor >= 4) || major > 4;
     GLAD_GL_VERSION_4_5 = (major == 4 && minor >= 5) || major > 4;
+    GLAD_GL_VERSION_4_6 = (major == 4 && minor >= 6) || major > 4;
 
     return GLAD_MAKE_VERSION(major, minor);
 }
@@ -9765,6 +9806,7 @@ int gladLoadGLUserPtr( GLADuserptrloadfunc load, void *userptr) {
     glad_gl_load_GL_VERSION_4_3(load, userptr);
     glad_gl_load_GL_VERSION_4_4(load, userptr);
     glad_gl_load_GL_VERSION_4_5(load, userptr);
+    glad_gl_load_GL_VERSION_4_6(load, userptr);
 
     if (!glad_gl_find_extensions_gl(version)) return 0;
 
@@ -10288,9 +10330,11 @@ void gladInstallGLDebug() {
     glad_debug_glMultTransposeMatrixf = glad_debug_impl_glMultTransposeMatrixf;
     glad_debug_glMultiDrawArrays = glad_debug_impl_glMultiDrawArrays;
     glad_debug_glMultiDrawArraysIndirect = glad_debug_impl_glMultiDrawArraysIndirect;
+    glad_debug_glMultiDrawArraysIndirectCount = glad_debug_impl_glMultiDrawArraysIndirectCount;
     glad_debug_glMultiDrawElements = glad_debug_impl_glMultiDrawElements;
     glad_debug_glMultiDrawElementsBaseVertex = glad_debug_impl_glMultiDrawElementsBaseVertex;
     glad_debug_glMultiDrawElementsIndirect = glad_debug_impl_glMultiDrawElementsIndirect;
+    glad_debug_glMultiDrawElementsIndirectCount = glad_debug_impl_glMultiDrawElementsIndirectCount;
     glad_debug_glMultiTexCoord1d = glad_debug_impl_glMultiTexCoord1d;
     glad_debug_glMultiTexCoord1dv = glad_debug_impl_glMultiTexCoord1dv;
     glad_debug_glMultiTexCoord1f = glad_debug_impl_glMultiTexCoord1f;
@@ -10379,6 +10423,7 @@ void gladInstallGLDebug() {
     glad_debug_glPointSize = glad_debug_impl_glPointSize;
     glad_debug_glPolygonMode = glad_debug_impl_glPolygonMode;
     glad_debug_glPolygonOffset = glad_debug_impl_glPolygonOffset;
+    glad_debug_glPolygonOffsetClamp = glad_debug_impl_glPolygonOffsetClamp;
     glad_debug_glPolygonStipple = glad_debug_impl_glPolygonStipple;
     glad_debug_glPopAttrib = glad_debug_impl_glPopAttrib;
     glad_debug_glPopClientAttrib = glad_debug_impl_glPopClientAttrib;
@@ -10526,6 +10571,7 @@ void gladInstallGLDebug() {
     glad_debug_glShaderBinary = glad_debug_impl_glShaderBinary;
     glad_debug_glShaderSource = glad_debug_impl_glShaderSource;
     glad_debug_glShaderStorageBlockBinding = glad_debug_impl_glShaderStorageBlockBinding;
+    glad_debug_glSpecializeShader = glad_debug_impl_glSpecializeShader;
     glad_debug_glStencilFunc = glad_debug_impl_glStencilFunc;
     glad_debug_glStencilFuncSeparate = glad_debug_impl_glStencilFuncSeparate;
     glad_debug_glStencilMask = glad_debug_impl_glStencilMask;
@@ -11335,9 +11381,11 @@ void gladUninstallGLDebug() {
     glad_debug_glMultTransposeMatrixf = glad_glMultTransposeMatrixf;
     glad_debug_glMultiDrawArrays = glad_glMultiDrawArrays;
     glad_debug_glMultiDrawArraysIndirect = glad_glMultiDrawArraysIndirect;
+    glad_debug_glMultiDrawArraysIndirectCount = glad_glMultiDrawArraysIndirectCount;
     glad_debug_glMultiDrawElements = glad_glMultiDrawElements;
     glad_debug_glMultiDrawElementsBaseVertex = glad_glMultiDrawElementsBaseVertex;
     glad_debug_glMultiDrawElementsIndirect = glad_glMultiDrawElementsIndirect;
+    glad_debug_glMultiDrawElementsIndirectCount = glad_glMultiDrawElementsIndirectCount;
     glad_debug_glMultiTexCoord1d = glad_glMultiTexCoord1d;
     glad_debug_glMultiTexCoord1dv = glad_glMultiTexCoord1dv;
     glad_debug_glMultiTexCoord1f = glad_glMultiTexCoord1f;
@@ -11426,6 +11474,7 @@ void gladUninstallGLDebug() {
     glad_debug_glPointSize = glad_glPointSize;
     glad_debug_glPolygonMode = glad_glPolygonMode;
     glad_debug_glPolygonOffset = glad_glPolygonOffset;
+    glad_debug_glPolygonOffsetClamp = glad_glPolygonOffsetClamp;
     glad_debug_glPolygonStipple = glad_glPolygonStipple;
     glad_debug_glPopAttrib = glad_glPopAttrib;
     glad_debug_glPopClientAttrib = glad_glPopClientAttrib;
@@ -11573,6 +11622,7 @@ void gladUninstallGLDebug() {
     glad_debug_glShaderBinary = glad_glShaderBinary;
     glad_debug_glShaderSource = glad_glShaderSource;
     glad_debug_glShaderStorageBlockBinding = glad_glShaderStorageBlockBinding;
+    glad_debug_glSpecializeShader = glad_glSpecializeShader;
     glad_debug_glStencilFunc = glad_glStencilFunc;
     glad_debug_glStencilFuncSeparate = glad_glStencilFuncSeparate;
     glad_debug_glStencilMask = glad_glStencilMask;
@@ -11875,172 +11925,6 @@ void gladUninstallGLDebug() {
     glad_debug_glWindowPos3sv = glad_glWindowPos3sv;
 }
 
-#ifdef GLAD_GL
-
-#ifndef GLAD_LOADER_LIBRARY_C_
-#define GLAD_LOADER_LIBRARY_C_
-
-#include <stddef.h>
-#include <stdlib.h>
-
-#if GLAD_PLATFORM_WIN32
-#include <windows.h>
-#else
-#include <dlfcn.h>
-#endif
-
-
-static void* glad_get_dlopen_handle(const char *lib_names[], int length) {
-    void *handle = NULL;
-    int i;
-
-    for (i = 0; i < length; ++i) {
-#if GLAD_PLATFORM_WIN32
-  #if GLAD_PLATFORM_UWP
-        size_t buffer_size = (strlen(lib_names[i]) + 1) * sizeof(WCHAR);
-        LPWSTR buffer = (LPWSTR) malloc(buffer_size);
-        if (buffer != NULL) {
-            int ret = MultiByteToWideChar(CP_ACP, 0, lib_names[i], -1, buffer, buffer_size);
-            if (ret != 0) {
-                handle = (void*) LoadPackagedLibrary(buffer, 0);
-            }
-            free((void*) buffer);
-        }
-  #else
-        handle = (void*) LoadLibraryA(lib_names[i]);
-  #endif
-#else
-        handle = dlopen(lib_names[i], RTLD_LAZY | RTLD_LOCAL);
-#endif
-        if (handle != NULL) {
-            return handle;
-        }
-    }
-
-    return NULL;
-}
-
-static void glad_close_dlopen_handle(void* handle) {
-    if (handle != NULL) {
-#if GLAD_PLATFORM_WIN32
-        FreeLibrary((HMODULE) handle);
-#else
-        dlclose(handle);
-#endif
-    }
-}
-
-static GLADapiproc glad_dlsym_handle(void* handle, const char *name) {
-    if (handle == NULL) {
-        return NULL;
-    }
-
-#if GLAD_PLATFORM_WIN32
-    return (GLADapiproc) GetProcAddress((HMODULE) handle, name);
-#else
-    return GLAD_GNUC_EXTENSION (GLADapiproc) dlsym(handle, name);
-#endif
-}
-
-#endif /* GLAD_LOADER_LIBRARY_C_ */
-
-typedef void* (GLAD_API_PTR *GLADglprocaddrfunc)(const char*);
-struct _glad_gl_userptr {
-    void *handle;
-    GLADglprocaddrfunc gl_get_proc_address_ptr;
-};
-
-static GLADapiproc glad_gl_get_proc(void *vuserptr, const char *name) {
-    struct _glad_gl_userptr userptr = *(struct _glad_gl_userptr*) vuserptr;
-    GLADapiproc result = NULL;
-
-    if(userptr.gl_get_proc_address_ptr != NULL) {
-        result = GLAD_GNUC_EXTENSION (GLADapiproc) userptr.gl_get_proc_address_ptr(name);
-    }
-    if(result == NULL) {
-        result = glad_dlsym_handle(userptr.handle, name);
-    }
-
-    return result;
-}
-
-static void* _gl_handle = NULL;
-
-static void* glad_gl_dlopen_handle(void) {
-#if GLAD_PLATFORM_APPLE
-    static const char *NAMES[] = {
-        "../Frameworks/OpenGL.framework/OpenGL",
-        "/Library/Frameworks/OpenGL.framework/OpenGL",
-        "/System/Library/Frameworks/OpenGL.framework/OpenGL",
-        "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL"
-    };
-#elif GLAD_PLATFORM_WIN32
-    static const char *NAMES[] = {"opengl32.dll"};
-#else
-    static const char *NAMES[] = {
-  #if defined(__CYGWIN__)
-        "libGL-1.so",
-  #endif
-        "libGL.so.1",
-        "libGL.so"
-    };
-#endif
-
-    if (_gl_handle == NULL) {
-        _gl_handle = glad_get_dlopen_handle(NAMES, sizeof(NAMES) / sizeof(NAMES[0]));
-    }
-
-    return _gl_handle;
-}
-
-static struct _glad_gl_userptr glad_gl_build_userptr(void *handle) {
-    struct _glad_gl_userptr userptr;
-
-    userptr.handle = handle;
-#if GLAD_PLATFORM_APPLE || defined(__HAIKU__)
-    userptr.gl_get_proc_address_ptr = NULL;
-#elif GLAD_PLATFORM_WIN32
-    userptr.gl_get_proc_address_ptr =
-        (GLADglprocaddrfunc) glad_dlsym_handle(handle, "wglGetProcAddress");
-#else
-    userptr.gl_get_proc_address_ptr =
-        (GLADglprocaddrfunc) glad_dlsym_handle(handle, "glXGetProcAddressARB");
-#endif
-
-    return userptr;
-}
-
-int gladLoaderLoadGL(void) {
-    int version = 0;
-    void *handle;
-    int did_load = 0;
-    struct _glad_gl_userptr userptr;
-
-    did_load = _gl_handle == NULL;
-    handle = glad_gl_dlopen_handle();
-    if (handle) {
-        userptr = glad_gl_build_userptr(handle);
-
-        version = gladLoadGLUserPtr(glad_gl_get_proc, &userptr);
-
-        if (did_load) {
-            gladLoaderUnloadGL();
-        }
-    }
-
-    return version;
-}
-
-
-
-void gladLoaderUnloadGL(void) {
-    if (_gl_handle != NULL) {
-        glad_close_dlopen_handle(_gl_handle);
-        _gl_handle = NULL;
-    }
-}
-
-#endif /* GLAD_GL */
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <iostream>
 #include <sstream>
@@ -12,12 +13,13 @@
 namespace Blob::GL {
 
 const ShaderProgram::Type ShaderProgram::Types::Vertex = GL_VERTEX_SHADER;
-const ShaderProgram::Type ShaderProgram::Types::TessellationControl =
-    0;                                                          // FIXME
-const ShaderProgram::Type ShaderProgram::Types::Evaluation = 1; // FIXME
+const ShaderProgram::Type ShaderProgram::Types::Tessellation =
+    GL_TESS_CONTROL_SHADER;
+const ShaderProgram::Type ShaderProgram::Types::Evaluation =
+    GL_TESS_EVALUATION_SHADER;
 const ShaderProgram::Type ShaderProgram::Types::Geometry = GL_GEOMETRY_SHADER;
 const ShaderProgram::Type ShaderProgram::Types::Fragment = GL_FRAGMENT_SHADER;
-const ShaderProgram::Type ShaderProgram::Types::Compute = 2; // FIXME
+const ShaderProgram::Type ShaderProgram::Types::Compute = GL_COMPUTE_SHADER;
 
 void ShaderProgram::destroy() {
     if (program != 0)
@@ -30,6 +32,8 @@ void ShaderProgram::destroy() {
 }
 
 void ShaderProgram::addShader(Type type, const std::string &src) {
+    if (shaders[type] != 0)
+        glDeleteShader(shaders[type]);
     shaders[type] = glCreateShader(type);
     try {
         const GLchar *source = src.c_str();
@@ -53,16 +57,58 @@ void ShaderProgram::addShader(Type type, const std::string &src) {
     }
 }
 
-void ShaderProgram::addVertexShader(const std::string &src) {
-    addShader(Types::Vertex, src);
+void ShaderProgram::addSpirV(Type type,
+                             const std::vector<uint8_t> &src,
+                             const std::string &entryPointName) {
+    if (shaders[type] != 0)
+        glDeleteShader(shaders[type]);
+    shaders[type] = glCreateShader(type);
+
+    try {
+        glShaderBinary(1,
+                       &shaders[type],
+                       GL_SHADER_BINARY_FORMAT_SPIR_V,
+                       src.data(),
+                       src.size());
+
+        glSpecializeShader(shaders[type],
+                           entryPointName.c_str(),
+                           0,
+                           nullptr,
+                           nullptr);
+    } catch (Blob::Exception &exception) {
+        std::cout << "Shader " << shaders[type] << std::endl;
+        std::cout << exception.what() << std::endl;
+        glDeleteShader(shaders[type]);
+        shaders[type] = 0;
+    }
 }
 
-void ShaderProgram::addGeometryShader(const std::string &src) {
-    addShader(Types::Geometry, src);
-}
+void ShaderProgram::addSpirV(Type type,
+                             const std::vector<uint32_t> &src,
+                             const std::string &entryPointName) {
+    if (shaders[type] != 0)
+        glDeleteShader(shaders[type]);
+    shaders[type] = glCreateShader(type);
 
-void ShaderProgram::addFragmentShader(const std::string &src) {
-    addShader(Types::Fragment, src);
+    try {
+        glShaderBinary(1,
+                       &shaders[type],
+                       GL_SHADER_BINARY_FORMAT_SPIR_V,
+                       src.data(),
+                       src.size() * 4);
+
+        glSpecializeShader(shaders[type],
+                           entryPointName.c_str(),
+                           0,
+                           nullptr,
+                           nullptr);
+    } catch (Blob::Exception &exception) {
+        std::cout << "Shader " << shaders[type] << std::endl;
+        std::cout << exception.what() << std::endl;
+        glDeleteShader(shaders[type]);
+        shaders[type] = 0;
+    }
 }
 
 void ShaderProgram::linkShaders() {

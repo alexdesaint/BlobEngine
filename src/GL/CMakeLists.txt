@@ -8,5 +8,7 @@ add_library(BlobGL STATIC
         VertexBufferObject.cpp
         Window.cpp)
 
-target_link_libraries(BlobGL Blob::Includes Blob::GLFW gladGL)
+target_link_libraries(BlobGL LINK_PUBLIC Blob::Includes Blob::GLFW gladGL)
 add_library(Blob::GL ALIAS BlobGL)
+target_compile_options(BlobGL PRIVATE "-fPIC")
+

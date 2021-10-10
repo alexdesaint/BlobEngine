@@ -3,6 +3,7 @@
 #include "Blob/Maths.inl"
 #include <Blob/Core/Material.hpp>
 #include <Blob/Shaders.hpp>
+#include <Blob/Shaders2D.hpp>
 
 namespace Blob::Materials2D {
 
@@ -71,27 +72,10 @@ private:
                        const Mat4 &mt) const final;
 
 public:
-    Color::RGB albedo = {1.0f, 0.5f, 0.31f};
-
-    SingleColor() = default;
-    explicit SingleColor(Color::RGB albedo) : albedo(albedo) {}
-};
-
-class SingleColorTransparent : public Material {
-private:
-    Blob::Shaders::SingleColorTransparent::Intance shader =
-        Blob::Shaders::SingleColorTransparent::getInstance();
-    void applyMaterial(const ProjectionTransform &pt,
-                       const ViewTransform &vt,
-                       const Mat4 &mt) const final;
-
-public:
     Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
 
-    SingleColorTransparent() = default;
-    explicit SingleColorTransparent(Color::RGBA albedo) : albedo(albedo) {}
-    explicit SingleColorTransparent(Color::RGB albedo, float alpha = 1.f) :
-        albedo(albedo, alpha) {}
+    SingleColor() = default;
+    explicit SingleColor(Color::RGBA albedo) : albedo(albedo) {}
 };
 
 class SingleTexture : public Material {
@@ -175,21 +159,6 @@ public:
 
     PBRSingleColorInstanced() = default;
     explicit PBRSingleColorInstanced(Color::RGB albedo) : albedo(albedo) {}
-};
-
-class PBRSingleTransparentColor : public Material, public PBR {
-private:
-    Blob::Shaders::PBR::SingleTransparentColor::Intance shader =
-        Blob::Shaders::PBR::SingleTransparentColor::getInstance();
-    void applyMaterial(const ProjectionTransform &pt,
-                       const ViewTransform &vt,
-                       const Mat4 &mt) const final;
-
-public:
-    Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
-
-    PBRSingleTransparentColor() = default;
-    explicit PBRSingleTransparentColor(Color::RGBA albedo) : albedo(albedo) {}
 };
 
 class PBRSingleTexture : public Material, public PBR {

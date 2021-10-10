@@ -23,12 +23,6 @@ void SingleColor::applyMaterial(const ProjectionTransform &pt,
     shader->setAttributes(mt, vt, pt, albedo);
 }
 
-void SingleColorTransparent::applyMaterial(const ProjectionTransform &pt,
-                                           const ViewTransform &vt,
-                                           const Mat4 &mt) const {
-    shader->setAttributes(mt, vt, pt, albedo);
-}
-
 void SingleTexture::applyMaterial(const ProjectionTransform &pt,
                                   const ViewTransform &vt,
                                   const Mat4 &mt) const {
@@ -70,23 +64,6 @@ void PBRSingleColorInstanced::applyMaterial(const ProjectionTransform &pt,
                                             const ViewTransform &vt,
                                             const Mat4 &mt) const {
     shader->setAttributes(vt,
-                          pt,
-                          metallic,
-                          roughness,
-                          ao,
-                          vt.cameraPosition,
-                          light.position,
-                          light.color,
-                          light.radius,
-                          light.power,
-                          albedo);
-}
-
-void PBRSingleTransparentColor::applyMaterial(const ProjectionTransform &pt,
-                                              const ViewTransform &vt,
-                                              const Mat4 &mt) const {
-    shader->setAttributes(mt,
-                          vt,
                           pt,
                           metallic,
                           roughness,

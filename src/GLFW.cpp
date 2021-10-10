@@ -1,8 +1,5 @@
 #include <Blob/GLFW.hpp>
 
-// OpenGL
-#include <glad/gl.h>
-
 // glfw3
 #include <GLFW/glfw3.h>
 

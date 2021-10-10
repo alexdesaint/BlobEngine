@@ -50,9 +50,8 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     Blob::GL::ShaderProgram sp;
-
-    sp.addVertexShader(vertex_shader_text);
-    sp.addFragmentShader(fragment_shader_text);
+    sp.addShader(GL::ShaderProgram::Types::Vertex, vertex_shader_text);
+    sp.addShader(GL::ShaderProgram::Types::Fragment, fragment_shader_text);
     sp.linkShaders();
 
     if (sp.isValid())

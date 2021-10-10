@@ -54,8 +54,8 @@ int main() {
     GL::VertexBufferObject vbo((uint8_t *) vertices, sizeof(vertices));
 
     GL::ShaderProgram sp;
-    sp.addVertexShader(vertex_shader_text);
-    sp.addFragmentShader(fragment_shader_text);
+    sp.addShader(GL::ShaderProgram::Types::Vertex, vertex_shader_text);
+    sp.addShader(GL::ShaderProgram::Types::Fragment, fragment_shader_text);
     sp.linkShaders();
 
     GL::VertexArrayObject vao;
