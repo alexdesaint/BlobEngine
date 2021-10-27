@@ -14,8 +14,8 @@ namespace Blob {
 
 Window::Window(const Vec2<unsigned int> &size) :
     GL::Window(size, GLmajor, GLminor),
-    keyboard(*keys),
-    mouse(*cursorPosition, *scrollOffsetH, *scrollOffsetW, *mouseButton),
+    keyboard(keys),
+    mouse(cursorPosition, scrollOffsetH, scrollOffsetW, mouseButton),
     projectionTransform(PI / 4, framebufferSize, 0.1, 1000),
     projectionTransform2D(framebufferSize.cast<float>()) {
 
@@ -31,34 +31,6 @@ Window::Window(const Vec2<unsigned int> &size) :
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
-    cursorPosition = (Vec2<> *) &io.MousePos;
-    mouseButton = &io.MouseDown;
-    scrollOffsetW = &io.MouseWheel;
-    scrollOffsetH = &io.MouseWheelH;
-    keyCtrl = &io.KeyCtrl;
-    keyShift = &io.KeyShift;
-    keyAlt = &io.KeyAlt;
-    keySuper = &io.KeySuper;
-    keys = &io.KeysDown;
-
-    new (&keyboard) Keyboard(*keys);
-    new (&mouse)
-        Mouse(*cursorPosition, *scrollOffsetH, *scrollOffsetW, *mouseButton);
-
-    // Deferred Shading
-    // gPosition.setRGBA16data(nullptr, framebufferSize);
-    // gPosition.applySampler({GL::Sampler::FILTER::NEAREST,
-    // GL::Sampler::FILTER::NEAREST}); gFrameBuffer.attachTexture(gPosition,
-    // GL::FrameBuffer::COLOR_ATTACHMENT0); gNormal.setRGBA16data(nullptr,
-    // framebufferSize); gNormal.applySampler({GL::Sampler::FILTER::NEAREST,
-    // GL::Sampler::FILTER::NEAREST}); gFrameBuffer.attachTexture(gPosition,
-    // GL::FrameBuffer::COLOR_ATTACHMENT1); gAlbedo.setRGBA16data(nullptr,
-    // framebufferSize); gAlbedo.applySampler({GL::Sampler::FILTER::NEAREST,
-    // GL::Sampler::FILTER::NEAREST}); gFrameBuffer.attachTexture(gPosition,
-    // GL::FrameBuffer::COLOR_ATTACHMENT2);
-    // gFrameBuffer.drawBuffer({GL::FrameBuffer::COLOR_ATTACHMENT0,
-    // GL::FrameBuffer::COLOR_ATTACHMENT1, GL::FrameBuffer::COLOR_ATTACHMENT2});
 
     lastFrameTime = std::chrono::high_resolution_clock::now();
 }
@@ -87,7 +59,6 @@ float Window::display() {
         std::chrono::system_clock::now();
 
     std::chrono::duration<float, std::ratio<1, 1>> diff = now - lastFrameTime;
-    ImGui::GetIO().DeltaTime = diff.count();
     timeFlow = diff.count();
     fpsCounter += now - lastFrameTime;
     lastFrameTime = now;
@@ -95,16 +66,11 @@ float Window::display() {
     return timeFlow;
 }
 
-void Window::windowResized() {
-    // imgui.setWindowSize(windowSize.cast<float>(),
-    // framebufferSize.cast<float>());
-}
+void Window::windowResized() {}
 
 void Window::framebufferResized() {
     projectionTransform.setRatio(framebufferSize);
     projectionTransform2D.setRatio(framebufferSize.cast<float>());
-    // imgui.setWindowSize(windowSize.cast<float>(),
-    // framebufferSize.cast<float>());
 
     setViewport(framebufferSize);
 }
@@ -150,7 +116,7 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
         ImGui::End();
     */
 
-    Vec2<> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
+    auto mousePos = cursorPosition, size = framebufferSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
     Vec4<float> pos(mousePos / size * 2 - 1,
@@ -178,7 +144,7 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
 
 Vec3<float> Window::getMousePositionInWorld(const Camera &camera,
                                             float zWorld) {
-    Vec2<> mousePos = *cursorPosition, size = framebufferSize.cast<float>();
+    auto mousePos = cursorPosition, size = framebufferSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
     Vec4<> screenPos{mousePos / size * 2 - 1, 0, 1};

@@ -60,7 +60,7 @@ public:
     constexpr RGBA(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 255) noexcept :
         R(R / 255.f), G(G / 255.f), B(B / 255.f), A(A / 255.f) {}
 
-    constexpr RGBA(RGB rgb, float A = 0) noexcept :
+    constexpr RGBA(RGB rgb, float A = 1.f) noexcept :
         R(rgb.R), G(rgb.G), B(rgb.B), A(A) {}
 
     /// Float Color Constructor. Values range is from 0.f to 1.f.

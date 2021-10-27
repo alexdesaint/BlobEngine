@@ -262,13 +262,7 @@ void Window::keyCallback(void *window,
     Window &w = *reinterpret_cast<Window *>(
         glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
-    (*w.keys)[key] = action;
-
-    *w.keyCtrl =
-        (*w.keys)[Keys::LEFT_CONTROL] || (*w.keys)[Keys::RIGHT_CONTROL];
-    *w.keyShift = (*w.keys)[Keys::LEFT_SHIFT] || (*w.keys)[Keys::RIGHT_SHIFT];
-    *w.keyAlt = (*w.keys)[Keys::LEFT_ALT] || (*w.keys)[Keys::RIGHT_ALT];
-    *w.keySuper = (*w.keys)[Keys::LEFT_SUPER] || (*w.keys)[Keys::RIGHT_SUPER];
+    w.keysData[key] = action;
 
     w.keyboardUpdate(key, action);
 }
@@ -281,7 +275,7 @@ void Window::mouseButtonCallback(void *window,
         glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     if (button < 5)
-        (*w.mouseButton)[button] = action != GLFW_RELEASE;
+        w.mouseButtonData[button] = action != GLFW_RELEASE;
 
     w.mouseButtonUpdate(button, action == GLFW_PRESS);
 }
@@ -290,8 +284,8 @@ void Window::cursorPosCallback(void *window, double xpos, double ypos) {
     Window &w = *reinterpret_cast<Window *>(
         glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
-    w.cursorPosition->x = (float) xpos;
-    w.cursorPosition->y = (float) ypos;
+    w.cursorPositionData.x = (float) xpos;
+    w.cursorPositionData.y = (float) ypos;
 
     w.cursorPositionUpdate(xpos, ypos);
 }
@@ -300,8 +294,8 @@ void Window::scrollCallback(void *window, double xoffset, double yoffset) {
     Window &w = *reinterpret_cast<Window *>(
         glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
-    *w.scrollOffsetH = (float) xoffset;
-    *w.scrollOffsetW = (float) yoffset;
+    w.scrollOffsetHData = (float) xoffset;
+    w.scrollOffsetWData = (float) yoffset;
 
     w.scrollUpdate(xoffset, yoffset);
 }
@@ -324,7 +318,7 @@ void Window::joystick_callback(int joy, int event) {
 void Window::windowFocusCallback(void *window, int c) {
     Window &w = *reinterpret_cast<Window *>(
         glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
-    w.windowFocused = c == GLFW_TRUE;
+    w.windowFocusedData = c == GLFW_TRUE;
 }
 
 bool Window::isOpen() const {
@@ -349,12 +343,6 @@ Window::~Window() {
 
 void Window::setTitle(const std::string &name) {
     glfwSetWindowTitle((GLFWwindow *) window, name.c_str());
-}
-
-Vec2<int> Window::getFrameBufferSize() {
-    int display_w, display_h;
-    glfwGetFramebufferSize((GLFWwindow *) window, &display_w, &display_h);
-    return {display_w, display_h};
 }
 
 void Window::close() {

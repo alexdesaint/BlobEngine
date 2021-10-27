@@ -345,8 +345,7 @@ public:
     }
 
     inline Vec3<T> setLength(double newLength) noexcept {
-        return operator=(operator/=(std::sqrt(x * x + y * y + z * z)) *
-                         newLength);
+        return *this = *this / std::sqrt(x * x + y * y + z * z) * newLength;
     }
 
     inline bool isNull() const noexcept {

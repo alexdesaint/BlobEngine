@@ -13,7 +13,7 @@ public:
     const int id;
     const bool &pressed;
 
-    explicit Key(int id, bool (&keys)[512]) : id(id), pressed(keys[id]) {}
+    explicit Key(int id, const bool (&keys)[512]) : id(id), pressed(keys[id]) {}
 
     explicit operator bool() const { return pressed; }
     bool operator==(const int &i) const { return i == id; }
@@ -148,7 +148,7 @@ public:
     const Key RIGHT_SUPER;
     const Key MENU;
 
-    explicit Keyboard(bool (&keys)[512]);
+    explicit Keyboard(const bool (&keys)[512]);
 
     const Key &operator[](unsigned int id);
 };
@@ -214,21 +214,20 @@ public:
 
 class Mouse {
 public:
-    Blob::Vec2<> &position;
-    bool (&buttons)[5];
-    float &scrollOffsetW, &scrollOffsetH;
+    const Blob::Vec2<> &position;
+    const bool (&buttons)[5];
+    const float &scrollOffsetW, &scrollOffsetH;
 
-    Mouse(Vec2<> &position,
-          float &scrollOffsetW,
-          float &scrollOffsetH,
-          bool (&buttons)[5]) :
+    Mouse(const Vec2<> &position,
+          const float &scrollOffsetW,
+          const float &scrollOffsetH,
+          const bool (&buttons)[5]) :
         position(position),
         scrollOffsetW(scrollOffsetW),
         scrollOffsetH(scrollOffsetH),
         buttons(buttons) {}
 
     Mouse(const Mouse &) = delete;
-
     Mouse(Mouse &&) = delete;
 };
 

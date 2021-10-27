@@ -14,7 +14,7 @@ std::string Key::getName() const {
         return std::string(name);
 }
 
-Keyboard::Keyboard(bool (&keys)[512]) :
+Keyboard::Keyboard(const bool (&keys)[512]) :
     UNKNOWN(GLFW::Keys::UNKNOWN, keys),
     SPACE(GLFW::Keys::SPACE, keys),
     APOSTROPHE(GLFW::Keys::APOSTROPHE, keys),

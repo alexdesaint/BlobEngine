@@ -22,13 +22,16 @@ using UniformModel = UniformAttribute<Mat4, 0>;
 using UniformView = UniformAttribute<ViewTransform, 1>;
 using UniformProjection = UniformAttribute<ProjectionTransform, 2>;
 
+using UniformAlbedo = UniformAttribute<Color::RGBA, 3>;
+using UniformTextureScale = UniformAttribute<Vec2<>, 4>;
+
 using SingleColor = Shader<
     ShaderProgramSpirV<VertexShaderSpirV<mainNonInstanced, "mainNonInstanced">,
                        FragmentShaderSpirV<singleColor, "singleColor">>,
     UniformModel,
     UniformView,
     UniformProjection,
-    UniformAttribute<Color::RGBA, 3>>;
+    UniformAlbedo>;
 
 using SingleTexture = Shader<
     ShaderProgramSpirV<VertexShaderSpirV<mainNonInstanced, "mainNonInstanced">,
@@ -36,7 +39,7 @@ using SingleTexture = Shader<
     UniformModel,
     UniformView,
     UniformProjection,
-    UniformAttribute<Vec2<>, 3>,
+    UniformTextureScale,
     UniformAttribute<Texture, 0>>;
 
 using PerFaceNormal =
@@ -46,20 +49,20 @@ using PerFaceNormal =
            UniformModel,
            UniformView,
            UniformProjection,
-           UniformAttribute<Color::RGB, 3>,
+           UniformAlbedo,
            UniformAttribute<float, 4>>;
 
 namespace PBR {
 
-using UniformMetallic = UniformAttribute<float, 3>;
-using UniformRoughness = UniformAttribute<float, 4>;
-using UniformAo = UniformAttribute<float, 5>;
+using UniformMetallic = UniformAttribute<float, 5>;
+using UniformRoughness = UniformAttribute<float, 6>;
+using UniformAo = UniformAttribute<float, 7>;
 
-using UniformCameraPosition = UniformAttribute<Vec3<float>, 6>;
-using UniformLightPosition = UniformAttribute<Vec3<float>, 7>;
-using UniformLightColor = UniformAttribute<Color::RGB, 8>;
-using UniformLightRadius = UniformAttribute<float, 9>;
-using UniformLightPower = UniformAttribute<float, 10>;
+using UniformCameraPosition = UniformAttribute<Vec3<float>, 8>;
+using UniformLightPosition = UniformAttribute<Vec3<float>, 9>;
+using UniformLightColor = UniformAttribute<Color::RGB, 10>;
+using UniformLightRadius = UniformAttribute<float, 11>;
+using UniformLightPower = UniformAttribute<float, 12>;
 
 using SingleColor = Shader<
     ShaderProgramSpirV<VertexShaderSpirV<mainNonInstanced, "mainNonInstanced">,
@@ -67,15 +70,15 @@ using SingleColor = Shader<
     UniformModel,
     UniformView,
     UniformProjection,
-    UniformMetallic,
-    UniformRoughness,
-    UniformAo,
-    UniformCameraPosition,
+    // UniformMetallic,
+    // UniformRoughness,
+    // UniformAo,
+    // UniformCameraPosition,
     UniformLightPosition,
-    UniformLightColor,
-    UniformLightRadius,
+    // UniformLightColor,
+    // UniformLightRadius,
     UniformLightPower,
-    UniformAttribute<Color::RGBA, 11>>;
+    UniformAlbedo>;
 
 using SingleColorInstanced = Shader<
     ShaderProgramSpirV<VertexShaderSpirV<mainInstanced, "mainInstanced">,
@@ -90,7 +93,7 @@ using SingleColorInstanced = Shader<
     UniformLightColor,
     UniformLightRadius,
     UniformLightPower,
-    UniformAttribute<Color::RGBA, 11>>;
+    UniformAlbedo>;
 
 using SingleTexture =
     Shader<ShaderProgramSpirV<

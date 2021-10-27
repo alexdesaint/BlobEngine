@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Blob/Core/Controls.hpp>
 #include <Blob/Maths.inl>
 #include <string>
 
@@ -160,12 +159,8 @@ private:
     static void joystick_callback(int joy, int event);
     static void windowFocusCallback(void *window, int event);
 
-    bool windowFocused = true;
     // The default imputs data storage
     bool keysData[512]{false};
-    bool keyCtrlData{false}, keyShiftData{false}, keyAltData{false},
-        keySuperData{false};
-
     bool mouseButtonData[5]{false};
     Vec2<> cursorPositionData;
     float scrollOffsetWData{0}, scrollOffsetHData{0};
@@ -175,39 +170,36 @@ private:
     Vec2<unsigned int> framebufferSizeData;
     Vec2<> contentScaleData;
     bool fullScreenData = false;
+    bool windowFocusedData = true;
 
     void initInputs();
 
 protected:
     // key control to update
-    bool (*keys)[512] = &keysData;
-    bool *keyCtrl = &keyCtrlData;
-    bool *keyShift = &keyShiftData;
-    bool *keyAlt = &keyAltData;
-    bool *keySuper = &keySuperData;
+    const bool (&keys)[512] = {keysData};
 
     // Mouse Cursor
-    bool (*mouseButton)[5] = &mouseButtonData;
-    Vec2<> *cursorPosition = &cursorPositionData;
-    float *scrollOffsetW = &scrollOffsetWData,
-          *scrollOffsetH = &scrollOffsetHData;
+    const bool (&mouseButton)[5] = mouseButtonData;
+    const Vec2<> &cursorPosition = cursorPositionData;
+    const float &scrollOffsetW = scrollOffsetWData;
+    const float &scrollOffsetH = scrollOffsetHData;
 
     void *cursors[MouseCursor::COUNT];
 
     virtual void windowResized() {}
-
     virtual void framebufferResized() {}
 
     /// Keyboard
     virtual void characterInput(unsigned int c) {}
-    virtual void keyboardUpdate(int key, bool pressed){};
+    virtual void keyboardUpdate(int key, bool pressed) {}
 
     /// Mouse
-    virtual void mouseButtonUpdate(int button, bool pressed){};
-    virtual void cursorPositionUpdate(double xpos, double ypos){};
-    virtual void scrollUpdate(double xoffset, double yoffset){};
+    virtual void mouseButtonUpdate(int button, bool pressed) {}
+    virtual void cursorPositionUpdate(double xpos, double ypos) {}
+    virtual void scrollUpdate(double xoffset, double yoffset) {}
 
-    // virtual void joystick_callback(int joy, int event) {};
+    // virtual void joystick_callback(int joy, int event) {}
+
 public:
     void *window = nullptr;
 
@@ -234,10 +226,6 @@ public:
     ~Window();
 
     bool isOpen() const;
-
-    // Vec2<int> getSize() const { return {width, height}; }
-
-    Vec2<int> getFrameBufferSize();
 
     void setTitle(const std::string &name);
 

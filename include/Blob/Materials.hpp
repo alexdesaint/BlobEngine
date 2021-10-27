@@ -105,11 +105,11 @@ private:
                        const Mat4 &mt) const final;
 
 public:
-    Color::RGB albedo = {1.0f, 0.5f, 0.31f};
+    Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
     float length = 1.f;
 
     PerFaceNormal() = default;
-    explicit PerFaceNormal(Color::RGB albedo) : albedo(albedo) {}
+    explicit PerFaceNormal(Color::RGBA albedo) : albedo(albedo) {}
 };
 
 struct Light {
@@ -140,10 +140,10 @@ private:
                        const Mat4 &mt) const final;
 
 public:
-    Color::RGB albedo = {1.0f, 0.5f, 0.31f};
+    Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
 
     PBRSingleColor() = default;
-    explicit PBRSingleColor(Color::RGB albedo) : albedo(albedo) {}
+    explicit PBRSingleColor(Color::RGBA albedo) : albedo(albedo) {}
 };
 
 class PBRSingleColorInstanced : public Material, public PBR {
@@ -155,10 +155,10 @@ private:
                        const Mat4 &mt) const final;
 
 public:
-    Color::RGB albedo = {1.0f, 0.5f, 0.31f};
+    Color::RGBA albedo = {1.0f, 0.5f, 0.31f};
 
     PBRSingleColorInstanced() = default;
-    explicit PBRSingleColorInstanced(Color::RGB albedo) : albedo(albedo) {}
+    explicit PBRSingleColorInstanced(Color::RGBA albedo) : albedo(albedo) {}
 };
 
 class PBRSingleTexture : public Material, public PBR {

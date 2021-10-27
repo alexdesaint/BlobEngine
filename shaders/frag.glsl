@@ -8,18 +8,18 @@ layout(location = 4) in vec3 tangent;
 layout(location = 5) in vec3 binormal;
 layout(location = 6) in vec3 color;
 
-layout(location = 3) uniform float metallic;
-layout(location = 4) uniform float roughness;
-layout(location = 5) uniform float ao;
+layout(location = 3) uniform vec4 albedo;
+layout(location = 4) uniform vec2 texScale;
 
-layout(location = 6) uniform vec3 eyePosition;
-layout(location = 7) uniform vec3 lightPosition;
-layout(location = 8) uniform vec3 lightColor;
-layout(location = 9) uniform float lightRadius;
-layout(location = 10) uniform float lightPower;
+layout(location = 5) uniform float metallic;
+layout(location = 6) uniform float roughness;
+layout(location = 7) uniform float ao;
 
-layout(location = 11) uniform vec4 albedo;
-layout(location = 12) uniform vec2 texScale;
+layout(location = 8) uniform vec3 eyePosition;
+layout(location = 9) uniform vec3 lightPosition;
+layout(location = 10) uniform vec3 lightColor;
+layout(location = 11) uniform float lightRadius;
+layout(location = 12) uniform float lightPower;
 
 layout(location = 0) out vec4 outColor;
 
@@ -133,31 +133,24 @@ float lightAttenuationLocale(float lightPower,
     return att;
 }
 
-float usePBR() {
-    return metallic * roughness * ao * lightRadius *
-           dot(eyePosition, lightColor);
-}
-
 void PBRsingleColor() {
-    usePBR();
-
-    vec3 limunance =
-        albedo.rgb *
-        lightAttenuation(lightPower, lightPosition, position, normal);
-    outColor = vec4(limunance, albedo.a);
+    outColor =
+        vec4(albedo.rgb *
+                 lightAttenuation(lightPower, lightPosition, position, normal),
+             albedo.a);
 }
 
 void PBRsingleTexture() {
-    vec4 albedo = texture(Texture, texCoord * texScale);
+    outColor = texture(Texture, texCoord * texScale);
 
-    vec3 limunance =
-        albedo.rgb *
-        lightAttenuation(lightPower, lightPosition, position, normal);
-    outColor = vec4(limunance, albedo.a);
+    outColor =
+        vec4(albedo.rgb *
+                 lightAttenuation(lightPower, lightPosition, position, normal),
+             albedo.a * outColor.a);
 }
 
 void PBRcolorArray() {
-    vec3 limunance =
+    vec3 luminance =
         color * lightAttenuation(lightPower, lightPosition, position, normal);
-    outColor = vec4(limunance, 1.0);
+    outColor = vec4(luminance, 1.0);
 }
