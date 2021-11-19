@@ -523,7 +523,7 @@ def codeMesh(mesh):
 
 
 def updateIfDifferent(filename, data, allFiles):
-    allFiles.remove(Path(filename))
+    allFiles.discard(Path(filename))
     if os.path.isfile(filename):
         with open(filename, "r") as f:
             if data == f.read():
