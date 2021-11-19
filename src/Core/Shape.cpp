@@ -54,14 +54,15 @@ void Shape::getDrawCallList(
 std::ostream &operator<<(std::ostream &s, const Shape &a) {
     s << "Shape : {" << std::endl;
 
-    s << (ModelTransform) a << std::endl;
+    s << (ModelTransform) a;
 
-    // s << a.mesh << std::endl;
+    if (a.mesh != nullptr)
+        s << *a.mesh << std::endl;
 
     // for (const auto &r : a.shapes)
     //    s << *r;
 
-    s << "}" << std::endl;
+    s << "}";
     return s;
 }
 

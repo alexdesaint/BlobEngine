@@ -1397,7 +1397,7 @@ public:
 
     friend std::ostream &operator<<(std::ostream &out,
                                     const ModelTransform &vec) {
-        out << "ModelTransform: " << std::endl << (Mat4) vec << std::endl;
+        out << "ModelTransform: " << std::endl << (Mat4) vec;
         return out;
     }
 };
@@ -1475,7 +1475,7 @@ public:
         out << "cameraLookAt: " << vec.cameraLookAt << std::endl;
         out << "cameraUp: " << vec.cameraUp << std::endl;
 
-        out << "ViewTransform: " << std::endl << (Mat4) vec << std::endl;
+        out << "ViewTransform: " << std::endl << (Mat4) vec;
 
         return out;
     }
@@ -1582,7 +1582,7 @@ public:
 
         //        out << "longRange: " << vec.longRange << std::endl;
 
-        out << "ProjectionTransform: " << std::endl << (Mat4) vec << std::endl;
+        out << "ProjectionTransform: " << std::endl << (Mat4) vec;
 
         return out;
     }

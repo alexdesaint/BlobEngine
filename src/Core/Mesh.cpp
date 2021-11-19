@@ -62,6 +62,15 @@ void Mesh::getDrawCallList(
         drawCallList[primitive].emplace_back(transform);
 }
 
+std::ostream &operator<<(std::ostream &s, const Mesh &a) {
+    s << "Mesh {" << std::endl;
+    s << "    primitive size" << a.primitives.size() << std::endl;
+    s << "    transparent primitives size" << a.transparentPrimitives.size()
+      << std::endl;
+    s << "}";
+    return s;
+}
+
 void Mesh2D ::addPrimitive(const Primitive2D &r) {
     primitives.emplace_back(&r);
 }

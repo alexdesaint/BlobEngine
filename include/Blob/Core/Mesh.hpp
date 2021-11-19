@@ -35,6 +35,8 @@ public:
     void getDrawCallList(
         std::unordered_map<const Primitive *, std::vector<Mat4>> &drawCallList,
         Mat4 transform = Mat4()) const;
+
+    friend std::ostream &operator<<(std::ostream &s, const Mesh &a);
 };
 
 class Mesh2D {

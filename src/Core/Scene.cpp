@@ -32,6 +32,8 @@ Scene::getDrawCallList() const {
 std::ostream &operator<<(std::ostream &os, const Scene &s) {
     os << "Scene :" << std::endl;
     os << "  - num of shapes : " << s.shapes.size() << std::endl;
+    for (const auto &shape : s.shapes)
+        os << *shape << std::endl;
     return os;
 }
 
