@@ -56,7 +56,7 @@ int main() {
             ImGui::ColorEdit4("albedo", &testShader.albedo.R);
             // ImGui::SliderFloat("metallic", &orange.metallic, 0.0f, 1.0f);
             // ImGui::SliderFloat("roughness", &orange.roughness, 0.0f, 1.0f);
-            // ImGui::SliderFloat("ao", &orange.ao, 0.0f, 1.f);
+            ImGui::SliderFloat("ao", &orange.ao, 0.0f, 1.f);
 
             ImGui::Text("Light");
             ImGui::ColorEdit3("Light color", &Materials::PBR::light.color.R);

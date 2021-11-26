@@ -1405,9 +1405,8 @@ public:
 class ViewTransform : public Mat4 {
 private:
     void compute() {
-        const Vec3<float> forward = (cameraLookAt - cameraPosition).getNormal();
-        const Vec3<float> right = forward.cross(cameraUp).getNormal();
-        const Vec3<float> up = right.cross(forward).getNormal();
+        const Vec3<> right = forward.cross(cameraUp).getNormal();
+        const Vec3<> up = right.cross(forward).getNormal();
 
         a11 = right.x;
         a12 = right.y;
@@ -1424,43 +1423,44 @@ private:
     }
 
 public:
-    Vec3<float> cameraPosition; /// Camera position in World Space
-    Vec3<float> cameraLookAt;   /// and looks at the origin
-    Vec3<float> cameraUp; /// Head is up (set to 0,-1,0 to look upside-down)
+    Vec3<> cameraPosition; /// Camera position in World Space
+    Vec3<> forward;        /// and looks at the origin
+    Vec3<> cameraUp;       /// Head is up (set to 0,-1,0 to look upside-down)
 
     ViewTransform() :
-        cameraPosition(1, 0, 1), cameraLookAt(0, 0, 0), cameraUp(0, 0, 1) {
+        cameraPosition(1, 0, 1), forward(-1, 0, -1), cameraUp(0, 0, 1) {
+        forward = forward.getNormal();
         compute();
     }
 
-    ViewTransform(const Vec3<float> &cameraPosition,
-                  const Vec3<float> &cameraLookAt,
-                  const Vec3<float> &cameraUp) :
+    ViewTransform(const Vec3<> &cameraPosition,
+                  const Vec3<> &forward,
+                  const Vec3<> &cameraUp) :
         cameraPosition(cameraPosition),
-        cameraLookAt(cameraLookAt),
+        forward(forward.getNormal()),
         cameraUp(cameraUp) {
         compute();
     }
 
-    void setPosition(const Vec3<float> &pos) {
+    void setPosition(const Vec3<> &pos) {
         cameraPosition = pos;
         compute();
     }
 
-    void move(const Vec3<float> &pos) {
-        cameraPosition += pos;
-        compute();
-    }
+    Vec3<> getPosition() { return cameraPosition; }
 
-    void move(const Vec3<float> &pos, float angle) {
+    void move(const Vec3<> &pos) {
         cameraPosition += pos;
-        cameraLookAt =
-            cameraPosition + Vec3<>(std::cos(angle), 0, std::sin(angle));
         compute();
     }
 
     void setLookAt(const Vec3<float> &lookAt) {
-        cameraLookAt = lookAt;
+        forward = (lookAt - cameraPosition).getNormal();
+        compute();
+    }
+
+    void setFOrward(const Vec3<float> &f) {
+        forward = f.getNormal();
         compute();
     }
 
@@ -1472,7 +1472,7 @@ public:
     friend std::ostream &operator<<(std::ostream &out,
                                     const ViewTransform &vec) {
         out << "cameraPosition: " << vec.cameraPosition << std::endl;
-        out << "cameraLookAt: " << vec.cameraLookAt << std::endl;
+        out << "cameraLookAt: " << vec.forward << std::endl;
         out << "cameraUp: " << vec.cameraUp << std::endl;
 
         out << "ViewTransform: " << std::endl << (Mat4) vec;

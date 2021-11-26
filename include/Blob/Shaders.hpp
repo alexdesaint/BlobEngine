@@ -72,7 +72,7 @@ using SingleColor = Shader<
     UniformProjection,
     // UniformMetallic,
     // UniformRoughness,
-    // UniformAo,
+    UniformAo,
     // UniformCameraPosition,
     UniformLightPosition,
     // UniformLightColor,

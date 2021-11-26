@@ -113,9 +113,9 @@ public:
 };
 
 struct Light {
-    Vec3<float> position = {0.f, 0.f, 2.0f};
+    Vec3<float> position = {0.4f, 0.8f, 1.0f};
     Color::RGB color = {1.f, 1.f, 1.f};
-    float power = 1000.f;
+    float power = 1.f;
     float radius = 0.1f;
 };
 
@@ -125,7 +125,7 @@ public:
 
     float metallic = 0;
     float roughness = 0;
-    float ao = 1;
+    float ao = 0.1;
 
     virtual ~PBR() noexcept = default;
 };

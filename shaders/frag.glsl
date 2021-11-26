@@ -117,6 +117,10 @@ float lightAttenuation(float lightPower,
     return att;
 }
 
+float sunlight(float lightPower, vec3 lightVector, vec3 N) {
+    return lightPower * clamp(dot(N, normalize(lightVector)), 0.0, 1.0);
+}
+
 // Light attenuation with a limited radius
 float lightAttenuationLocale(float lightPower,
                              float lightRadius,
@@ -135,8 +139,8 @@ float lightAttenuationLocale(float lightPower,
 
 void PBRsingleColor() {
     outColor =
-        vec4(albedo.rgb *
-                 lightAttenuation(lightPower, lightPosition, position, normal),
+        vec4(albedo.rgb * max(sunlight(lightPower, lightPosition, normal), ao),
+             // lightAttenuation(lightPower, lightPosition, position, normal),
              albedo.a);
 }
 
