@@ -61,10 +61,10 @@ protected:
      * the final position that will be saved in the internal spacial definition.
      * In this method CollisionDetector::testCollision will never detect itself
      * because it is not in the internal spacial definition yet.
-     * @param currentForm Time in second sins list frame
-     * @param nextForm Time in second sins list frame
+     * @param currentForm the form return by last postCollisionUpdate
+     * @param nextForm the form returned by last preCollisionUpdate
      * @param timeFlow Time in second sins list frame
-     * @return the fianl position
+     * @return the fianl form
      */
     virtual Form postCollisionUpdate(const Form &currentForm,
                                      Form nextForm,

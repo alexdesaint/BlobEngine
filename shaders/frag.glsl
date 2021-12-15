@@ -139,7 +139,8 @@ float lightAttenuationLocale(float lightPower,
 
 void PBRsingleColor() {
     outColor =
-        vec4(albedo.rgb * max(sunlight(lightPower, lightPosition, normal), ao),
+        vec4(albedo.rgb *
+                 (sunlight(lightPower, lightPosition, normal) * (1 - ao) + ao),
              // lightAttenuation(lightPower, lightPosition, position, normal),
              albedo.a);
 }

@@ -13,11 +13,12 @@
 
 namespace Blob {
 
+class Point;
 class Circle;
-class RasterArea;
 class Line;
 class Rectangle;
-class Point;
+class Polygon;
+class RasterArea;
 
 struct CollisionResolution {
     bool collision = false;
@@ -40,6 +41,8 @@ public:
 
     constexpr static bool overlap(const Point &point) { return true; }
 
+    constexpr static bool overlap(const Polygon &polygon) { return true; }
+
     constexpr static bool overlap(const Raster &raster) { return true; }
 
     constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
@@ -57,9 +60,11 @@ public:
 
     RasterArea() = default;
 
-    RasterArea(const std::unordered_set<Vec2<int32_t>> &rasters) : rasters(rasters) {}
+    RasterArea(const std::unordered_set<Vec2<int32_t>> &rasters) :
+        rasters(rasters) {}
 
-    RasterArea(std::unordered_set<Vec2<int32_t>> &&rasters) : rasters(rasters) {}
+    RasterArea(std::unordered_set<Vec2<int32_t>> &&rasters) :
+        rasters(rasters) {}
 
     RasterArea(const Vec2<int32_t> &start, const Vec2<int32_t> &end) {
         setArea(start, end);
@@ -105,6 +110,8 @@ public:
 
     constexpr static bool overlap(const Point &point) { return true; }
 
+    constexpr static bool overlap(const Polygon &polygon) { return true; }
+
     constexpr static bool overlap(const Raster &raster) { return true; }
 
     constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
@@ -134,6 +141,8 @@ public:
     constexpr static bool overlap(const Point &point) { return false; }
 
     bool overlap(const Circle &circle) const;
+
+    bool overlap(const Polygon &polygon) const;
 
     constexpr static bool overlap(const Raster &raster) { return true; }
 
@@ -167,6 +176,12 @@ public:
 
     bool overlap(const Point &point) const;
 
+    bool overlap(const Polygon &polygon) const { return true; }
+
+    constexpr static bool overlap(const Raster &raster) { return true; }
+
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
+
     CollisionResolution resolve(const Circle &circle, Vec2<> destination) const;
 
     CollisionResolution resolve(const Line &line, Vec2<> destination) const;
@@ -175,10 +190,6 @@ public:
 
     CollisionResolution resolve(const Rectangle &rectangle,
                                 Vec2<> destination) const;
-
-    constexpr static bool overlap(const Raster &raster) { return true; }
-
-    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
 
     std::unordered_set<Vec2<int32_t>> rasterize() const;
 
@@ -213,6 +224,8 @@ public:
     bool overlap(const Line &line) const;
 
     bool overlap(const Point &point) const;
+
+    bool overlap(const Polygon &polygon) const { return true; }
 
     constexpr static bool overlap(const Raster &raster) { return true; }
 
@@ -249,6 +262,8 @@ public:
 
     bool overlap(const Point &point) const;
 
+    bool overlap(const Polygon &polygon) const { return true; }
+
     constexpr static bool overlap(const Raster &raster) { return true; }
 
     constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
@@ -266,6 +281,32 @@ public:
         return os << "Rectangle: {position: " << (Vec2<>) p.position
                   << ", size: " << (Vec2<>) p.size << "}";
     }
+};
+
+class Polygon {
+public:
+    std::vector<Point> points;
+
+    Polygon(std::vector<Point> &&points);
+    Polygon(const std::vector<Point> &points);
+
+    bool overlap(const Rectangle &rectangle) const;
+
+    bool overlap(const Circle &circle) const;
+
+    bool overlap(const Line &line) const;
+
+    bool overlap(const Point &point) const;
+
+    bool overlap(const Polygon &polygon) const;
+
+    constexpr static bool overlap(const Raster &raster) { return true; }
+
+    constexpr static bool overlap(const RasterArea &rasterArea) { return true; }
+
+    std::unordered_set<Vec2<int32_t>> rasterize() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const Polygon &p);
 };
 
 } // namespace Blob

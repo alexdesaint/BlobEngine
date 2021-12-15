@@ -92,6 +92,8 @@ public:
 
     Vec3<float> getMousePositionInWorld(const Camera &camera);
     Vec3<float> getMousePositionInWorld(const Camera &camera, float z);
+    std::array<Vec3<>, 4> getCameraCornersInWorld(const Camera &camera,
+                                                  float z);
 };
 
 } // namespace Blob

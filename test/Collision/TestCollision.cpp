@@ -1,9 +1,15 @@
-#include "SDL_stdinc.h"
+#include "Blob/Collision/Forms.hpp"
+#include "polygon_triangulate/polygon_triangulate.hpp"
+
 #include <SDL.h>
+#include <SDL_render.h>
+#include <SDL_stdinc.h>
+#include <cstddef>
 #include <list>
 
 #include <Blob/Collision/CollisionDetector.hpp>
 #include <Blob/Color.hpp>
+#include <vector>
 
 using namespace Blob;
 
@@ -14,7 +20,8 @@ using CollisionDetector = GeneralCollisionDetector<class CircleObject,
                                                    class LineObject,
                                                    class LineCursor,
                                                    class RectangleObject,
-                                                   class RectangleCursor>;
+                                                   class RectangleCursor,
+                                                   class PolygonObject>;
 
 class CircleShape {
 public:
@@ -48,6 +55,158 @@ public:
               const Point &position2,
               Color::RGB color = Color::White) :
         position1(position1), position2(position2), color(color) {}
+};
+
+class PolygonShape {
+public:
+    std::vector<Point> points;
+    Color::RGB color;
+
+    PolygonShape(const std::vector<Point> &points,
+                 Color::RGB color = Color::White) :
+        points(points), color(color) {}
+};
+
+class CircleObject : public StaticCollider<Circle>, public CircleShape {
+public:
+    CircleObject(const Point &position, float rayon) :
+        StaticCollider(Circle(position, rayon)), CircleShape(rayon, position) {}
+};
+
+class CircleCursor : public DynamicCollider<Circle>, public CircleShape {
+public:
+    CircleCursor(const Point &position, float rayon) :
+        DynamicCollider(Circle(position, rayon)),
+        CircleShape(rayon, position) {}
+
+    Circle preCollisionUpdate(Circle currentForm, float timeFlow) final {
+        currentForm.position = position;
+        return currentForm;
+    }
+
+    void setPosition(const Point &p) { position = p; }
+
+    template<class Collider>
+    void hitStart(Collider *object) {
+        color = Color::Red;
+    }
+
+    void hitStart(CircleObject *object) { color = Color::Blue; }
+
+    template<class Collider>
+    void hitEnd(Collider *object) {
+        color = Color::Green;
+    }
+};
+
+class PointObject : public StaticCollider<Point>, public CircleShape {
+public:
+    explicit PointObject(const Point &position) :
+        StaticCollider(Point(position)), CircleShape(2, position) {}
+};
+
+class PointCursor : public DynamicCollider<Point>, public CircleShape {
+public:
+    explicit PointCursor(const Point &position) :
+        DynamicCollider(Point(position)), CircleShape(2, position) {}
+
+    Point preCollisionUpdate(Point currentForm, float timeFlow) final {
+        currentForm = position;
+        return currentForm;
+    }
+
+    void setPosition(const Point &p) { position = p; }
+
+    template<class Collider>
+    void hitStart(Collider *object) {
+        color = Color::Red;
+    }
+
+    template<class Collider>
+    void hitEnd(Collider *object) {
+        color = Color::Green;
+    }
+};
+
+class RectangleObject :
+    public StaticCollider<Rectangle>,
+    public RectangleShape {
+public:
+    RectangleObject(const Point &position,
+                    const Point &size,
+                    Color::RGB fillColor = Color::White) :
+        StaticCollider(Rectangle(position, size)),
+        RectangleShape(size, position, fillColor) {}
+};
+
+class RectangleCursor :
+    public DynamicCollider<Rectangle>,
+    public RectangleShape {
+public:
+    RectangleCursor(const Point &position,
+                    const Point &size,
+                    Color::RGB fillColor = Color::White) :
+        DynamicCollider(Rectangle(position, size)),
+        RectangleShape(size, position, fillColor) {}
+
+    Rectangle preCollisionUpdate(Rectangle currentForm, float timeFlow) final {
+        currentForm.position = position;
+        return currentForm;
+    }
+
+    void setPosition(const Point &p) { position = p; }
+
+    template<class Collider>
+    void hitStart(Collider *object) {
+        color = Color::Red;
+    }
+
+    template<class Collider>
+    void hitEnd(Collider *object) {
+        color = Color::Green;
+    }
+};
+
+class LineObject : public StaticCollider<Line>, public LineShape {
+public:
+    LineObject(Point position1, Point position2) :
+        StaticCollider<Line>(Line(position1, position2)),
+        LineShape(position1, position2) {}
+};
+
+class LineCursor : public DynamicCollider<Line>, public LineShape {
+public:
+    LineCursor(Point position1, Point position2) :
+        DynamicCollider(Line(position1, position2)),
+        LineShape(position1, position2) {}
+
+    Line preCollisionUpdate(Line currentForm, float timeFlow) final {
+        currentForm.positionA = position1;
+        currentForm.positionB = position2;
+        return currentForm;
+    }
+
+    void setPosition(const Point &position1, const Point &position2) {
+        LineShape::position1 = position1;
+        LineShape::position2 = position2;
+    }
+
+    template<class Collider>
+    void hitStart(Collider *object) {
+        color = Color::Red;
+    }
+
+    template<class Collider>
+    void hitEnd(Collider *object) {
+        color = Color::Green;
+    }
+};
+
+class PolygonObject : public StaticCollider<Polygon>, public PolygonShape {
+public:
+    PolygonObject(const std::vector<Point> &points,
+                  Color::RGB fillColor = Color::White) :
+        StaticCollider(Polygon(points)), PolygonShape(points, fillColor) {}
 };
 
 class Window {
@@ -167,6 +326,35 @@ public:
         }
     }
 
+    void draw(const PolygonShape &polygonShape) {
+        auto size = polygonShape.points.size();
+
+        if (size < 3)
+            return;
+
+        double x[size], y[size];
+        SDL_Vertex vertex[size];
+
+        for (size_t it = 0; it < size; it++) {
+            vertex[it].position.x = x[it] = polygonShape.points[it].x;
+            vertex[it].position.y = y[it] = polygonShape.points[it].y;
+            vertex[it].color.r = (Uint8) (polygonShape.color.R * 255.f);
+            vertex[it].color.g = (Uint8) (polygonShape.color.G * 255.f);
+            vertex[it].color.b = (Uint8) (polygonShape.color.B * 255.f);
+            vertex[it].color.a = 255;
+        }
+
+        int *triangles = polygon_triangulate(size, x, y);
+
+        SDL_RenderGeometry(renderer,
+                           NULL,
+                           vertex,
+                           size,
+                           triangles,
+                           3 * (size - 2));
+        delete[] triangles;
+    }
+
     void setTitle(const char *title) { SDL_SetWindowTitle(window, title); }
 
     void display() { SDL_RenderPresent(renderer); }
@@ -174,7 +362,7 @@ public:
     float getFrameTime() {
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
-        return ((NOW - LAST) * 1000.f / (float) SDL_GetPerformanceFrequency());
+        return (float) (NOW - LAST) / SDL_GetPerformanceFrequency();
     }
 
     void clear() {
@@ -183,298 +371,158 @@ public:
     }
 };
 
-class CircleObject : public StaticCollider<Circle>, public CircleShape {
-public:
-    CircleObject(const Point &position, float rayon) :
-        StaticCollider(Circle(position, rayon)), CircleShape(rayon, position) {}
-};
-
-class CircleCursor : public DynamicCollider<Circle>, public CircleShape {
-public:
-    CircleCursor(const Point &position, float rayon) :
-        DynamicCollider(Circle(position, rayon)),
-        CircleShape(rayon, position) {}
-
-    Circle preCollisionUpdate(Circle currentForm, float timeFlow) final {
-        currentForm.position = position;
-        return currentForm;
-    }
-
-    void setPosition(const Point &p) { position = p; }
-
-    template<class Collider>
-    void hitStart(Collider *object) {
-        color = Color::Red;
-    }
-
-    void hitStart(CircleObject *object) { color = Color::Blue; }
-
-    template<class Collider>
-    void hitEnd(Collider *object) {
-        color = Color::Green;
-    }
-};
-
-class PointObject : public StaticCollider<Point>, public CircleShape {
-public:
-    explicit PointObject(const Point &position) :
-        StaticCollider(Point(position)), CircleShape(2, position) {}
-};
-
-class PointCursor : public DynamicCollider<Point>, public CircleShape {
-public:
-    explicit PointCursor(const Point &position) :
-        DynamicCollider(Point(position)), CircleShape(2, position) {}
-
-    Point preCollisionUpdate(Point currentForm, float timeFlow) final {
-        currentForm = position;
-        return currentForm;
-    }
-
-    void setPosition(const Point &p) { position = p; }
-
-    template<class Collider>
-    void hitStart(Collider *object) {
-        color = Color::Red;
-    }
-
-    template<class Collider>
-    void hitEnd(Collider *object) {
-        color = Color::Green;
-    }
-};
-
-class RectangleObject :
-    public StaticCollider<Rectangle>,
-    public RectangleShape {
-public:
-    RectangleObject(const Point &position,
-                    const Point &size,
-                    Color::RGB fillColor = Color::White) :
-        StaticCollider(Rectangle(position, size)),
-        RectangleShape(size, position, fillColor) {}
-};
-
-class RectangleCursor :
-    public DynamicCollider<Rectangle>,
-    public RectangleShape {
-public:
-    RectangleCursor(const Point &position,
-                    const Point &size,
-                    Color::RGB fillColor = Color::White) :
-        DynamicCollider(Rectangle(position, size)),
-        RectangleShape(size, position, fillColor) {}
-
-    Rectangle preCollisionUpdate(Rectangle currentForm, float timeFlow) final {
-        currentForm.position = position;
-        return currentForm;
-    }
-
-    void setPosition(const Point &p) { position = p; }
-
-    // template<class Collider>
-    // void hitStart(Collider *object) {
-    //    color = Color::Red;
-    //}
-    //
-    // template<class Collider>
-    // void hitEnd(Collider *object) {
-    //    color = Color::Green;
-    //}
-};
-
-class LineObject : public StaticCollider<Line>, public LineShape {
-public:
-    LineObject(Point position1, Point position2) :
-        StaticCollider<Line>(Line(position1, position2)),
-        LineShape(position1, position2) {}
-};
-
-class LineCursor : public DynamicCollider<Line>, public LineShape {
-public:
-    LineCursor(Point position1, Point position2) :
-        DynamicCollider(Line(position1, position2)),
-        LineShape(position1, position2) {}
-
-    Line preCollisionUpdate(Line currentForm, float timeFlow) final {
-        currentForm.positionA = position1;
-        currentForm.positionB = position2;
-        return currentForm;
-    }
-
-    void setPosition(const Point &position1, const Point &position2) {
-        LineShape::position1 = position1;
-        LineShape::position2 = position2;
-    }
-
-    template<class Collider>
-    void hitStart(Collider *object) {
-        color = Color::Red;
-    }
-
-    template<class Collider>
-    void hitEnd(Collider *object) {
-        color = Color::Green;
-    }
-};
-
-class Game {
-private:
+int main(int argc, char *args[]) {
     unsigned int tick;
-    // std::list<sf::Sprite *> ModelList;
     Window window;
-    // sf::View view;
     std::list<CircleObject> circles;
     std::list<RectangleObject> rectangles;
     std::list<PointObject> points;
     std::list<LineObject> lines;
+    std::list<PolygonObject> polygones;
 
-public:
-    Game() // :
-    // view(sf::FloatRect(0.f, 0.f, 100.f, 100.f)),
-    {
+    CollisionDetector collisionDetector;
 
-        CollisionDetector collisionDetector;
+    CircleCursor circleCursor(Point{0, 0}, 20);
+    collisionDetector.enableCollision(circleCursor);
+    RectangleCursor rectangleCursor({0, 0}, {40, 40});
+    PointCursor pointCursor({0, 0});
+    LineCursor lineCursor({-20, 0}, {20, 0});
 
-        CircleCursor circleCursor(Point{0, 0}, 20);
-        collisionDetector.enableCollision(circleCursor);
-        RectangleCursor rectangleCursor({0, 0}, {40, 40});
-        PointCursor pointCursor({0, 0});
-        LineCursor lineCursor({-20, 0}, {20, 0});
+    circles.emplace_back(Point{100, 100}, 10);
+    circles.emplace_back(Point{300, 100}, 20);
+    circles.emplace_back(Point{500, 100}, 30);
+    circles.emplace_back(Point{700, 100}, 40);
 
-        circles.emplace_back(Point{200, 200}, 10);
-        circles.emplace_back(Point{400, 200}, 20);
-        circles.emplace_back(Point{600, 200}, 30);
-        circles.emplace_back(Point{800, 200}, 40);
+    for (auto &c : circles)
+        collisionDetector.enableCollision(c);
 
-        for (auto &c : circles)
-            collisionDetector.enableCollision(c);
+    rectangles.emplace_back(Point{100, 300}, Point{20, 200});
+    rectangles.emplace_back(Point{300, 300}, Point{40, 40});
+    rectangles.emplace_back(Point{500, 300}, Point{100, 60});
+    rectangles.emplace_back(Point{700, 300}, Point{60, 100});
 
-        rectangles.emplace_back(Point{205, 405}, Point{20, 200});
-        rectangles.emplace_back(Point{400, 400}, Point{40, 40});
-        rectangles.emplace_back(Point{600, 400}, Point{100, 60});
-        rectangles.emplace_back(Point{800, 400}, Point{60, 100});
+    for (auto &c : rectangles)
+        collisionDetector.enableCollision(c);
 
-        for (auto &c : rectangles)
-            collisionDetector.enableCollision(c);
+    points.emplace_back(Point{100, 500});
+    points.emplace_back(Point{300, 500});
+    points.emplace_back(Point{500, 500});
+    points.emplace_back(Point{700, 500});
 
-        points.emplace_back(Point{200, 600});
-        points.emplace_back(Point{400, 600});
-        points.emplace_back(Point{600, 600});
-        points.emplace_back(Point{800, 600});
+    for (auto &c : points)
+        collisionDetector.enableCollision(c);
 
-        for (auto &c : points)
-            collisionDetector.enableCollision(c);
+    lines.emplace_back(Point{100, 690}, Point{100, 710});
+    lines.emplace_back(Point{280, 700}, Point{320, 700});
+    lines.emplace_back(Point{470, 670}, Point{530, 730});
+    lines.emplace_back(Point{720, 680}, Point{680, 720});
 
-        lines.emplace_back(Point{200, 790}, Point{200, 810});
-        lines.emplace_back(Point{380, 800}, Point{420, 800});
-        lines.emplace_back(Point{570, 770}, Point{630, 830});
-        lines.emplace_back(Point{820, 780}, Point{780, 820});
+    for (auto &c : lines)
+        collisionDetector.enableCollision(c);
 
-        for (auto &c : lines)
-            collisionDetector.enableCollision(c);
+    polygones.emplace_back(
+        std::vector<Point>{{{860, 880}, {940, 880}, {930, 920}, {870, 920}}});
 
-        SDL_Event e;
-        bool quit = false;
-        // window.setMouseCursorVisible(false);
-        SDL_ShowCursor(false);
-        uint32_t state = 0;
-        float mouseOrientation = 0;
-        // sf::Clock clock;
+    for (auto &c : polygones)
+        collisionDetector.enableCollision(c);
 
-        while (!quit) {
-            for (const auto &c : circles)
-                window.draw(c);
-            for (const auto &r : rectangles)
-                window.draw(r);
-            for (const auto &c : points)
-                window.draw(c);
-            for (const auto &r : lines)
-                window.draw(r);
+    SDL_Event e;
+    bool quit = false;
+    SDL_ShowCursor(false);
+    uint32_t state = 0;
+    float mouseOrientation = 0;
 
-            Vec2<int> cursorPosition;
-            SDL_GetMouseState(&cursorPosition.x, &cursorPosition.y);
-            switch (state) {
-            case 0:
-                circleCursor.setPosition(cursorPosition.cast<float>());
-                window.draw(circleCursor);
+    while (!quit) {
+
+        for (const auto &c : circles)
+            window.draw(c);
+        for (const auto &r : rectangles)
+            window.draw(r);
+        for (const auto &c : points)
+            window.draw(c);
+        for (const auto &r : lines)
+            window.draw(r);
+        for (const auto &r : polygones)
+            window.draw(r);
+
+        Vec2<int> cursorPosition;
+        SDL_GetMouseState(&cursorPosition.x, &cursorPosition.y);
+        switch (state) {
+        case 0:
+            circleCursor.setPosition(cursorPosition.cast<float>());
+            window.draw(circleCursor);
+            break;
+        case 1:
+            rectangleCursor.setPosition(cursorPosition.cast<float>());
+            window.draw(rectangleCursor);
+            break;
+        case 2:
+            pointCursor.setPosition(cursorPosition.cast<float>());
+            window.draw(pointCursor);
+            break;
+        case 3:
+            lineCursor.setPosition(
+                {(float) cursorPosition.x +
+                     (20 * std::cos(mouseOrientation / 20.f)),
+                 (float) cursorPosition.y +
+                     (20 * std::sin(mouseOrientation / 20.f))},
+                {(float) cursorPosition.x -
+                     (20 * std::cos(mouseOrientation / 20.f)),
+                 (float) cursorPosition.y -
+                     (20 * std::sin(mouseOrientation / 20.f))});
+            window.draw(lineCursor);
+            break;
+        }
+
+        while (SDL_PollEvent(&e) != 0) {
+            switch (e.type) {
+            case SDL_QUIT:
+                quit = true;
                 break;
-            case 1:
-                rectangleCursor.setPosition(cursorPosition.cast<float>());
-                window.draw(rectangleCursor);
-                break;
-            case 2:
-                pointCursor.setPosition(cursorPosition.cast<float>());
-                window.draw(pointCursor);
-                break;
-            case 3:
-                lineCursor.setPosition(
-                    {(float) cursorPosition.x +
-                         (20 * std::cos(mouseOrientation / 20.f)),
-                     (float) cursorPosition.y +
-                         (20 * std::sin(mouseOrientation / 20.f))},
-                    {(float) cursorPosition.x -
-                         (20 * std::cos(mouseOrientation / 20.f)),
-                     (float) cursorPosition.y -
-                         (20 * std::sin(mouseOrientation / 20.f))});
-                window.draw(lineCursor);
-                break;
-            }
-
-            while (SDL_PollEvent(&e) != 0) {
-                switch (e.type) {
-                case SDL_QUIT:
-                    quit = true;
+            case SDL_MOUSEBUTTONDOWN:
+                state++;
+                if (state > 3)
+                    state = 0;
+                switch (state) {
+                case 0:
+                    collisionDetector.disableCollision(lineCursor);
+                    collisionDetector.enableCollision(circleCursor);
                     break;
-                case SDL_MOUSEBUTTONDOWN:
-                    state++;
-                    if (state > 3)
-                        state = 0;
-                    switch (state) {
-                    case 0:
-                        collisionDetector.disableCollision(lineCursor);
-                        collisionDetector.enableCollision(circleCursor);
-                        break;
-                    case 1:
-                        collisionDetector.disableCollision(circleCursor);
-                        collisionDetector.enableCollision(rectangleCursor);
-                        break;
-                    case 2:
-                        collisionDetector.disableCollision(rectangleCursor);
-                        collisionDetector.enableCollision(pointCursor);
-                        break;
-                    case 3:
-                        collisionDetector.disableCollision(pointCursor);
-                        collisionDetector.enableCollision(lineCursor);
-                        break;
-                    }
+                case 1:
+                    collisionDetector.disableCollision(circleCursor);
+                    collisionDetector.enableCollision(rectangleCursor);
                     break;
-                case SDL_MOUSEWHEEL:
-                    mouseOrientation += e.wheel.y;
+                case 2:
+                    collisionDetector.disableCollision(rectangleCursor);
+                    collisionDetector.enableCollision(pointCursor);
                     break;
-                default:
+                case 3:
+                    collisionDetector.disableCollision(pointCursor);
+                    collisionDetector.enableCollision(lineCursor);
                     break;
                 }
+                break;
+            case SDL_MOUSEWHEEL:
+                mouseOrientation += e.wheel.y;
+                break;
+            default:
+                break;
             }
-
-            tick++;
-
-            auto deltaTime = window.getFrameTime();
-            if (tick >= 60) {
-                char szFps[200];
-                sprintf(szFps, "%s : %f FPS", "Game Title", 1 / deltaTime);
-                tick = 0;
-                window.setTitle(szFps);
-            }
-            collisionDetector.update(deltaTime);
-            window.display();
-            window.clear();
         }
-    }
-};
 
-int main(int argc, char *args[]) {
-    Game game;
+        tick++;
+
+        auto deltaTime = window.getFrameTime();
+        if (tick >= 60) {
+            char szFps[200];
+            sprintf(szFps, "%s : %f FPS", "Test Collision", 1 / deltaTime);
+            tick = 0;
+            window.setTitle(szFps);
+        }
+        collisionDetector.update(deltaTime);
+        window.display();
+        window.clear();
+    }
 
     return 0;
 }

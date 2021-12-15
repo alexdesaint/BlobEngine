@@ -41,6 +41,7 @@ public:
     float readPixel(const Vec2<int> &pos) const;
     void setViewport(const Vec2<unsigned int> &framebufferSize) const;
     void clear() const;
+    void enableSRGB(bool enable);
 
     friend std::ostream &operator<<(std::ostream &s, const Window &a);
 };

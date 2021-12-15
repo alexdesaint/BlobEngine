@@ -1,4 +1,5 @@
 #include "Blob/GLFW.hpp"
+#include "Blob/Maths.inl"
 #include <Blob/Core/Window.hpp>
 
 #include <backends/imgui_impl_glfw.h>
@@ -44,8 +45,10 @@ Window::~Window() {
 float Window::timeFlow = 0;
 
 float Window::display() {
+    enableSRGB(false);
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    enableSRGB(true);
 
     swapBuffers();
     clear();
@@ -215,6 +218,31 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera,
     */
 
     return worldPos / worldPos.w;
+}
+
+std::array<Vec3<>, 4> Window::getCameraCornersInWorld(const Camera &camera,
+                                                      float zWorld) {
+    Vec4<> screenPos[4]{{1, 1, 0, 1},
+                        {-1, 1, 0, 1},
+                        {-1, -1, 1},
+                        {1, -1, 0, 1}};
+
+    const auto MVP = projectionTransform * camera;
+    const auto MVPinv = MVP.inverse();
+
+    std::array<Vec3<float>, 4> ret;
+    for (size_t i = 0; i < 4; i++) {
+        screenPos[i].z =
+            (MVPinv.a34 - screenPos[i].x * (MVPinv.a41 * zWorld - MVPinv.a31) -
+             screenPos[i].y * (MVPinv.a42 * zWorld - MVPinv.a32) -
+             MVPinv.a44 * zWorld) /
+            (MVPinv.a43 * zWorld - MVPinv.a33);
+
+        auto worldPos = MVPinv * screenPos[i];
+        ret[i] = worldPos / worldPos.w;
+    }
+
+    return ret;
 }
 
 void Window::draw(const Primitive2D &primitive,

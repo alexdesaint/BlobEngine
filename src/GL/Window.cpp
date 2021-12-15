@@ -151,6 +151,13 @@ Window::~Window() {
     std::cout << "destroy OpenGL" << std::endl;
 }
 
+void Window::enableSRGB(bool enable) {
+    if (enable)
+        glEnable(GL_FRAMEBUFFER_SRGB);
+    else
+        glDisable(GL_FRAMEBUFFER_SRGB);
+}
+
 std::ostream &operator<<(std::ostream &s, const Window &a) {
     s << glGetString(GL_VENDOR) << std::endl
       << glGetString(GL_RENDERER) << std::endl

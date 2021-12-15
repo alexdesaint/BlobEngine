@@ -15,6 +15,10 @@ bool Point::overlap(const Circle &circle) const {
     return operator-(circle.position).length2() <= circle.rayon * circle.rayon;
 }
 
+bool Point::overlap(const Polygon &polygon) const {
+    return polygon.overlap(*this);
+}
+
 std::unordered_set<Vec2<int32_t>> Point::rasterize() const {
     std::unordered_set<Vec2<int32_t>> points;
     points.emplace(cast<int32_t>());
