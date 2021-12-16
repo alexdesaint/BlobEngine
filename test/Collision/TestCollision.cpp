@@ -332,7 +332,7 @@ public:
         if (size < 3)
             return;
 
-        double x[size], y[size];
+        std::vector<double> x(size), y(size);
         SDL_Vertex vertex[size];
 
         for (size_t it = 0; it < size; it++) {
@@ -344,7 +344,7 @@ public:
             vertex[it].color.a = 255;
         }
 
-        int *triangles = polygon_triangulate(size, x, y);
+        int *triangles = polygon_triangulate(size, x.data(), y.data());
 
         SDL_RenderGeometry(renderer,
                            NULL,
