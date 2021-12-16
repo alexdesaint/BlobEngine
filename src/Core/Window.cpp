@@ -56,7 +56,7 @@ double Window::display() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    std::chrono::system_clock::time_point now =
+    std::chrono::time_point<std::chrono::system_clock> now =
         std::chrono::system_clock::now();
 
     auto diff = std::chrono::duration_cast<std::chrono::duration<double>>(

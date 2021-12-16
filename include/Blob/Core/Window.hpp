@@ -20,7 +20,7 @@ namespace Blob {
 class Window : private GL::Window {
 private:
     // time counting
-    std::chrono::system_clock::time_point lastFrameTime;
+    std::chrono::time_point<std::chrono::system_clock> lastFrameTime;
 
     // GBuffer
     GL::FrameBuffer gFrameBuffer;
