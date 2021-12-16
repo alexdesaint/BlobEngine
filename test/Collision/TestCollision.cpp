@@ -79,7 +79,7 @@ public:
         DynamicCollider(Circle(position, rayon)),
         CircleShape(rayon, position) {}
 
-    Circle preCollisionUpdate(Circle currentForm, float timeFlow) final {
+    Circle preCollisionUpdate(Circle currentForm, double timeFlow) final {
         currentForm.position = position;
         return currentForm;
     }
@@ -110,7 +110,7 @@ public:
     explicit PointCursor(const Point &position) :
         DynamicCollider(Point(position)), CircleShape(2, position) {}
 
-    Point preCollisionUpdate(Point currentForm, float timeFlow) final {
+    Point preCollisionUpdate(Point currentForm, double timeFlow) final {
         currentForm = position;
         return currentForm;
     }
@@ -149,7 +149,7 @@ public:
         DynamicCollider(Rectangle(position, size)),
         RectangleShape(size, position, fillColor) {}
 
-    Rectangle preCollisionUpdate(Rectangle currentForm, float timeFlow) final {
+    Rectangle preCollisionUpdate(Rectangle currentForm, double timeFlow) final {
         currentForm.position = position;
         return currentForm;
     }
@@ -180,7 +180,7 @@ public:
         DynamicCollider(Line(position1, position2)),
         LineShape(position1, position2) {}
 
-    Line preCollisionUpdate(Line currentForm, float timeFlow) final {
+    Line preCollisionUpdate(Line currentForm, double timeFlow) final {
         currentForm.positionA = position1;
         currentForm.positionB = position2;
         return currentForm;

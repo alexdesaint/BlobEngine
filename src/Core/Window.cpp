@@ -42,9 +42,7 @@ Window::~Window() {
     ImGui::DestroyContext();
 }
 
-float Window::timeFlow = 0;
-
-float Window::display() {
+double Window::display() {
     enableSRGB(false);
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -58,12 +56,12 @@ float Window::display() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    std::chrono::time_point<std::chrono::system_clock> now =
+    std::chrono::system_clock::time_point now =
         std::chrono::system_clock::now();
 
-    std::chrono::duration<float, std::ratio<1, 1>> diff = now - lastFrameTime;
+    auto diff = std::chrono::duration_cast<std::chrono::duration<double>>(
+        now - lastFrameTime);
     timeFlow = diff.count();
-    fpsCounter += now - lastFrameTime;
     lastFrameTime = now;
 
     return timeFlow;

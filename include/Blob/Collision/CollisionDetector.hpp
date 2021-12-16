@@ -52,7 +52,7 @@ protected:
      * @param timeFlow Time in second since list frame
      * @return the form you wish to test the next collision
      */
-    virtual Form preCollisionUpdate(Form currentForm, float timeFlow) {
+    virtual Form preCollisionUpdate(Form currentForm, double timeFlow) {
         return currentForm;
     }
 
@@ -68,7 +68,7 @@ protected:
      */
     virtual Form postCollisionUpdate(const Form &currentForm,
                                      Form nextForm,
-                                     float timeFlow) {
+                                     double timeFlow) {
         return nextForm;
     }
 
@@ -212,7 +212,7 @@ private:
     template<class Collider>
     void updateOneCollider(Collider *dynamicCollider,
                            AllColliders &hitting,
-                           float timeFlow) {
+                           double timeFlow) {
         auto nextForm =
             dynamicCollider->preCollisionUpdate(dynamicCollider->form,
                                                 timeFlow);
@@ -234,7 +234,7 @@ private:
     }
 
     template<class Collider>
-    void testDynamicColliderDatabase(float timeFlow) {
+    void testDynamicColliderDatabase(double timeFlow) {
         for (auto &[dynamicCollider, hitting] :
              ColliderDatabase<Collider>::colliders) {
             for (const auto &position : dynamicCollider->form.rasterize())
@@ -261,7 +261,7 @@ private:
     }
 
     template<class Collider>
-    constexpr void testColliderDatabase(float timeFlow) {
+    constexpr void testColliderDatabase(double timeFlow) {
         if constexpr (std::is_base_of<
                           DynamicCollider<typename Collider::FormType>,
                           Collider>())
@@ -269,14 +269,14 @@ private:
     }
 
 public:
-    void update(float timeFlow) {
+    void update(double timeFlow) {
         (testColliderDatabase<Colliders>(timeFlow), ...);
     }
 
 #ifdef BLOB_COLLISION_IMGUI
     bool ImGuiDebugWindowVisible = true;
 
-    constexpr static float zoomIn = 20;
+    constexpr static double zoomIn = 20;
 
     void draw(const Circle &c, ImDrawList *draw_list, Vec2<> offset) {
         draw_list->AddCircleFilled(offset + c.position * zoomIn,

@@ -19,11 +19,8 @@ namespace Blob {
 
 class Window : private GL::Window {
 private:
-    // ImGui::Context imgui;
-
     // time counting
-    std::chrono::time_point<std::chrono::system_clock> lastFrameTime;
-    std::chrono::duration<float, std::milli> fpsCounter{0};
+    std::chrono::system_clock::time_point lastFrameTime;
 
     // GBuffer
     GL::FrameBuffer gFrameBuffer;
@@ -44,7 +41,7 @@ private:
 public:
     Keyboard keyboard;
     Mouse mouse;
-    static float timeFlow;
+    double timeFlow;
     using GLFW::Window::close;
     using GLFW::Window::isOpen;
     using GLFW::Window::totalTimeFlow;
@@ -88,7 +85,7 @@ public:
     void disableMouseCursor();
     void enableMouseCursor();
 
-    float display();
+    double display();
 
     Vec3<float> getMousePositionInWorld(const Camera &camera);
     Vec3<float> getMousePositionInWorld(const Camera &camera, float z);
