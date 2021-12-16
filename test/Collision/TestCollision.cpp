@@ -333,7 +333,7 @@ public:
             return;
 
         std::vector<double> x(size), y(size);
-        SDL_Vertex vertex[size];
+        std::vector<SDL_Vertex> vertex(size);
 
         for (size_t it = 0; it < size; it++) {
             vertex[it].position.x = x[it] = polygonShape.points[it].x;
@@ -348,7 +348,7 @@ public:
 
         SDL_RenderGeometry(renderer,
                            NULL,
-                           vertex,
+                           vertex.data(),
                            size,
                            triangles,
                            3 * (size - 2));
