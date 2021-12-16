@@ -91,12 +91,14 @@ int main() {
         mesh.addPrimitive(primitive);
         Shape shape(mesh);
 
+        double timeFlow;
+
         while (window.isOpen()) {
 
-            shape.setRotation((float) Window::timeFlow, {0, 0, 1});
+            shape.setRotation((float) timeFlow, {0, 0, 1});
             window.draw(shape, camera);
 
-            window.display();
+            timeFlow = window.display();
         }
 
     } catch (Exception &ex) { std::cout << ex.what(); }
