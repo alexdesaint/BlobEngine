@@ -176,7 +176,8 @@ class Struct:
         if self.parents:
             ret += " : "
         ret += ", ".join(
-            [str(access) + " " + str(parent) for parent, access in self.parents.items()]
+            [str(access) + " " + str(parent)
+             for parent, access in self.parents.items()]
         )
         ret += " {\n"
         ret += "".join([c.getInlineHeader(indent + 1) for c in self.content])
@@ -189,7 +190,8 @@ class Struct:
         if self.parents:
             ret += " : "
         ret += ", ".join(
-            [str(access) + " " + str(parent) for parent, access in self.parents.items()]
+            [str(access) + " " + str(parent)
+             for parent, access in self.parents.items()]
         )
         ret += " {\n"
         ret += "".join([c.getHeader(indent + 1) for c in self.content])
@@ -304,11 +306,13 @@ def codeMesh(mesh):
     dataStruct = Struct(
         "Data",
         {},
-        [Parameter("x", float_t), Parameter("y", float_t), Parameter("z", float_t)],
+        [Parameter("x", float_t), Parameter(
+            "y", float_t), Parameter("z", float_t)],
         [],
     )
     if use_normals:
-        dataType += [("nx", np.float32), ("ny", np.float32), ("nz", np.float32)]
+        dataType += [("nx", np.float32), ("ny", np.float32),
+                     ("nz", np.float32)]
         dataStruct.content += [
             Parameter("nx", float_t),
             Parameter("ny", float_t),
@@ -327,7 +331,8 @@ def codeMesh(mesh):
             Parameter("tz", float_t),
         ]
     for uv_i in range(tex_coord_max):
-        dataType += [("uv%dx" % uv_i, np.float32), ("uv%dy" % uv_i, np.float32)]
+        dataType += [("uv%dx" % uv_i, np.float32),
+                     ("uv%dy" % uv_i, np.float32)]
         dataStruct.content += [
             Parameter("uv%dx" % uv_i, float_t),
             Parameter("uv%dy" % uv_i, float_t),
@@ -409,7 +414,8 @@ def codeMesh(mesh):
 
     indicePerMaterial = {}
     for matId in materialIndices:
-        indicePerMaterial[matId] = indice[indiceData[indice]["material"] == matId]
+        indicePerMaterial[matId] = indice[indiceData[indice]
+                                          ["material"] == matId]
 
     attributes.content.append(
         Parameter(
@@ -417,7 +423,7 @@ def codeMesh(mesh):
             dataStruct,
             "\n" + print2dData(indiceData[list(indiceData.dtype.names)[1:]]),
             preQualif="const",
-            postQualif="[" + str(dataSize) + "]",
+            postQualif="[" + str(len(indiceData)) + "]",
             static=True,
         )
     )
@@ -444,7 +450,8 @@ def codeMesh(mesh):
         )
 
     attributes.content.append(
-        Parameter("buffer", Buffer_t, init="(const uint8_t *) data, sizeof(data)")
+        Parameter("buffer", Buffer_t,
+                  init="(const uint8_t *) data, sizeof(data)")
     )
     attributes.content.append(Parameter("attribute", Attribute_t))
     constructorCode = [
@@ -585,7 +592,8 @@ for material in bpy.data.materials:
     data += "namespace " + projectName + "::Materials {\n"
     data += materialsStruct.getInlineHeader()
     data += "}\n"
-    updateIfDifferent(materialHeaderFolder + name + ".hpp", data, existingsFiles)
+    updateIfDifferent(materialHeaderFolder + name +
+                      ".hpp", data, existingsFiles)
 
 for mesh in bpy.data.meshes:
     name = nameFormat(mesh.name)
@@ -631,7 +639,8 @@ for object in bpy.data.objects:
     shapeInit += (
         "Blob::ModelTransform{"
         + ", ".join(
-            ["{" + ", ".join(map(str, vec)) + "}" for vec in object.matrix_local]
+            ["{" + ", ".join(map(str, vec)) +
+             "}" for vec in object.matrix_local]
         )
         + "}"
     )
@@ -673,10 +682,12 @@ for scene in bpy.data.scenes:
         if object.parent != None:
             continue
         objectName = nameFormat(object.name)
-        constructor.content.append(sceneName + ".addShape(" + objectName + ");")
+        constructor.content.append(
+            sceneName + ".addShape(" + objectName + ");")
 
 data = ""
-data += "add_library(" + projectName + " STATIC " + "\n    ".join(cppFiles) + ")\n"
+data += "add_library(" + projectName + " STATIC " + \
+    "\n    ".join(cppFiles) + ")\n"
 data += "target_link_libraries(" + projectName + " Blob)\n"
 data += "target_include_directories(" + projectName + " PUBLIC include/)"
 updateIfDifferent(mainFolder + "CMakeLists.txt", data, existingsFiles)

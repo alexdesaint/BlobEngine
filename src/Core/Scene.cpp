@@ -21,9 +21,12 @@ void Scene::removeShape(const Shape *r) {
 void Scene::removeAll() {
     shapes.clear();
 }
-std::unordered_map<const Primitive *, std::vector<Mat4>>
+std::unordered_map<const GL::VertexArrayObject *,
+                   std::pair<std::vector<Mat4>, std::deque<RenderOptions>>>
 Scene::getDrawCallList() const {
-    std::unordered_map<const Primitive *, std::vector<Mat4>> list;
+    std::unordered_map<const GL::VertexArrayObject *,
+                       std::pair<std::vector<Mat4>, std::deque<RenderOptions>>>
+        list;
     for (auto shape : shapes)
         shape->getDrawCallList(list);
     return list;

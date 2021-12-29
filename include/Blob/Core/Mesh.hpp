@@ -3,6 +3,7 @@
 #include <list>
 #include <unordered_map>
 
+#include <Blob/Core/DynamicDrawCallList.hpp>
 #include <Blob/Core/Primitive.hpp>
 
 namespace Blob {
@@ -25,6 +26,7 @@ public:
 
     void removePrimitive(const Primitive &r);
     void removePrimitive(const Primitive *r);
+    void removeAllPrimitive();
 
     void addTransparentPrimitive(const Primitive &r);
     void addTransparentPrimitive(const Primitive *r);
@@ -33,8 +35,16 @@ public:
     void removeTransparentPrimitive(const Primitive *r);
 
     void getDrawCallList(
-        std::unordered_map<const Primitive *, std::vector<Mat4>> &drawCallList,
-        Mat4 transform = Mat4()) const;
+        std::unordered_map<const GL::VertexArrayObject *,
+                           std::pair<std::vector<Mat4>,
+                                     std::deque<RenderOptions>>> &drawCallList,
+        Mat4 transform = {}) const;
+
+    void addToDynamicDrawCallList(DynamicDrawCallList &dynamicDrawCallList,
+                                  Mat4 transform = {},
+                                  void *id = nullptr) const;
+    void removeFromDynamicDrawCallList(DynamicDrawCallList &dynamicDrawCallList,
+                                       void *id = nullptr) const;
 
     friend std::ostream &operator<<(std::ostream &s, const Mesh &a);
 };

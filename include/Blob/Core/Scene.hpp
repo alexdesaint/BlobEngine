@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Blob/Core/RenderOptions.hpp"
 #include <Blob/Core/Camera.hpp>
 #include <Blob/Core/Shape.hpp>
 #include <ostream>
@@ -26,7 +27,8 @@ public:
     void removeShape(const Shape *r);
     void removeAll();
 
-    std::unordered_map<const Primitive *, std::vector<Mat4>>
+    std::unordered_map<const GL::VertexArrayObject *,
+                       std::pair<std::vector<Mat4>, std::deque<RenderOptions>>>
     getDrawCallList() const;
 
     friend std::ostream &operator<<(std::ostream &, const Scene &);

@@ -85,13 +85,13 @@ using SingleColorInstanced = Shader<
                        FragmentShaderSpirV<PBRsingleColor, "PBRsingleColor">>,
     UniformView,
     UniformProjection,
-    UniformMetallic,
-    UniformRoughness,
+    // UniformMetallic,
+    // UniformRoughness,
     UniformAo,
-    UniformCameraPosition,
+    // UniformCameraPosition,
     UniformLightPosition,
-    UniformLightColor,
-    UniformLightRadius,
+    // UniformLightColor,
+    // UniformLightRadius,
     UniformLightPower,
     UniformAlbedo>;
 

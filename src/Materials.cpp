@@ -65,13 +65,13 @@ void PBRSingleColorInstanced::applyMaterial(const ProjectionTransform &pt,
                                             const Mat4 &mt) const {
     shader->setAttributes(vt,
                           pt,
-                          metallic,
-                          roughness,
+                          // metallic,
+                          // roughness,
                           ao,
-                          vt.cameraPosition,
+                          // vt.cameraPosition,
                           light.position,
-                          light.color,
-                          light.radius,
+                          // light.color,
+                          // light.radius,
                           light.power,
                           albedo);
 }

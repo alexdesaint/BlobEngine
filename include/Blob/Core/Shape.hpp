@@ -31,8 +31,16 @@ public:
     void removeChild(Shape *r);
 
     void getDrawCallList(
-        std::unordered_map<const Primitive *, std::vector<Mat4>> &drawCallList,
-        Mat4 transform = Mat4()) const;
+        std::unordered_map<const GL::VertexArrayObject *,
+                           std::pair<std::vector<Mat4>,
+                                     std::deque<RenderOptions>>> &drawCallList,
+        Mat4 transform = {}) const;
+
+    void addToDynamicDrawCallList(DynamicDrawCallList &dynamicDrawCallList,
+                                  Mat4 transform = {},
+                                  void *id = nullptr) const;
+    void removeFromDynamicDrawCallList(DynamicDrawCallList &dynamicDrawCallList,
+                                       void *id = nullptr) const;
 
     friend std::ostream &operator<<(std::ostream &s, const Shape &a);
 };

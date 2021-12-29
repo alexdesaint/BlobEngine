@@ -41,7 +41,9 @@ void Shape::removeChild(Shape *r) {
 }
 
 void Shape::getDrawCallList(
-    std::unordered_map<const Primitive *, std::vector<Mat4>> &drawCallList,
+    std::unordered_map<const GL::VertexArrayObject *,
+                       std::pair<std::vector<Mat4>, std::deque<RenderOptions>>>
+        &drawCallList,
     Mat4 transform) const {
     Mat4 modelMatrix = transform * *this;
     for (auto shape : shapes)
@@ -49,6 +51,31 @@ void Shape::getDrawCallList(
 
     if (mesh != nullptr)
         mesh->getDrawCallList(drawCallList, modelMatrix);
+}
+
+void Shape::addToDynamicDrawCallList(DynamicDrawCallList &dynamicDrawCallList,
+                                     Mat4 transform,
+                                     void *id) const {
+    Mat4 modelMatrix = transform * *this;
+    if (id == nullptr)
+        id = (void *) this;
+    for (auto shape : shapes)
+        shape->addToDynamicDrawCallList(dynamicDrawCallList, modelMatrix, id);
+
+    if (mesh != nullptr)
+        mesh->addToDynamicDrawCallList(dynamicDrawCallList, modelMatrix, id);
+}
+
+void Shape::removeFromDynamicDrawCallList(
+    DynamicDrawCallList &dynamicDrawCallList,
+    void *id) const {
+    if (id == nullptr)
+        id = (void *) this;
+    for (auto shape : shapes)
+        shape->removeFromDynamicDrawCallList(dynamicDrawCallList, id);
+
+    if (mesh != nullptr)
+        mesh->removeFromDynamicDrawCallList(dynamicDrawCallList, id);
 }
 
 std::ostream &operator<<(std::ostream &s, const Shape &a) {

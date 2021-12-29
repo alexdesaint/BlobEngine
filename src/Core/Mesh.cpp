@@ -1,3 +1,4 @@
+#include "Blob/GL/VertexArrayObject.hpp"
 #include <Blob/Core/Mesh.hpp>
 #include <algorithm>
 
@@ -29,6 +30,10 @@ void Mesh::removePrimitive(const Primitive *r) {
     }
 }
 
+void Mesh::removeAllPrimitive() {
+    primitives.clear();
+}
+
 void Mesh::addTransparentPrimitive(const Primitive &r) {
     transparentPrimitives.emplace_back(&r);
 }
@@ -56,10 +61,34 @@ void Mesh::removeTransparentPrimitive(const Primitive *r) {
 }
 
 void Mesh::getDrawCallList(
-    std::unordered_map<const Primitive *, std::vector<Mat4>> &drawCallList,
+    std::unordered_map<const GL::VertexArrayObject *,
+                       std::pair<std::vector<Mat4>, std::deque<RenderOptions>>>
+        &drawCallList,
     Mat4 transform) const {
+    for (auto primitive : primitives) {
+        drawCallList[primitive->vertexArrayObject].first.emplace_back(
+            transform);
+        // drawCallList[primitive->vertexArrayObject].second.push_back(
+        //     *primitive->renderOptions);
+    }
+}
+
+void Mesh::addToDynamicDrawCallList(DynamicDrawCallList &dynamicDrawCallList,
+                                    Mat4 transform,
+                                    void *id) const {
+    if (id == nullptr)
+        id = (void *) this;
     for (auto primitive : primitives)
-        drawCallList[primitive].emplace_back(transform);
+        dynamicDrawCallList.add(id, primitive, transform);
+}
+
+void Mesh::removeFromDynamicDrawCallList(
+    DynamicDrawCallList &dynamicDrawCallList,
+    void *id) const {
+    if (id == nullptr)
+        id = (void *) this;
+    for (auto primitive : primitives)
+        dynamicDrawCallList.remove(id, primitive);
 }
 
 std::ostream &operator<<(std::ostream &s, const Mesh &a) {
