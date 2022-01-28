@@ -1,11 +1,11 @@
-#include "Blob/Core/Shader.hpp"
-#include "Blob/Maths.inl"
 #include <Blob/GL/Shader.hpp>
 #include <Blob/GL/VertexBufferObject.hpp>
 #include <Blob/GL/Window.hpp>
+#include <Blob/Maths.hpp>
+#include <Blob/Shader.hpp>
 
-#include <Blob/Core/Exception.hpp>
-#include <Blob/Core/Window.hpp>
+#include <Blob/Exception.hpp>
+#include <Blob/Window.hpp>
 #include <iostream>
 
 using namespace Blob;
@@ -52,7 +52,7 @@ void main()  {
 
 class SimpleMaterial : public Material {
 public:
-    SimpleShader::Intance shader = SimpleShader::getInstance();
+    SimpleShader::Instance shader = SimpleShader::getInstance();
 
     void applyMaterial(const ProjectionTransform &pt,
                        const ViewTransform &vt,

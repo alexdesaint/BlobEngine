@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Blob/Collision/Forms.hpp>
-#include <Blob/Core/Exception.hpp>
+#include <Blob/Exception.hpp>
 
 #include <iostream>
 #include <type_traits>

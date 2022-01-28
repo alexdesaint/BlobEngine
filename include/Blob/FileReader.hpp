@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace Blob::Reader {
+namespace Blob {
 class FileReader {
 private:
     std::ifstream inFile;
@@ -57,4 +57,4 @@ public:
         return file.substr(b, file.find_last_of('.') - b);
     }
 };
-} // namespace Blob::Reader
+} // namespace Blob

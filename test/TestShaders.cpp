@@ -1,7 +1,7 @@
-#include <Blob/Core/Exception.hpp>
-#include <Blob/Core/Window.hpp>
+#include <Blob/Exception.hpp>
 #include <Blob/Materials.hpp>
 #include <Blob/Shapes.hpp>
+#include <Blob/Window.hpp>
 #include <imgui.h>
 #include <iostream>
 
@@ -19,7 +19,8 @@ int main() {
         white.albedo = Color::White;
 
         Scene scene;
-        Shapes::Cube cubeOrange(orange), cubeBlue(testShader), cubeDm(white);
+        Shapes::Cubufferbe cubeOrange(orange), cubeBlue(testShader),
+            cubeDm(white);
         scene.addShape(cubeOrange);
         cubeOrange.setPosition({4, 4});
         scene.addShape(cubeBlue);

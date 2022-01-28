@@ -1,6 +1,6 @@
-#include <Blob/Core/Window.hpp>
-#include <Blob/Maths.inl>
+#include <Blob/Maths.hpp>
 #include <Blob/Shapes.hpp>
+#include <Blob/Window.hpp>
 
 using namespace std;
 using namespace Blob;

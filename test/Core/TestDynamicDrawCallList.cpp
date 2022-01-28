@@ -1,6 +1,6 @@
-#include "Blob/Core/Primitive.hpp"
-#include "Blob/Maths.inl"
-#include <Blob/Core/DynamicDrawCallList.hpp>
+#include <Blob/DynamicDrawCallList.hpp>
+#include <Blob/Maths.hpp>
+#include <Blob/Primitive.hpp>
 
 using namespace Blob;
 

@@ -1,5 +1,5 @@
-#include "Blob/Core/Window.hpp"
 #include <Blob/Collision/Forms.hpp>
+#include <Blob/Window.hpp>
 
 #include <Blob/Color.hpp>
 #include <SDL.h>

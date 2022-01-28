@@ -1,12 +1,12 @@
 #include <Blob/FileReader.hpp>
 
-#include <Blob/Core/Exception.hpp>
+#include <Blob/Exception.hpp>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <vector>
 
-namespace Blob::Reader {
+namespace Blob {
 
 FileReader::FileReader(const std::string &FilePath) {
     inFile.open(FilePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -123,4 +123,4 @@ std::ostream &operator<<(std::ostream &s, FileReader &a) {
     return s;
 }
 
-} // namespace Blob::Reader
+} // namespace Blob

@@ -1,4 +1,4 @@
-#include <Blob/Maths.inl>
+#include <Blob/Maths.hpp>
 #include <glm/fwd.hpp>
 #include <glm/geometric.hpp>
 #ifdef _WIN32

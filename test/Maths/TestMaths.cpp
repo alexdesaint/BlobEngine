@@ -1,4 +1,4 @@
-#include <Blob/Maths.inl>
+#include <Blob/Maths.hpp>
 #include <iostream>
 
 using namespace Blob;

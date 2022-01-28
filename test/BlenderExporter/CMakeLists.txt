@@ -1,2 +1,4 @@
+add_subdirectory(blenderTest)
+
 add_executable(TestBlenderExporter TestBlenderExporter.cpp)
-target_link_libraries(TestBlenderExporter Blob)
+target_link_libraries(TestBlenderExporter Blob blenderTest)

@@ -1,4 +1,4 @@
-#include <Blob/Core/Asset.hpp>
+#include <Blob/Asset.hpp>
 #include <iostream>
 
 class TestAsset : public Blob::Asset<TestAsset> {

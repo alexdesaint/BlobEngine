@@ -3,15 +3,24 @@ add_library(Blob::Includes ALIAS BlobIncludes)
 target_include_directories(BlobIncludes INTERFACE ${INCLUDE_FOLDER})
 
 add_subdirectory(Collision)
-add_subdirectory(Core)
-add_subdirectory(GL)
-add_subdirectory(VK)
+add_subdirectory(SDL2)
 
-add_library(BlobGLFW STATIC GLFW.cpp)
-target_link_libraries(BlobGLFW glfw Blob::Includes)
-add_library(Blob::GLFW ALIAS BlobGLFW)
-target_compile_options(BlobGLFW PRIVATE "-fPIC")
-
-add_library(Blob STATIC Materials.cpp Shapes.cpp Color.cpp FileReader.cpp)
-target_link_libraries(Blob LINK_PUBLIC Blob::Core gladGL)
-set_target_properties(Blob PROPERTIES RESOURCE ${SHADERS_FOLDER}/frag.spv)
+add_library(Blob STATIC
+        Buffer.cpp
+        Controls.cpp
+        Image.cpp
+        Material.cpp
+        Mesh.cpp
+        Primitive.cpp
+        RenderOptions.cpp
+        Scene.cpp
+        Shader.cpp
+        Shape.cpp
+        Texture.cpp
+        VertexBuffer.cpp
+        VertexLayout.cpp
+        Window.cpp
+        Materials.cpp
+        Color.cpp
+        FileReader.cpp)
+target_link_libraries(Blob LINK_PUBLIC Blob::Includes dear-imgui stb bgfx bx BlobSDL2 BlobShaders)

@@ -65,8 +65,8 @@ int32_t = NativeType("int")
 uint16_t = NativeType("uint16_t")
 string_t = NativeType("std::string")
 
-Buffer_t = NativeType("Blob::Buffer")
-Attribute_t = NativeType("Blob::GL::VertexArrayObject")
+Attribute_t = NativeType("Blob::VertexBuffer")
+VertexLayout_t = NativeType("Blob::VertexLayout")
 RenderOptions_t = NativeType("Blob::RenderOptions")
 Shape_t = NativeType("Blob::Shape")
 Scene_t = NativeType("Blob::Scene")
@@ -176,8 +176,7 @@ class Struct:
         if self.parents:
             ret += " : "
         ret += ", ".join(
-            [str(access) + " " + str(parent)
-             for parent, access in self.parents.items()]
+            [str(access) + " " + str(parent) for parent, access in self.parents.items()]
         )
         ret += " {\n"
         ret += "".join([c.getInlineHeader(indent + 1) for c in self.content])
@@ -190,8 +189,7 @@ class Struct:
         if self.parents:
             ret += " : "
         ret += ", ".join(
-            [str(access) + " " + str(parent)
-             for parent, access in self.parents.items()]
+            [str(access) + " " + str(parent) for parent, access in self.parents.items()]
         )
         ret += " {\n"
         ret += "".join([c.getHeader(indent + 1) for c in self.content])
@@ -208,17 +206,29 @@ class Struct:
 
 
 class Function:
-    def __init__(self, name, ret=None, parameters=[], constructorInit=[], content=[]):
+    def __init__(
+        self,
+        name,
+        ret=None,
+        parameters=[],
+        preQualif="",
+        constructorInit=[],
+        content=[],
+    ):
         self.name = name
         self.ret = ret
+        if preQualif != "":
+            preQualif += " "
+        self.preQualif = preQualif
         self.parameters = parameters
         self.constructorInit = constructorInit
         self.content = content
 
     def getInlineHeader(self, indent=0):
         ret = getIndent(indent)
+        ret += self.preQualif
         if self.ret:
-            ret += str(self.ret) + " "
+            ret += str(self.ret.name) + " "
         ret += self.name
         ret += "("
         if self.parameters:
@@ -236,8 +246,9 @@ class Function:
 
     def getHeader(self, indent=0):
         ret = getIndent(indent)
+        ret += self.preQualif
         if self.ret:
-            ret += str(self.ret) + " "
+            ret += str(self.ret.name) + " "
         ret += self.name
         ret += "("
         if self.parameters:
@@ -248,8 +259,8 @@ class Function:
     def getCore(self, namespace):
         ret = ""
         if self.ret:
-            ret += str(self.ret) + " "
-        ret = namespace + self.name
+            ret += str(self.ret.name) + " "
+        ret += namespace + self.name
         ret += "("
         if self.parameters:
             ", ".join(self.parameters)
@@ -306,18 +317,27 @@ def codeMesh(mesh):
     dataStruct = Struct(
         "Data",
         {},
-        [Parameter("x", float_t), Parameter(
-            "y", float_t), Parameter("z", float_t)],
+        [Parameter("x", float_t), Parameter("y", float_t), Parameter("z", float_t)],
         [],
     )
+
+    getVertexLayoutFunction = Function("getVertexLayout", VertexLayout_t, [], "static")
+    getVertexLayoutFunction.content.append("Blob::VertexLayout vertexLayout;")
+    getVertexLayoutFunction.content.append("vertexLayout.begin();")
+    getVertexLayoutFunction.content.append(
+        "vertexLayout.add<float>(bgfx::Attrib::Position, 3);"
+    )
+
     if use_normals:
-        dataType += [("nx", np.float32), ("ny", np.float32),
-                     ("nz", np.float32)]
+        dataType += [("nx", np.float32), ("ny", np.float32), ("nz", np.float32)]
         dataStruct.content += [
             Parameter("nx", float_t),
             Parameter("ny", float_t),
             Parameter("nz", float_t),
         ]
+        getVertexLayoutFunction.content.append(
+            "vertexLayout.add<float>(bgfx::Attrib::Normal, 3);"
+        )
     if use_tangents:
         dataType += [
             ("tx", np.float32),
@@ -330,13 +350,18 @@ def codeMesh(mesh):
             Parameter("ty", float_t),
             Parameter("tz", float_t),
         ]
+        getVertexLayoutFunction.content.append(
+            "vertexLayout.add<float>(bgfx::Attrib::Tangent, 3);"
+        )
     for uv_i in range(tex_coord_max):
-        dataType += [("uv%dx" % uv_i, np.float32),
-                     ("uv%dy" % uv_i, np.float32)]
+        dataType += [("uv%dx" % uv_i, np.float32), ("uv%dy" % uv_i, np.float32)]
         dataStruct.content += [
             Parameter("uv%dx" % uv_i, float_t),
             Parameter("uv%dy" % uv_i, float_t),
         ]
+        getVertexLayoutFunction.content.append(
+            "vertexLayout.add<float>(bgfx::Attrib::TexCoord0, 2);"
+        )
     for col_i in range(color_max):
         dataType += [
             ("color%dr" % col_i, np.float32),
@@ -350,6 +375,9 @@ def codeMesh(mesh):
             Parameter("colob%dr" % col_i, float_t),
             Parameter("coloa%dr" % col_i, float_t),
         ]
+        getVertexLayoutFunction.content.append(
+            "vertexLayout.add<float>(bgfx::Attrib::Color0, 4);"
+        )
     if use_morph_normals:
         for morph_i, _ in enumerate(key_blocks):
             dataType += [
@@ -362,6 +390,10 @@ def codeMesh(mesh):
                 Parameter("morph%dny" % col_i, float_t),
                 Parameter("morph%dnz" % col_i, float_t),
             ]
+
+    getVertexLayoutFunction.content.append("vertexLayout.end();")
+    getVertexLayoutFunction.content.append("return vertexLayout;")
+    dataStruct.content.append(getVertexLayoutFunction)
 
     attributes = Struct(
         "Attributes", content=[], parents={"Blob::Asset<Attributes>": "public"}
@@ -414,8 +446,7 @@ def codeMesh(mesh):
 
     indicePerMaterial = {}
     for matId in materialIndices:
-        indicePerMaterial[matId] = indice[indiceData[indice]
-                                          ["material"] == matId]
+        indicePerMaterial[matId] = indice[indiceData[indice]["material"] == matId]
 
     attributes.content.append(
         Parameter(
@@ -445,26 +476,17 @@ def codeMesh(mesh):
             Parameter(
                 "renderOptions" + str(matId),
                 RenderOptions_t,
-                "indices" + idStr + ", " + lenIndices,
+                "Blob::Buffer{indices" + idStr + "}",
             )
         )
 
     attributes.content.append(
-        Parameter("buffer", Buffer_t,
-                  init="(const uint8_t *) data, sizeof(data)")
-    )
-    attributes.content.append(Parameter("attribute", Attribute_t))
-    constructorCode = [
-        "attribute.setBuffer(buffer, sizeof(data[0]));",
-        "attribute.setArray<float>(3, Blob::AttributeLocation::POSITION, offsetof(Data, x));",
-        "attribute.setArray<float>(3, Blob::AttributeLocation::NORMAL, offsetof(Data, nx));",
-    ]
-    if color_max:
-        constructorCode.append(
-            "attribute.setArray<float>(4, Blob::AttributeLocation::COLOR_0, offsetof(Data, color0r));"
+        Parameter(
+            "attribute",
+            Attribute_t,
+            "Blob::Buffer{data}, Data::getVertexLayout()",
         )
-
-    attributes.content.append(Function("Attributes", content=constructorCode))
+    )
 
     meshStruct = Struct(
         name,
@@ -473,7 +495,7 @@ def codeMesh(mesh):
             attributes,
             Parameter(
                 "attributes",
-                NativeType("Attributes::Intance"),
+                NativeType("Attributes::Instance"),
                 "Attributes::getInstance()",
             ),
         ],
@@ -502,11 +524,13 @@ def codeMesh(mesh):
             Parameter(matName, NativeType("Materials::" + matName))
         )
 
-    meshConstructor = Function(name, None, [], [], [])
+    meshConstructor = Function(name, None, [], "", [], [])
 
+    meshStruct.content.append(
+        Parameter("primitives[" + str(len(indicePerMaterial)) + "]", Primitive_t)
+    )
     for matId, indices in indicePerMaterial.items():
-        primitiveName = "primitive" + str(matId)
-        meshStruct.content.append(Parameter(primitiveName, Primitive_t))
+        primitiveName = "primitives[" + str(matId) + "]"
         meshConstructor.content.append(
             primitiveName
             + ".material = &"
@@ -520,7 +544,7 @@ def codeMesh(mesh):
             + ";"
         )
         meshConstructor.content.append(
-            primitiveName + ".vertexArrayObject = &attributes->attribute;"
+            primitiveName + ".vertexBuffer = &attributes->attribute;"
         )
         meshConstructor.content.append("addPrimitive(" + primitiveName + ");")
 
@@ -573,6 +597,7 @@ for material in bpy.data.materials:
         name,
         None,
         [],
+        "",
         [
             "Blob::Materials::PBRSingleColor(Blob::Color::RGBA{"
             + print1dData(material.diffuse_color)
@@ -592,8 +617,7 @@ for material in bpy.data.materials:
     data += "namespace " + projectName + "::Materials {\n"
     data += materialsStruct.getInlineHeader()
     data += "}\n"
-    updateIfDifferent(materialHeaderFolder + name +
-                      ".hpp", data, existingsFiles)
+    updateIfDifferent(materialHeaderFolder + name + ".hpp", data, existingsFiles)
 
 for mesh in bpy.data.meshes:
     name = nameFormat(mesh.name)
@@ -601,9 +625,9 @@ for mesh in bpy.data.meshes:
 
     data = ""
     data += "#pragma once\n"
-    data += "#include <Blob/Core/AttributeLocation.hpp>\n"
-    data += "#include <Blob/Core/Mesh.hpp>\n"
-    data += "#include <Blob/Core/Buffer.hpp>\n"
+    data += "#include <Blob/AttributeLocation.hpp>\n"
+    data += "#include <Blob/Mesh.hpp>\n"
+    data += "#include <Blob/Buffer.hpp>\n"
     for material in mesh.materials:
         matName = nameFormat(material.name)
         data += "#include <" + projectName + "/Materials/" + matName + ".hpp>\n"
@@ -639,13 +663,12 @@ for object in bpy.data.objects:
     shapeInit += (
         "Blob::ModelTransform{"
         + ", ".join(
-            ["{" + ", ".join(map(str, vec)) +
-             "}" for vec in object.matrix_local]
+            ["{" + ", ".join(map(str, vec)) + "}" for vec in object.matrix_local]
         )
         + "}"
     )
     shapeInit += ")"
-    constructor = Function(name, None, [], [shapeInit], [])
+    constructor = Function(name, None, [], "", [shapeInit], [])
     shapeStruct.content.append(constructor)
 
     for child in object.children:
@@ -668,7 +691,7 @@ for object in bpy.data.objects:
 
     data = ""
     data += "#pragma once\n"
-    data += "#include <Blob/Core/Shape.hpp>\n"
+    data += "#include <Blob/Shape.hpp>\n"
     for include in toInclude:
         data += "#include <" + projectName + "/" + include + ".hpp>\n"
     data += "namespace " + projectName + "::Shapes {\n"
@@ -682,12 +705,10 @@ for scene in bpy.data.scenes:
         if object.parent != None:
             continue
         objectName = nameFormat(object.name)
-        constructor.content.append(
-            sceneName + ".addShape(" + objectName + ");")
+        constructor.content.append(sceneName + ".addShape(" + objectName + ");")
 
 data = ""
-data += "add_library(" + projectName + " STATIC " + \
-    "\n    ".join(cppFiles) + ")\n"
+data += "add_library(" + projectName + " STATIC " + "\n    ".join(cppFiles) + ")\n"
 data += "target_link_libraries(" + projectName + " Blob)\n"
 data += "target_include_directories(" + projectName + " PUBLIC include/)"
 updateIfDifferent(mainFolder + "CMakeLists.txt", data, existingsFiles)

@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <Blob/Core/Window.hpp>
+#include <Blob/Window.hpp>
 #include <imgui.h>
 #include <iostream>
 
@@ -57,7 +57,7 @@ void main()  {
 
 class SimpleMaterial : public Material {
 public:
-    SimpleShader::Intance shader = SimpleShader::getInstance();
+    SimpleShader::Instance shader = SimpleShader::getInstance();
 
     void applyMaterial(const ProjectionTransform &pt,
                        const ViewTransform &vt,

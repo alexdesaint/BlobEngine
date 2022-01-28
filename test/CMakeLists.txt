@@ -1,4 +1,4 @@
-message("Blob Test are enable")
+message("Blob Test are enabled")
 
 add_executable(TestAsset TestAsset.cpp)
 target_link_libraries(TestAsset Blob::Includes)
@@ -22,8 +22,6 @@ add_executable(TestShaders TestShaders.cpp)
 target_link_libraries(TestShaders Blob)
 
 add_subdirectory(BlenderExporter)
-add_subdirectory(GL)
-add_subdirectory(VK)
 add_subdirectory(Maths)
 add_subdirectory(Collision)
 add_subdirectory(Core)

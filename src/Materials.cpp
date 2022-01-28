@@ -1,40 +1,76 @@
-#include <Blob/Core/Window.hpp>
+#include <Blob/Buffer.hpp>
 #include <Blob/Materials.hpp>
+#include <Blob/Window.hpp>
+
+#include <shaders/f_colorArray.h>
+#include <shaders/v_normal.h>
 
 namespace Blob::Materials2D {
 
-void SingleColor::applyMaterial(const ProjectionTransform2D &pt,
-                                const ViewTransform2D &vt,
-                                const Mat3 &mt) const {
-    shader->setAttributes(mt, vt, pt, albedo);
+/********************* SingleColor *********************/
+
+SingleColor::SingleColor(const Color::RGBA &albedo) :
+    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
+    albedo(albedo) {}
+
+void SingleColor::applyMaterial() const {
+    shader->setAttributes(albedo);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
 }
 
-void SingleColorSingleTexture::applyMaterial(const ProjectionTransform2D &pt,
-                                             const ViewTransform2D &vt,
-                                             const Mat3 &mt) const {
-    shader->setAttributes(mt, vt, pt, albedo, texture);
+/********************* SingleTexture *********************/
+
+SingleColorSingleTexture::SingleColorSingleTexture(const Texture &texture,
+                                                   const Color::RGBA &albedo) :
+    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
+    texture(texture),
+    albedo(albedo) {}
+
+void SingleColorSingleTexture::applyMaterial() const {
+    shader->setAttributes(albedo);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
 }
 
 } // namespace Blob::Materials2D
+
 namespace Blob::Materials {
-void SingleColor::applyMaterial(const ProjectionTransform &pt,
-                                const ViewTransform &vt,
-                                const Mat4 &mt) const {
-    shader->setAttributes(mt, vt, pt, albedo);
+
+/********************* SingleColor *********************/
+
+SingleColor::SingleColor(const Color::RGBA &albedo) :
+    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
+    albedo(albedo) {}
+
+void SingleColor::applyMaterial() const {
+    shader->setAttributes(albedo);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
 }
 
-void SingleTexture::applyMaterial(const ProjectionTransform &pt,
-                                  const ViewTransform &vt,
-                                  const Mat4 &mt) const {
-    shader->setAttributes(mt, vt, pt, texScale, texture);
+/********************* SingleTexture *********************/
+
+SingleTexture::SingleTexture(const Texture &texture,
+                             const Vec2<> &texScale,
+                             const Color::RGBA &albedo) :
+    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
+    texture(texture),
+    texScale(texScale),
+    albedo(albedo) {}
+
+void SingleTexture::applyMaterial() const {
+    shader->setAttributes(texScale);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
 }
 
-/********************* Utils *********************/
+/********************* PerFaceNormal *********************/
 
-void PerFaceNormal::applyMaterial(const ProjectionTransform &pt,
-                                  const ViewTransform &vt,
-                                  const Mat4 &mt) const {
-    shader->setAttributes(mt, vt, pt, albedo, length);
+void PerFaceNormal::applyMaterial() const {
+    shader->setAttributes(albedo, length);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
 }
 
 /********************* PBR *********************/
@@ -43,90 +79,90 @@ Light PBR::light;
 
 /********************* PBRSingleColor *********************/
 
-void PBRSingleColor::applyMaterial(const ProjectionTransform &pt,
-                                   const ViewTransform &vt,
-                                   const Mat4 &mt) const {
-    shader->setAttributes(mt,
-                          vt,
-                          pt,
-                          // metallic,
-                          // roughness,
-                          ao,
-                          // vt.cameraPosition,
-                          light.position,
-                          // light.color,
-                          // light.radius,
-                          light.power,
-                          albedo);
-}
+PBRSingleColor::PBRSingleColor(const Color::RGBA &albedo) :
+    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
+    albedo(albedo) {}
 
-void PBRSingleColorInstanced::applyMaterial(const ProjectionTransform &pt,
-                                            const ViewTransform &vt,
-                                            const Mat4 &mt) const {
-    shader->setAttributes(vt,
-                          pt,
-                          // metallic,
-                          // roughness,
-                          ao,
-                          // vt.cameraPosition,
-                          light.position,
-                          // light.color,
-                          // light.radius,
-                          light.power,
-                          albedo);
-}
-
-/********************* PBRSingleTexture *********************/
-
-void PBRSingleTexture::applyMaterial(const ProjectionTransform &pt,
-                                     const ViewTransform &vt,
-                                     const Mat4 &mt) const {
-    shader->setAttributes(mt,
-                          vt,
-                          pt,
+void PBRSingleColor::applyMaterial() const {
+    shader->setAttributes(albedo,
                           metallic,
                           roughness,
                           ao,
-                          vt.cameraPosition,
-                          light.position,
-                          light.color,
-                          light.radius,
-                          light.power,
-                          texture);
-}
-
-/********************* PBRColorArray *********************/
-void PBRColorArray::applyMaterial(const ProjectionTransform &pt,
-                                  const ViewTransform &vt,
-                                  const Mat4 &mt) const {
-    shader->setAttributes(mt,
-                          vt,
-                          pt,
-                          metallic,
-                          roughness,
-                          ao,
-                          vt.cameraPosition,
                           light.position,
                           light.color,
                           light.radius,
                           light.power);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
 }
 
-void PBRWater::applyMaterial(const ProjectionTransform &pt,
-                             const ViewTransform &vt,
-                             const Mat4 &mt) const {
-    shader->setAttributes(mt,
-                          vt,
-                          pt,
+/********************* PBRSingleColorInstanced *********************/
+
+void PBRSingleColorInstanced::applyMaterial() const {
+    shader->setAttributes(albedo,
                           metallic,
                           roughness,
                           ao,
-                          vt.cameraPosition,
+                          light.position,
+                          light.color,
+                          light.radius,
+                          light.power);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
+}
+
+/********************* PBRSingleTexture *********************/
+
+PBRSingleTexture::PBRSingleTexture(const Texture &texture,
+                                   const Vec2<> &texScale,
+                                   const Color::RGBA &albedo) :
+    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
+    texture(texture),
+    texScale(texScale),
+    albedo(albedo) {}
+
+void PBRSingleTexture::applyMaterial() const {
+    shader->setAttributes(texScale,
+                          metallic,
+                          roughness,
+                          ao,
+                          light.position,
+                          light.color,
+                          light.radius,
+                          light.power);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
+}
+
+/********************* PBRColorArray *********************/
+
+void PBRColorArray::applyMaterial() const {
+    shader->setAttributes(metallic,
+                          roughness,
+                          ao,
+                          light.position,
+                          light.color,
+                          light.radius,
+                          light.power);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
+}
+
+/********************* PBRWater *********************/
+
+void PBRWater::applyMaterial() const {
+    shader->setAttributes(albedo,
+                          metallic,
+                          roughness,
+                          ao,
                           light.position,
                           light.color,
                           light.radius,
                           light.power,
-                          (float) Window::totalTimeFlow);
+                          //(float) Window::totalTimeFlow,
+                          (float) 0.0);
+    bgfx::setState(BGFX_STATE_DEFAULT);
+    bgfx::submit(0, shader->shaderHandle);
 }
 
 } // namespace Blob::Materials

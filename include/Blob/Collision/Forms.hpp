@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Blob/Maths.inl>
+#include <Blob/Maths.hpp>
 
 #include <array>
 #include <cmath>
