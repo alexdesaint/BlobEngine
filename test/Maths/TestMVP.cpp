@@ -14,8 +14,7 @@ int main() {
     //    std::tan(cameraAngle)});
     // camera.setLookAt({width / 2.f, height * std::tan(cameraAngle / 2.f), 1});
     camera.setCameraUp({0, 0, 1});
-    camera.setLookAt({0, 0, 0});
-    camera.setPosition({0, 0.0001, 40});
+    camera.setPosition({0, 0.0001, 40}, Vec3{0.f, 0.f, 0.f});
 
     std::cout << camera;
     std::cout << camera * c1 << std::endl;

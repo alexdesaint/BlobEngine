@@ -2,6 +2,7 @@
 #include <deque>
 #include <iostream>
 #include <ostream>
+#include <typeindex>
 #include <unordered_set>
 #include <vector>
 
@@ -15,11 +16,12 @@ namespace Blob {
 class DynamicDrawCallList {
 private:
 public:
-    std::unordered_map<size_t, std::pair<std::vector<Mat4>, std::deque<size_t>>>
+    std::unordered_map<std::type_index,
+                       std::pair<std::vector<Mat4>, std::deque<size_t>>>
         drawCallList;
-    std::unordered_map<size_t, std::unordered_set<size_t>> typeIdperId;
+    std::unordered_map<size_t, std::unordered_set<std::type_index>> typeIdperId;
 
-    void add(size_t type_id, size_t id, const Mat4 &pos) {
+    void add(std::type_index type_id, size_t id, const Mat4 &pos) {
         drawCallList[type_id].first.emplace_back(pos);
         drawCallList[type_id].second.emplace_back(id);
         typeIdperId[id].emplace(type_id);
@@ -54,7 +56,7 @@ public:
                const DynamicDrawCallList &dynamicDrawCallList) {
         for (const auto &[typeId, posIdsPair] :
              dynamicDrawCallList.drawCallList) {
-            os << typeId << " {" << std::endl;
+            os << typeId.hash_code() << " {" << std::endl;
             auto &[positions, ids] = posIdsPair;
             if (ids.size() != positions.size())
                 std::cout << "Error, ids and pos are of different size"

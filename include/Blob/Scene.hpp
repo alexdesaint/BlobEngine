@@ -9,7 +9,7 @@
 namespace Blob {
 
 class Scene {
-    friend Window;
+    friend class Window;
 
 private:
     std::list<Shape const *> shapes;
@@ -30,24 +30,4 @@ public:
     friend std::ostream &operator<<(std::ostream &, const Scene &);
 };
 
-class Scene2D {
-    friend Window;
-
-private:
-    std::list<Shape2D const *> shapes;
-
-public:
-    const ViewTransform2D &camera;
-    explicit Scene2D(const ViewTransform2D &camera);
-
-    Scene2D(const ViewTransform2D &camera, std::list<Shape2D const *> shapes);
-
-    void addShape(const Shape2D &r);
-    void addShape(const Shape2D *r);
-    void removeShape(const Shape2D &r);
-    void removeShape(const Shape2D *r);
-    void removeAll();
-
-    friend std::ostream &operator<<(std::ostream &, const Scene2D &);
-};
 } // namespace Blob

@@ -1,11 +1,9 @@
 #pragma once
 
-#include <vector>
-
 #include <Blob/Buffer.hpp>
 #include <Blob/VertexLayout.hpp>
-
 #include <bgfx/bgfx.h>
+#include <vector>
 
 namespace Blob {
 class VertexBuffer {

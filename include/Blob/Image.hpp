@@ -22,7 +22,7 @@ public:
     Image(unsigned char *data, const Vec2<size_t> &size, Channel channel);
     ~Image();
 
-    Color::RGBA getPixel(const Blob::Vec2<size_t> &position);
+    Color getPixel(const Blob::Vec2<size_t> &position);
 
     Image getSubImage(const Blob::Vec2<size_t> &size,
                       const Blob::Vec2<size_t> &position) const;

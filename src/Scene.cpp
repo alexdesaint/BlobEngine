@@ -30,31 +30,4 @@ std::ostream &operator<<(std::ostream &os, const Scene &s) {
     return os;
 }
 
-Scene2D::Scene2D(const Blob::ViewTransform2D &camera) : camera(camera) {}
-Scene2D::Scene2D(const Blob::ViewTransform2D &camera,
-                 std::list<Shape2D const *> shapes) :
-    camera(camera), shapes(std::move(shapes)) {}
-
-void Scene2D::addShape(const Shape2D &r) {
-    shapes.emplace_back(&r);
-}
-void Scene2D::addShape(const Shape2D *r) {
-    shapes.emplace_back(r);
-}
-void Scene2D::removeShape(const Shape2D &r) {
-    shapes.remove(&r);
-}
-void Scene2D::removeShape(const Shape2D *r) {
-    shapes.remove(r);
-}
-void Scene2D::removeAll() {
-    shapes.clear();
-}
-
-std::ostream &operator<<(std::ostream &os, const Scene2D &s) {
-    os << "Scene :" << std::endl;
-    os << "  - num of shapes : " << s.shapes.size() << std::endl;
-    return os;
-}
-
 } // namespace Blob

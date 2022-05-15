@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Blob/Maths.hpp>
+#include <cstddef>
 #include <functional>
 #include <list>
 #include <string>
@@ -8,152 +9,174 @@
 
 namespace Blob {
 
-class Key {
-public:
-    const int id;
-    const bool &pressed;
-
-    explicit Key(int id, const bool (&keys)[512]) : id(id), pressed(keys[id]) {}
-
-    explicit operator bool() const { return pressed; }
-    bool operator==(const int &i) const { return i == id; }
-
-    std::string getName() const;
+typedef int MouseKey;
+struct MouseKeys {
+    static const MouseKey LEFT;
+    static const MouseKey MIDDLE;
+    static const MouseKey RIGHT;
+    static const MouseKey X1;
+    static const MouseKey X2;
+    static const MouseKey X3;
+    static const MouseKey X4;
+    static const MouseKey X5;
 };
 
-class Keyboard {
-private:
-    const std::unordered_map<unsigned int, const Key *> keys;
-
-public:
-    const Key UNKNOWN;
-    const Key SPACE;
-    const Key APOSTROPHE;
-    const Key COMMA;
-    const Key MINUS;
-    const Key PERIOD;
-    const Key SLASH;
-    const Key Zero;
-    const Key One;
-    const Key Two;
-    const Key Three;
-    const Key Four;
-    const Key Five;
-    const Key Six;
-    const Key Seven;
-    const Key Eight;
-    const Key Nine;
-    const Key SEMICOLON;
-    const Key EQUAL;
-    const Key A;
-    const Key B;
-    const Key C;
-    const Key D;
-    const Key E;
-    const Key F;
-    const Key G;
-    const Key H;
-    const Key I;
-    const Key J;
-    const Key K;
-    const Key L;
-    const Key M;
-    const Key N;
-    const Key O;
-    const Key P;
-    const Key Q;
-    const Key R;
-    const Key S;
-    const Key T;
-    const Key U;
-    const Key V;
-    const Key W;
-    const Key X;
-    const Key Y;
-    const Key Z;
-    const Key LEFT_BRACKET;
-    const Key BACKSLASH;
-    const Key RIGHT_BRACKET;
-    const Key GRAVE_ACCENT;
-    const Key ESCAPE;
-    const Key ENTER;
-    const Key TAB;
-    const Key BACKSPACE;
-    const Key INSERT;
-    const Key DELETE;
-    const Key RIGHT;
-    const Key LEFT;
-    const Key DOWN;
-    const Key UP;
-    const Key PAGE_UP;
-    const Key PAGE_DOWN;
-    const Key HOME;
-    const Key END;
-    const Key CAPS_LOCK;
-    const Key SCROLL_LOCK;
-    const Key NUM_LOCK;
-    const Key PRINT_SCREEN;
-    const Key PAUSE;
-    const Key F1;
-    const Key F2;
-    const Key F3;
-    const Key F4;
-    const Key F5;
-    const Key F6;
-    const Key F7;
-    const Key F8;
-    const Key F9;
-    const Key F10;
-    const Key F11;
-    const Key F12;
-    const Key F13;
-    const Key F14;
-    const Key F15;
-    const Key F16;
-    const Key F17;
-    const Key F18;
-    const Key F19;
-    const Key F20;
-    const Key F21;
-    const Key F22;
-    const Key F23;
-    const Key F24;
-    const Key NumericKeypadZero;
-    const Key NumericKeypadOne;
-    const Key NumericKeypadTwo;
-    const Key NumericKeypadThree;
-    const Key NumericKeypadFour;
-    const Key NumericKeypadFive;
-    const Key NumericKeypadSix;
-    const Key NumericKeypadSeven;
-    const Key NumericKeypadEight;
-    const Key NumericKeypadNine;
-    const Key NumericKeypadDECIMAL;
-    const Key NumericKeypadDIVIDE;
-    const Key NumericKeypadMULTIPLY;
-    const Key NumericKeypadSUBTRACT;
-    const Key NumericKeypadADD;
-    const Key NumericKeypadENTER;
-    const Key NumericKeypadEQUAL;
-    const Key LEFT_SHIFT;
-    const Key LEFT_CONTROL;
-    const Key LEFT_ALT;
-    const Key LEFT_SUPER;
-    const Key RIGHT_SHIFT;
-    const Key RIGHT_CONTROL;
-    const Key RIGHT_ALT;
-    const Key RIGHT_SUPER;
-    const Key MENU;
-
-    explicit Keyboard(const bool (&keys)[512]);
-
-    const Key &operator[](unsigned int id);
+typedef int Key;
+struct Keys {
+    static const Key UNKNOWN;
+    static const Key SPACE;
+    static const Key APOSTROPHE;
+    static const Key COMMA;
+    static const Key MINUS;
+    static const Key PERIOD;
+    static const Key SLASH;
+    static const Key Zero;
+    static const Key One;
+    static const Key Two;
+    static const Key Three;
+    static const Key Four;
+    static const Key Five;
+    static const Key Six;
+    static const Key Seven;
+    static const Key Eight;
+    static const Key Nine;
+    static const Key SEMICOLON;
+    static const Key EQUAL;
+    static const Key A;
+    static const Key B;
+    static const Key C;
+    static const Key D;
+    static const Key E;
+    static const Key F;
+    static const Key G;
+    static const Key H;
+    static const Key I;
+    static const Key J;
+    static const Key K;
+    static const Key L;
+    static const Key M;
+    static const Key N;
+    static const Key O;
+    static const Key P;
+    static const Key Q;
+    static const Key R;
+    static const Key S;
+    static const Key T;
+    static const Key U;
+    static const Key V;
+    static const Key W;
+    static const Key X;
+    static const Key Y;
+    static const Key Z;
+    static const Key LEFT_BRACKET;
+    static const Key BACKSLASH;
+    static const Key RIGHT_BRACKET;
+    static const Key GRAVE_ACCENT;
+    static const Key ESCAPE;
+    static const Key ENTER;
+    static const Key TAB;
+    static const Key BACKSPACE;
+    static const Key INSERT;
+    static const Key DEL;
+    static const Key RIGHT;
+    static const Key LEFT;
+    static const Key DOWN;
+    static const Key UP;
+    static const Key PAGE_UP;
+    static const Key PAGE_DOWN;
+    static const Key HOME;
+    static const Key END;
+    static const Key CAPS_LOCK;
+    static const Key SCROLL_LOCK;
+    static const Key NUM_LOCK;
+    static const Key PRINT_SCREEN;
+    static const Key PAUSE;
+    static const Key F1;
+    static const Key F2;
+    static const Key F3;
+    static const Key F4;
+    static const Key F5;
+    static const Key F6;
+    static const Key F7;
+    static const Key F8;
+    static const Key F9;
+    static const Key F10;
+    static const Key F11;
+    static const Key F12;
+    static const Key F13;
+    static const Key F14;
+    static const Key F15;
+    static const Key F16;
+    static const Key F17;
+    static const Key F18;
+    static const Key F19;
+    static const Key F20;
+    static const Key F21;
+    static const Key F22;
+    static const Key F23;
+    static const Key F24;
+    static const Key NumericKeypadZero;
+    static const Key NumericKeypadOne;
+    static const Key NumericKeypadTwo;
+    static const Key NumericKeypadThree;
+    static const Key NumericKeypadFour;
+    static const Key NumericKeypadFive;
+    static const Key NumericKeypadSix;
+    static const Key NumericKeypadSeven;
+    static const Key NumericKeypadEight;
+    static const Key NumericKeypadNine;
+    static const Key NumericKeypadDECIMAL;
+    static const Key NumericKeypadDIVIDE;
+    static const Key NumericKeypadMULTIPLY;
+    static const Key NumericKeypadSUBTRACT;
+    static const Key NumericKeypadADD;
+    static const Key NumericKeypadENTER;
+    static const Key NumericKeypadEQUAL;
+    static const Key LEFT_SHIFT;
+    static const Key LEFT_CONTROL;
+    static const Key LEFT_ALT;
+    static const Key LEFT_SUPER;
+    static const Key RIGHT_SHIFT;
+    static const Key RIGHT_CONTROL;
+    static const Key RIGHT_ALT;
+    static const Key RIGHT_SUPER;
+    static const Key MENU;
 };
 
-class Window;
+typedef int GamepadKey;
+struct GamepadKeys {
+    static const GamepadKey A;
+    static const GamepadKey B;
+    static const GamepadKey X;
+    static const GamepadKey Y;
+    static const GamepadKey LEFT_BUMPER;
+    static const GamepadKey RIGHT_BUMPER;
+    static const GamepadKey BACK;
+    static const GamepadKey START;
+    static const GamepadKey GUIDE;
+    static const GamepadKey LEFT_THUMB;
+    static const GamepadKey RIGHT_THUMB;
+    static const GamepadKey DPAD_UP;
+    static const GamepadKey DPAD_RIGHT;
+    static const GamepadKey DPAD_DOWN;
+    static const GamepadKey DPAD_LEFT;
+    static const GamepadKey CROSS;
+    static const GamepadKey CIRCLE;
+    static const GamepadKey SQUARE;
+    static const GamepadKey TRIANGLE;
+};
+
+struct GamepadAxis {
+    static const GamepadKey leftX;
+    static const GamepadKey leftY;
+    static const GamepadKey rightX;
+    static const GamepadKey rightY;
+    static const GamepadKey leftTRIGGER;
+    static const GamepadKey rightTRIGGER;
+};
 
 class KeyboardEvents {
-    friend Window;
+    friend class Window;
 
 private:
     static std::list<KeyboardEvents *> subscribers;
@@ -163,31 +186,14 @@ protected:
 
     ~KeyboardEvents() { subscribers.remove(this); }
 
-    virtual void keyboardUpdate(const Key &key) = 0;
+    virtual void keyUpdate(const Key &key, const bool &state){};
 
 public:
     KeyboardEvents(const KeyboardEvents &) = delete;
 };
 
-class KeyboardEvents2 { // TODO: move this to the Window class
-    friend Window;
-
-private:
-    static std::list<KeyboardEvents2 *> subscribers;
-    std::unordered_map<int, std::function<void(bool)>> callbacks;
-
-public:
-    explicit KeyboardEvents2(
-        std::unordered_map<int, std::function<void(bool)>> &&callbacks) :
-        callbacks(callbacks) {
-        subscribers.push_back(this);
-    }
-
-    ~KeyboardEvents2() { subscribers.remove(this); }
-};
-
 class MouseEvents {
-    friend Window;
+    friend class Window;
 
 private:
     static std::list<MouseEvents *> subscribers;
@@ -230,23 +236,14 @@ public:
 
 class Controller {
 public:
-    const char *&name;
-    bool &connected;
+    std::string name;
+    bool connected;
 
-    int &buttonsCount;
-    const unsigned char *&buttons;
+    int buttonsCount;
+    const unsigned char *buttons;
 
-    int &joystickAxesCount;
-    const float *&joystickAxes;
-
-    // void controllerOut() const;
-    Controller(size_t num);
-};
-
-template<unsigned int N>
-class ControllerEvents {
-private:
-protected:
+    int joystickAxesCount;
+    const float *joystickAxes;
 };
 
 } // namespace Blob

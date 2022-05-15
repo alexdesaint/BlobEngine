@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Blob/Asset.hpp>
 #include <Blob/Buffer.hpp>
 #include <Blob/Exception.hpp>
 #include <Blob/Shader.hpp>
@@ -13,17 +12,44 @@
 
 namespace Blob {
 
-template<class T, size_t POSITION>
-class UniformAttribute {
-public:
-    using Type = T;
-    static const size_t position = POSITION;
+enum UniformType {
+    UniformVec4 = bgfx::UniformType::Vec4,
+    UniformMat3 = bgfx::UniformType::Mat3,
+    UniformMat4 = bgfx::UniformType::Mat4
 };
 
-template<class... UNIFORM_ATTRIBUTES>
-class Shader : public Asset<Shader<UNIFORM_ATTRIBUTES...>> {
+class Uniform {
 private:
-    friend Asset<Shader<UNIFORM_ATTRIBUTES...>>;
+public:
+    Uniform(const std::string &name, UniformType uniformType) {
+        uniformHandle =
+            bgfx::createUniform(name.c_str(),
+                                (bgfx::UniformType::Enum) uniformType);
+    }
+
+    bgfx::UniformHandle uniformHandle;
+    ~Uniform() { bgfx::destroy(uniformHandle); }
+};
+
+class UniformSampler {
+private:
+public:
+    UniformSampler(const std::string &name) {
+        uniformHandle =
+            bgfx::createUniform(name.c_str(), bgfx::UniformType::Sampler);
+    }
+
+    bgfx::UniformHandle uniformHandle;
+    ~UniformSampler() { bgfx::destroy(uniformHandle); }
+};
+
+class Shader {
+private:
+    bgfx::ShaderHandle vsh;
+    bgfx::ShaderHandle fsh;
+
+public:
+    bgfx::ProgramHandle shaderHandle;
 
     Shader(const Buffer &vertex, const Buffer &fragment) {
         vsh = bgfx::createShader(vertex.memory);
@@ -35,23 +61,7 @@ private:
             throw Exception("involid shader");
     }
 
-public:
-    bgfx::ProgramHandle shaderHandle;
-    bgfx::ShaderHandle vsh;
-    bgfx::ShaderHandle fsh;
-
     ~Shader() { bgfx::destroy(shaderHandle); }
-
-    void setUniform(const Texture &texture, int position) const {
-        // GL::Shader::setTexture(texture);
-    }
-
-    void setAttributes(
-        const typename UNIFORM_ATTRIBUTES::Type &...UNIFORM_ATTRIBUTES_Type) {
-        // setShaderProgram(shaderProgram);
-        //(setUniform(UNIFORM_ATTRIBUTES_Type, UNIFORM_ATTRIBUTES::position),
-        //  ...);
-    }
 };
 
 } // namespace Blob

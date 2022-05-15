@@ -381,8 +381,7 @@ public:
 
     explicit Vec4(T xyzw[4]) : x(xyzw[0]), y(xyzw[1]), z(xyzw[2]), w(xyzw[3]) {}
 
-    explicit Vec4(const Vec3<T> &xyz, T w = 1) :
-        x(xyz.x), y(xyz.y), z(xyz.z), w(w) {}
+    Vec4(const Vec3<T> &xyz, T w = 1) : x(xyz.x), y(xyz.y), z(xyz.z), w(w) {}
 
     Vec4(const Vec2<T> &xy, T z, T w = 1) : x(xy.x), y(xy.y), z(z), w(w) {}
 
@@ -635,18 +634,6 @@ public:
         a32(mat[7]),
         a33(mat[8]) {}
 
-    void load(const std::array<float, 9> &mat) {
-        a11 = mat[0];
-        a12 = mat[1];
-        a13 = mat[2];
-        a21 = mat[3];
-        a22 = mat[4];
-        a23 = mat[5];
-        a31 = mat[6];
-        a32 = mat[7];
-        a33 = mat[8];
-    }
-
     constexpr inline Mat3 &operator=(const Mat2<float> &v) {
         a11 = v.a11;
         a21 = v.a21;
@@ -716,7 +703,7 @@ public:
 
     Mat4() noexcept = default;
 
-    explicit Mat4(float val) :
+    Mat4(float val) :
         a11(val),
         a21(val),
         a31(val),
@@ -1080,16 +1067,14 @@ private:
 public:
     using Mat3::Mat3;
 
-    explicit ModelTransform2D(const Mat3 &mat3) : Mat3(mat3) {}
+    ModelTransform2D(const Mat3 &mat3) : Mat3(mat3) {}
 
     explicit ModelTransform2D(const Vec2<> &position) { setPosition(position); }
-    explicit ModelTransform2D(const Vec2<> &position, const Vec2<> &scale) {
+    ModelTransform2D(const Vec2<> &position, const Vec2<> &scale) {
         setPosition(position);
         setScale(scale);
     }
-    explicit ModelTransform2D(const Vec2<> &position,
-                              const Vec2<> &scale,
-                              float angle) :
+    ModelTransform2D(const Vec2<> &position, const Vec2<> &scale, float angle) :
         scale(scale) {
         setPosition(position);
         setRotation(angle);
@@ -1150,10 +1135,10 @@ private:
 public:
     using Mat3::Mat3;
 
-    explicit ViewTransform2D() = default;
-    explicit ViewTransform2D(const Mat3 &mat3) : Mat3(mat3) {}
+    ViewTransform2D() = default;
+    ViewTransform2D(const Mat3 &mat3) : Mat3(mat3) {}
     explicit ViewTransform2D(const Vec2<> &position) { setPosition(position); }
-    explicit ViewTransform2D(const Vec2<> &position, float angle) {
+    ViewTransform2D(const Vec2<> &position, float angle) {
         setPosition(position);
         setRotation(angle);
     }
@@ -1219,7 +1204,7 @@ private:
 public:
     using Mat4::Mat4;
 
-    explicit ModelTransform(const Mat4 &mat4) : Mat4(mat4) {}
+    ModelTransform(const Mat4 &mat4) : Mat4(mat4) {}
 
     void setPosition(const Vec3<float> &xyz) {
         a14 = xyz.x;

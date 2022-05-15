@@ -1,168 +1,140 @@
 #include <Blob/Buffer.hpp>
 #include <Blob/Materials.hpp>
 #include <Blob/Window.hpp>
+#include <bgfx/bgfx.h>
 
+#include <memory>
 #include <shaders/f_colorArray.h>
+#include <shaders/f_colorUniform.h>
 #include <shaders/v_normal.h>
 
-namespace Blob::Materials2D {
+namespace Blob {
 
 /********************* SingleColor *********************/
 
-SingleColor::SingleColor(const Color::RGBA &albedo) :
-    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
-    albedo(albedo) {}
+std::unique_ptr<Material> Materials::singleColor(Context &context,
+                                                 const Color &albedo) {
+    std::unique_ptr<Shader> &shader = context.shaders["singleColor"];
+    if (!shader)
+        shader =
+            std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
 
-void SingleColor::applyMaterial() const {
-    shader->setAttributes(albedo);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
+    std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
+
+    material->color = albedo;
+    std::unique_ptr<Uniform> &uniformColor = context.uniforms["u_color"];
+    if (!uniformColor)
+        uniformColor = std::make_unique<Uniform>("u_color", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformColor,
+                                             (const void *) &material->color.R);
+
+    return material;
 }
 
-/********************* SingleTexture *********************/
+std::unique_ptr<Material> Materials::singleTexture(Context &context,
+                                                   const Texture &texture,
+                                                   const Color &albedo) {
+    std::unique_ptr<Shader> &shader = context.shaders["singleTexture"];
+    if (!shader)
+        shader =
+            std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
+    std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
 
-SingleColorSingleTexture::SingleColorSingleTexture(const Texture &texture,
-                                                   const Color::RGBA &albedo) :
-    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
-    texture(texture),
-    albedo(albedo) {}
+    material->color = albedo;
+    std::unique_ptr<Uniform> &uniformColor = context.uniforms["u_color"];
+    if (!uniformColor)
+        uniformColor = std::make_unique<Uniform>("u_color", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformColor, &material->color.R);
 
-void SingleColorSingleTexture::applyMaterial() const {
-    shader->setAttributes(albedo);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
+    return material;
 }
 
-} // namespace Blob::Materials2D
+std::unique_ptr<Material> Materials::perFaceNormal(Context &context,
+                                                   const Color &albedo) {
+    std::unique_ptr<Shader> &shader = context.shaders["perFaceNormal"];
+    if (!shader)
+        shader =
+            std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
+    std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
 
-namespace Blob::Materials {
+    material->color = albedo;
+    std::unique_ptr<Uniform> &uniformColor = context.uniforms["u_color"];
+    if (!uniformColor)
+        uniformColor = std::make_unique<Uniform>("u_color", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformColor, &material->color.R);
 
-/********************* SingleColor *********************/
-
-SingleColor::SingleColor(const Color::RGBA &albedo) :
-    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
-    albedo(albedo) {}
-
-void SingleColor::applyMaterial() const {
-    shader->setAttributes(albedo);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
+    return material;
 }
 
-/********************* SingleTexture *********************/
+std::unique_ptr<Material> Materials::pbrSingleColor(Context &context,
+                                                    const Color &albedo) {
+    std::unique_ptr<Shader> &shader = context.shaders["pbrSingleColor"];
+    if (!shader)
+        shader =
+            std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
+    std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
 
-SingleTexture::SingleTexture(const Texture &texture,
-                             const Vec2<> &texScale,
-                             const Color::RGBA &albedo) :
-    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
-    texture(texture),
-    texScale(texScale),
-    albedo(albedo) {}
+    material->color = albedo;
+    std::unique_ptr<Uniform> &uniformColor = context.uniforms["u_color"];
+    if (!uniformColor)
+        uniformColor = std::make_unique<Uniform>("u_color", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformColor, &material->color.R);
 
-void SingleTexture::applyMaterial() const {
-    shader->setAttributes(texScale);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
+    return material;
 }
 
-/********************* PerFaceNormal *********************/
+std::unique_ptr<Material>
+Materials::pbrSingleColorInstanced(Context &context, const Color &albedo) {
+    std::unique_ptr<Shader> &shader =
+        context.shaders["pbrSingleColorInstanced"];
+    if (!shader)
+        shader =
+            std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
+    std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
 
-void PerFaceNormal::applyMaterial() const {
-    shader->setAttributes(albedo, length);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
+    material->color = albedo;
+    std::unique_ptr<Uniform> &uniformColor = context.uniforms["u_color"];
+    if (!uniformColor)
+        uniformColor = std::make_unique<Uniform>("u_color", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformColor, &material->color.R);
+
+    return material;
 }
 
-/********************* PBR *********************/
-
-Light PBR::light;
-
-/********************* PBRSingleColor *********************/
-
-PBRSingleColor::PBRSingleColor(const Color::RGBA &albedo) :
-    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
-    albedo(albedo) {}
-
-void PBRSingleColor::applyMaterial() const {
-    shader->setAttributes(albedo,
-                          metallic,
-                          roughness,
-                          ao,
-                          light.position,
-                          light.color,
-                          light.radius,
-                          light.power);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
+std::unique_ptr<Material> Materials::pbrColorArray(Context &context) {
+    std::unique_ptr<Shader> &shader = context.shaders["pbrColorArray"];
+    if (!shader)
+        shader =
+            std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
+    std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
+    return material;
 }
 
-/********************* PBRSingleColorInstanced *********************/
-
-void PBRSingleColorInstanced::applyMaterial() const {
-    shader->setAttributes(albedo,
-                          metallic,
-                          roughness,
-                          ao,
-                          light.position,
-                          light.color,
-                          light.radius,
-                          light.power);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
+std::unique_ptr<Material> Materials::pbrColorArrayInstanced(Context &context) {
+    std::unique_ptr<Shader> &shader = context.shaders["pbrColorArrayInstanced"];
+    if (!shader)
+        shader =
+            std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
+    std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
+    return material;
 }
 
-/********************* PBRSingleTexture *********************/
+std::unique_ptr<Material> Materials::pbrSingleTexture(Context &context,
+                                                      const Texture &texture,
+                                                      const Color &albedo) {
+    std::unique_ptr<Shader> &shader = context.shaders["pbrSingleTexture"];
+    if (!shader)
+        shader =
+            std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
+    std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
 
-PBRSingleTexture::PBRSingleTexture(const Texture &texture,
-                                   const Vec2<> &texScale,
-                                   const Color::RGBA &albedo) :
-    shader(MaterialShader::getInstance(Buffer{v_normal}, Buffer{f_colorArray})),
-    texture(texture),
-    texScale(texScale),
-    albedo(albedo) {}
+    material->color = albedo;
+    std::unique_ptr<Uniform> &uniformColor = context.uniforms["u_color"];
+    if (!uniformColor)
+        uniformColor = std::make_unique<Uniform>("u_color", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformColor, &material->color.R);
 
-void PBRSingleTexture::applyMaterial() const {
-    shader->setAttributes(texScale,
-                          metallic,
-                          roughness,
-                          ao,
-                          light.position,
-                          light.color,
-                          light.radius,
-                          light.power);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
+    return material;
 }
 
-/********************* PBRColorArray *********************/
-
-void PBRColorArray::applyMaterial() const {
-    shader->setAttributes(metallic,
-                          roughness,
-                          ao,
-                          light.position,
-                          light.color,
-                          light.radius,
-                          light.power);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
-}
-
-/********************* PBRWater *********************/
-
-void PBRWater::applyMaterial() const {
-    shader->setAttributes(albedo,
-                          metallic,
-                          roughness,
-                          ao,
-                          light.position,
-                          light.color,
-                          light.radius,
-                          light.power,
-                          //(float) Window::totalTimeFlow,
-                          (float) 0.0);
-    bgfx::setState(BGFX_STATE_DEFAULT);
-    bgfx::submit(0, shader->shaderHandle);
-}
-
-} // namespace Blob::Materials
+} // namespace Blob

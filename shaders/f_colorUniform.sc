@@ -4,6 +4,7 @@ $input v_wpos, v_color0, v_view, v_normal, v_tangent, v_bitangent, v_texcoord0
 #include "shaderlib.sh"
 
 uniform vec4 u_lightPosRadius;
+uniform vec4 u_color;
 
 vec2 blinn(vec3 _lightDir, vec3 _normal, vec3 _viewDir)
 {
@@ -60,7 +61,7 @@ void main()
 	vec3 lightColor = calculateLight(u_lightPosRadius.xyz, u_lightPosRadius.w, 1, tbn, v_wpos, v_normal, v_view);
 
 	//gl_FragColor.xyz = max(vec3_splat(0.05), lightColor.xyz) * v_color0.xyz;
-	gl_FragColor = v_color0;
+	gl_FragColor = u_color;
 	gl_FragColor.w = 1.0;
 	gl_FragColor = toGamma(gl_FragColor);
 }

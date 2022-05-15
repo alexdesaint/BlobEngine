@@ -2,9 +2,11 @@
 
 // BlobEngine
 #include <Blob/Camera.hpp>
+#include <Blob/Context.hpp>
 #include <Blob/Controls.hpp>
+#include <Blob/GLFW.hpp>
+#include <Blob/ImGuiContext.hpp>
 #include <Blob/Mesh.hpp>
-#include <Blob/SDL2/Window.hpp>
 #include <Blob/Scene.hpp>
 #include <Blob/Shape.hpp>
 
@@ -15,71 +17,56 @@
 
 namespace Blob {
 
-class Window : private SDL2::Window {
+class Window : private GLFW::Window {
+public:
+    Context context;
+
 private:
     // time counting
     std::chrono::time_point<std::chrono::system_clock> lastFrameTime;
     uint32_t m_currFrame;
+    ImGuiContext imGuiContext;
 
     void windowResized() final;
 
-    void characterInput(unsigned int c) final;
+    // void textInput(std::string c) final;
 
     void keyboardUpdate(int key, bool pressed) final;
 
-    void mouseButtonUpdate(int button, bool pressed) final;
+    void mouseButtonUpdate(MouseKey button, bool pressed) final;
     void cursorPositionUpdate(double xpos, double ypos) final;
     void scrollUpdate(double xoffset, double yoffset) final;
 
 public:
-    Keyboard keyboard;
-    Mouse mouse;
+    // Keyboard keyboard;
+    // Mouse mouse;
     double timeFlow;
-    using SDL2::Window::close;
-    using SDL2::Window::isOpen;
-    using SDL2::Window::totalTimeFlow;
-    using SDL2::Window::windowSize;
+    using GLFW::Window::close;
+    using GLFW::Window::isOpen;
+    using GLFW::Window::totalTimeFlow;
+    using GLFW::Window::windowSize;
     ProjectionTransform projectionTransform;
     ProjectionTransform2D projectionTransform2D;
 
     explicit Window(const Vec2<unsigned int> &size = {640, 480},
                     std::string windowName = "BlobEngine");
-    ~Window();
 
     void draw(const Primitive &primitive,
-              const ViewTransform2D &camera,
-              const Mat3 &modelTransform = Mat3()) const;
-    void draw(const Mesh &mesh,
-              const ViewTransform2D &camera,
-              const Mat3 &modelTransform = Mat3()) const;
-    void draw(const Shape2D &shape,
-              const ViewTransform2D &camera,
-              const Mat3 &modelTransform = Mat3()) const;
-    void draw(const Scene2D &scene) const;
-
-    void draw(const Primitive &primitive,
-              const ViewTransform &camera,
-              const Mat4 &modelTransform = Mat4()) const;
-    void draw(const Mesh &mesh,
-              const ViewTransform &camera,
-              const Mat4 &modelTransform = Mat4()) const;
-    void draw(const Shape &shape,
-              const ViewTransform &camera,
-              const Mat4 &modelTransform = Mat4()) const;
+              const Mat4 &modelTransform = {}) const;
+    void draw(const Mesh &mesh, const Mat4 &modelTransform = {}) const;
+    void draw(const Shape &shape, const Mat4 &modelTransform = {}) const;
     void drawTransparent(const Mesh &mesh,
-                         const ViewTransform &camera,
-                         const Mat4 &modelTransform = Mat4()) const;
+                         const Mat4 &modelTransform = {}) const;
     void drawTransparent(const Shape &shape,
-                         const ViewTransform &camera,
-                         const Mat4 &modelTransform = Mat4()) const;
+                         const Mat4 &modelTransform = {}) const;
     void draw(const Scene &scene, const Mat4 &modelTransform) const;
-    void draw(const Scene &scene, const ViewTransform &camera) const;
     void draw(const Scene &scene) const;
 
     void disableMouseCursor();
     void enableMouseCursor();
 
-    double display();
+    double display(const ViewTransform &camera,
+                   const ViewTransform2D &camera2D = {});
 
     Vec3<float> getMousePositionInWorld(const Camera &camera);
     Vec3<float> getMousePositionInWorld(const Camera &camera, float z);

@@ -1,4 +1,5 @@
 #include <Blob/Collision/Forms.hpp>
+#include <cmath>
 
 namespace Blob {
 
@@ -46,7 +47,7 @@ std::unordered_set<Vec2<int32_t>> Polygon::rasterize() const {
 
     std::unordered_set<Vec2<int32_t>> ret;
 
-    Raster min = points.front().cast<int>(), max = points.front().cast<int>();
+    Vec2<> min = points.front(), max = points.front();
 
     for (const auto &point : points) {
         if (point.x < min.x)
@@ -59,8 +60,8 @@ std::unordered_set<Vec2<int32_t>> Polygon::rasterize() const {
             max.y = point.y;
     }
 
-    for (int x = min.x; x <= max.x; x++)
-        for (int y = min.y; y <= max.y; y++)
+    for (int x = std::floor(min.x); x <= std::ceil(max.x); x++)
+        for (int y = std::floor(min.y); y <= std::ceil(max.y); y++)
             ret.emplace(x, y);
 
     return ret;

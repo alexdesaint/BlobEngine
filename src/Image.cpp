@@ -27,18 +27,19 @@ Image::Image(unsigned char *data, const Vec2<size_t> &size, Channel channel) :
 Image::~Image() {
     stbi_image_free(data);
 }
-Color::RGBA Image::getPixel(const Blob::Vec2<size_t> &position) {
+
+Color Image::getPixel(const Blob::Vec2<size_t> &position) {
     switch (channel) {
     case RGB:
-        return Color::RGBA{data[3 * (position.y * size.x + position.x) + 0],
-                           data[3 * (position.y * size.x + position.x) + 1],
-                           data[3 * (position.y * size.x + position.x) + 2],
-                           1};
+        return Color{data[3 * (position.y * size.x + position.x) + 0],
+                     data[3 * (position.y * size.x + position.x) + 1],
+                     data[3 * (position.y * size.x + position.x) + 2],
+                     1};
     case RGBA:
-        return Color::RGBA{data[4 * (position.y * size.x + position.x) + 0],
-                           data[4 * (position.y * size.x + position.x) + 1],
-                           data[4 * (position.y * size.x + position.x) + 2],
-                           data[4 * (position.y * size.x + position.x) + 3]};
+        return Color{data[4 * (position.y * size.x + position.x) + 0],
+                     data[4 * (position.y * size.x + position.x) + 1],
+                     data[4 * (position.y * size.x + position.x) + 2],
+                     data[4 * (position.y * size.x + position.x) + 3]};
     case GREY:
     case GREY_ALPHA:
     default:

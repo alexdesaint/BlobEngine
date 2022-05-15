@@ -1,14 +1,15 @@
 #pragma once
 
-#include <Blob/FilePath.hpp>
 #include <Blob/Image.hpp>
-#include <memory>
+#include <bgfx/bgfx.h>
 
 namespace Blob {
 
 class Texture {
 public:
-    Texture() = default;
+    bgfx::TextureHandle textureHandle;
+
+    ~Texture();
     // explicit Texture(const std::string &path);
     // Texture(const std::string &path, GL::Sampler sampler);
     // explicit Texture(const Image &image);

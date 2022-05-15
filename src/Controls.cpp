@@ -1,267 +1,171 @@
 #include <Blob/Controls.hpp>
-
-// #include <imgui.h>
-#include <Blob/SDL2/Controls.hpp>
+#include <GLFW/glfw3.h>
 
 namespace Blob {
 
-std::string Key::getName() const {
-    const char *name = nullptr; // SDL2GetKeyName(id - 1, 0);
+// std::string Key::getName() const {
+//     const char *name = nullptr; // glfwGetKeyName(id - 1, 0);
 
-    if (name == nullptr)
-        return std::string();
-    else
-        return std::string(name);
-}
+//     if (name == nullptr)
+//         return std::string();
+//     else
+//         return std::string(name);
+// }
 
-Keyboard::Keyboard(const bool (&keys)[512]) :
-    UNKNOWN(SDL2::Keys::UNKNOWN, keys),
-    SPACE(SDL2::Keys::SPACE, keys),
-    APOSTROPHE(SDL2::Keys::APOSTROPHE, keys),
-    COMMA(SDL2::Keys::COMMA, keys),
-    MINUS(SDL2::Keys::MINUS, keys),
-    PERIOD(SDL2::Keys::PERIOD, keys),
-    SLASH(SDL2::Keys::SLASH, keys),
-    Zero(SDL2::Keys::Zero, keys),
-    One(SDL2::Keys::One, keys),
-    Two(SDL2::Keys::Two, keys),
-    Three(SDL2::Keys::Three, keys),
-    Four(SDL2::Keys::Four, keys),
-    Five(SDL2::Keys::Five, keys),
-    Six(SDL2::Keys::Six, keys),
-    Seven(SDL2::Keys::Seven, keys),
-    Eight(SDL2::Keys::Eight, keys),
-    Nine(SDL2::Keys::Nine, keys),
-    SEMICOLON(SDL2::Keys::SEMICOLON, keys),
-    EQUAL(SDL2::Keys::EQUAL, keys),
-    A(SDL2::Keys::A, keys),
-    B(SDL2::Keys::B, keys),
-    C(SDL2::Keys::C, keys),
-    D(SDL2::Keys::D, keys),
-    E(SDL2::Keys::E, keys),
-    F(SDL2::Keys::F, keys),
-    G(SDL2::Keys::G, keys),
-    H(SDL2::Keys::H, keys),
-    I(SDL2::Keys::I, keys),
-    J(SDL2::Keys::J, keys),
-    K(SDL2::Keys::K, keys),
-    L(SDL2::Keys::L, keys),
-    M(SDL2::Keys::M, keys),
-    N(SDL2::Keys::N, keys),
-    O(SDL2::Keys::O, keys),
-    P(SDL2::Keys::P, keys),
-    Q(SDL2::Keys::Q, keys),
-    R(SDL2::Keys::R, keys),
-    S(SDL2::Keys::S, keys),
-    T(SDL2::Keys::T, keys),
-    U(SDL2::Keys::U, keys),
-    V(SDL2::Keys::V, keys),
-    W(SDL2::Keys::W, keys),
-    X(SDL2::Keys::X, keys),
-    Y(SDL2::Keys::Y, keys),
-    Z(SDL2::Keys::Z, keys),
-    LEFT_BRACKET(SDL2::Keys::LEFT_BRACKET, keys),
-    BACKSLASH(SDL2::Keys::BACKSLASH, keys),
-    RIGHT_BRACKET(SDL2::Keys::RIGHT_BRACKET, keys),
-    GRAVE_ACCENT(SDL2::Keys::GRAVE_ACCENT, keys),
-    ESCAPE(SDL2::Keys::ESCAPE, keys),
-    ENTER(SDL2::Keys::ENTER, keys),
-    TAB(SDL2::Keys::TAB, keys),
-    BACKSPACE(SDL2::Keys::BACKSPACE, keys),
-    INSERT(SDL2::Keys::INSERT, keys),
-    DELETE(SDL2::Keys::DEL, keys),
-    RIGHT(SDL2::Keys::RIGHT, keys),
-    LEFT(SDL2::Keys::LEFT, keys),
-    DOWN(SDL2::Keys::DOWN, keys),
-    UP(SDL2::Keys::UP, keys),
-    PAGE_UP(SDL2::Keys::PAGE_UP, keys),
-    PAGE_DOWN(SDL2::Keys::PAGE_DOWN, keys),
-    HOME(SDL2::Keys::HOME, keys),
-    END(SDL2::Keys::END, keys),
-    CAPS_LOCK(SDL2::Keys::CAPS_LOCK, keys),
-    SCROLL_LOCK(SDL2::Keys::SCROLL_LOCK, keys),
-    NUM_LOCK(SDL2::Keys::NUM_LOCK, keys),
-    PRINT_SCREEN(SDL2::Keys::PRINT_SCREEN, keys),
-    PAUSE(SDL2::Keys::PAUSE, keys),
-    F1(SDL2::Keys::F1, keys),
-    F2(SDL2::Keys::F2, keys),
-    F3(SDL2::Keys::F3, keys),
-    F4(SDL2::Keys::F4, keys),
-    F5(SDL2::Keys::F5, keys),
-    F6(SDL2::Keys::F6, keys),
-    F7(SDL2::Keys::F7, keys),
-    F8(SDL2::Keys::F8, keys),
-    F9(SDL2::Keys::F9, keys),
-    F10(SDL2::Keys::F10, keys),
-    F11(SDL2::Keys::F11, keys),
-    F12(SDL2::Keys::F12, keys),
-    F13(SDL2::Keys::F13, keys),
-    F14(SDL2::Keys::F14, keys),
-    F15(SDL2::Keys::F15, keys),
-    F16(SDL2::Keys::F16, keys),
-    F17(SDL2::Keys::F17, keys),
-    F18(SDL2::Keys::F18, keys),
-    F19(SDL2::Keys::F19, keys),
-    F20(SDL2::Keys::F20, keys),
-    F21(SDL2::Keys::F21, keys),
-    F22(SDL2::Keys::F22, keys),
-    F23(SDL2::Keys::F23, keys),
-    F24(SDL2::Keys::F24, keys),
-    NumericKeypadZero(SDL2::Keys::NumericKeypadZero, keys),
-    NumericKeypadOne(SDL2::Keys::NumericKeypadOne, keys),
-    NumericKeypadTwo(SDL2::Keys::NumericKeypadTwo, keys),
-    NumericKeypadThree(SDL2::Keys::NumericKeypadThree, keys),
-    NumericKeypadFour(SDL2::Keys::NumericKeypadFour, keys),
-    NumericKeypadFive(SDL2::Keys::NumericKeypadFive, keys),
-    NumericKeypadSix(SDL2::Keys::NumericKeypadSix, keys),
-    NumericKeypadSeven(SDL2::Keys::NumericKeypadSeven, keys),
-    NumericKeypadEight(SDL2::Keys::NumericKeypadEight, keys),
-    NumericKeypadNine(SDL2::Keys::NumericKeypadNine, keys),
-    NumericKeypadDECIMAL(SDL2::Keys::NumericKeypadDECIMAL, keys),
-    NumericKeypadDIVIDE(SDL2::Keys::NumericKeypadDIVIDE, keys),
-    NumericKeypadMULTIPLY(SDL2::Keys::NumericKeypadMULTIPLY, keys),
-    NumericKeypadSUBTRACT(SDL2::Keys::NumericKeypadSUBTRACT, keys),
-    NumericKeypadADD(SDL2::Keys::NumericKeypadADD, keys),
-    NumericKeypadENTER(SDL2::Keys::NumericKeypadENTER, keys),
-    NumericKeypadEQUAL(SDL2::Keys::NumericKeypadEQUAL, keys),
-    LEFT_SHIFT(SDL2::Keys::LEFT_SHIFT, keys),
-    LEFT_CONTROL(SDL2::Keys::LEFT_CONTROL, keys),
-    LEFT_ALT(SDL2::Keys::LEFT_ALT, keys),
-    LEFT_SUPER(SDL2::Keys::LEFT_SUPER, keys),
-    RIGHT_SHIFT(SDL2::Keys::RIGHT_SHIFT, keys),
-    RIGHT_CONTROL(SDL2::Keys::RIGHT_CONTROL, keys),
-    RIGHT_ALT(SDL2::Keys::RIGHT_ALT, keys),
-    RIGHT_SUPER(SDL2::Keys::RIGHT_SUPER, keys),
-    MENU(SDL2::Keys::MENU, keys),
-    keys{{SDL2::Keys::UNKNOWN, &UNKNOWN},
-         {SDL2::Keys::SPACE, &SPACE},
-         {SDL2::Keys::APOSTROPHE, &APOSTROPHE},
-         {SDL2::Keys::COMMA, &COMMA},
-         {SDL2::Keys::MINUS, &MINUS},
-         {SDL2::Keys::PERIOD, &PERIOD},
-         {SDL2::Keys::SLASH, &SLASH},
-         {SDL2::Keys::Zero, &Zero},
-         {SDL2::Keys::One, &One},
-         {SDL2::Keys::Two, &Two},
-         {SDL2::Keys::Three, &Three},
-         {SDL2::Keys::Four, &Four},
-         {SDL2::Keys::Five, &Five},
-         {SDL2::Keys::Six, &Six},
-         {SDL2::Keys::Seven, &Seven},
-         {SDL2::Keys::Eight, &Eight},
-         {SDL2::Keys::Nine, &Nine},
-         {SDL2::Keys::SEMICOLON, &SEMICOLON},
-         {SDL2::Keys::EQUAL, &EQUAL},
-         {SDL2::Keys::A, &A},
-         {SDL2::Keys::B, &B},
-         {SDL2::Keys::C, &C},
-         {SDL2::Keys::D, &D},
-         {SDL2::Keys::E, &E},
-         {SDL2::Keys::F, &F},
-         {SDL2::Keys::G, &G},
-         {SDL2::Keys::H, &H},
-         {SDL2::Keys::I, &I},
-         {SDL2::Keys::J, &J},
-         {SDL2::Keys::K, &K},
-         {SDL2::Keys::L, &L},
-         {SDL2::Keys::M, &M},
-         {SDL2::Keys::N, &N},
-         {SDL2::Keys::O, &O},
-         {SDL2::Keys::P, &P},
-         {SDL2::Keys::Q, &Q},
-         {SDL2::Keys::R, &R},
-         {SDL2::Keys::S, &S},
-         {SDL2::Keys::T, &T},
-         {SDL2::Keys::U, &U},
-         {SDL2::Keys::V, &V},
-         {SDL2::Keys::W, &W},
-         {SDL2::Keys::X, &X},
-         {SDL2::Keys::Y, &Y},
-         {SDL2::Keys::Z, &Z},
-         {SDL2::Keys::LEFT_BRACKET, &LEFT_BRACKET},
-         {SDL2::Keys::BACKSLASH, &BACKSLASH},
-         {SDL2::Keys::RIGHT_BRACKET, &RIGHT_BRACKET},
-         {SDL2::Keys::GRAVE_ACCENT, &GRAVE_ACCENT},
-         {SDL2::Keys::ESCAPE, &ESCAPE},
-         {SDL2::Keys::ENTER, &ENTER},
-         {SDL2::Keys::TAB, &TAB},
-         {SDL2::Keys::BACKSPACE, &BACKSPACE},
-         {SDL2::Keys::INSERT, &INSERT},
-         {SDL2::Keys::DEL, &DELETE},
-         {SDL2::Keys::RIGHT, &RIGHT},
-         {SDL2::Keys::LEFT, &LEFT},
-         {SDL2::Keys::DOWN, &DOWN},
-         {SDL2::Keys::UP, &UP},
-         {SDL2::Keys::PAGE_UP, &PAGE_UP},
-         {SDL2::Keys::PAGE_DOWN, &PAGE_DOWN},
-         {SDL2::Keys::HOME, &HOME},
-         {SDL2::Keys::END, &END},
-         {SDL2::Keys::CAPS_LOCK, &CAPS_LOCK},
-         {SDL2::Keys::SCROLL_LOCK, &SCROLL_LOCK},
-         {SDL2::Keys::NUM_LOCK, &NUM_LOCK},
-         {SDL2::Keys::PRINT_SCREEN, &PRINT_SCREEN},
-         {SDL2::Keys::PAUSE, &PAUSE},
-         {SDL2::Keys::F1, &F1},
-         {SDL2::Keys::F2, &F2},
-         {SDL2::Keys::F3, &F3},
-         {SDL2::Keys::F4, &F4},
-         {SDL2::Keys::F5, &F5},
-         {SDL2::Keys::F6, &F6},
-         {SDL2::Keys::F7, &F7},
-         {SDL2::Keys::F8, &F8},
-         {SDL2::Keys::F9, &F9},
-         {SDL2::Keys::F10, &F10},
-         {SDL2::Keys::F11, &F11},
-         {SDL2::Keys::F12, &F12},
-         {SDL2::Keys::F13, &F13},
-         {SDL2::Keys::F14, &F14},
-         {SDL2::Keys::F15, &F15},
-         {SDL2::Keys::F16, &F16},
-         {SDL2::Keys::F17, &F17},
-         {SDL2::Keys::F18, &F18},
-         {SDL2::Keys::F19, &F19},
-         {SDL2::Keys::F20, &F20},
-         {SDL2::Keys::F21, &F21},
-         {SDL2::Keys::F22, &F22},
-         {SDL2::Keys::F23, &F23},
-         {SDL2::Keys::F24, &F24},
-         {SDL2::Keys::NumericKeypadZero, &NumericKeypadZero},
-         {SDL2::Keys::NumericKeypadOne, &NumericKeypadOne},
-         {SDL2::Keys::NumericKeypadTwo, &NumericKeypadTwo},
-         {SDL2::Keys::NumericKeypadThree, &NumericKeypadThree},
-         {SDL2::Keys::NumericKeypadFour, &NumericKeypadFour},
-         {SDL2::Keys::NumericKeypadFive, &NumericKeypadFive},
-         {SDL2::Keys::NumericKeypadSix, &NumericKeypadSix},
-         {SDL2::Keys::NumericKeypadSeven, &NumericKeypadSeven},
-         {SDL2::Keys::NumericKeypadEight, &NumericKeypadEight},
-         {SDL2::Keys::NumericKeypadNine, &NumericKeypadNine},
-         {SDL2::Keys::NumericKeypadDECIMAL, &NumericKeypadDECIMAL},
-         {SDL2::Keys::NumericKeypadDIVIDE, &NumericKeypadDIVIDE},
-         {SDL2::Keys::NumericKeypadMULTIPLY, &NumericKeypadMULTIPLY},
-         {SDL2::Keys::NumericKeypadSUBTRACT, &NumericKeypadSUBTRACT},
-         {SDL2::Keys::NumericKeypadADD, &NumericKeypadADD},
-         {SDL2::Keys::NumericKeypadENTER, &NumericKeypadENTER},
-         {SDL2::Keys::NumericKeypadEQUAL, &NumericKeypadEQUAL},
-         {SDL2::Keys::LEFT_SHIFT, &LEFT_SHIFT},
-         {SDL2::Keys::LEFT_CONTROL, &LEFT_CONTROL},
-         {SDL2::Keys::LEFT_ALT, &LEFT_ALT},
-         {SDL2::Keys::LEFT_SUPER, &LEFT_SUPER},
-         {SDL2::Keys::RIGHT_SHIFT, &RIGHT_SHIFT},
-         {SDL2::Keys::RIGHT_CONTROL, &RIGHT_CONTROL},
-         {SDL2::Keys::RIGHT_ALT, &RIGHT_ALT},
-         {SDL2::Keys::RIGHT_SUPER, &RIGHT_SUPER},
-         {SDL2::Keys::MENU, &MENU}} {}
+const MouseKey MouseKeys::LEFT = GLFW_MOUSE_BUTTON_LEFT;
+const MouseKey MouseKeys::MIDDLE = GLFW_MOUSE_BUTTON_MIDDLE;
+const MouseKey MouseKeys::RIGHT = GLFW_MOUSE_BUTTON_RIGHT;
+const MouseKey MouseKeys::X1 = GLFW_MOUSE_BUTTON_4;
+const MouseKey MouseKeys::X2 = GLFW_MOUSE_BUTTON_5;
+const MouseKey MouseKeys::X3 = GLFW_MOUSE_BUTTON_5;
+const MouseKey MouseKeys::X4 = GLFW_MOUSE_BUTTON_5;
+const MouseKey MouseKeys::X5 = GLFW_MOUSE_BUTTON_5;
 
-const Key &Keyboard::operator[](unsigned int id) {
-    auto it = keys.find(id);
-    if (it == keys.end())
-        return UNKNOWN;
-    return *it->second;
-}
+const Key Keys::UNKNOWN = GLFW_KEY_UNKNOWN;
+const Key Keys::SPACE = GLFW_KEY_SPACE;
+const Key Keys::APOSTROPHE = GLFW_KEY_APOSTROPHE;
+const Key Keys::COMMA = GLFW_KEY_COMMA;
+const Key Keys::MINUS = GLFW_KEY_MINUS;
+const Key Keys::PERIOD = GLFW_KEY_PERIOD;
+const Key Keys::SLASH = GLFW_KEY_SLASH;
+const Key Keys::Zero = GLFW_KEY_0;
+const Key Keys::One = GLFW_KEY_1;
+const Key Keys::Two = GLFW_KEY_2;
+const Key Keys::Three = GLFW_KEY_3;
+const Key Keys::Four = GLFW_KEY_4;
+const Key Keys::Five = GLFW_KEY_5;
+const Key Keys::Six = GLFW_KEY_6;
+const Key Keys::Seven = GLFW_KEY_7;
+const Key Keys::Eight = GLFW_KEY_8;
+const Key Keys::Nine = GLFW_KEY_9;
+const Key Keys::SEMICOLON = GLFW_KEY_SEMICOLON;
+const Key Keys::EQUAL = GLFW_KEY_EQUAL;
+const Key Keys::A = GLFW_KEY_A;
+const Key Keys::B = GLFW_KEY_B;
+const Key Keys::C = GLFW_KEY_C;
+const Key Keys::D = GLFW_KEY_D;
+const Key Keys::E = GLFW_KEY_E;
+const Key Keys::F = GLFW_KEY_F;
+const Key Keys::G = GLFW_KEY_G;
+const Key Keys::H = GLFW_KEY_H;
+const Key Keys::I = GLFW_KEY_I;
+const Key Keys::J = GLFW_KEY_J;
+const Key Keys::K = GLFW_KEY_K;
+const Key Keys::L = GLFW_KEY_L;
+const Key Keys::M = GLFW_KEY_M;
+const Key Keys::N = GLFW_KEY_N;
+const Key Keys::O = GLFW_KEY_O;
+const Key Keys::P = GLFW_KEY_P;
+const Key Keys::Q = GLFW_KEY_Q;
+const Key Keys::R = GLFW_KEY_R;
+const Key Keys::S = GLFW_KEY_S;
+const Key Keys::T = GLFW_KEY_T;
+const Key Keys::U = GLFW_KEY_U;
+const Key Keys::V = GLFW_KEY_V;
+const Key Keys::W = GLFW_KEY_W;
+const Key Keys::X = GLFW_KEY_X;
+const Key Keys::Y = GLFW_KEY_Y;
+const Key Keys::Z = GLFW_KEY_Z;
+const Key Keys::LEFT_BRACKET = GLFW_KEY_LEFT_BRACKET;
+const Key Keys::BACKSLASH = GLFW_KEY_BACKSLASH;
+const Key Keys::RIGHT_BRACKET = GLFW_KEY_RIGHT_BRACKET;
+const Key Keys::GRAVE_ACCENT = GLFW_KEY_GRAVE_ACCENT;
+const Key Keys::ESCAPE = GLFW_KEY_ESCAPE;
+const Key Keys::ENTER = GLFW_KEY_ENTER;
+const Key Keys::TAB = GLFW_KEY_TAB;
+const Key Keys::BACKSPACE = GLFW_KEY_BACKSPACE;
+const Key Keys::INSERT = GLFW_KEY_INSERT;
+const Key Keys::DEL = GLFW_KEY_DELETE;
+const Key Keys::RIGHT = GLFW_KEY_RIGHT;
+const Key Keys::LEFT = GLFW_KEY_LEFT;
+const Key Keys::DOWN = GLFW_KEY_DOWN;
+const Key Keys::UP = GLFW_KEY_UP;
+const Key Keys::PAGE_UP = GLFW_KEY_PAGE_UP;
+const Key Keys::PAGE_DOWN = GLFW_KEY_PAGE_DOWN;
+const Key Keys::HOME = GLFW_KEY_HOME;
+const Key Keys::END = GLFW_KEY_END;
+const Key Keys::CAPS_LOCK = GLFW_KEY_CAPS_LOCK;
+const Key Keys::SCROLL_LOCK = GLFW_KEY_SCROLL_LOCK;
+const Key Keys::NUM_LOCK = GLFW_KEY_NUM_LOCK;
+const Key Keys::PRINT_SCREEN = GLFW_KEY_PRINT_SCREEN;
+const Key Keys::PAUSE = GLFW_KEY_PAUSE;
+const Key Keys::F1 = GLFW_KEY_F1;
+const Key Keys::F2 = GLFW_KEY_F2;
+const Key Keys::F3 = GLFW_KEY_F3;
+const Key Keys::F4 = GLFW_KEY_F4;
+const Key Keys::F5 = GLFW_KEY_F5;
+const Key Keys::F6 = GLFW_KEY_F6;
+const Key Keys::F7 = GLFW_KEY_F7;
+const Key Keys::F8 = GLFW_KEY_F8;
+const Key Keys::F9 = GLFW_KEY_F9;
+const Key Keys::F10 = GLFW_KEY_F10;
+const Key Keys::F11 = GLFW_KEY_F11;
+const Key Keys::F12 = GLFW_KEY_F12;
+const Key Keys::F13 = GLFW_KEY_F13;
+const Key Keys::F14 = GLFW_KEY_F14;
+const Key Keys::F15 = GLFW_KEY_F15;
+const Key Keys::F16 = GLFW_KEY_F16;
+const Key Keys::F17 = GLFW_KEY_F17;
+const Key Keys::F18 = GLFW_KEY_F18;
+const Key Keys::F19 = GLFW_KEY_F19;
+const Key Keys::F20 = GLFW_KEY_F20;
+const Key Keys::F21 = GLFW_KEY_F21;
+const Key Keys::F22 = GLFW_KEY_F22;
+const Key Keys::F23 = GLFW_KEY_F23;
+const Key Keys::F24 = GLFW_KEY_F24;
+const Key Keys::NumericKeypadZero = GLFW_KEY_KP_0;
+const Key Keys::NumericKeypadOne = GLFW_KEY_KP_1;
+const Key Keys::NumericKeypadTwo = GLFW_KEY_KP_2;
+const Key Keys::NumericKeypadThree = GLFW_KEY_KP_3;
+const Key Keys::NumericKeypadFour = GLFW_KEY_KP_4;
+const Key Keys::NumericKeypadFive = GLFW_KEY_KP_5;
+const Key Keys::NumericKeypadSix = GLFW_KEY_KP_6;
+const Key Keys::NumericKeypadSeven = GLFW_KEY_KP_7;
+const Key Keys::NumericKeypadEight = GLFW_KEY_KP_8;
+const Key Keys::NumericKeypadNine = GLFW_KEY_KP_9;
+const Key Keys::NumericKeypadDECIMAL = GLFW_KEY_KP_DECIMAL;
+const Key Keys::NumericKeypadDIVIDE = GLFW_KEY_KP_DIVIDE;
+const Key Keys::NumericKeypadMULTIPLY = GLFW_KEY_KP_MULTIPLY;
+const Key Keys::NumericKeypadSUBTRACT = GLFW_KEY_KP_SUBTRACT;
+const Key Keys::NumericKeypadADD = GLFW_KEY_KP_ADD;
+const Key Keys::NumericKeypadENTER = GLFW_KEY_KP_ENTER;
+const Key Keys::NumericKeypadEQUAL = GLFW_KEY_KP_EQUAL;
+const Key Keys::LEFT_SHIFT = GLFW_KEY_LEFT_SHIFT;
+const Key Keys::LEFT_CONTROL = GLFW_KEY_LEFT_CONTROL;
+const Key Keys::LEFT_ALT = GLFW_KEY_LEFT_ALT;
+const Key Keys::LEFT_SUPER = GLFW_KEY_LEFT_SUPER;
+const Key Keys::RIGHT_SHIFT = GLFW_KEY_RIGHT_SHIFT;
+const Key Keys::RIGHT_CONTROL = GLFW_KEY_RIGHT_CONTROL;
+const Key Keys::RIGHT_ALT = GLFW_KEY_RIGHT_ALT;
+const Key Keys::RIGHT_SUPER = GLFW_KEY_RIGHT_SUPER;
+const Key Keys::MENU = GLFW_KEY_MENU;
 
-std::list<KeyboardEvents *> KeyboardEvents::subscribers;
-std::list<KeyboardEvents2 *> KeyboardEvents2::subscribers;
-std::list<MouseEvents *> MouseEvents::subscribers;
+const GamepadKey GamepadKeys::A = GLFW_GAMEPAD_BUTTON_A;
+const GamepadKey GamepadKeys::B = GLFW_GAMEPAD_BUTTON_B;
+const GamepadKey GamepadKeys::X = GLFW_GAMEPAD_BUTTON_X;
+const GamepadKey GamepadKeys::Y = GLFW_GAMEPAD_BUTTON_Y;
+const GamepadKey GamepadKeys::LEFT_BUMPER = GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
+const GamepadKey GamepadKeys::RIGHT_BUMPER = GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
+const GamepadKey GamepadKeys::BACK = GLFW_GAMEPAD_BUTTON_BACK;
+const GamepadKey GamepadKeys::START = GLFW_GAMEPAD_BUTTON_START;
+const GamepadKey GamepadKeys::GUIDE = GLFW_GAMEPAD_BUTTON_GUIDE;
+const GamepadKey GamepadKeys::LEFT_THUMB = GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
+const GamepadKey GamepadKeys::RIGHT_THUMB = GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
+const GamepadKey GamepadKeys::DPAD_UP = GLFW_GAMEPAD_BUTTON_DPAD_UP;
+const GamepadKey GamepadKeys::DPAD_RIGHT = GLFW_GAMEPAD_BUTTON_DPAD_RIGHT;
+const GamepadKey GamepadKeys::DPAD_DOWN = GLFW_GAMEPAD_BUTTON_DPAD_DOWN;
+const GamepadKey GamepadKeys::DPAD_LEFT = GLFW_GAMEPAD_BUTTON_DPAD_LEFT;
+const GamepadKey GamepadKeys::CROSS = GLFW_GAMEPAD_BUTTON_CROSS;
+const GamepadKey GamepadKeys::CIRCLE = GLFW_GAMEPAD_BUTTON_CIRCLE;
+const GamepadKey GamepadKeys::SQUARE = GLFW_GAMEPAD_BUTTON_SQUARE;
+const GamepadKey GamepadKeys::TRIANGLE = GLFW_GAMEPAD_BUTTON_TRIANGLE;
+
+const GamepadKey GamepadAxis::leftX = GLFW_GAMEPAD_AXIS_LEFT_X;
+const GamepadKey GamepadAxis::leftY = GLFW_GAMEPAD_AXIS_LEFT_Y;
+const GamepadKey GamepadAxis::rightX = GLFW_GAMEPAD_AXIS_RIGHT_X;
+const GamepadKey GamepadAxis::rightY = GLFW_GAMEPAD_AXIS_RIGHT_Y;
+const GamepadKey GamepadAxis::leftTRIGGER = GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
+const GamepadKey GamepadAxis::rightTRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
 
 /*
 void Controller::controllerOut() const {
@@ -279,11 +183,8 @@ void Controller::controllerOut() const {
     ImGui::End();
 }
 */
-// Controller::Controller(size_t num) :
-//     name(SDL2::Window::joystickName[num]),
-//     connected(SDL2::Window::joystickConnected[num]),
-//     buttonsCount(SDL2::Window::joystickButtonsCount[num]),
-//     buttons(SDL2::Window::joystickButtons[num]),
-//     joystickAxesCount(SDL2::Window::joystickAxesCount[num]),
-//     joystickAxes(SDL2::Window::joystickAxes[num]) {}
+
+std::list<KeyboardEvents *> KeyboardEvents::subscribers;
+std::list<MouseEvents *> MouseEvents::subscribers;
+
 } // namespace Blob

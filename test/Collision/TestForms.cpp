@@ -1,4 +1,3 @@
-#include <SDL.h>
 #include <iostream>
 #include <list>
 
@@ -11,33 +10,31 @@ class CircleShape {
 public:
     float rayon;
     Point position;
-    Color::RGB color;
+    Color color;
 
-    CircleShape(float rayon,
-                const Point &position,
-                Color::RGB color = Color::White) :
+    CircleShape(float rayon, const Point &position, Color color = X11::White) :
         rayon(rayon), position(position), color(color) {}
 };
 
 class RectangleShape {
 public:
     Point position, size;
-    Color::RGB color;
+    Color color;
 
     RectangleShape(const Point &size,
                    const Point &position,
-                   Color::RGB color = Color::White) :
+                   Color color = X11::White) :
         position(position), size(size), color(color) {}
 };
 
 class LineShape {
 public:
     Point position1, position2;
-    Color::RGB color;
+    Color color;
 
     LineShape(const Point &position1,
               const Point &position2,
-              Color::RGB color = Color::White) :
+              Color color = X11::White) :
         position1(position1), position2(position2), color(color) {}
 };
 
@@ -193,9 +190,7 @@ public:
 
 class RectangleObject : public Rectangle, public RectangleShape {
 public:
-    RectangleObject(Point position,
-                    Point size,
-                    Color::RGB fillColor = Color::White) :
+    RectangleObject(Point position, Point size, Color fillColor = X11::White) :
         Rectangle(position, size), RectangleShape(size, position, fillColor) {}
 
     void setPosition(Point p) {
@@ -289,13 +284,13 @@ public:
                     if (circleCursor.overlap(c))
                         hit = true;
                 if (hit)
-                    circleCursor.color = Color::Red;
+                    circleCursor.color = X11::Red;
                 else
-                    circleCursor.color = Color::Green;
+                    circleCursor.color = X11::Green;
                 for (auto &r : circleCursor.rasterize())
                     window.draw(RectangleShape(Point{1, 1},
                                                r.cast<float>() + 0.5f,
-                                               Color::Blue));
+                                               X11::Blue));
                 window.draw(circleCursor);
                 break;
             case 1:
@@ -313,13 +308,13 @@ public:
                     if (rectangleCursor.overlap(c))
                         hit = true;
                 if (hit)
-                    rectangleCursor.color = Color::Red;
+                    rectangleCursor.color = X11::Red;
                 else
-                    rectangleCursor.color = Color::Green;
+                    rectangleCursor.color = X11::Green;
                 for (auto &r : rectangleCursor.rasterize())
                     window.draw(RectangleShape(Point{1, 1},
                                                r.cast<float>() + 0.5f,
-                                               Color::Blue));
+                                               X11::Blue));
                 window.draw(rectangleCursor);
                 break;
             case 2:
@@ -337,13 +332,13 @@ public:
                     if (pointCursor.overlap(c))
                         hit = true;
                 if (hit)
-                    pointCursor.color = Color::Red;
+                    pointCursor.color = X11::Red;
                 else
-                    pointCursor.color = Color::Green;
+                    pointCursor.color = X11::Green;
                 for (auto &r : pointCursor.rasterize())
                     window.draw(RectangleShape(Point{1, 1},
                                                r.cast<float>() + 0.5f,
-                                               Color::Blue));
+                                               X11::Blue));
                 window.draw(pointCursor);
                 break;
             case 3:
@@ -369,13 +364,13 @@ public:
                     if (lineCursor.overlap(c))
                         hit = true;
                 if (hit)
-                    lineCursor.color = Color::Red;
+                    lineCursor.color = X11::Red;
                 else
-                    lineCursor.color = Color::Green;
+                    lineCursor.color = X11::Green;
                 for (auto &r : lineCursor.rasterize())
                     window.draw(RectangleShape(Point{1, 1},
                                                r.cast<float>() + 0.5f,
-                                               Color::Blue));
+                                               X11::Blue));
                 window.draw(lineCursor);
                 break;
             }

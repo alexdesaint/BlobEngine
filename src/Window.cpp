@@ -4,33 +4,19 @@
 
 #include <bgfx/platform.h>
 
-//#include <backends/imgui_impl_glfw.h>
-//#include <backends/imgui_impl_opengl3.h>
-
 // Blob
 #include <chrono>
 #include <cstddef>
-//#include <imgui.h>
+#include <imgui.h>
 #include <iostream>
 
 namespace Blob {
 
 Window::Window(const Vec2<unsigned int> &size, std::string windowName) :
-    SDL2::Window(size),
-    keyboard(keys),
-    mouse(cursorPosition, scrollOffsetH, scrollOffsetW, mouseButton),
+    context(getNativeDisplayType(), getNativeWindowHandle()),
+    GLFW::Window(size),
     projectionTransform(PI / 4, windowSize, 0.1, 1000, false),
     projectionTransform2D(windowSize.cast<float>()) {
-    bgfx::PlatformData pd;
-    pd.ndt = getNativeDisplayType();
-    pd.nwh = getNativeWindowHandle();
-    bgfx::setPlatformData(pd);
-
-    bgfx::renderFrame();
-
-    if (!bgfx::init())
-        throw Blob::Exception("Failed to init bgfx");
-
     // Clear the view rect
     bgfx::setViewClear(0,
                        BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
@@ -42,44 +28,53 @@ Window::Window(const Vec2<unsigned int> &size, std::string windowName) :
 
     bgfx::touch(0);
 
-    // IMGUI_CHECKVERSION();
-    // ImGui::CreateContext();
-    // ImGuiIO &io = ImGui::GetIO();
-    // io.BackendRendererName = "BlobEngine";
-    // io.IniFilename = nullptr;
-    // ImGui::StyleColorsDark();
-    // ImGui_ImplGlfw_InitForOpenGL((GLFWwindow *) GLFW::Window::window, true);
-    // ImGui_ImplOpenGL3_Init("#version 450");
+    ImGuiIO &io = ImGui::GetIO();
+    io.BackendRendererName = "BlobEngine";
+    io.IniFilename = nullptr;
+    io.UserData = this;
+    io.SetClipboardTextFn = [](void *userData, const char *text) {
+        ((Blob::Window *) userData)->setClipboardText(text);
+    };
+    io.GetClipboardTextFn = [](void *userData) {
+        return ((Blob::Window *) userData)->getClipboardText();
+    };
+    io.ClipboardUserData = nullptr;
+    io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+    io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
-    // ImGui_ImplOpenGL3_NewFrame();
-    // ImGui_ImplGlfw_NewFrame();
-    // ImGui::NewFrame();
+    ImGui::NewFrame();
 
     lastFrameTime = std::chrono::system_clock::now();
 }
 
-Window::~Window() {
-    // ImGui_ImplOpenGL3_Shutdown();
-    // ImGui_ImplGlfw_Shutdown();
-    // ImGui::DestroyContext();
+double Window::display(const ViewTransform &camera,
+                       const ViewTransform2D &camera2D) {
+    ImGuiIO &io = ImGui::GetIO();
+    // if (io.WantSetMousePos)
+    //     SDL_WarpMouseInWindow(bd->Window,
+    //                           (int) io.MousePos.x,
+    //                           (int) io.MousePos.y);
+    ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+    if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None) {
+        setCursorState(CURSOR_HIDDEN);
+    } else {
+        setCursorState(CURSOR_NORMAL);
 
-    bgfx::shutdown();
-}
+        setMouseCursor((GLFW::MouseCursor) imgui_cursor);
+    }
 
-double Window::display() {
-    // enableSRGB(false);
-    // ImGui::Render();
-    // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    // enableSRGB(true);
+    bgfx::setViewTransform(0, &camera.a11, &projectionTransform.a11);
 
+    // render
+    ImGui::Render();
+    imGuiContext.RenderDrawData(ImGui::GetDrawData());
     m_currFrame = bgfx::frame();
 
+    // new frame
     bgfx::touch(0);
+    ImGui::NewFrame();
 
-    // ImGui_ImplOpenGL3_NewFrame();
-    // ImGui_ImplGlfw_NewFrame();
-    // ImGui::NewFrame();
-
+    // time mesuring
     std::chrono::time_point<std::chrono::system_clock> now =
         std::chrono::system_clock::now();
 
@@ -87,8 +82,8 @@ double Window::display() {
         now - lastFrameTime);
     timeFlow = diff.count();
     lastFrameTime = now;
-
-    pollEvents();
+    // events
+    updateInputs();
 
     return timeFlow;
 }
@@ -99,11 +94,13 @@ void Window::windowResized() {
 
     projectionTransform.setRatio(windowSize);
     projectionTransform2D.setRatio(windowSize.cast<float>());
+
+    ImGui::GetIO().DisplaySize = ImVec2(windowSize.x, windowSize.y);
 }
 
-void Window::characterInput(unsigned int c) {
-    // imgui.addInputCharacter(c);
-}
+// void Window::textInput(std::string c) {
+//     ImGui::GetIO().AddInputCharactersUTF8(c.c_str());
+// }
 
 Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
     /*
@@ -144,11 +141,11 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
 
     auto readPixel = [](Vec2<int> pos) { return 0; };
 
-    auto mousePos = cursorPosition, size = windowSize.cast<float>();
+    Vec2<> mousePos, size = windowSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
-    Vec4<float> pos(mousePos / size * 2 - 1,
-                    readPixel(mousePos.cast<int>()) * 2 - 1);
+    Vec4<> pos(mousePos / size * 2 - 1,
+               readPixel(mousePos.cast<int>()) * 2 - 1);
 
     // ImGui::Begin("getWorldPosition");
     // ImGui::Text("Window : %f %f %f %f", pos.x, pos.y, pos.z, pos.w);
@@ -168,7 +165,7 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
 
 Vec3<float> Window::getMousePositionInWorld(const Camera &camera,
                                             float zWorld) {
-    auto mousePos = cursorPosition, size = windowSize.cast<float>();
+    Vec2<> mousePos, size = windowSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
     Vec4<> screenPos{mousePos / size * 2 - 1, 0, 1};
@@ -187,54 +184,22 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera,
     /*
     ImGui::Begin("getWorldPosition");
     ImGui::Text("MVP :\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f",
-                MVP.a11,
-                MVP.a12,
-                MVP.a13,
-                MVP.a14,
-                MVP.a21,
-                MVP.a22,
-                MVP.a23,
-                MVP.a24,
-                MVP.a31,
-                MVP.a32,
-                MVP.a33,
-                MVP.a34,
-                MVP.a41,
-                MVP.a42,
-                MVP.a43,
-                MVP.a44);
+                MVP.a11, MVP.a12, MVP.a13, MVP.a14,
+                MVP.a21, MVP.a22, MVP.a23, MVP.a24,
+                MVP.a31, MVP.a32, MVP.a33, MVP.a34,
+                MVP.a41, MVP.a42, MVP.a43, MVP.a44);
     ImGui::Text("MVPinv :\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f",
-                MVPinv.a11,
-                MVPinv.a12,
-                MVPinv.a13,
-                MVPinv.a14,
-                MVPinv.a21,
-                MVPinv.a22,
-                MVPinv.a23,
-                MVPinv.a24,
-                MVPinv.a31,
-                MVPinv.a32,
-                MVPinv.a33,
-                MVPinv.a34,
-                MVPinv.a41,
-                MVPinv.a42,
-                MVPinv.a43,
-                MVPinv.a44);
+                MVPinv.a11, MVPinv.a12, MVPinv.a13, MVPinv.a14,
+                MVPinv.a21, MVPinv.a22, MVPinv.a23, MVPinv.a24,
+                MVPinv.a31, MVPinv.a32, MVPinv.a33, MVPinv.a34,
+                MVPinv.a41, MVPinv.a42, MVPinv.a43, MVPinv.a44);
     ImGui::Text("screenPos : %f %f %f %f",
-                screenPos.x,
-                screenPos.y,
-                screenPos.z,
-                screenPos.w);
+                screenPos.x, screenPos.y, screenPos.z, screenPos.w);
     ImGui::Text("worldPos non div : %f %f %f %f",
-                worldPos.x,
-                worldPos.y,
-                worldPos.z,
-                worldPos.w);
+                worldPos.x, worldPos.y, worldPos.z, worldPos.w);
     ImGui::Text("World : %f %f %f %f",
-                worldPos.x / worldPos.w,
-                worldPos.y / worldPos.w,
-                worldPos.z / worldPos.w,
-                worldPos.w / worldPos.w);
+                worldPos.x / worldPos.w, worldPos.y / worldPos.w,
+                worldPos.z / worldPos.w, worldPos.w / worldPos.w);
     ImGui::End();
     */
 
@@ -266,54 +231,7 @@ std::array<Vec3<>, 4> Window::getCameraCornersInWorld(const Camera &camera,
     return ret;
 }
 
-void Window::draw(const Primitive &primitive,
-                  const ViewTransform2D &camera,
-                  const Mat3 &model) const {
-    bgfx::setViewTransform(0, &camera.a11, &projectionTransform.a11);
-
-    bgfx::setTransform(&model.a11);
-    bgfx::setVertexBuffer(0, primitive.vertexBuffer->vertexBufferHandle);
-
-    primitive.material->applyMaterial();
-
-    if (primitive.renderOptions->instancedCount)
-        throw Exception("instancedCount not supported");
-    else
-        bgfx::setIndexBuffer(primitive.renderOptions->indexBufferHandle);
-}
-
-void Window::draw(const Mesh &mesh,
-                  const ViewTransform2D &camera,
-                  const Mat3 &sceneModel) const {
-    for (auto r : mesh.primitives)
-        draw(*r, camera, sceneModel);
-}
-
-void Window::draw(const Shape2D &shape,
-                  const ViewTransform2D &camera,
-                  const Mat3 &sceneModel) const {
-    // Mat3 modelMatrix = shape * sceneModel;
-    Mat3 modelMatrix = sceneModel * shape;
-
-    if (shape.mesh != nullptr)
-        draw(*shape.mesh, camera, modelMatrix);
-
-    for (auto r : shape.shapes)
-        draw(*r, camera, modelMatrix);
-}
-
-void Window::draw(const Scene2D &scene) const {
-    for (auto r : scene.shapes)
-        draw(*r, scene.camera);
-    // for (auto r : scene.shapes)
-    //    drawTransparent(*r, scene.camera);
-}
-
-void Window::draw(const Primitive &primitive,
-                  const ViewTransform &camera,
-                  const Mat4 &model) const {
-    bgfx::setViewTransform(0, &camera.a11, &projectionTransform.a11);
-
+void Window::draw(const Primitive &primitive, const Mat4 &model) const {
     bgfx::setIndexBuffer(primitive.renderOptions->indexBufferHandle);
     bgfx::setTransform(&model.a11);
     bgfx::setVertexBuffer(0, primitive.vertexBuffer->vertexBufferHandle);
@@ -326,100 +244,92 @@ void Window::draw(const Primitive &primitive,
         bgfx::setIndexBuffer(primitive.renderOptions->indexBufferHandle);
 }
 
-void Window::draw(const Mesh &mesh,
-                  const ViewTransform &camera,
-                  const Mat4 &sceneModel) const {
+void Window::draw(const Mesh &mesh, const Mat4 &sceneModel) const {
     for (auto r : mesh.primitives)
-        draw(*r, camera, sceneModel);
+        draw(*r, sceneModel);
 }
 
-void Window::draw(const Shape &shape,
-                  const ViewTransform &camera,
-                  const Mat4 &sceneModel) const {
+void Window::draw(const Shape &shape, const Mat4 &sceneModel) const {
     // Mat4 modelMatrix = shape * sceneModel;
     Mat4 modelMatrix = sceneModel * shape;
 
     if (shape.mesh != nullptr)
-        draw(*shape.mesh, camera, modelMatrix);
+        draw(*shape.mesh, modelMatrix);
 
     for (auto r : shape.shapes)
-        draw(*r, camera, modelMatrix);
+        draw(*r, modelMatrix);
 }
 
 void Window::draw(const Scene &scene, const Mat4 &sceneModel) const {
     for (auto r : scene.shapes)
-        draw(*r, scene.camera, sceneModel);
+        draw(*r, sceneModel);
     for (auto r : scene.shapes)
-        drawTransparent(*r, scene.camera, sceneModel);
-}
-
-void Window::draw(const Scene &scene, const ViewTransform &camera) const {
-    for (auto r : scene.shapes)
-        draw(*r, camera);
-    for (auto r : scene.shapes)
-        drawTransparent(*r, camera);
+        drawTransparent(*r, sceneModel);
 }
 
 void Window::draw(const Scene &scene) const {
     for (auto r : scene.shapes)
-        draw(*r, scene.camera);
+        draw(*r);
     for (auto r : scene.shapes)
-        drawTransparent(*r, scene.camera);
+        drawTransparent(*r);
 }
 
-void Window::drawTransparent(const Mesh &mesh,
-                             const ViewTransform &camera,
-                             const Mat4 &sceneModel) const {
+void Window::drawTransparent(const Mesh &mesh, const Mat4 &sceneModel) const {
     for (auto r : mesh.transparentPrimitives)
-        draw(*r, camera, sceneModel);
+        draw(*r, sceneModel);
 }
 
-void Window::drawTransparent(const Shape &shape,
-                             const ViewTransform &camera,
-                             const Mat4 &sceneModel) const {
+void Window::drawTransparent(const Shape &shape, const Mat4 &sceneModel) const {
     // Mat4 modelMatrix = shape * sceneModel;
     Mat4 modelMatrix = sceneModel * shape;
 
     if (shape.mesh != nullptr)
-        drawTransparent(*shape.mesh, camera, modelMatrix);
+        drawTransparent(*shape.mesh, modelMatrix);
 
     for (auto r : shape.shapes)
-        drawTransparent(*r, camera, modelMatrix);
+        drawTransparent(*r, modelMatrix);
 }
 
-void Window::keyboardUpdate(int key, bool pressed) {
+void Window::keyboardUpdate(Key key, bool pressed) {
+    ImGuiKey imGuiKey = imGuiContext.KeycodeToImGuiKey(key);
+    ImGui::GetIO().AddKeyEvent(imGuiKey, pressed);
     for (auto &k : KeyboardEvents::subscribers)
-        k->keyboardUpdate(keyboard[key]);
-    for (auto &k : KeyboardEvents2::subscribers) {
-        auto it = k->callbacks.find(key);
-        if (it != k->callbacks.end() && it->second)
-            it->second(pressed);
-    }
+        k->keyUpdate(key, pressed);
 }
 
-void Window::mouseButtonUpdate(int button, bool pressed) {
+void Window::mouseButtonUpdate(MouseKey button, bool pressed) {
+    int mouse_button = -1;
+    if (button == MouseKeys::LEFT)
+        mouse_button = 0;
+    if (button == MouseKeys::RIGHT)
+        mouse_button = 1;
+    if (button == MouseKeys::MIDDLE)
+        mouse_button = 2;
+    if (mouse_button != -1)
+        ImGui::GetIO().AddMouseButtonEvent(mouse_button, pressed);
+
     for (auto &k : MouseEvents::subscribers)
         k->mouseButtonUpdate(button, pressed);
 }
 
 void Window::cursorPositionUpdate(double xpos, double ypos) {
+    ImGui::GetIO().AddMousePosEvent(xpos, ypos);
     for (auto &k : MouseEvents::subscribers)
         k->cursorPosUpdate(xpos, ypos);
 }
 
 void Window::scrollUpdate(double xoffset, double yoffset) {
+    ImGui::GetIO().AddMouseWheelEvent(xoffset, yoffset);
     for (auto &k : MouseEvents::subscribers)
         k->scrollUpdate(xoffset, yoffset);
 }
 
 void Window::disableMouseCursor() {
-    // ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
-    setCursorState(CURSOR_DISABLED);
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
 }
 
 void Window::enableMouseCursor() {
-    // ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-    setCursorState(CURSOR_NORMAL);
+    ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 }
 
 } // namespace Blob

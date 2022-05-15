@@ -1,16 +1,10 @@
 #include <Blob/Color.hpp>
-namespace Blob::Color {
+namespace Blob {
 
-std::ostream &operator<<(std::ostream &out, const RGB &vec) {
-    out << "(" << vec.R << ", " << vec.G << ", "
-        << vec.B /*<< ", " << vec.A*/ << ")" << std::endl;
-    return out;
-}
-
-std::ostream &operator<<(std::ostream &out, const RGBA &vec) {
+std::ostream &operator<<(std::ostream &out, const Color &vec) {
     out << "(" << vec.R << ", " << vec.G << ", " << vec.B << ", " << vec.A
         << ")" << std::endl;
     return out;
 }
 
-} // namespace Blob::Color
+} // namespace Blob

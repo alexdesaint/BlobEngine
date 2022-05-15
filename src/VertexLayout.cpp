@@ -1,4 +1,3 @@
-#include "SDL_stdinc.h"
 #include <Blob/VertexLayout.hpp>
 
 namespace Blob {
