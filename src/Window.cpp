@@ -18,11 +18,7 @@ Window::Window(const Vec2<unsigned int> &size, std::string windowName) :
     projectionTransform(PI / 4, windowSize, 0.1, 1000, false),
     projectionTransform2D(windowSize.cast<float>()) {
     // Clear the view rect
-    bgfx::setViewClear(0,
-                       BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
-                       0x443355FF,
-                       1.0f,
-                       0);
+    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
 
     windowResized();
 
@@ -47,8 +43,7 @@ Window::Window(const Vec2<unsigned int> &size, std::string windowName) :
     lastFrameTime = std::chrono::system_clock::now();
 }
 
-double Window::display(const ViewTransform &camera,
-                       const ViewTransform2D &camera2D) {
+double Window::display(const ViewTransform &camera) {
     ImGuiIO &io = ImGui::GetIO();
     // if (io.WantSetMousePos)
     //     SDL_WarpMouseInWindow(bd->Window,
@@ -75,11 +70,9 @@ double Window::display(const ViewTransform &camera,
     ImGui::NewFrame();
 
     // time mesuring
-    std::chrono::time_point<std::chrono::system_clock> now =
-        std::chrono::system_clock::now();
+    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
 
-    auto diff = std::chrono::duration_cast<std::chrono::duration<double>>(
-        now - lastFrameTime);
+    auto diff = std::chrono::duration_cast<std::chrono::duration<double>>(now - lastFrameTime);
     timeFlow = diff.count();
     lastFrameTime = now;
     // events
@@ -144,8 +137,7 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
     Vec2<> mousePos, size = windowSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
-    Vec4<> pos(mousePos / size * 2 - 1,
-               readPixel(mousePos.cast<int>()) * 2 - 1);
+    Vec4<> pos(mousePos / size * 2 - 1, readPixel(mousePos.cast<int>()) * 2 - 1);
 
     // ImGui::Begin("getWorldPosition");
     // ImGui::Text("Window : %f %f %f %f", pos.x, pos.y, pos.z, pos.w);
@@ -163,9 +155,8 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera) {
     return pos / pos.w;
 }
 
-Vec3<float> Window::getMousePositionInWorld(const Camera &camera,
-                                            float zWorld) {
-    Vec2<> mousePos, size = windowSize.cast<float>();
+Vec3<float> Window::getMousePositionInWorld(const Camera &camera, float zWorld) {
+    Vec2<> mousePos = cursorPosition, size = windowSize.cast<float>();
     mousePos.y = size.y - mousePos.y;
 
     Vec4<> screenPos{mousePos / size * 2 - 1, 0, 1};
@@ -173,11 +164,9 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera,
     const auto MVP = projectionTransform * camera;
     const auto MVPinv = MVP.inverse();
 
-    screenPos.z =
-        (MVPinv.a34 - screenPos.x * (MVPinv.a41 * zWorld - MVPinv.a31) -
-         screenPos.y * (MVPinv.a42 * zWorld - MVPinv.a32) -
-         MVPinv.a44 * zWorld) /
-        (MVPinv.a43 * zWorld - MVPinv.a33);
+    screenPos.z = (MVPinv.a34 - screenPos.x * (MVPinv.a41 * zWorld - MVPinv.a31)
+                   - screenPos.y * (MVPinv.a42 * zWorld - MVPinv.a32) - MVPinv.a44 * zWorld)
+                  / (MVPinv.a43 * zWorld - MVPinv.a33);
 
     auto const worldPos = MVPinv * screenPos;
 
@@ -206,12 +195,8 @@ Vec3<float> Window::getMousePositionInWorld(const Camera &camera,
     return worldPos / worldPos.w;
 }
 
-std::array<Vec3<>, 4> Window::getCameraCornersInWorld(const Camera &camera,
-                                                      float zWorld) {
-    Vec4<> screenPos[4]{{1, 1, 0, 1},
-                        {-1, 1, 0, 1},
-                        {-1, -1, 1},
-                        {1, -1, 0, 1}};
+std::array<Vec3<>, 4> Window::getCameraCornersInWorld(const Camera &camera, float zWorld) {
+    Vec4<> screenPos[4]{{1, 1, 0, 1}, {-1, 1, 0, 1}, {-1, -1, 0, 1}, {1, -1, 0, 1}};
 
     const auto MVP = projectionTransform * camera;
     const auto MVPinv = MVP.inverse();
@@ -219,10 +204,9 @@ std::array<Vec3<>, 4> Window::getCameraCornersInWorld(const Camera &camera,
     std::array<Vec3<float>, 4> ret;
     for (size_t i = 0; i < 4; i++) {
         screenPos[i].z =
-            (MVPinv.a34 - screenPos[i].x * (MVPinv.a41 * zWorld - MVPinv.a31) -
-             screenPos[i].y * (MVPinv.a42 * zWorld - MVPinv.a32) -
-             MVPinv.a44 * zWorld) /
-            (MVPinv.a43 * zWorld - MVPinv.a33);
+            (MVPinv.a34 - screenPos[i].x * (MVPinv.a41 * zWorld - MVPinv.a31)
+             - screenPos[i].y * (MVPinv.a42 * zWorld - MVPinv.a32) - MVPinv.a44 * zWorld)
+            / (MVPinv.a43 * zWorld - MVPinv.a33);
 
         auto worldPos = MVPinv * screenPos[i];
         ret[i] = worldPos / worldPos.w;

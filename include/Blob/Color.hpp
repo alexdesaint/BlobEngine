@@ -25,8 +25,7 @@ public:
     /// \param G Green channel
     /// \param B Blue channel
     /// \param A Alpha channel (transparency)
-    constexpr Color(float R, float G, float B, float A = 1.f) noexcept :
-        R(R), G(G), B(B), A(A) {}
+    constexpr Color(float R, float G, float B, float A = 1.f) noexcept : R(R), G(G), B(B), A(A) {}
 
     constexpr Color(double R, double G, double B, double A = 1.f) noexcept :
         R(R), G(G), B(B), A(A) {}
@@ -34,9 +33,7 @@ public:
     /// Hex Color Code Constructor
     /// \param RGB Hexadecimal color representation
     constexpr explicit Color(uint32_t RGB) noexcept :
-        R(((RGB >> 16) & 0xFF) / 255.f),
-        G(((RGB >> 8) & 0xFF) / 255.f),
-        B((RGB & 0xFF) / 255.f) {}
+        R(((RGB >> 16) & 0xFF) / 255.f), G(((RGB >> 8) & 0xFF) / 255.f), B((RGB & 0xFF) / 255.f) {}
 
     friend std::ostream &operator<<(std::ostream &out, const Color &vec);
 };
@@ -186,5 +183,19 @@ static const Color Gray(0x808080U);
 static const Color DimGray(0x696969U);
 static const Color Black(0x000000U);
 } // namespace X11
+
+namespace Dracula {
+constexpr static const Color Background(0xFF282a36U);
+constexpr static const Color Selection(0xFF44475aU);
+constexpr static const Color Foreground(0xFFf8f8f2U);
+constexpr static const Color Comment(0xFF6272a4U);
+constexpr static const Color Cyan(0xFF8be9fdU);
+constexpr static const Color Green(0xFF50fa7bU);
+constexpr static const Color Orange(0xFFffb86cU);
+constexpr static const Color Pink(0xFFff79c6U);
+constexpr static const Color Purple(0xFFbd93f9U);
+constexpr static const Color Red(0xFFff5555U);
+constexpr static const Color Yellow(0xFFf1fa8cU);
+} // namespace Dracula
 
 } // namespace Blob

@@ -17,7 +17,7 @@
 
 namespace Blob {
 
-class Window : private GLFW::Window {
+class Window : public GLFW::Window {
 public:
     Context context;
 
@@ -65,8 +65,7 @@ public:
     void disableMouseCursor();
     void enableMouseCursor();
 
-    double display(const ViewTransform &camera,
-                   const ViewTransform2D &camera2D = {});
+    double display(const ViewTransform &camera);
 
     Vec3<float> getMousePositionInWorld(const Camera &camera);
     Vec3<float> getMousePositionInWorld(const Camera &camera, float z);

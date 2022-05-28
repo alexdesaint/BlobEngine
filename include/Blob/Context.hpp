@@ -17,12 +17,9 @@ class Context {
 public:
     std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
     std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
-    std::unordered_map<std::string, std::unique_ptr<RenderOptions>>
-        renderOptions;
-    std::unordered_map<std::string, std::unique_ptr<VertexBuffer>>
-        vertexBuffers;
-    std::unordered_map<std::string, std::unique_ptr<UniformSampler>>
-        uniformSamplers;
+    std::unordered_map<std::string, std::unique_ptr<RenderOptions>> renderOptions;
+    std::unordered_map<std::string, std::unique_ptr<VertexBuffer>> vertexBuffers;
+    std::unordered_map<std::string, std::unique_ptr<UniformSampler>> uniformSamplers;
     std::unordered_map<std::string, std::unique_ptr<Uniform>> uniforms;
 
     Context(void *ndt, void *nwh) {

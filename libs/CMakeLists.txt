@@ -3,7 +3,7 @@ add_subdirectory(glfw)
 
 # libs
 add_library(stb INTERFACE)
-target_include_directories(stb INTERFACE stb/)
+target_include_directories(stb INTERFACE include/)
 
 #imgui
 file(GLOB IMGUIFILES "imgui/*.cpp")

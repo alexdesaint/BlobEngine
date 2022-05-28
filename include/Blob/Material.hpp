@@ -17,6 +17,8 @@ struct UniformSamplerReference {
 struct UniformReference {
     const Uniform &uniform;
     const void *data;
+
+    UniformReference(const Uniform &uniform, const void *data) : uniform(uniform), data(data) {}
 };
 
 struct LightPoint {
@@ -52,11 +54,8 @@ public:
 
     void applyMaterial() const {
         bgfx::setState(BGFX_STATE_DEFAULT);
-        for (const auto &[uniformHandle, uniformObject] :
-             uniformSamplerReferences)
-            setTexture(0,
-                       uniformHandle.uniformHandle,
-                       uniformObject.textureHandle);
+        for (const auto &[uniformHandle, uniformObject] : uniformSamplerReferences)
+            setTexture(0, uniformHandle.uniformHandle, uniformObject.textureHandle);
         for (const auto &[uniformHandle, uniformObject] : uniformReferences)
             bgfx::setUniform(uniformHandle.uniformHandle, uniformObject);
         bgfx::submit(0, shader.shaderHandle);

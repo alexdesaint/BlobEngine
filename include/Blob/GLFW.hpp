@@ -74,7 +74,6 @@ protected:
     virtual void scrollUpdate(double xoffset, double yoffset) {}
     // virtual void joystick_callback(int joy, int event) {}
 
-public:
     void *window = nullptr;
 
     // Window info
@@ -99,22 +98,21 @@ public:
            std::string windowName = "BlobEngine");
     ~Window();
 
-    void setTitle(const std::string &name);
-
     void updateInputs();
-    void close();
 
+    void *getNativeDisplayType();
+    void *getNativeWindowHandle();
+
+public:
+    void setTitle(const std::string &name);
+    static double getTime();
     const char *getClipboardText();
     void setClipboardText(const std::string &text);
-
-    static double getTime();
+    void close();
 
     enum CursorState { CURSOR_HIDDEN, CURSOR_NORMAL, CURSOR_DISABLED };
     void setCursorState(CursorState cursorState);
     void setMouseCursor(MouseCursor mouseCursor);
-
-    void *getNativeDisplayType();
-    void *getNativeWindowHandle();
 };
 
 } // namespace Blob::GLFW

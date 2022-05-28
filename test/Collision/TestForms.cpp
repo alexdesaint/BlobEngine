@@ -1,417 +1,241 @@
-#include <iostream>
-#include <list>
-
 #include <Blob/Collision/Forms.hpp>
 #include <Blob/Color.hpp>
+#include <Blob/Controls.hpp>
+#include <Blob/Window.hpp>
+#include <cstddef>
+#include <list>
+#include <nanovg.h>
+#include <vector>
+
+#define STB_TRUETYPE_IMPLEMENTATION 1
+#include <stb/stb_truetype.h>
 
 using namespace Blob;
 
-class CircleShape {
+class PointShape {
 public:
-    float rayon;
+    float rayon = 2;
     Point position;
     Color color;
 
-    CircleShape(float rayon, const Point &position, Color color = X11::White) :
-        rayon(rayon), position(position), color(color) {}
+    PointShape(const Point &position, Color color = X11::White) :
+        position(position), color(color) {}
+
+    void draw(NVGcontext *nvgContext) const {
+        nvgFillColor(nvgContext, nvgRGBAf(color.R, color.G, color.B, 255));
+        nvgBeginPath(nvgContext);
+        nvgCircle(nvgContext, position.x, position.y, rayon);
+        nvgFill(nvgContext);
+    }
 };
 
 class RectangleShape {
 public:
-    Point position, size;
+    Box box;
     Color color;
 
-    RectangleShape(const Point &size,
-                   const Point &position,
-                   Color color = X11::White) :
-        position(position), size(size), color(color) {}
+    RectangleShape(const Box &box, Color color = X11::White) : box(box), color(color) {}
+
+    void draw(NVGcontext *nvgContext) const {
+        nvgFillColor(nvgContext, nvgRGBAf(color.R, color.G, color.B, 255));
+        nvgBeginPath(nvgContext);
+        nvgRect(nvgContext, box.p1.x, box.p1.y, box.p2.x - box.p1.x, box.p2.y - box.p1.y);
+        nvgFill(nvgContext);
+    }
 };
 
 class LineShape {
 public:
-    Point position1, position2;
+    Segment segment;
     Color color;
 
-    LineShape(const Point &position1,
-              const Point &position2,
-              Color color = X11::White) :
-        position1(position1), position2(position2), color(color) {}
+    LineShape(const Segment &segment, Color color = X11::White) : segment(segment), color(color) {}
+
+    void draw(NVGcontext *nvgContext) const {
+        nvgStrokeWidth(nvgContext, 2.f);
+        nvgStrokeColor(nvgContext, nvgRGBAf(color.R, color.G, color.B, 255));
+        nvgBeginPath(nvgContext);
+        nvgMoveTo(nvgContext, segment.p1.x, segment.p1.y);
+        nvgLineTo(nvgContext, segment.p2.x, segment.p2.y);
+        nvgStroke(nvgContext);
+    }
 };
 
-class Window {
+class PointCursor : public PointShape {
+public:
+    explicit PointCursor(const Point &position = {}) : PointShape(position) {}
+
+    void setPosition(const Point &p) { position = p; }
+
+    void hitStart() { color = X11::Red; }
+    void hitEnd() { color = X11::Green; }
+};
+
+class RectangleCursor : public RectangleShape {
+public:
+    RectangleCursor(const Box &box = {}, Color fillColor = X11::White) :
+        RectangleShape(box, fillColor) {}
+
+    void setPosition(const Box &p) { box = p; }
+
+    void hitStart() { color = X11::Red; }
+    void hitEnd() { color = X11::Green; }
+};
+
+class LineCursor : public LineShape {
+public:
+    LineCursor(const Segment &seg = {}) : LineShape(seg) {}
+
+    void setPosition(const Segment &seg) { segment = seg; }
+
+    void hitStart() { color = X11::Red; }
+    void hitEnd() { color = X11::Green; }
+};
+
+class Cursor : public MouseEvents {
 private:
-    SDL_Window *window = nullptr;
-    SDL_Surface *screenSurface = nullptr;
-    SDL_Renderer *renderer = nullptr;
-    int64_t NOW = SDL_GetPerformanceCounter();
-    int64_t LAST = 0;
-
-public:
-    Window() {
-        window = SDL_CreateWindow("hello_sdl2",
-                                  SDL_WINDOWPOS_UNDEFINED,
-                                  SDL_WINDOWPOS_UNDEFINED,
-                                  1000,
-                                  1000,
-                                  SDL_WINDOW_SHOWN);
-        if (window == nullptr) {
-            fprintf(stderr, "could not create window: %s\n", SDL_GetError());
+    void mouseButtonUpdate(int button, bool pressed) final {
+        if (pressed)
             return;
-        }
-        screenSurface = SDL_GetWindowSurface(window);
-        if (screenSurface == nullptr) {
-            fprintf(stderr,
-                    "could not create screenSurface: %s\n",
-                    SDL_GetError());
-            return;
-        }
-        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        state++;
+        if (state > 2)
+            state = 0;
     }
 
-    void draw(const RectangleShape &rectangleShape) {
-        SDL_SetRenderDrawColor(renderer,
-                               rectangleShape.color.R * 255,
-                               rectangleShape.color.G * 255,
-                               rectangleShape.color.B * 255,
-                               255);
-        SDL_Rect rect{
-            (int) (rectangleShape.position.x - rectangleShape.size.x / 2),
-            (int) (rectangleShape.position.y - rectangleShape.size.y / 2),
-            (int) rectangleShape.size.x,
-            (int) rectangleShape.size.y};
-        SDL_RenderFillRect(renderer, &rect);
+    void cursorPosUpdate(double xpos, double ypos) final {
+        rectangleCursor.setPosition(Box(Point(xpos, ypos), 20, 20));
+        pointCursor.setPosition(Point(xpos, ypos));
+        lineCursor.setPosition(Segment(Point(xpos + (20 * std::cos(mouseOrientation / 20.f)),
+                                             ypos + (20 * std::sin(mouseOrientation / 20.f))),
+                                       Point(xpos - (20 * std::cos(mouseOrientation / 20.f)),
+                                             ypos - (20 * std::sin(mouseOrientation / 20.f)))));
     }
 
-    void draw(const LineShape &lineShape) {
-        SDL_SetRenderDrawColor(renderer,
-                               lineShape.color.R * 255,
-                               lineShape.color.G * 255,
-                               lineShape.color.B * 255,
-                               255);
-        SDL_RenderDrawLine(renderer,
-                           lineShape.position1.x,
-                           lineShape.position1.y,
-                           lineShape.position2.x,
-                           lineShape.position2.y);
-    }
-
-    void draw(const CircleShape &circleShape) {
-        SDL_SetRenderDrawColor(renderer,
-                               circleShape.color.R * 255,
-                               circleShape.color.G * 255,
-                               circleShape.color.B * 255,
-                               255);
-        int offsetx, offsety, d;
-        int status;
-
-        offsetx = 0;
-        offsety = circleShape.rayon;
-        d = circleShape.rayon - 1;
-        status = 0;
-
-        while (offsety >= offsetx) {
-
-            status += SDL_RenderDrawLine(renderer,
-                                         circleShape.position.x - offsety,
-                                         circleShape.position.y + offsetx,
-                                         circleShape.position.x + offsety,
-                                         circleShape.position.y + offsetx);
-            status += SDL_RenderDrawLine(renderer,
-                                         circleShape.position.x - offsetx,
-                                         circleShape.position.y + offsety,
-                                         circleShape.position.x + offsetx,
-                                         circleShape.position.y + offsety);
-            status += SDL_RenderDrawLine(renderer,
-                                         circleShape.position.x - offsetx,
-                                         circleShape.position.y - offsety,
-                                         circleShape.position.x + offsetx,
-                                         circleShape.position.y - offsety);
-            status += SDL_RenderDrawLine(renderer,
-                                         circleShape.position.x - offsety,
-                                         circleShape.position.y - offsetx,
-                                         circleShape.position.x + offsety,
-                                         circleShape.position.y - offsetx);
-
-            if (status < 0) {
-                status = -1;
-                break;
-            }
-
-            if (d >= 2 * offsetx) {
-                d -= 2 * offsetx + 1;
-                offsetx += 1;
-            } else if (d < 2 * (circleShape.rayon - offsety)) {
-                d += 2 * offsety - 1;
-                offsety -= 1;
-            } else {
-                d += 2 * (offsety - offsetx - 1);
-                offsety -= 1;
-                offsetx += 1;
-            }
-        }
-    }
-
-    void setTitle(const char *title) { SDL_SetWindowTitle(window, title); }
-
-    void display() { SDL_RenderPresent(renderer); }
-
-    float getFrameTime() {
-        LAST = NOW;
-        NOW = SDL_GetPerformanceCounter();
-        return ((NOW - LAST) * 1000.f / (float) SDL_GetPerformanceFrequency());
-    }
-
-    void clear() {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-    }
-};
-
-class CircleObject : public Circle, public CircleShape {
-public:
-    CircleObject(Point position, float rayon) :
-        Circle(position, rayon), CircleShape(rayon, position) {}
-
-    void setPosition(Point p) {
-        CircleShape::position = p;
-        Circle::position = p;
-    }
-};
-
-class PointObject : public Point, public CircleShape {
-public:
-    PointObject(Point position) : Point(position), CircleShape(0.2, position) {}
-
-    void setPosition(Point p) {
-        CircleShape::position = p;
-        operator=(p);
-    }
-};
-
-class RectangleObject : public Rectangle, public RectangleShape {
-public:
-    RectangleObject(Point position, Point size, Color fillColor = X11::White) :
-        Rectangle(position, size), RectangleShape(size, position, fillColor) {}
-
-    void setPosition(Point p) {
-        Rectangle::position = p;
-        RectangleShape::position = p;
-    }
-};
-
-class LineObject : public Line, public LineShape {
-public:
-    LineObject(Point position1, Point position2) :
-        Line(position1, position2), LineShape(position1, position2) {}
-
-    void setPosition(Point position1, Point position2) {
-        Line::positionA = position1;
-        Line::positionB = position2;
-        LineShape::position1 = position1;
-        LineShape::position2 = position2;
-    }
-};
-
-class Game {
-private:
-    unsigned int tick;
-    Window window;
-    std::list<CircleObject> circles;
-    std::list<RectangleObject> rectangles;
-    std::list<PointObject> points;
-    std::list<LineObject> lines;
+    void scrollUpdate(double xoffset, double yoffset) final { mouseOrientation += yoffset; }
 
 public:
-    Game() {
+    uint32_t state = 0;
+    float mouseOrientation = 0;
 
-        CircleObject circleCursor(Point{0, 0}, 20);
-        RectangleObject rectangleCursor({0, 0}, {40, 40});
-        PointObject pointCursor({0, 0});
-        LineObject lineCursor({-20, 0}, {20, 0});
+    RectangleCursor &rectangleCursor;
+    PointCursor &pointCursor;
+    LineCursor &lineCursor;
 
-        circles.emplace_back(Point{200, 200}, 10);
-        circles.emplace_back(Point{400, 200}, 20);
-        circles.emplace_back(Point{600, 200}, 30);
-        circles.emplace_back(Point{800, 200}, 40);
+    Cursor(RectangleCursor &rectangleCursor, PointCursor &pointCursor, LineCursor &lineCursor) :
+        rectangleCursor(rectangleCursor), pointCursor(pointCursor), lineCursor(lineCursor) {}
 
-        rectangles.emplace_back(Point{205, 405}, Point{20, 20});
-        rectangles.emplace_back(Point{400, 400}, Point{40, 40});
-        rectangles.emplace_back(Point{600, 400}, Point{100, 60});
-        rectangles.emplace_back(Point{800, 400}, Point{60, 10});
-
-        points.emplace_back(Point{200, 600});
-        points.emplace_back(Point{400, 600});
-        points.emplace_back(Point{600, 600});
-        points.emplace_back(Point{800, 600});
-
-        lines.emplace_back(Point{200, 790}, Point{200, 810});
-        lines.emplace_back(Point{380, 800}, Point{420, 800});
-        lines.emplace_back(Point{570, 770}, Point{630, 830});
-        lines.emplace_back(Point{820, 780}, Point{780, 820});
-
-        SDL_Event e{};
-        bool quit = false;
-        SDL_ShowCursor(false);
-        uint32_t state = 0;
-        float mouseOrientation = 0;
-
-        while (!quit) {
-            for (const auto &c : circles)
-                window.draw(c);
-            for (const auto &r : rectangles)
-                window.draw(r);
-            for (const auto &c : points)
-                window.draw(c);
-            for (const auto &r : lines)
-                window.draw(r);
-
-            Vec2<int> cursorPosition;
-            SDL_GetMouseState(&cursorPosition.x, &cursorPosition.y);
-            bool hit = false;
-            switch (state) {
-            case 0:
-                circleCursor.setPosition(cursorPosition.cast<float>());
-                for (const auto &c : circles)
-                    if (circleCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : rectangles)
-                    if (circleCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : lines)
-                    if (circleCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : points)
-                    if (circleCursor.overlap(c))
-                        hit = true;
-                if (hit)
-                    circleCursor.color = X11::Red;
-                else
-                    circleCursor.color = X11::Green;
-                for (auto &r : circleCursor.rasterize())
-                    window.draw(RectangleShape(Point{1, 1},
-                                               r.cast<float>() + 0.5f,
-                                               X11::Blue));
-                window.draw(circleCursor);
-                break;
-            case 1:
-                rectangleCursor.setPosition(cursorPosition.cast<float>());
-                for (const auto &c : circles)
-                    if (rectangleCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : rectangles)
-                    if (rectangleCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : lines)
-                    if (rectangleCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : points)
-                    if (rectangleCursor.overlap(c))
-                        hit = true;
-                if (hit)
-                    rectangleCursor.color = X11::Red;
-                else
-                    rectangleCursor.color = X11::Green;
-                for (auto &r : rectangleCursor.rasterize())
-                    window.draw(RectangleShape(Point{1, 1},
-                                               r.cast<float>() + 0.5f,
-                                               X11::Blue));
-                window.draw(rectangleCursor);
-                break;
-            case 2:
-                pointCursor.setPosition(cursorPosition.cast<float>());
-                for (const auto &c : circles)
-                    if (pointCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : rectangles)
-                    if (pointCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : lines)
-                    if (pointCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : points)
-                    if (pointCursor.overlap(c))
-                        hit = true;
-                if (hit)
-                    pointCursor.color = X11::Red;
-                else
-                    pointCursor.color = X11::Green;
-                for (auto &r : pointCursor.rasterize())
-                    window.draw(RectangleShape(Point{1, 1},
-                                               r.cast<float>() + 0.5f,
-                                               X11::Blue));
-                window.draw(pointCursor);
-                break;
-            case 3:
-                lineCursor.setPosition(
-                    {(float) cursorPosition.x +
-                         (20 * std::cos(mouseOrientation / 20.f)),
-                     (float) cursorPosition.y +
-                         (20 * std::sin(mouseOrientation / 20.f))},
-                    {(float) cursorPosition.x -
-                         (20 * std::cos(mouseOrientation / 20.f)),
-                     (float) cursorPosition.y -
-                         (20 * std::sin(mouseOrientation / 20.f))});
-                for (const auto &c : circles)
-                    if (lineCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : rectangles)
-                    if (lineCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : lines)
-                    if (lineCursor.overlap(c))
-                        hit = true;
-                for (const auto &c : points)
-                    if (lineCursor.overlap(c))
-                        hit = true;
-                if (hit)
-                    lineCursor.color = X11::Red;
-                else
-                    lineCursor.color = X11::Green;
-                for (auto &r : lineCursor.rasterize())
-                    window.draw(RectangleShape(Point{1, 1},
-                                               r.cast<float>() + 0.5f,
-                                               X11::Blue));
-                window.draw(lineCursor);
-                break;
-            }
-
-            while (SDL_PollEvent(&e) != 0) {
-                switch (e.type) {
-                case SDL_QUIT:
-                    quit = true;
-                    break;
-                case SDL_MOUSEBUTTONDOWN:
-                    state++;
-                    if (state > 3)
-                        state = 0;
-                    break;
-                case SDL_MOUSEWHEEL:
-                    mouseOrientation += e.wheel.y;
-                    break;
-                default:
-                    break;
-                }
-            }
-
-            tick++;
-
-            if (tick >= 60) {
-                char szFps[200];
-                sprintf(szFps,
-                        "%s : %f FPS",
-                        "Game Title",
-                        tick / window.getFrameTime());
-                tick = 0;
-                window.setTitle(szFps);
-            }
-            window.display();
-            window.clear();
+    void update(NVGcontext *nvgContext) {
+        switch (state) {
+        case 0:
+            rectangleCursor.draw(nvgContext);
+            break;
+        case 1:
+            pointCursor.draw(nvgContext);
+            break;
+        case 2:
+            lineCursor.draw(nvgContext);
+            break;
         }
     }
 };
 
 int main(int argc, char *args[]) {
-    Game game;
+    Window window;
+    Blob::Camera camera;
+
+    NVGcontext *nvgContext = nvgCreate(1, 0);
+    bgfx::setViewMode(0, bgfx::ViewMode::Sequential);
+
+    std::list<RectangleShape> rectangles;
+    std::list<PointShape> points;
+    std::list<LineShape> lines;
+    RectangleCursor rectangleCursor;
+    PointCursor pointCursor;
+    LineCursor lineCursor;
+
+    Cursor cursor{rectangleCursor, pointCursor, lineCursor};
+
+    rectangles.emplace_back(Box{Point{100, 300}, 20, 200});
+    rectangles.emplace_back(Box{Point{300, 300}, 40, 40});
+    rectangles.emplace_back(Box{Point{500, 300}, 100, 60});
+    rectangles.emplace_back(Box{Point{700, 300}, 60, 100});
+    points.emplace_back(Point{100, 500});
+    points.emplace_back(Point{300, 500});
+    points.emplace_back(Point{500, 500});
+    points.emplace_back(Point{700, 500});
+    lines.emplace_back(Segment{Point{100, 690}, Point{100, 710}});
+    lines.emplace_back(Segment{Point{280, 700}, Point{320, 700}});
+    lines.emplace_back(Segment{Point{470, 670}, Point{530, 730}});
+    lines.emplace_back(Segment{Point{720, 680}, Point{680, 720}});
+
+    while (window.isOpen) {
+        nvgBeginFrame(nvgContext, window.windowSize.x, window.windowSize.y, 1.0f);
+
+        bool hit = false;
+
+        for (const auto &shape : rectangles)
+            shape.draw(nvgContext);
+        for (const auto &shape : points)
+            shape.draw(nvgContext);
+        for (const auto &shape : lines)
+            shape.draw(nvgContext);
+
+        switch (cursor.state) {
+        case 0:
+            for (const auto &shape : rectangles)
+                if (overlap(shape.box, rectangleCursor.box))
+                    hit = true;
+            for (const auto &shape : points)
+                if (overlap(shape.position, rectangleCursor.box))
+                    hit = true;
+            for (const auto &shape : lines)
+                if (overlap(shape.segment, rectangleCursor.box))
+                    hit = true;
+            if (hit)
+                rectangleCursor.hitStart();
+            else
+                rectangleCursor.hitEnd();
+            rectangleCursor.draw(nvgContext);
+            break;
+        case 1:
+            for (const auto &shape : rectangles)
+                if (overlap(shape.box, pointCursor.position))
+                    hit = true;
+            for (const auto &shape : points)
+                if (overlap(shape.position, pointCursor.position))
+                    hit = true;
+            for (const auto &shape : lines)
+                if (overlap(shape.segment, pointCursor.position))
+                    hit = true;
+            if (hit)
+                pointCursor.hitStart();
+            else
+                pointCursor.hitEnd();
+            pointCursor.draw(nvgContext);
+            break;
+        case 2:
+            for (const auto &shape : rectangles)
+                if (overlap(shape.box, lineCursor.segment))
+                    hit = true;
+            for (const auto &shape : points)
+                if (overlap(shape.position, lineCursor.segment))
+                    hit = true;
+            for (const auto &shape : lines)
+                if (overlap(shape.segment, lineCursor.segment))
+                    hit = true;
+            if (hit)
+                lineCursor.hitStart();
+            else
+                lineCursor.hitEnd();
+            lineCursor.draw(nvgContext);
+            break;
+        }
+
+        nvgEndFrame(nvgContext);
+        window.display(camera);
+    }
+
+    nvgDelete(nvgContext);
 
     return 0;
 }

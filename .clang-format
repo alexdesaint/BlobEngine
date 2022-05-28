@@ -5,7 +5,7 @@ IndentWidth: 4
 AccessModifierOffset: -4
 SpaceAfterCStyleCast: true
 SpaceAfterTemplateKeyword: false
-ColumnLimit: 80
+ColumnLimit: 100
 
 # Funcion
 BinPackParameters: false
@@ -21,3 +21,14 @@ AllowShortBlocksOnASingleLine: Always
 BreakConstructorInitializers: AfterColon
 BreakInheritanceList: AfterColon
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterReturnType: None
+BreakBeforeBinaryOperators: NonAssignment
+# BreakBeforeConceptDeclarations: Always
+BreakBeforeTernaryOperators: true
+ExperimentalAutoDetectBinPacking: true
+# PackConstructorInitializers: Never

@@ -1,45 +1,100 @@
 #pragma once
 
 #include <Blob/Collision/Forms.hpp>
-#include <Blob/Exception.hpp>
-
-#include <iostream>
-#include <type_traits>
+#include <memory>
+#include <stdexcept>
 #include <unordered_map>
-#include <unordered_set>
 
-#ifdef BLOB_COLLISION_IMGUI
-#include <imgui.h>
-#include <sstream>
-#endif
+#define HAS_FUNCTION(function, functionType)                                                       \
+    namespace has {                                                                                \
+    namespace name {                                                                               \
+    template<typename, typename T>                                                                 \
+    struct function {                                                                              \
+        static_assert(std::integral_constant<T, false>::value,                                     \
+                      "Second template parameter needs to be of function type.");                  \
+    };                                                                                             \
+    template<typename C, typename Ret, typename... Args>                                           \
+    struct function<C, Ret(Args...)> {                                                             \
+    private:                                                                                       \
+        template<typename T>                                                                       \
+        static constexpr auto check(T *) ->                                                        \
+            typename std::is_same<decltype(std::declval<T>().function(std::declval<Args>()...)),   \
+                                  Ret>::type;                                                      \
+                                                                                                   \
+        template<typename>                                                                         \
+        static constexpr std::false_type check(...);                                               \
+                                                                                                   \
+        typedef decltype(check<C>(0)) type;                                                        \
+                                                                                                   \
+    public:                                                                                        \
+        static constexpr bool value = type::value;                                                 \
+        static Ret call(C &c, Args... args) { return c.function(args...); }                        \
+    };                                                                                             \
+    }                                                                                              \
+    template<class T>                                                                              \
+    using function = name::function<T, functionType>;                                              \
+    }
 
 namespace Blob {
 
-template<class Form>
-class StaticCollider {
+template<class FormType>
+class Collider {
 public:
-    using FormType = Form;
-    const Form form;
-
-    StaticCollider(Form &&form) : form(form) {}
-    StaticCollider(const Form &form) : form(form) {}
-};
-
-template<class Form>
-class DynamicCollider {
     template<class... C>
-    friend class GeneralCollisionDetector;
+    friend class CollisionDetector;
+    template<class ColliderType, class... Colliders>
+    friend class ColliderDatabase;
+
+    using Form = FormType;
 
 private:
+    static constexpr bool isRaster() { return std::is_same_v<Form, Raster>; }
+    static constexpr bool isRasterArea() { return std::is_same_v<Form, RasterArea>; }
+
+    bool privateEnabled = false;
+
+    enum {
+        initNone,
+        initEnableDynamicCollision,
+        initEnableStaticCollision,
+        initEnableGhostCollision,
+        initRemove
+    } initFunction = initNone;
     Form privateForm;
+    std::function<void(Form &&)> privateEnableDynamicCollision = [&](Form &&form) {
+        privateForm = std::move(form);
+        initFunction = initEnableDynamicCollision;
+    };
+    std::function<void()> privateDisableDynamicCollision = [&] { initFunction = initNone; };
+    std::function<void(Form &&)> privateEnableStaticCollision = [&](Form &&form) {
+        privateForm = std::move(form);
+        initFunction = initEnableStaticCollision;
+    };
+    std::function<void()> privateDisableStaticCollision = [&] { initFunction = initNone; };
+    std::function<void(Form &&)> privateEnableGhostCollision = [&](Form &&form) {
+        privateForm = std::move(form);
+        initFunction = initEnableGhostCollision;
+    };
+    std::function<void()> privateDisableGhostCollision = [&] { initFunction = initNone; };
+    std::function<void()> privateRemove = [&] { initFunction = initRemove; };
 
 public:
-    using FormType = Form;
+    const bool &enabled{privateEnabled};
     const Form &form{privateForm};
 
-protected:
-    explicit DynamicCollider(Form &&form) : privateForm(form) {}
+    const std::function<void(Form &&)> &enableDynamicCollision{privateEnableDynamicCollision};
+    const std::function<void()> &disableDynamicCollision{privateDisableDynamicCollision};
+    const std::function<void(Form &&)> &enableStaticCollision{privateEnableStaticCollision};
+    const std::function<void()> &disableStaticCollision{privateDisableStaticCollision};
+    const std::function<void(Form &&)> &enableGhostCollision{privateEnableGhostCollision};
+    const std::function<void()> &disableGhostCollision{privateDisableGhostCollision};
+    const std::function<void()> &remove{privateRemove};
 
+    Collider() = default;
+    Collider(const Collider &) = delete;
+    Collider(Collider &&) = delete;
+
+protected:
     template<class Collider>
     void hitStart(Collider *object) {}
 
@@ -52,153 +107,91 @@ protected:
      * @param timeFlow Time in second since list frame
      * @return the form you wish to test the next collision
      */
-    virtual Form preCollisionUpdate(Form currentForm, double timeFlow) {
-        return currentForm;
-    }
+    virtual Form preCollisionUpdate(Form currentForm, double timeFlow) { return currentForm; }
 
     /**
      * This method is called right after the collision is computed and return
      * the final position that will be saved in the internal spacial definition.
-     * In this method CollisionDetector::testCollision will never detect itself
-     * because it is not in the internal spacial definition yet.
      * @param currentForm the form return by last postCollisionUpdate
      * @param nextForm the form returned by last preCollisionUpdate
      * @param timeFlow Time in second sins list frame
      * @return the fianl form
      */
-    virtual Form postCollisionUpdate(const Form &currentForm,
-                                     Form nextForm,
-                                     double timeFlow) {
+    virtual Form postCollisionUpdate(const Form &currentForm, Form nextForm, double timeFlow) {
         return nextForm;
     }
-
-public:
-    const Form &collider{form};
 };
 
-template<class Collider, class... Colliders>
+template<class ColliderType, class... Colliders>
 class ColliderDatabase {
 protected:
-    std::unordered_map<Vec2<int32_t>, std::unordered_set<Collider *>>
-        spacialHash;
+    std::unordered_map<Raster, std::unordered_set<ColliderType *>> spacialHash;
 
     using AllColliders = std::tuple<std::unordered_set<Colliders *>...>;
-    std::unordered_map<Collider *, AllColliders> colliders;
-    std::unordered_map<Collider *, AllColliders> ghostColliders;
+    std::unordered_map<ColliderType *, AllColliders> colliders;
+    std::unordered_map<ColliderType *, AllColliders> ghostColliders;
+
+    std::vector<std::unique_ptr<ColliderType>> data;
 
     template<class U>
-    std::unordered_set<Collider *>
-    overlap(const U &form, std::unordered_set<Vec2<int32_t>> rasters) const {
-        std::unordered_set<Collider *> collidingObjects;
-        for (const Vec2<int32_t> &position : rasters) {
-            auto positions = spacialHash.find(position);
-            if (positions != spacialHash.end())
-                for (Collider *target : positions->second)
-                    if (form.overlap(target->form))
-                        collidingObjects.emplace(target);
+    std::unordered_set<ColliderType *> overlapRasters(const U &form,
+                                                      const RasterArea &rasters) const {
+        std::unordered_set<ColliderType *> collidingObjects;
+
+        for (const Raster &position : rasters) {
+            auto colliderIt = spacialHash.find(position);
+            if (colliderIt == spacialHash.end())
+                continue;
+            for (ColliderType *target : colliderIt->second) {
+                if constexpr (ColliderType::isRaster() || ColliderType::isRasterArea()
+                              || std::is_same_v<U, Raster> || std::is_same_v<U, RasterArea>)
+                    collidingObjects.emplace(target);
+                else if (overlap(form, target->form))
+                    collidingObjects.emplace(target);
+            }
         }
         return collidingObjects;
     }
 };
 
-template<class... Colliders>
-class GeneralCollisionDetector :
-    public ColliderDatabase<Colliders, Colliders...>... {
-public:
+template<class... CollidersType>
+class CollisionDetector : public ColliderDatabase<CollidersType, CollidersType...>... {
+private:
     template<class Collider>
-    using ColliderDatabase = ColliderDatabase<Collider, Colliders...>;
-    using AllColliders = std::tuple<std::unordered_set<Colliders *>...>;
+    using ColliderDatabase = ColliderDatabase<Collider, CollidersType...>;
+    using AllColliders = std::tuple<std::unordered_set<CollidersType *>...>;
 
-    template<class Collider>
-    void staticTest() {
-        static_assert(
-            std::is_convertible_v<
-                Collider *,
-                DynamicCollider<typename Collider::FormType> *> ||
-                std::is_convertible_v<
-                    Collider *,
-                    StaticCollider<typename Collider::FormType> *>,
-            "Colliders need to have DynamicCollider or StaticCollider as "
-            "accessible parent. ");
-    }
+    template<class ColliderType>
+    using isCollider = std::is_base_of<Collider<typename ColliderType::Form>, ColliderType>;
 
-    GeneralCollisionDetector() { (staticTest<Colliders>(), ...); }
-
-    template<class Collider>
-    void enableCollision(Collider &collider) {
-        static_assert(!std::is_const_v<Collider>,
-                      "enableCollision called with a const qualified Collider. "
+    template<class ColliderType>
+    constexpr void staticTest() {
+        static_assert(!std::is_const_v<ColliderType>,
+                      "Collider is const qualified."
                       "Collider need to be modified by the CollisionDetector.");
         static_assert(
-            std::is_base_of<DynamicCollider<typename Collider::FormType>,
-                            Collider>() ||
-                std::is_base_of<StaticCollider<typename Collider::FormType>,
-                                Collider>(),
+            std::is_convertible_v<ColliderType *, Collider<typename ColliderType::Form> *>,
             "Colliders need to have DynamicCollider or StaticCollider as "
-            "accessible parent.");
+            "accessible parent. ");
+        static_assert(isCollider<ColliderType>(),
+                      "Colliders need to have DynamicCollider or StaticCollider as "
+                      "accessible parent.");
 
-        static_assert(
-            (std::is_same_v<Collider, Colliders> || ...),
-            "enableCollision called with type not in the collision detector");
-
-        auto &localHash = ColliderDatabase<Collider>::spacialHash;
-
-        for (const auto &position : collider.form.rasterize())
-            if (!localHash[position].insert(&collider).second)
-                throw Exception(
-                    "Insertion in Spacial Hash but element already exist");
-
-        if constexpr (std::is_base_of<
-                          DynamicCollider<typename Collider::FormType>,
-                          Collider>())
-            ColliderDatabase<Collider>::colliders[&collider] = {};
+        static_assert((std::is_same_v<ColliderType, CollidersType> || ...),
+                      "enableCollision called with type not in the collision detector");
     }
 
-    template<class Collider>
-    void disableCollision(Collider &collider) {
-        auto &localHash = ColliderDatabase<Collider>::spacialHash;
-
-        for (const auto &position : collider.form.rasterize())
-            if (!localHash[position].erase(&collider))
-                throw Exception("Remove in Spacial Hash but no element");
-
-        if constexpr (std::is_base_of<
-                          DynamicCollider<typename Collider::FormType>,
-                          Collider>())
-            ColliderDatabase<Collider>::colliders.erase(&collider);
-    }
-
-    template<class Collider>
-    void enableGhostCollision(Collider &collider) {
-        static_assert(
-            std::is_base_of<DynamicCollider<typename Collider::FormType>,
-                            Collider>(),
-            "Only dynamic colliders can be ghost collider");
-
-        ColliderDatabase<Collider>::ghostColliders[&collider] = {};
-    }
-
-    template<class Collider>
-    void disableGhostCollision(Collider &collider) {
-        static_assert(
-            std::is_base_of<DynamicCollider<typename Collider::FormType>,
-                            Collider>(),
-            "Only dynamic colliders can be ghost collider");
-
-        ColliderDatabase<Collider>::ghostColliders.erase(&collider);
-    }
-
+public:
 private:
-    template<class TestedCollider, class Collider, class Form>
-    std::unordered_set<TestedCollider *> testColliderDatabase(
-        std::unordered_set<TestedCollider *> &hitting,
-        Collider *dynamicCollider,
-        const Form &form,
-        const std::unordered_set<Vec2<int32_t>> &rasters) const {
+    template<class TestedCollider, class ColliderType, class Form>
+    std::unordered_set<TestedCollider *>
+    testColliderDatabase(std::unordered_set<TestedCollider *> &hitting,
+                         ColliderType *dynamicCollider,
+                         const Form &form,
+                         const RasterArea &rasters) const {
 
         std::unordered_set<TestedCollider *> collidingObjects =
-            ColliderDatabase<TestedCollider>::template overlap<Form>(form,
-                                                                     rasters);
+            ColliderDatabase<TestedCollider>::template overlapRasters<Form>(form, rasters);
 
         for (TestedCollider *collidingObject : collidingObjects)
             if (hitting.erase(collidingObject) == 0)
@@ -209,118 +202,151 @@ private:
         return collidingObjects;
     }
 
-    template<class Collider>
-    void updateOneCollider(Collider *dynamicCollider,
-                           AllColliders &hitting,
-                           double timeFlow) {
-        auto nextForm =
-            dynamicCollider->preCollisionUpdate(dynamicCollider->form,
-                                                timeFlow);
+    template<class ColliderType>
+    void updateOneCollider(ColliderType *dynamicCollider, AllColliders &hitting, double timeFlow) {
+        auto nextForm = dynamicCollider->preCollisionUpdate(dynamicCollider->form, timeFlow);
 
-        auto rasters = nextForm.rasterize();
+        auto rasters = rasterize(nextForm);
 
-        ((std::get<std::unordered_set<Colliders *>>(hitting) =
-              testColliderDatabase<Colliders>(
-                  std::get<std::unordered_set<Colliders *>>(hitting),
+        ((std::get<std::unordered_set<CollidersType *>>(hitting) =
+              testColliderDatabase<CollidersType>(
+                  std::get<std::unordered_set<CollidersType *>>(hitting),
                   dynamicCollider,
                   nextForm,
                   rasters)),
          ...);
 
         dynamicCollider->privateForm =
-            dynamicCollider->postCollisionUpdate(dynamicCollider->form,
-                                                 nextForm,
-                                                 timeFlow);
+            dynamicCollider->postCollisionUpdate(dynamicCollider->form, nextForm, timeFlow);
     }
 
-    template<class Collider>
+    template<class ColliderType>
     void testDynamicColliderDatabase(double timeFlow) {
-        for (auto &[dynamicCollider, hitting] :
-             ColliderDatabase<Collider>::colliders) {
-            for (const auto &position : dynamicCollider->form.rasterize())
-                if (ColliderDatabase<Collider>::spacialHash[position].erase(
-                        dynamicCollider) == 0)
-                    throw Exception(
-                        std::string("erase ") + typeid(dynamicCollider).name() +
-                        " in dynamic Spacial Hash but element does not exist");
+        for (auto &[dynamicCollider, hitting] : ColliderDatabase<ColliderType>::colliders) {
+            for (const auto &position : rasterize(dynamicCollider->form))
+                if (ColliderDatabase<ColliderType>::spacialHash[position].erase(dynamicCollider)
+                    == 0)
+                    throw std::runtime_error(
+                        std::string("erase ") + typeid(dynamicCollider).name()
+                        + " in dynamic Spacial Hash but element does not exist");
 
             updateOneCollider(dynamicCollider, hitting, timeFlow);
 
-            for (const auto &position : dynamicCollider->form.rasterize())
-                if (!ColliderDatabase<Collider>::spacialHash[position]
+            for (const auto &position : rasterize(dynamicCollider->form))
+                if (!ColliderDatabase<ColliderType>::spacialHash[position]
                          .insert(dynamicCollider)
                          .second)
-                    throw Exception(
-                        std::string("insert ") +
-                        typeid(dynamicCollider).name() +
-                        " in dynamic Spacial Hash but element already exist");
+                    throw std::runtime_error(
+                        std::string("insert ") + typeid(dynamicCollider).name()
+                        + " in dynamic Spacial Hash but element already exist");
         }
-        for (auto &[ghostCollider, hitting] :
-             ColliderDatabase<Collider>::ghostColliders)
+        for (auto &[ghostCollider, hitting] : ColliderDatabase<ColliderType>::ghostColliders)
             updateOneCollider(ghostCollider, hitting, timeFlow);
     }
 
-    template<class Collider>
+    template<class ColliderType>
     constexpr void testColliderDatabase(double timeFlow) {
-        if constexpr (std::is_base_of<
-                          DynamicCollider<typename Collider::FormType>,
-                          Collider>())
-            testDynamicColliderDatabase<Collider>(timeFlow);
+        if constexpr (isCollider<ColliderType>())
+            testDynamicColliderDatabase<ColliderType>(timeFlow);
     }
 
 public:
-    void update(double timeFlow) {
-        (testColliderDatabase<Colliders>(timeFlow), ...);
+    void update(double timeFlow) { (testColliderDatabase<CollidersType>(timeFlow), ...); }
+
+    template<class ColliderType>
+    AllColliders testCollider(const ColliderType &collider) const {
+        auto r = rasterize(collider);
+        AllColliders allColliders;
+        ((std::get<std::unordered_set<CollidersType *>>(allColliders) =
+              ColliderDatabase<CollidersType>::overlapRasters(collider, r)),
+         ...);
+        return allColliders;
     }
 
-#ifdef BLOB_COLLISION_IMGUI
-    bool ImGuiDebugWindowVisible = true;
-
-    constexpr static double zoomIn = 20;
-
-    void draw(const Circle &c, ImDrawList *draw_list, Vec2<> offset) {
-        draw_list->AddCircleFilled(offset + c.position * zoomIn,
-                                   c.rayon * zoomIn,
-                                   ImColor(ImVec4(0.0f, 1.0f, 0.4f, 1.0f)),
-                                   10.f);
-    }
-
-    void draw(const Raster &c, ImDrawList *draw_list, Vec2<> offset) {}
-
-    void draw(const Rectangle &c, ImDrawList *draw_list, Vec2<> offset) {}
-
-    void draw(const Point &c, ImDrawList *draw_list, Vec2<> offset) {}
-
-    void draw(const Line &c, ImDrawList *draw_list, Vec2<> offset) {}
-
-    template<class T>
-    void drawSpacialHash(ImDrawList *draw_list, Vec2<> offset) {
-        for (const auto &[pos, colliders] : ColliderDatabase<T>::spacialHash) {
-            if (!colliders.empty())
-                draw_list->AddRect(
-                    offset + pos.template cast<float>() * zoomIn,
-                    offset + pos.template cast<float>() * zoomIn + zoomIn,
-                    ImColor(ImVec4(0.8f, 0.8f, 0.4f, 1.0f)),
-                    0.0f,
-                    ImDrawFlags_None,
-                    1.f);
-            for (const auto &c : colliders)
-                draw(c->form, draw_list, offset);
-        }
-        for (const auto &[collider, hits] :
-             ColliderDatabase<T>::ghostColliders) {
-            draw(collider->form, draw_list, offset);
+    // collider function caller
+private:
+    template<class Test, class ColliderType, typename... Args>
+    void callColliderDatabase(Args... args) {
+        if constexpr (Test::value) {
+            for (auto &collider : ColliderDatabase<ColliderType>::data)
+                Test::call(*collider, args...);
         }
     }
 
-    void ImGuiDebugWindow() {
-        ImGui::Begin("CollisionDetector Debug", &ImGuiDebugWindowVisible);
-        ImDrawList *draw_list = ImGui::GetWindowDrawList();
-        const ImVec2 p = ImGui::GetCursorScreenPos();
-        (drawSpacialHash<Colliders>(draw_list, p), ...);
-        ImGui::End();
+public:
+    template<template<typename> class Test, class... Args>
+    void callAll(Args... args) {
+        (callColliderDatabase<Test<CollidersType>, CollidersType>(args...), ...);
     }
-#endif
+
+    // data storage
+    template<class ColliderType, class... Args>
+    ColliderType &emplace(Args... args) {
+        staticTest<ColliderType>();
+        std::unique_ptr<ColliderType> colliderUniqPtr = std::make_unique<ColliderType>(args...);
+        auto collider = colliderUniqPtr.get();
+
+        // Static collision
+        collider->privateEnableStaticCollision = [&, collider](typename ColliderType::Form &&form) {
+            collider->privateEnabled = true;
+            collider->privateForm = std::move(form);
+            auto &localHash = ColliderDatabase<ColliderType>::spacialHash;
+            for (const auto &position : rasterize(collider->form))
+                if (!localHash[position].insert(collider).second)
+                    throw std::runtime_error("Insertion in Spacial Hash but element already exist");
+        };
+        collider->privateDisableStaticCollision = [&, collider] {
+            collider->privateEnabled = false;
+            auto &localHash = ColliderDatabase<ColliderType>::spacialHash;
+            for (const auto &position : rasterize(collider->form))
+                if (!localHash[position].erase(collider))
+                    throw std::runtime_error("Remove in Spacial Hash but no element");
+        };
+        if (collider->initFunction == ColliderType::initEnableStaticCollision)
+            collider->privateEnableStaticCollision(std::move(collider->privateForm));
+
+        // Dynamic collision
+        collider->privateEnableDynamicCollision = [&,
+                                                   collider](typename ColliderType::Form &&form) {
+            collider->privateEnabled = true;
+            collider->privateForm = std::move(form);
+            auto &localHash = ColliderDatabase<ColliderType>::spacialHash;
+            for (const auto &position : rasterize(collider->form))
+                if (!localHash[position].insert(collider).second)
+                    throw std::runtime_error("Insertion in Spacial Hash but element already exist");
+            ColliderDatabase<ColliderType>::colliders[collider] = {};
+        };
+        collider->privateDisableDynamicCollision = [&, collider] {
+            collider->privateEnabled = false;
+            auto &localHash = ColliderDatabase<ColliderType>::spacialHash;
+            for (const auto &position : rasterize(collider->form))
+                if (!localHash[position].erase(collider))
+                    throw std::runtime_error("Remove in Spacial Hash but no element");
+            ColliderDatabase<ColliderType>::colliders.erase(collider);
+        };
+        if (collider->initFunction == ColliderType::initEnableDynamicCollision)
+            collider->privateEnableDynamicCollision(std::move(collider->privateForm));
+
+        // Ghost collision
+        collider->privateEnableGhostCollision = [&, collider](typename ColliderType::Form &&form) {
+            collider->privateEnabled = true;
+            collider->privateForm = std::move(form);
+            ColliderDatabase<ColliderType>::ghostColliders[collider] = {};
+        };
+        collider->privateDisableGhostCollision = [&, collider] {
+            collider->privateEnabled = false;
+            ColliderDatabase<ColliderType>::ghostColliders.erase(collider);
+        };
+        if (collider->initFunction == ColliderType::initEnableGhostCollision)
+            collider->privateEnableGhostCollision(std::move(collider->privateForm));
+
+        // remove
+        collider->privateRemove = [&, collider] {};
+        if (collider->initFunction == ColliderType::initRemove)
+            collider->privateRemove();
+
+        return *ColliderDatabase<ColliderType>::data.emplace_back(std::move(colliderUniqPtr));
+    }
 };
 
 } // namespace Blob
