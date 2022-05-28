@@ -19,15 +19,15 @@ jobs:
       run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11
     - name: Build
       run: cmake --build build --config Release
-  gcc-12:
+  gcc-default:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Submodules
       run: git submodule update --init --recursive
     - name: Install libs
-      run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libwayland-dev libboost-all-dev gcc-12 g++-12
+      run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libwayland-dev libboost-all-dev gcc g++
     - name: Configure
-      run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12
+      run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
     - name: Build
       run: cmake --build build --config Release

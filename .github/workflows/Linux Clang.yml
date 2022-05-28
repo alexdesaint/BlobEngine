@@ -31,15 +31,15 @@ jobs:
       run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12
     - name: Build
       run: cmake --build build --config Release
-  clang-13:
+  clang-default:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Submodules
       run: git submodule update --init --recursive
     - name: Install libs
-      run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libwayland-dev libboost-all-dev clang-13
+      run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libwayland-dev libboost-all-dev clang
     - name: Configure
-      run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=clang-13 -DCMAKE_CXX_COMPILER=clang++-13
+      run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
     - name: Build
       run: cmake --build build --config Release

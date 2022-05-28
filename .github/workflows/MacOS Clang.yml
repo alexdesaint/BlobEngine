@@ -1,0 +1,19 @@
+name: Visual Studio
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  clang-default:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Submodules
+      run: git submodule update --init --recursive
+    - name: Configure
+      run: cmake -Bbuild
+    - name: Build
+      run: cmake --build build --config Release
