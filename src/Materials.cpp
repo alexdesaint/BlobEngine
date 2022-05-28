@@ -65,6 +65,11 @@ std::unique_ptr<Material> Materials::pbrSingleColor(Context &context, const Colo
         shader = std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
     std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
 
+    std::unique_ptr<Uniform> &uniformLight = context.uniforms["u_lightPosRadius"];
+    if (!uniformLight)
+        uniformLight = std::make_unique<Uniform>("u_lightPosRadius", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformLight, &context.lightPosRadius.x);
+
     material->color = albedo;
     std::unique_ptr<Uniform> &uniformColor = context.uniforms["u_color"];
     if (!uniformColor)
@@ -81,6 +86,11 @@ std::unique_ptr<Material> Materials::pbrSingleColorInstanced(Context &context,
         shader = std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
     std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
 
+    std::unique_ptr<Uniform> &uniformLight = context.uniforms["u_lightPosRadius"];
+    if (!uniformLight)
+        uniformLight = std::make_unique<Uniform>("u_lightPosRadius", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformLight, &context.lightPosRadius.x);
+
     material->color = albedo;
     std::unique_ptr<Uniform> &uniformColor = context.uniforms["u_color"];
     if (!uniformColor)
@@ -95,6 +105,12 @@ std::unique_ptr<Material> Materials::pbrColorArray(Context &context) {
     if (!shader)
         shader = std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
     std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
+
+    std::unique_ptr<Uniform> &uniformLight = context.uniforms["u_lightPosRadius"];
+    if (!uniformLight)
+        uniformLight = std::make_unique<Uniform>("u_lightPosRadius", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformLight, &context.lightPosRadius.x);
+
     return material;
 }
 
@@ -103,6 +119,12 @@ std::unique_ptr<Material> Materials::pbrColorArrayInstanced(Context &context) {
     if (!shader)
         shader = std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
     std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
+
+    std::unique_ptr<Uniform> &uniformLight = context.uniforms["u_lightPosRadius"];
+    if (!uniformLight)
+        uniformLight = std::make_unique<Uniform>("u_lightPosRadius", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformLight, &context.lightPosRadius.x);
+
     return material;
 }
 
@@ -112,6 +134,11 @@ Materials::pbrSingleTexture(Context &context, const Texture &texture, const Colo
     if (!shader)
         shader = std::make_unique<Shader>(Buffer{v_normal}, Buffer{f_colorUniform});
     std::unique_ptr<Material> material = std::make_unique<Material>(*shader);
+
+    std::unique_ptr<Uniform> &uniformLight = context.uniforms["u_lightPosRadius"];
+    if (!uniformLight)
+        uniformLight = std::make_unique<Uniform>("u_lightPosRadius", UniformVec4);
+    material->uniformReferences.emplace_back(*uniformLight, &context.lightPosRadius.x);
 
     material->color = albedo;
     std::unique_ptr<Uniform> &uniformColor = context.uniforms["u_color"];

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Blob/Maths.hpp"
 #include "bgfx/bgfx.h"
 #include <Blob/Material.hpp>
 #include <Blob/RenderOptions.hpp>
@@ -21,6 +22,8 @@ public:
     std::unordered_map<std::string, std::unique_ptr<VertexBuffer>> vertexBuffers;
     std::unordered_map<std::string, std::unique_ptr<UniformSampler>> uniformSamplers;
     std::unordered_map<std::string, std::unique_ptr<Uniform>> uniforms;
+
+    Vec4<> lightPosRadius = {0, 0, 100, 10000};
 
     Context(void *ndt, void *nwh) {
         bgfx::PlatformData pd;

@@ -1,4 +1,4 @@
-name: Visual Studio 2019
+name: Visual Studio
 
 on:
   push:
@@ -14,6 +14,6 @@ jobs:
     - name: Submodules
       run: git submodule update --init --recursive
     - name: Configure
-      run: cmake -Bbuild -G"Visual Studio 16 2019"
+      run: cmake -Bbuild
     - name: Build
       run: cmake --build build --config Release

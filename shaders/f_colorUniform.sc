@@ -60,8 +60,8 @@ void main()
 
 	vec3 lightColor = calculateLight(u_lightPosRadius.xyz, u_lightPosRadius.w, 1, tbn, v_wpos, v_normal, v_view);
 
-	//gl_FragColor.xyz = max(vec3_splat(0.05), lightColor.xyz) * v_color0.xyz;
-	gl_FragColor = u_color;
+	gl_FragColor.xyz = max(vec3_splat(0.05), lightColor.xyz) * u_color.xyz;
+	//gl_FragColor = u_color;
 	gl_FragColor.w = 1.0;
 	gl_FragColor = toGamma(gl_FragColor);
 }
