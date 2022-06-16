@@ -1,10 +1,8 @@
 import bpy
 import idprop
 import os
-import math
 import numpy as np
 from pathlib import Path
-import shutil
 
 # blender -b file.blend -P libs/BlobEngine/BlobBlender.py
 
@@ -62,14 +60,16 @@ class NativeType:
 float_t = NativeType("float")
 int32_t = NativeType("int")
 uint16_t = NativeType("uint16_t")
-string_t = NativeType("std::string")
+auto_t = NativeType("auto")
+char_t = NativeType("char")
+string_view_t = NativeType("std::string_view")
 
 Attribute_t = NativeType("std::unique_ptr<Blob::VertexBuffer>")
 VertexLayout_t = NativeType("Blob::VertexLayout")
 RenderOptions_t = NativeType("std::unique_ptr<Blob::RenderOptions>")
 Shape_t = NativeType("Blob::Shape")
 Scene_t = NativeType("Blob::Scene")
-Primitive_t = NativeType("Blob::Primitive")
+Mesh_t = NativeType("Blob::Mesh")
 
 
 def getIndent(size):
@@ -90,6 +90,7 @@ class Parameter:
         postQualif="",
         static=False,
         inline=False,
+        constexpr=False,
     ):
         self.name = name
         self.type = type
@@ -103,11 +104,17 @@ class Parameter:
         self.postQualif = postQualif
         self.static = static
         self.inline = inline
+        self.constexpr = constexpr
+        if constexpr:
+            self.static = True
+            self.inline = True
 
     def getHeader(self, indent=0):
         ret = getIndent(indent)
+        if self.constexpr:
+            ret += "constexpr "
         if self.static:
-            if self.inline:
+            if self.inline and not self.constexpr:
                 ret += "inline "
             ret += "static "
         ret += self.preQualif
@@ -190,6 +197,7 @@ class Function:
         content=[],
         static=False,
         inline=False,
+        constexpr=False,
     ):
         self.name = name
         self.ret = ret
@@ -201,10 +209,15 @@ class Function:
         self.content = content
         self.static = static
         self.inline = inline
+        self.constexpr = constexpr
 
     def getHeader(self, indent=0):
         ret = getIndent(indent)
         ret += self.preQualif
+        if self.constexpr:
+            ret += "constexpr "
+        if self.static:
+            ret += "static "
         if self.ret:
             ret += str(self.ret.name) + " "
         ret += self.name
@@ -232,6 +245,8 @@ class Function:
     def getCore(self, namespace):
         ret = ""
         if not self.inline:
+            if self.constexpr:
+                ret += "constexpr "
             if self.ret:
                 ret += str(self.ret.name) + " "
             ret += namespace + self.name
@@ -250,7 +265,37 @@ class Function:
         return ret
 
 
-def codeMesh(mesh):
+def setGetNameProperties(name):
+    return [
+        Parameter(
+            "name",
+            string_view_t,
+            '"' + name + '"',
+            constexpr=True,
+        )
+    ]
+
+
+def setGetStringProperties(items):
+    ret = Function(
+        "getStringProperties",
+        NativeType("std::string_view"),
+        ["std::string_view key"],
+        "",
+        [],
+        [],
+        True,
+        True,
+        True,
+    )
+    for key, value in items:
+        if isinstance(value, str):
+            ret.content.append('if (key == "' + key + '") return "' + value + '";')
+    ret.content.append('return "";')
+    return [ret]
+
+
+def codeMesh(mesh: bpy.types.Mesh):
     mesh.calc_loop_triangles()
     dataSize = len(mesh.loop_triangles) * 3
     name = nameFormat(mesh.name)
@@ -298,13 +343,16 @@ def codeMesh(mesh):
         [],
     )
 
-    meshConstructor = Function(name, None, ["Blob::Context &context"], "", [], [])
+    meshStruct = Struct(name, {}, [], [], [])
 
-    meshConstructor.content.append("Blob::VertexLayout vertexLayout;")
-    meshConstructor.content.append("vertexLayout.begin();")
-    meshConstructor.content.append(
-        "vertexLayout.add<float>(bgfx::Attrib::Position, 3);"
-    )
+    meshStruct.content += setGetNameProperties(name)
+    meshStruct.content += setGetStringProperties(mesh.items())
+
+    meshGetter = Function("get", Mesh_t, ["Blob::Context &context"], "", [], [], True)
+
+    meshGetter.content.append("Blob::VertexLayout vertexLayout;")
+    meshGetter.content.append("vertexLayout.begin();")
+    meshGetter.content.append("vertexLayout.add<float>(bgfx::Attrib::Position, 3);")
 
     if use_normals:
         dataType += [("nx", np.float32), ("ny", np.float32), ("nz", np.float32)]
@@ -313,9 +361,7 @@ def codeMesh(mesh):
             Parameter("ny", float_t),
             Parameter("nz", float_t),
         ]
-        meshConstructor.content.append(
-            "vertexLayout.add<float>(bgfx::Attrib::Normal, 3);"
-        )
+        meshGetter.content.append("vertexLayout.add<float>(bgfx::Attrib::Normal, 3);")
     if use_tangents:
         dataType += [
             ("tx", np.float32),
@@ -327,16 +373,14 @@ def codeMesh(mesh):
             Parameter("ty", float_t),
             Parameter("tz", float_t),
         ]
-        meshConstructor.content.append(
-            "vertexLayout.add<float>(bgfx::Attrib::Tangent, 3);"
-        )
+        meshGetter.content.append("vertexLayout.add<float>(bgfx::Attrib::Tangent, 3);")
     for uv_i in range(tex_coord_max):
         dataType += [("uv%dx" % uv_i, np.float32), ("uv%dy" % uv_i, np.float32)]
         dataStruct.content += [
             Parameter("uv%dx" % uv_i, float_t),
             Parameter("uv%dy" % uv_i, float_t),
         ]
-        meshConstructor.content.append(
+        meshGetter.content.append(
             "vertexLayout.add<float>(bgfx::Attrib::TexCoord0, 2);"
         )
     for col_i in range(color_max):
@@ -352,9 +396,7 @@ def codeMesh(mesh):
             Parameter("colob%dr" % col_i, float_t),
             Parameter("coloa%dr" % col_i, float_t),
         ]
-        meshConstructor.content.append(
-            "vertexLayout.add<float>(bgfx::Attrib::Color0, 4);"
-        )
+        meshGetter.content.append("vertexLayout.add<float>(bgfx::Attrib::Color0, 4);")
     if use_morph_normals:
         for morph_i, _ in enumerate(key_blocks):
             dataType += [
@@ -368,9 +410,7 @@ def codeMesh(mesh):
                 Parameter("morph%dnz" % col_i, float_t),
             ]
 
-    meshConstructor.content.append("vertexLayout.end();")
-
-    meshStruct = Struct(name, {"Blob::Mesh": "public"}, [], [], [])
+    meshGetter.content.append("vertexLayout.end();")
 
     meshStruct.localContent.append(dataStruct)
 
@@ -432,7 +472,7 @@ def codeMesh(mesh):
         )
     )
 
-    meshConstructor.content.append(
+    meshGetter.content.append(
         Attribute_t.getType()
         + " &"
         + name
@@ -441,14 +481,16 @@ def codeMesh(mesh):
         + name
         + '"];'
     )
-    meshConstructor.content.append("if(!" + name + "VertexBuffer)")
-    meshConstructor.content.append(
+    meshGetter.content.append("if(!" + name + "VertexBuffer)")
+    meshGetter.content.append(
         "    "
         + name
         + "VertexBuffer"
         + " = std::make_unique<Blob::VertexBuffer>(Blob::Buffer{data"
         + "}, vertexLayout);"
     )
+
+    meshConstructor = "return " + Mesh_t.name + "{{\n"
     for matId, indices in indicePerMaterial.items():
         lenIndices = str(len(indices))
         primitiveName = nameFormat(mesh.materials[matId].name)
@@ -464,7 +506,7 @@ def codeMesh(mesh):
             )
         )
         roName = primitiveName + "Ro"
-        meshConstructor.content.append(
+        meshGetter.content.append(
             RenderOptions_t.getType()
             + " &"
             + roName
@@ -473,8 +515,8 @@ def codeMesh(mesh):
             + primitiveName
             + '"];'
         )
-        meshConstructor.content.append("if(!" + roName + ")")
-        meshConstructor.content.append(
+        meshGetter.content.append("if(!" + roName + ")")
+        meshGetter.content.append(
             "    "
             + roName
             + " = std::make_unique<Blob::RenderOptions>(Blob::Buffer{indices"
@@ -482,21 +524,18 @@ def codeMesh(mesh):
             + "});"
         )
 
-        meshStruct.content.append(Parameter(primitiveName, Primitive_t))
-        meshConstructor.content.append(
-            primitiveName
-            + ".material = Blob::Materials::pbrSingleColor(context, Blob::Color{"
+        meshConstructor += (
+            "        {"
+            + "\n            Blob::Materials::pbrSingleColor(context, Blob::Color{"
             + print1dData(mesh.materials[matId].diffuse_color)
-            + "});"
+            + "}),\n            "
+            + name
+            + "VertexBuffer.get(),\n            "
+            + roName
+            + ".get(),\n        },\n"
         )
-        meshConstructor.content.append(
-            primitiveName + ".renderOptions = " + roName + ".get();"
-        )
-        meshConstructor.content.append(
-            primitiveName + ".vertexBuffer = " + name + "VertexBuffer.get();"
-        )
-        meshConstructor.content.append("addPrimitive(" + primitiveName + ");")
 
+    meshGetter.content.append(meshConstructor + "    }};")
     albedo = False
     for keyName, prop in mesh.items():
         propType = float_t
@@ -513,7 +552,7 @@ def codeMesh(mesh):
             )
         if type(prop) == idprop.types.IDPropertyGroup:
             continue
-    meshStruct.content.append(meshConstructor)
+    meshStruct.content.append(meshGetter)
 
     return meshStruct.getHeader(), meshStruct.getCore()
 
@@ -536,7 +575,9 @@ headerFolder = mainFolder + "include/" + projectName + "/"
 srcFolder = mainFolder + "src/"
 
 meshSrcFolder = srcFolder + "Meshes/"
+meshHeaderFolder = headerFolder + "Meshes/"
 Path(meshSrcFolder).mkdir(parents=True, exist_ok=True)
+Path(meshHeaderFolder).mkdir(parents=True, exist_ok=True)
 
 shapeHeaderFolder = headerFolder + "Shapes/"
 Path(shapeHeaderFolder).mkdir(parents=True, exist_ok=True)
@@ -550,19 +591,14 @@ for file in Path(mainFolder).rglob("*"):
     if file.is_file():
         existingsFiles.add(file)
 
-
-meshHeaderData = ""
-meshHeaderData += "#pragma once\n"
-meshHeaderData += "#include <Blob/Mesh.hpp>\n"
-meshHeaderData += "#include <Blob/Context.hpp>\n"
-meshHeaderData += "namespace " + projectName + "::Meshes {\n"
-
+meshes = []
 for mesh in bpy.data.meshes:
     name = nameFormat(mesh.name)
+    meshes.append(name)
     headerCode, coreCode = codeMesh(mesh)
-    meshHeaderData += headerCode
+
     data = ""
-    data += "#include <" + projectName + "/Meshes.hpp>\n"
+    data += "#include <" + projectName + "/Meshes/" + name + ".hpp>\n"
     data += "#include <Blob/Materials.hpp>\n"
     data += "namespace " + projectName + "::Meshes {\n"
     data += coreCode
@@ -570,54 +606,80 @@ for mesh in bpy.data.meshes:
     cppFiles.append("src/Meshes/" + name + ".cpp")
     updateIfDifferent(meshSrcFolder + name + ".cpp", data, existingsFiles)
 
-meshHeaderData += "}\n"
-updateIfDifferent(headerFolder + "Meshes.hpp", meshHeaderData, existingsFiles)
+    data = ""
+    data += "#pragma once\n"
+    data += "#include <Blob/Mesh.hpp>\n"
+    data += "#include <Blob/Context.hpp>\n"
+    data += "namespace " + projectName + "::Meshes {\n"
+    data += headerCode
+    data += "}\n"
+    updateIfDifferent(meshHeaderFolder + name + ".hpp", data, existingsFiles)
+
+data = ""
+data += "#pragma once\n"
+for name in meshes:
+    data += "#include <" + projectName + "/Meshes/" + name + ".hpp>\n"
+data += "namespace " + projectName + "::Meshes {\n"
+data += """
+struct BlenderPropertie {
+    std::string_view name;
+    Blob::Mesh (*get)(Blob::Context &);
+
+    constexpr BlenderPropertie(std::string_view name,
+                               Blob::Mesh (*get)(Blob::Context &)) :
+        name(name), get(get) {}
+};
+"""
+data += Function(
+    "getAllMeshes",
+    NativeType("std::array<BlenderPropertie, " + str(len(meshes)) + ">"),
+    [],
+    "",
+    [],
+    ["return {"]
+    + [
+        "    BlenderPropertie{" + name + "::name, &" + name + "::get},"
+        for name in meshes
+    ]
+    + ["};"],
+    False,
+    True,
+    True,
+).getHeader()
+data += "}\n"
+updateIfDifferent(headerFolder + "Meshes.hpp", data, existingsFiles)
 
 for object in bpy.data.objects:
     args = []
     name = nameFormat(object.name)
 
-    shapeStruct = Struct(name, {"Blob::Shape": "public"}, [], [], [])
+    shapeStruct = Struct(name, {}, [], [], [])
+    shapeStruct.content += setGetNameProperties(name)
+    shapeStruct.content += setGetStringProperties(object.items())
     toInclude = []
 
-    shapeInit = "Blob::Shape("
-    meshInit = ""
+    shapeGetter = Function(
+        "get",
+        Shape_t,
+        ["Blob::Context &context"],
+        "",
+        [],
+        [],
+        True,
+        True,
+    )
+    shapeGetter.content.append("return {")
     if type(object.data) == bpy.types.Mesh:
         typeName = nameFormat(object.data.name)
         attributeName = "mesh_" + typeName
-        shapeInit += attributeName + ", "
-        shapeStruct.content.append(
-            Parameter(attributeName, NativeType("Meshes::" + typeName))
-        )
-        meshInit += attributeName + "(context)"
-    shapeInit += (
-        "Blob::ModelTransform{"
-        + ", ".join(
-            ["{" + ", ".join(map(str, vec)) + "}" for vec in object.matrix_local]
-        )
-        + "}"
-    )
-    shapeInit += ")"
-    constructor = Function(
-        name,
-        None,
-        ["Blob::Context &context"],
-        "",
-        [meshInit, shapeInit],
-        [],
-        False,
-        True,
-    )
-    shapeStruct.content.append(constructor)
+        shapeGetter.content.append("    Meshes::" + typeName + "::get(context),")
+
+    shapeGetter.content.append("    {")
 
     for child in object.children:
         typeName = nameFormat(child.name)
-        attributeName = "shape_" + typeName
         toInclude.append("Shapes/" + typeName)
-        shapeStruct.content.append(
-            Parameter(attributeName, NativeType("Shapes::" + typeName))
-        )
-        constructor.content.append("addChild(" + attributeName + ");")
+        shapeGetter.content.append("        Shapes::" + typeName + "::get(context),")
     if object.instance_collection:
         for child in object.instance_collection.objects:
             childName = nameFormat(child.name)
@@ -626,7 +688,17 @@ for object in bpy.data.objects:
             shapeStruct.content.append(
                 Parameter(childName, NativeType("Shapes::" + childName))
             )
-            constructor.content.append("addChild(" + childName + ");")
+            shapeGetter.content.append(
+                "        Shapes::" + typeName + "::get(context),"
+            )
+
+    shapeGetter.content.append("    },")
+    shapeGetter.content.append("    {")
+    for vec in object.matrix_local:
+        shapeGetter.content.append("        {" + ", ".join(map(str, vec)) + "},")
+    shapeGetter.content.append("    },")
+    shapeGetter.content.append("};")
+    shapeStruct.content.append(shapeGetter)
 
     data = ""
     data += "#pragma once\n"
@@ -645,7 +717,7 @@ for scene in bpy.data.scenes:
         if object.parent != None:
             continue
         objectName = nameFormat(object.name)
-        constructor.content.append(sceneName + ".addShape(" + objectName + ");")
+        # constructor.content.append(sceneName + ".addShape(" + objectName + ");")
 
 data = ""
 data += "add_library(" + projectName + " STATIC " + "\n    ".join(cppFiles) + ")\n"

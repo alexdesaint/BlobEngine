@@ -1,39 +1,47 @@
 #pragma once
 
-#include <list>
-#include <unordered_map>
-
-#include <Blob/Primitive.hpp>
+#include <Blob/Material.hpp>
+#include <Blob/RenderOptions.hpp>
+#include <Blob/VertexBuffer.hpp>
+#include <memory>
 
 namespace Blob {
 
-class Mesh {
-    friend class Window;
+struct Mesh {
+    struct Primitive {
+        Material material;
+        VertexBuffer *vertexBuffer;
+        RenderOptions *renderOptions;
 
-private:
-    std::list<const Primitive *> primitives;
-    std::list<const Primitive *> transparentPrimitives;
+        Primitive() = delete;
+        Primitive(const Primitive &) = default;
+        Primitive(Primitive &&) = default;
+        Primitive(Material &&material, VertexBuffer *vertexBuffer, RenderOptions *renderOptions) :
+            material(std::move(material)),
+            vertexBuffer(vertexBuffer),
+            renderOptions(renderOptions) {}
+    };
 
-public:
+    std::vector<Primitive> primitives;
+    std::vector<Primitive> transparentPrimitives;
+
     Mesh() = default;
-    Mesh(const Mesh &) = delete;
-    Mesh(Mesh &&) = delete;
-    explicit Mesh(const Primitive &r);
+    Mesh(const Mesh &) = default;
+    Mesh(Mesh &&) = default;
+    Mesh(Material &&material, VertexBuffer *vertexBuffer, RenderOptions *renderOptions) :
+        primitives({Primitive{std::move(material), vertexBuffer, renderOptions}}) {}
+    explicit Mesh(std::vector<Primitive> &&primitives,
+                  std::vector<Primitive> &&transparentPrimitives = {}) :
+        primitives(std::move(primitives)),
+        transparentPrimitives(std::move(transparentPrimitives)) {}
 
-    void addPrimitive(const Primitive &r);
-    void addPrimitive(const Primitive *r);
-
-    void removePrimitive(const Primitive &r);
-    void removePrimitive(const Primitive *r);
-    void removeAllPrimitive();
-
-    void addTransparentPrimitive(const Primitive &r);
-    void addTransparentPrimitive(const Primitive *r);
-
-    void removeTransparentPrimitive(const Primitive &r);
-    void removeTransparentPrimitive(const Primitive *r);
-
-    friend std::ostream &operator<<(std::ostream &s, const Mesh &a);
+    friend std::ostream &operator<<(std::ostream &s, const Mesh &a) {
+        s << "Mesh {" << std::endl;
+        s << "    primitive size" << a.primitives.size() << std::endl;
+        s << "    transparent primitives size" << a.transparentPrimitives.size() << std::endl;
+        s << "}";
+        return s;
+    }
 };
 
 } // namespace Blob

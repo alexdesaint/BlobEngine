@@ -1,4 +1,4 @@
-#include <blenderTest/Meshes.hpp>
+#include <blenderTest/Meshes/Cube.hpp>
 #include <Blob/Materials.hpp>
 namespace blenderTest::Meshes {
 struct Data {
@@ -42,7 +42,7 @@ const Data data[24]{
 {1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.625, 0.5, 0.5176471, 1.0, 0.42352942, 1.0}
 };
 const uint16_t indicesArrayColor[36]{21, 10, 5, 21, 5, 16, 12, 15, 4, 12, 4, 1, 0, 3, 9, 0, 9, 6, 7, 18, 13, 7, 13, 2, 20, 23, 17, 20, 17, 14, 8, 11, 22, 8, 22, 19};
-Cube::Cube(Blob::Context &context) {
+Blob::Mesh Cube::get(Blob::Context &context) {
     Blob::VertexLayout vertexLayout;
     vertexLayout.begin();
     vertexLayout.add<float>(bgfx::Attrib::Position, 3);
@@ -56,9 +56,12 @@ Cube::Cube(Blob::Context &context) {
     std::unique_ptr<Blob::RenderOptions> &ArrayColorRo = context.renderOptions["CubeArrayColor"];
     if(!ArrayColorRo)
         ArrayColorRo = std::make_unique<Blob::RenderOptions>(Blob::Buffer{indicesArrayColor});
-    ArrayColor.material = Blob::Materials::pbrSingleColor(context, Blob::Color{0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0});
-    ArrayColor.renderOptions = ArrayColorRo.get();
-    ArrayColor.vertexBuffer = CubeVertexBuffer.get();
-    addPrimitive(ArrayColor);
+    return Blob::Mesh{{
+        {
+            Blob::Materials::pbrSingleColor(context, Blob::Color{0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0}),
+            CubeVertexBuffer.get(),
+            ArrayColorRo.get(),
+        },
+    }};
 }
 }

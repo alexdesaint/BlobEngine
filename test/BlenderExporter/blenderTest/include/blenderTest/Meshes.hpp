@@ -1,17 +1,22 @@
 #pragma once
-#include <Blob/Mesh.hpp>
-#include <Blob/Context.hpp>
+#include <blenderTest/Meshes/Cube.hpp>
+#include <blenderTest/Meshes/Cylinder.hpp>
+#include <blenderTest/Meshes/Sphere.hpp>
 namespace blenderTest::Meshes {
-struct Cube : public Blob::Mesh {
-    Blob::Primitive ArrayColor;
-    Cube(Blob::Context &context);
+
+struct BlenderPropertie {
+    std::string_view name;
+    Blob::Mesh (*get)(Blob::Context &);
+
+    constexpr BlenderPropertie(std::string_view name,
+                               Blob::Mesh (*get)(Blob::Context &)) :
+        name(name), get(get) {}
 };
-struct Cylinder : public Blob::Mesh {
-    Blob::Primitive PinkMaterial;
-    Cylinder(Blob::Context &context);
-};
-struct Sphere : public Blob::Mesh {
-    Blob::Primitive Blue;
-    Sphere(Blob::Context &context);
-};
+constexpr std::array<BlenderPropertie, 3> getAllMeshes(){
+    return {
+        BlenderPropertie{Cube::name, &Cube::get},
+        BlenderPropertie{Cylinder::name, &Cylinder::get},
+        BlenderPropertie{Sphere::name, &Sphere::get},
+    };
+}
 }

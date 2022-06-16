@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 20)
 
 option(BLOBTEST "Build the tests" OFF)
 
+# add_compile_options("-stdlib=libc++")
+# add_link_options("-fuse-ld=lld")
+# link_libraries(c++)
+
 # check if Doxygen is installed
 find_package(Doxygen)
 if (DOXYGEN_FOUND)

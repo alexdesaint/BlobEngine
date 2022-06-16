@@ -51,14 +51,11 @@ public:
     explicit Window(const Vec2<unsigned int> &size = {640, 480},
                     std::string windowName = "BlobEngine");
 
-    void draw(const Primitive &primitive,
-              const Mat4 &modelTransform = {}) const;
+    void draw(const Mesh::Primitive &primitive, const Mat4 &modelTransform = {}) const;
     void draw(const Mesh &mesh, const Mat4 &modelTransform = {}) const;
     void draw(const Shape &shape, const Mat4 &modelTransform = {}) const;
-    void drawTransparent(const Mesh &mesh,
-                         const Mat4 &modelTransform = {}) const;
-    void drawTransparent(const Shape &shape,
-                         const Mat4 &modelTransform = {}) const;
+    void drawTransparent(const Mesh &mesh, const Mat4 &modelTransform = {}) const;
+    void drawTransparent(const Shape &shape, const Mat4 &modelTransform = {}) const;
     void draw(const Scene &scene, const Mat4 &modelTransform) const;
     void draw(const Scene &scene) const;
 
@@ -69,8 +66,7 @@ public:
 
     Vec3<float> getMousePositionInWorld(const Camera &camera);
     Vec3<float> getMousePositionInWorld(const Camera &camera, float z);
-    std::array<Vec3<>, 4> getCameraCornersInWorld(const Camera &camera,
-                                                  float z);
+    std::array<Vec3<>, 4> getCameraCornersInWorld(const Camera &camera, float z);
 };
 
 } // namespace Blob

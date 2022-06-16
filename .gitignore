@@ -4,3 +4,4 @@ lib/
 build/
 cmake-build-*/
 *.kdev4
+*.blend1

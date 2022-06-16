@@ -12,14 +12,14 @@ class Scene {
     friend class Window;
 
 private:
-    std::list<Shape const *> shapes;
+    std::vector<Shape const *> shapes;
 
 public:
     Camera camera;
     Scene() = default;
 
-    explicit Scene(std::list<Shape const *> shapes);
-    Scene(const Camera &camera, std::list<Shape const *> shapes);
+    explicit Scene(std::vector<Shape const *> shapes);
+    Scene(const Camera &camera, std::vector<Shape const *> shapes);
 
     void addShape(const Shape &r);
     void addShape(const Shape *r);

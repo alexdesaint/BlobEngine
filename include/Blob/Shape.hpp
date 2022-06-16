@@ -1,34 +1,19 @@
 #pragma once
 
 #include <Blob/Mesh.hpp>
+#include <list>
 
 namespace Blob {
 
-class Shape : public ModelTransform {
-    friend class Window;
+struct Shape : public ModelTransform {
+    std::optional<Mesh> mesh;
+    std::vector<Shape> shapes;
 
-private:
-    const Mesh *mesh = nullptr;
-    std::list<const Shape *> shapes;
-
-public:
     Shape() = default;
-    Shape(const Shape &) = delete;
-    Shape(Shape &&) = delete;
-    explicit Shape(const ModelTransform &args);
-    explicit Shape(const Mesh &r);
-    Shape(const Mesh &r, const ModelTransform &args);
-
-    void setMesh(Mesh &r);
-    void setMesh(Mesh *r);
-
-    void removeMesh();
-
-    void addChild(Shape *r);
-    void addChild(Shape &r);
-
-    void removeChild(Shape &r);
-    void removeChild(Shape *r);
+    Shape(const Shape &) = default;
+    Shape(Shape &&) = default;
+    Shape(std::vector<Shape> &&shapes, ModelTransform &&modelTransform = {});
+    Shape(Mesh &&r, std::vector<Shape> &&shapes = {}, ModelTransform &&modelTransform = {});
 
     friend std::ostream &operator<<(std::ostream &s, const Shape &a);
 };

@@ -1,9 +1,10 @@
 #include <Blob/Scene.hpp>
+#include <cstddef>
 #include <iostream>
 
 namespace Blob {
-Scene::Scene(std::list<Shape const *> shapes) : shapes(std::move(shapes)) {}
-Scene::Scene(const Camera &camera, std::list<Shape const *> shapes) :
+Scene::Scene(std::vector<Shape const *> shapes) : shapes(std::move(shapes)) {}
+Scene::Scene(const Camera &camera, std::vector<Shape const *> shapes) :
     camera(camera), shapes(std::move(shapes)) {}
 
 void Scene::addShape(const Shape &r) {
@@ -13,10 +14,14 @@ void Scene::addShape(const Shape *r) {
     shapes.emplace_back(r);
 }
 void Scene::removeShape(const Shape &r) {
-    shapes.remove(&r);
+    removeShape(&r);
 }
 void Scene::removeShape(const Shape *r) {
-    shapes.remove(r);
+    auto it = std::find(shapes.begin(), shapes.end(), r);
+    if (it == shapes.end())
+        return;
+    *it = shapes.back();
+    shapes.pop_back();
 }
 void Scene::removeAll() {
     shapes.clear();

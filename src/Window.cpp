@@ -41,6 +41,9 @@ Window::Window(const Vec2<unsigned int> &size, std::string windowName) :
     ImGui::NewFrame();
 
     lastFrameTime = std::chrono::system_clock::now();
+
+    Material::initMaterial(context);
+    Material::applyMaterialStatic();
 }
 
 double Window::display(const ViewTransform &camera) {
@@ -77,6 +80,8 @@ double Window::display(const ViewTransform &camera) {
     lastFrameTime = now;
     // events
     updateInputs();
+
+    Material::applyMaterialStatic();
 
     return timeFlow;
 }
@@ -215,12 +220,12 @@ std::array<Vec3<>, 4> Window::getCameraCornersInWorld(const Camera &camera, floa
     return ret;
 }
 
-void Window::draw(const Primitive &primitive, const Mat4 &model) const {
+void Window::draw(const Mesh::Primitive &primitive, const Mat4 &model) const {
     bgfx::setIndexBuffer(primitive.renderOptions->indexBufferHandle);
     bgfx::setTransform(&model.a11);
     bgfx::setVertexBuffer(0, primitive.vertexBuffer->vertexBufferHandle);
 
-    primitive.material->applyMaterial();
+    primitive.material.applyMaterial();
 
     if (primitive.renderOptions->instancedCount)
         throw Exception("instancedCount not supported");
@@ -229,49 +234,49 @@ void Window::draw(const Primitive &primitive, const Mat4 &model) const {
 }
 
 void Window::draw(const Mesh &mesh, const Mat4 &sceneModel) const {
-    for (auto r : mesh.primitives)
-        draw(*r, sceneModel);
+    for (const auto &r : mesh.primitives)
+        draw(r, sceneModel);
 }
 
 void Window::draw(const Shape &shape, const Mat4 &sceneModel) const {
     // Mat4 modelMatrix = shape * sceneModel;
     Mat4 modelMatrix = sceneModel * shape;
 
-    if (shape.mesh != nullptr)
+    if (shape.mesh.has_value())
         draw(*shape.mesh, modelMatrix);
 
-    for (auto r : shape.shapes)
-        draw(*r, modelMatrix);
+    for (const auto &r : shape.shapes)
+        draw(r, modelMatrix);
 }
 
 void Window::draw(const Scene &scene, const Mat4 &sceneModel) const {
-    for (auto r : scene.shapes)
+    for (const auto &r : scene.shapes)
         draw(*r, sceneModel);
-    for (auto r : scene.shapes)
+    for (const auto &r : scene.shapes)
         drawTransparent(*r, sceneModel);
 }
 
 void Window::draw(const Scene &scene) const {
-    for (auto r : scene.shapes)
+    for (const auto &r : scene.shapes)
         draw(*r);
-    for (auto r : scene.shapes)
+    for (const auto &r : scene.shapes)
         drawTransparent(*r);
 }
 
 void Window::drawTransparent(const Mesh &mesh, const Mat4 &sceneModel) const {
-    for (auto r : mesh.transparentPrimitives)
-        draw(*r, sceneModel);
+    for (const auto &r : mesh.transparentPrimitives)
+        draw(r, sceneModel);
 }
 
 void Window::drawTransparent(const Shape &shape, const Mat4 &sceneModel) const {
     // Mat4 modelMatrix = shape * sceneModel;
     Mat4 modelMatrix = sceneModel * shape;
 
-    if (shape.mesh != nullptr)
+    if (shape.mesh.has_value())
         drawTransparent(*shape.mesh, modelMatrix);
 
-    for (auto r : shape.shapes)
-        drawTransparent(*r, modelMatrix);
+    for (const auto &r : shape.shapes)
+        drawTransparent(r, modelMatrix);
 }
 
 void Window::keyboardUpdate(Key key, bool pressed) {
