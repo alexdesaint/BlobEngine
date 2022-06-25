@@ -12,9 +12,7 @@ def print3dData(data):
         "{"
         + ",\n ".join(
             [
-                "{"
-                + ", ".join(["{" + ", ".join(map(str, d2)) + "}" for d2 in d1])
-                + "}"
+                "{" + ", ".join(["{" + ", ".join(map(str, d2)) + "}" for d2 in d1]) + "}"
                 for d1 in data
             ]
         )
@@ -178,9 +176,7 @@ class Struct:
             namespace = ""
 
         ret += "".join([c.getHeader(0) for c in self.localContent])
-        ret += "".join(
-            [c.getCore(namespace + self.name + "::") for c in self.localContent]
-        )
+        ret += "".join([c.getCore(namespace + self.name + "::") for c in self.localContent])
         ret += "".join([c.getCore(namespace + self.name + "::") for c in self.content])
 
         return ret
@@ -233,9 +229,7 @@ class Function:
             else:
                 ret += getIndent(indent) + "{\n"
                 ret += (
-                    getIndent(indent + 1)
-                    + ("\n" + getIndent(indent + 1)).join(self.content)
-                    + "\n"
+                    getIndent(indent + 1) + ("\n" + getIndent(indent + 1)).join(self.content) + "\n"
                 )
                 ret += getIndent(indent) + "}\n"
         else:
@@ -380,9 +374,7 @@ def codeMesh(mesh: bpy.types.Mesh):
             Parameter("uv%dx" % uv_i, float_t),
             Parameter("uv%dy" % uv_i, float_t),
         ]
-        meshGetter.content.append(
-            "vertexLayout.add<float>(bgfx::Attrib::TexCoord0, 2);"
-        )
+        meshGetter.content.append("vertexLayout.add<float>(bgfx::Attrib::TexCoord0, 2);")
     for col_i in range(color_max):
         dataType += [
             ("color%dr" % col_i, np.float32),
@@ -433,12 +425,8 @@ def codeMesh(mesh: bpy.types.Mesh):
                 data[cursor]["ty"] = mesh.loops[loop_index].tangent[1]
                 data[cursor]["tz"] = mesh.loops[loop_index].tangent[2]
             for uv_i in range(tex_coord_max):
-                data[cursor]["uv%dx" % uv_i] = (
-                    mesh.uv_layers[uv_i].data[loop_index].uv[0]
-                )
-                data[cursor]["uv%dy" % uv_i] = (
-                    mesh.uv_layers[uv_i].data[loop_index].uv[1]
-                )
+                data[cursor]["uv%dx" % uv_i] = mesh.uv_layers[uv_i].data[loop_index].uv[0]
+                data[cursor]["uv%dy" % uv_i] = mesh.uv_layers[uv_i].data[loop_index].uv[1]
             for col_i in range(color_max):
                 data[cursor]["color%dr" % col_i] = (
                     mesh.vertex_colors[col_i].data[loop_index].color[0]
@@ -586,13 +574,16 @@ sceneHeaderFolder = headerFolder + "Scenes/"
 Path(sceneHeaderFolder).mkdir(parents=True, exist_ok=True)
 
 cppFiles = []
-existingsFiles = set()
+existingFiles = set()
 for file in Path(mainFolder).rglob("*"):
     if file.is_file():
-        existingsFiles.add(file)
+        existingFiles.add(file)
 
 meshes = []
 for mesh in bpy.data.meshes:
+    if "BlobEnabled" in mesh and not mesh["BlobEnabled"]:
+        continue
+
     name = nameFormat(mesh.name)
     meshes.append(name)
     headerCode, coreCode = codeMesh(mesh)
@@ -604,7 +595,7 @@ for mesh in bpy.data.meshes:
     data += coreCode
     data += "}\n"
     cppFiles.append("src/Meshes/" + name + ".cpp")
-    updateIfDifferent(meshSrcFolder + name + ".cpp", data, existingsFiles)
+    updateIfDifferent(meshSrcFolder + name + ".cpp", data, existingFiles)
 
     data = ""
     data += "#pragma once\n"
@@ -613,7 +604,7 @@ for mesh in bpy.data.meshes:
     data += "namespace " + projectName + "::Meshes {\n"
     data += headerCode
     data += "}\n"
-    updateIfDifferent(meshHeaderFolder + name + ".hpp", data, existingsFiles)
+    updateIfDifferent(meshHeaderFolder + name + ".hpp", data, existingFiles)
 
 data = ""
 data += "#pragma once\n"
@@ -621,33 +612,30 @@ for name in meshes:
     data += "#include <" + projectName + "/Meshes/" + name + ".hpp>\n"
 data += "namespace " + projectName + "::Meshes {\n"
 data += """
-struct BlenderPropertie {
+struct BlenderProperties {
     std::string_view name;
     Blob::Mesh (*get)(Blob::Context &);
 
-    constexpr BlenderPropertie(std::string_view name,
+    constexpr BlenderProperties(std::string_view name,
                                Blob::Mesh (*get)(Blob::Context &)) :
         name(name), get(get) {}
 };
 """
 data += Function(
     "getAllMeshes",
-    NativeType("std::array<BlenderPropertie, " + str(len(meshes)) + ">"),
+    NativeType("std::array<BlenderProperties, " + str(len(meshes)) + ">"),
     [],
     "",
     [],
     ["return {"]
-    + [
-        "    BlenderPropertie{" + name + "::name, &" + name + "::get},"
-        for name in meshes
-    ]
+    + ["    BlenderProperties{" + name + "::name, &" + name + "::get}," for name in meshes]
     + ["};"],
     False,
     True,
     True,
 ).getHeader()
 data += "}\n"
-updateIfDifferent(headerFolder + "Meshes.hpp", data, existingsFiles)
+updateIfDifferent(headerFolder + "Meshes.hpp", data, existingFiles)
 
 for object in bpy.data.objects:
     args = []
@@ -685,12 +673,8 @@ for object in bpy.data.objects:
             childName = nameFormat(child.name)
             childName = "shape_" + childName
             toInclude.append("Shapes/" + childName)
-            shapeStruct.content.append(
-                Parameter(childName, NativeType("Shapes::" + childName))
-            )
-            shapeGetter.content.append(
-                "        Shapes::" + typeName + "::get(context),"
-            )
+            shapeStruct.content.append(Parameter(childName, NativeType("Shapes::" + childName)))
+            shapeGetter.content.append("        Shapes::" + typeName + "::get(context),")
 
     shapeGetter.content.append("    },")
     shapeGetter.content.append("    {")
@@ -709,7 +693,7 @@ for object in bpy.data.objects:
     data += "namespace " + projectName + "::Shapes {\n"
     data += shapeStruct.getHeader()
     data += "}\n"
-    updateIfDifferent(shapeHeaderFolder + name + ".hpp", data, existingsFiles)
+    updateIfDifferent(shapeHeaderFolder + name + ".hpp", data, existingFiles)
 
 for scene in bpy.data.scenes:
     sceneName = nameFormat(scene.name)
@@ -723,8 +707,8 @@ data = ""
 data += "add_library(" + projectName + " STATIC " + "\n    ".join(cppFiles) + ")\n"
 data += "target_link_libraries(" + projectName + " Blob)\n"
 data += "target_include_directories(" + projectName + " PUBLIC include/)"
-updateIfDifferent(mainFolder + "CMakeLists.txt", data, existingsFiles)
+updateIfDifferent(mainFolder + "CMakeLists.txt", data, existingFiles)
 
-for file in existingsFiles:
+for file in existingFiles:
     print("Removing: ", file)
     os.remove(file)

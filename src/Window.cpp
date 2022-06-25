@@ -88,7 +88,7 @@ double Window::display(const ViewTransform &camera) {
 
 void Window::windowResized() {
     bgfx::setViewRect(0, 0, 0, windowSize.x, windowSize.y);
-    bgfx::reset(windowSize.x, windowSize.y, BGFX_RESET_VSYNC);
+    bgfx::reset(windowSize.x, windowSize.y, resetFlags);
 
     projectionTransform.setRatio(windowSize);
     projectionTransform2D.setRatio(windowSize.cast<float>());

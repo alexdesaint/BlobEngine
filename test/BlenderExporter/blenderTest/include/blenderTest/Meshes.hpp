@@ -4,19 +4,19 @@
 #include <blenderTest/Meshes/Sphere.hpp>
 namespace blenderTest::Meshes {
 
-struct BlenderPropertie {
+struct BlenderProperties {
     std::string_view name;
     Blob::Mesh (*get)(Blob::Context &);
 
-    constexpr BlenderPropertie(std::string_view name,
+    constexpr BlenderProperties(std::string_view name,
                                Blob::Mesh (*get)(Blob::Context &)) :
         name(name), get(get) {}
 };
-constexpr std::array<BlenderPropertie, 3> getAllMeshes(){
+constexpr std::array<BlenderProperties, 3> getAllMeshes(){
     return {
-        BlenderPropertie{Cube::name, &Cube::get},
-        BlenderPropertie{Cylinder::name, &Cylinder::get},
-        BlenderPropertie{Sphere::name, &Sphere::get},
+        BlenderProperties{Cube::name, &Cube::get},
+        BlenderProperties{Cylinder::name, &Cylinder::get},
+        BlenderProperties{Sphere::name, &Sphere::get},
     };
 }
 }

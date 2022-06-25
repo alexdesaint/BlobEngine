@@ -30,7 +30,10 @@ public:
 
         bgfx::renderFrame();
 
-        if (!bgfx::init())
+        bgfx::Init init;
+        init.debug = false;
+
+        if (!bgfx::init(init))
             throw Blob::Exception("Failed to init bgfx");
     }
 

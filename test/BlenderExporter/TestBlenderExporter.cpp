@@ -11,14 +11,14 @@
 
 // blender -b test/BlenderExporter/blenderTest.blend -P BlobBlender.py
 
-constexpr blenderTest::Meshes::BlenderPropertie func() {
+constexpr blenderTest::Meshes::BlenderProperties func() {
     auto prop = blenderTest::Meshes::getAllMeshes();
 
-    for (const auto &blenderPropertie : prop)
-        if (blenderPropertie.name == "Cylinder")
-            return blenderPropertie;
+    for (const auto &blenderProperties : prop)
+        if (blenderProperties.name == "Cylinder")
+            return blenderProperties;
 
-    return blenderTest::Meshes::BlenderPropertie{"ERROR", nullptr};
+    return blenderTest::Meshes::BlenderProperties{"ERROR", nullptr};
 }
 
 static_assert(func().name != "ERROR", "Error could not find the mesh");

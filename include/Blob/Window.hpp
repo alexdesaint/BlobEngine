@@ -26,10 +26,10 @@ private:
     std::chrono::time_point<std::chrono::system_clock> lastFrameTime;
     uint32_t m_currFrame;
     ImGuiContext imGuiContext;
+    uint32_t resetFlags = BGFX_RESET_NONE;
+    // uint32_t resetFlags = BGFX_RESET_VSYNC;
 
     void windowResized() final;
-
-    // void textInput(std::string c) final;
 
     void keyboardUpdate(int key, bool pressed) final;
 
