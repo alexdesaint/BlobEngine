@@ -2,20 +2,17 @@
 
 #include <cstdint>
 #include <ostream>
+#include <unordered_map>
 
 namespace Blob {
 
-class Color {
-public:
-    ///@{
-    /// @name Color channels
-    float R = 0.f;
-    float G = 0.f;
-    float B = 0.f;
-    float A = 1.f;
-    ///@}
+union Color {
+    struct {
+        float R, G, B, A;
+    };
+    float rgba[4];
 
-    constexpr Color() noexcept = default;
+    constexpr Color() noexcept : R(0.f), G(0.f), B(0.f), A(1.f){};
 
     constexpr Color(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 255) noexcept :
         R(R / 255.f), G(G / 255.f), B(B / 255.f), A(A / 255.f) {}
@@ -31,9 +28,12 @@ public:
         R(R), G(G), B(B), A(A) {}
 
     /// Hex Color Code Constructor
-    /// \param RGB Hexadecimal color representation
-    constexpr explicit Color(uint32_t RGB) noexcept :
-        R(((RGB >> 16) & 0xFF) / 255.f), G(((RGB >> 8) & 0xFF) / 255.f), B((RGB & 0xFF) / 255.f) {}
+    /// \param ARGB Hexadecimal color representation
+    constexpr explicit Color(uint32_t ARGB) noexcept :
+        R(((ARGB >> 16) & 0xFF) / 255.f),
+        G(((ARGB >> 8) & 0xFF) / 255.f),
+        B(((ARGB >> 0) & 0xFF) / 255.f),
+        A(((ARGB >> 24) & 0xFF) / 255.f) {}
 
     friend std::ostream &operator<<(std::ostream &out, const Color &vec);
 };
@@ -42,146 +42,291 @@ namespace X11 {
 /** @name X11 Colors
  *  Source : http://cng.seas.rochester.edu/CNG/docs/x11color.html
  */
-static const Color LightPink(0xFFB6C1U);
-static const Color Pink(0xFFC0CBU);
-static const Color Crimson(0xDC143CU);
-static const Color LavenderBlush(0xFFF0F5U);
-static const Color PaleVioletRed(0xDB7093U);
-static const Color HotPink(0xFF69B4U);
-static const Color DeepPink(0xFF1493U);
-static const Color MediumVioletRed(0xC71585U);
-static const Color Orchid(0xDA70D6U);
-static const Color Thistle(0xD8BFD8U);
-static const Color Plum(0xDDA0DDU);
-static const Color Violet(0xEE82EEU);
-static const Color Magenta(0xFF00FFU);
-static const Color Fuchsia(0xFF00FFU);
-static const Color DarkMagenta(0x8B008BU);
-static const Color Purple(0x800080U);
-static const Color MediumOrchid(0xBA55D3U);
-static const Color DarkViolet(0x9400D3U);
-static const Color DarkOrchid(0x9932CCU);
-static const Color Indigo(0x4B0082U);
-static const Color BlueViolet(0x8A2BE2U);
-static const Color MediumPurple(0x9370DBU);
-static const Color MediumSlateBlue(0x7B68EEU);
-static const Color SlateBlue(0x6A5ACDU);
-static const Color DarkSlateBlue(0x483D8BU);
-static const Color Lavender(0xE6E6FAU);
-static const Color GhostWhite(0xF8F8FFU);
-static const Color Blue(0x0000FFU);
-static const Color MediumBlue(0x0000CDU);
-static const Color MidnightBlue(0x191970U);
-static const Color DarkBlue(0x00008BU);
-static const Color Navy(0x000080U);
-static const Color RoyalBlue(0x4169E1U);
-static const Color CornflowerBlue(0x6495EDU);
-static const Color LightSteelBlue(0xB0C4DEU);
-static const Color LightSlateGray(0x778899U);
-static const Color SlateGray(0x708090U);
-static const Color DodgerBlue(0x1E90FFU);
-static const Color AliceBlue(0xF0F8FFU);
-static const Color SteelBlue(0x4682B4U);
-static const Color LightSkyBlue(0x87CEFAU);
-static const Color SkyBlue(0x87CEEBU);
-static const Color DeepSkyBlue(0x00BFFFU);
-static const Color LightBlue(0xADD8E6U);
-static const Color PowderBlue(0xB0E0E6U);
-static const Color CadetBlue(0x5F9EA0U);
-static const Color Azure(0xF0FFFFU);
-static const Color LightCyan(0xE0FFFFU);
-static const Color PaleTurquoise(0xAFEEEEU);
-static const Color Cyan(0x00FFFFU);
-static const Color Aqua(0x00FFFFU);
-static const Color DarkTurquoise(0x00CED1U);
-static const Color DarkSlateGray(0x2F4F4FU);
-static const Color DarkCyan(0x008B8BU);
-static const Color Teal(0x008080U);
-static const Color MediumTurquoise(0x48D1CCU);
-static const Color LightSeaGreen(0x20B2AAU);
-static const Color Turquoise(0x40E0D0U);
-static const Color Aquamarine(0x7FFFD4U);
-static const Color MediumAquamarine(0x66CDAAU);
-static const Color MediumSpringGreen(0x00FA9AU);
-static const Color MintCream(0xF5FFFAU);
-static const Color SpringGreen(0x00FF7FU);
-static const Color MediumSeaGreen(0x3CB371U);
-static const Color SeaGreen(0x2E8B57U);
-static const Color Honeydew(0xF0FFF0U);
-static const Color LightGreen(0x90EE90U);
-static const Color PaleGreen(0x98FB98U);
-static const Color DarkSeaGreen(0x8FBC8FU);
-static const Color LimeGreen(0x32CD32U);
-static const Color Lime(0x00FF00U);
-static const Color ForestGreen(0x228B22U);
-static const Color Green(0x008000U);
-static const Color DarkGreen(0x006400U);
-static const Color Chartreuse(0x7FFF00U);
-static const Color LawnGreen(0x7CFC00U);
-static const Color GreenYellow(0xADFF2FU);
-static const Color DarkOliveGreen(0x556B2FU);
-static const Color YellowGreen(0x9ACD32U);
-static const Color OliveDrab(0x6B8E23U);
-static const Color Beige(0xF5F5DCU);
-static const Color LightGoldenrodYellow(0xFAFAD2U);
-static const Color Ivory(0xFFFFF0U);
-static const Color LightYellow(0xFFFFE0U);
-static const Color Yellow(0xFFFF00U);
-static const Color Olive(0x808000U);
-static const Color DarkKhaki(0xBDB76BU);
-static const Color LemonChiffon(0xFFFACDU);
-static const Color PaleGoldenrod(0xEEE8AAU);
-static const Color Khaki(0xF0E68CU);
-static const Color Gold(0xFFD700U);
-static const Color Cornsilk(0xFFF8DCU);
-static const Color Goldenrod(0xDAA520U);
-static const Color DarkGoldenrod(0xB8860BU);
-static const Color FloralWhite(0xFFFAF0U);
-static const Color OldLace(0xFDF5E6U);
-static const Color Wheat(0xF5DEB3U);
-static const Color Moccasin(0xFFE4B5U);
-static const Color Orange(0xFFA500U);
-static const Color PapayaWhip(0xFFEFD5U);
-static const Color BlanchedAlmond(0xFFEBCDU);
-static const Color NavajoWhite(0xFFDEADU);
-static const Color AntiqueWhite(0xFAEBD7U);
-static const Color Tan(0xD2B48CU);
-static const Color BurlyWood(0xDEB887U);
-static const Color Bisque(0xFFE4C4U);
-static const Color DarkOrange(0xFF8C00U);
-static const Color Linen(0xFAF0E6U);
-static const Color Peru(0xCD853FU);
-static const Color PeachPuff(0xFFDAB9U);
-static const Color SandyBrown(0xF4A460U);
-static const Color Chocolate(0xD2691EU);
-static const Color SaddleBrown(0x8B4513U);
-static const Color Seashell(0xFFF5EEU);
-static const Color Sienna(0xA0522DU);
-static const Color LightSalmon(0xFFA07AU);
-static const Color Coral(0xFF7F50U);
-static const Color OrangeRed(0xFF4500U);
-static const Color DarkSalmon(0xE9967AU);
-static const Color Tomato(0xFF6347U);
-static const Color MistyRose(0xFFE4E1U);
-static const Color Salmon(0xFA8072U);
-static const Color Snow(0xFFFAFAU);
-static const Color LightCoral(0xF08080U);
-static const Color RosyBrown(0xBC8F8FU);
-static const Color IndianRed(0xCD5C5CU);
-static const Color Red(0xFF0000U);
-static const Color Brown(0xA52A2AU);
-static const Color FireBrick(0xB22222U);
-static const Color DarkRed(0x8B0000U);
-static const Color Maroon(0x800000U);
-static const Color White(0xFFFFFFU);
-static const Color WhiteSmoke(0xF5F5F5U);
-static const Color Gainsboro(0xDCDCDCU);
-static const Color LightGrey(0xD3D3D3U);
-static const Color Silver(0xC0C0C0U);
-static const Color DarkGray(0xA9A9A9U);
-static const Color Gray(0x808080U);
-static const Color DimGray(0x696969U);
-static const Color Black(0x000000U);
+constexpr Color LightPink(0xFFFFB6C1U);
+constexpr Color Pink(0xFFFFC0CBU);
+constexpr Color Crimson(0xFFDC143CU);
+constexpr Color LavenderBlush(0xFFFFF0F5U);
+constexpr Color PaleVioletRed(0xFFDB7093U);
+constexpr Color HotPink(0xFFFF69B4U);
+constexpr Color DeepPink(0xFFFF1493U);
+constexpr Color MediumVioletRed(0xFFC71585U);
+constexpr Color Orchid(0xFFDA70D6U);
+constexpr Color Thistle(0xFFD8BFD8U);
+constexpr Color Plum(0xFFDDA0DDU);
+constexpr Color Violet(0xFFEE82EEU);
+constexpr Color Magenta(0xFFFF00FFU);
+constexpr Color Fuchsia(0xFFFF00FFU);
+constexpr Color DarkMagenta(0xFF8B008BU);
+constexpr Color Purple(0xFF800080U);
+constexpr Color MediumOrchid(0xFFBA55D3U);
+constexpr Color DarkViolet(0xFF9400D3U);
+constexpr Color DarkOrchid(0xFF9932CCU);
+constexpr Color Indigo(0xFF4B0082U);
+constexpr Color BlueViolet(0xFF8A2BE2U);
+constexpr Color MediumPurple(0xFF9370DBU);
+constexpr Color MediumSlateBlue(0xFF7B68EEU);
+constexpr Color SlateBlue(0xFF6A5ACDU);
+constexpr Color DarkSlateBlue(0xFF483D8BU);
+constexpr Color Lavender(0xFFE6E6FAU);
+constexpr Color GhostWhite(0xFFF8F8FFU);
+constexpr Color Blue(0xFF0000FFU);
+constexpr Color MediumBlue(0xFF0000CDU);
+constexpr Color MidnightBlue(0xFF191970U);
+constexpr Color DarkBlue(0xFF00008BU);
+constexpr Color Navy(0xFF000080U);
+constexpr Color RoyalBlue(0xFF4169E1U);
+constexpr Color CornflowerBlue(0xFF6495EDU);
+constexpr Color LightSteelBlue(0xFFB0C4DEU);
+constexpr Color LightSlateGray(0xFF778899U);
+constexpr Color SlateGray(0xFF708090U);
+constexpr Color DodgerBlue(0xFF1E90FFU);
+constexpr Color AliceBlue(0xFFF0F8FFU);
+constexpr Color SteelBlue(0xFF4682B4U);
+constexpr Color LightSkyBlue(0xFF87CEFAU);
+constexpr Color SkyBlue(0xFF87CEEBU);
+constexpr Color DeepSkyBlue(0xFF00BFFFU);
+constexpr Color LightBlue(0xFFADD8E6U);
+constexpr Color PowderBlue(0xFFB0E0E6U);
+constexpr Color CadetBlue(0xFF5F9EA0U);
+constexpr Color Azure(0xFFF0FFFFU);
+constexpr Color LightCyan(0xFFE0FFFFU);
+constexpr Color PaleTurquoise(0xFFAFEEEEU);
+constexpr Color Cyan(0xFF00FFFFU);
+constexpr Color Aqua(0xFF00FFFFU);
+constexpr Color DarkTurquoise(0xFF00CED1U);
+constexpr Color DarkSlateGray(0xFF2F4F4FU);
+constexpr Color DarkCyan(0xFF008B8BU);
+constexpr Color Teal(0xFF008080U);
+constexpr Color MediumTurquoise(0xFF48D1CCU);
+constexpr Color LightSeaGreen(0xFF20B2AAU);
+constexpr Color Turquoise(0xFF40E0D0U);
+constexpr Color Aquamarine(0xFF7FFFD4U);
+constexpr Color MediumAquamarine(0xFF66CDAAU);
+constexpr Color MediumSpringGreen(0xFF00FA9AU);
+constexpr Color MintCream(0xFFF5FFFAU);
+constexpr Color SpringGreen(0xFF00FF7FU);
+constexpr Color MediumSeaGreen(0xFF3CB371U);
+constexpr Color SeaGreen(0xFF2E8B57U);
+constexpr Color Honeydew(0xFFF0FFF0U);
+constexpr Color LightGreen(0xFF90EE90U);
+constexpr Color PaleGreen(0xFF98FB98U);
+constexpr Color DarkSeaGreen(0xFF8FBC8FU);
+constexpr Color LimeGreen(0xFF32CD32U);
+constexpr Color Lime(0xFF00FF00U);
+constexpr Color ForestGreen(0xFF228B22U);
+constexpr Color Green(0xFF008000U);
+constexpr Color DarkGreen(0xFF006400U);
+constexpr Color Chartreuse(0xFF7FFF00U);
+constexpr Color LawnGreen(0xFF7CFC00U);
+constexpr Color GreenYellow(0xFFADFF2FU);
+constexpr Color DarkOliveGreen(0xFF556B2FU);
+constexpr Color YellowGreen(0xFF9ACD32U);
+constexpr Color OliveDrab(0xFF6B8E23U);
+constexpr Color Beige(0xFFF5F5DCU);
+constexpr Color LightGoldenrodYellow(0xFFFAFAD2U);
+constexpr Color Ivory(0xFFFFFFF0U);
+constexpr Color LightYellow(0xFFFFFFE0U);
+constexpr Color Yellow(0xFFFFFF00U);
+constexpr Color Olive(0xFF808000U);
+constexpr Color DarkKhaki(0xFFBDB76BU);
+constexpr Color LemonChiffon(0xFFFFFACDU);
+constexpr Color PaleGoldenrod(0xFFEEE8AAU);
+constexpr Color Khaki(0xFFF0E68CU);
+constexpr Color Gold(0xFFFFD700U);
+constexpr Color Cornsilk(0xFFFFF8DCU);
+constexpr Color Goldenrod(0xFFDAA520U);
+constexpr Color DarkGoldenrod(0xFFB8860BU);
+constexpr Color FloralWhite(0xFFFFFAF0U);
+constexpr Color OldLace(0xFFFDF5E6U);
+constexpr Color Wheat(0xFFF5DEB3U);
+constexpr Color Moccasin(0xFFFFE4B5U);
+constexpr Color Orange(0xFFFFA500U);
+constexpr Color PapayaWhip(0xFFFFEFD5U);
+constexpr Color BlanchedAlmond(0xFFFFEBCDU);
+constexpr Color NavajoWhite(0xFFFFDEADU);
+constexpr Color AntiqueWhite(0xFFFAEBD7U);
+constexpr Color Tan(0xFFD2B48CU);
+constexpr Color BurlyWood(0xFFDEB887U);
+constexpr Color Bisque(0xFFFFE4C4U);
+constexpr Color DarkOrange(0xFFFF8C00U);
+constexpr Color Linen(0xFFFAF0E6U);
+constexpr Color Peru(0xFFCD853FU);
+constexpr Color PeachPuff(0xFFFFDAB9U);
+constexpr Color SandyBrown(0xFFF4A460U);
+constexpr Color Chocolate(0xFFD2691EU);
+constexpr Color SaddleBrown(0xFF8B4513U);
+constexpr Color Seashell(0xFFFFF5EEU);
+constexpr Color Sienna(0xFFA0522DU);
+constexpr Color LightSalmon(0xFFFFA07AU);
+constexpr Color Coral(0xFFFF7F50U);
+constexpr Color OrangeRed(0xFFFF4500U);
+constexpr Color DarkSalmon(0xFFE9967AU);
+constexpr Color Tomato(0xFFFF6347U);
+constexpr Color MistyRose(0xFFFFE4E1U);
+constexpr Color Salmon(0xFFFA8072U);
+constexpr Color Snow(0xFFFFFAFAU);
+constexpr Color LightCoral(0xFFF08080U);
+constexpr Color RosyBrown(0xFFBC8F8FU);
+constexpr Color IndianRed(0xFFCD5C5CU);
+constexpr Color Red(0xFFFF0000U);
+constexpr Color Brown(0xFFA52A2AU);
+constexpr Color FireBrick(0xFFB22222U);
+constexpr Color DarkRed(0xFF8B0000U);
+constexpr Color Maroon(0xFF800000U);
+constexpr Color White(0xFFFFFFFFU);
+constexpr Color WhiteSmoke(0xFFF5F5F5U);
+constexpr Color Gainsboro(0xFFDCDCDCU);
+constexpr Color LightGrey(0xFFD3D3D3U);
+constexpr Color Silver(0xFFC0C0C0U);
+constexpr Color DarkGray(0xFFA9A9A9U);
+constexpr Color Gray(0xFF808080U);
+constexpr Color DimGray(0xFF696969U);
+constexpr Color Black(0xFF000000U);
+
+inline std::unordered_map<std::string, Color> getAll() {
+    return {
+        {"LightPink", LightPink},
+        {"Pink", Pink},
+        {"Crimson", Crimson},
+        {"LavenderBlush", LavenderBlush},
+        {"PaleVioletRed", PaleVioletRed},
+        {"HotPink", HotPink},
+        {"DeepPink", DeepPink},
+        {"MediumVioletRed", MediumVioletRed},
+        {"Orchid", Orchid},
+        {"Thistle", Thistle},
+        {"Plum", Plum},
+        {"Violet", Violet},
+        {"Magenta", Magenta},
+        {"Fuchsia", Fuchsia},
+        {"DarkMagenta", DarkMagenta},
+        {"Purple", Purple},
+        {"MediumOrchid", MediumOrchid},
+        {"DarkViolet", DarkViolet},
+        {"DarkOrchid", DarkOrchid},
+        {"Indigo", Indigo},
+        {"BlueViolet", BlueViolet},
+        {"MediumPurple", MediumPurple},
+        {"MediumSlateBlue", MediumSlateBlue},
+        {"SlateBlue", SlateBlue},
+        {"DarkSlateBlue", DarkSlateBlue},
+        {"Lavender", Lavender},
+        {"GhostWhite", GhostWhite},
+        {"Blue", Blue},
+        {"MediumBlue", MediumBlue},
+        {"MidnightBlue", MidnightBlue},
+        {"DarkBlue", DarkBlue},
+        {"Navy", Navy},
+        {"RoyalBlue", RoyalBlue},
+        {"CornflowerBlue", CornflowerBlue},
+        {"LightSteelBlue", LightSteelBlue},
+        {"LightSlateGray", LightSlateGray},
+        {"SlateGray", SlateGray},
+        {"DodgerBlue", DodgerBlue},
+        {"AliceBlue", AliceBlue},
+        {"SteelBlue", SteelBlue},
+        {"LightSkyBlue", LightSkyBlue},
+        {"SkyBlue", SkyBlue},
+        {"DeepSkyBlue", DeepSkyBlue},
+        {"LightBlue", LightBlue},
+        {"PowderBlue", PowderBlue},
+        {"CadetBlue", CadetBlue},
+        {"Azure", Azure},
+        {"LightCyan", LightCyan},
+        {"PaleTurquoise", PaleTurquoise},
+        {"Cyan", Cyan},
+        {"Aqua", Aqua},
+        {"DarkTurquoise", DarkTurquoise},
+        {"DarkSlateGray", DarkSlateGray},
+        {"DarkCyan", DarkCyan},
+        {"Teal", Teal},
+        {"MediumTurquoise", MediumTurquoise},
+        {"LightSeaGreen", LightSeaGreen},
+        {"Turquoise", Turquoise},
+        {"Aquamarine", Aquamarine},
+        {"MediumAquamarine", MediumAquamarine},
+        {"MediumSpringGreen", MediumSpringGreen},
+        {"MintCream", MintCream},
+        {"SpringGreen", SpringGreen},
+        {"MediumSeaGreen", MediumSeaGreen},
+        {"SeaGreen", SeaGreen},
+        {"Honeydew", Honeydew},
+        {"LightGreen", LightGreen},
+        {"PaleGreen", PaleGreen},
+        {"DarkSeaGreen", DarkSeaGreen},
+        {"LimeGreen", LimeGreen},
+        {"Lime", Lime},
+        {"ForestGreen", ForestGreen},
+        {"Green", Green},
+        {"DarkGreen", DarkGreen},
+        {"Chartreuse", Chartreuse},
+        {"LawnGreen", LawnGreen},
+        {"GreenYellow", GreenYellow},
+        {"DarkOliveGreen", DarkOliveGreen},
+        {"YellowGreen", YellowGreen},
+        {"OliveDrab", OliveDrab},
+        {"Beige", Beige},
+        {"LightGoldenrodYellow", LightGoldenrodYellow},
+        {"Ivory", Ivory},
+        {"LightYellow", LightYellow},
+        {"Yellow", Yellow},
+        {"Olive", Olive},
+        {"DarkKhaki", DarkKhaki},
+        {"LemonChiffon", LemonChiffon},
+        {"PaleGoldenrod", PaleGoldenrod},
+        {"Khaki", Khaki},
+        {"Gold", Gold},
+        {"Cornsilk", Cornsilk},
+        {"Goldenrod", Goldenrod},
+        {"DarkGoldenrod", DarkGoldenrod},
+        {"FloralWhite", FloralWhite},
+        {"OldLace", OldLace},
+        {"Wheat", Wheat},
+        {"Moccasin", Moccasin},
+        {"Orange", Orange},
+        {"PapayaWhip", PapayaWhip},
+        {"BlanchedAlmond", BlanchedAlmond},
+        {"NavajoWhite", NavajoWhite},
+        {"AntiqueWhite", AntiqueWhite},
+        {"Tan", Tan},
+        {"BurlyWood", BurlyWood},
+        {"Bisque", Bisque},
+        {"DarkOrange", DarkOrange},
+        {"Linen", Linen},
+        {"Peru", Peru},
+        {"PeachPuff", PeachPuff},
+        {"SandyBrown", SandyBrown},
+        {"Chocolate", Chocolate},
+        {"SaddleBrown", SaddleBrown},
+        {"Seashell", Seashell},
+        {"Sienna", Sienna},
+        {"LightSalmon", LightSalmon},
+        {"Coral", Coral},
+        {"OrangeRed", OrangeRed},
+        {"DarkSalmon", DarkSalmon},
+        {"Tomato", Tomato},
+        {"MistyRose", MistyRose},
+        {"Salmon", Salmon},
+        {"Snow", Snow},
+        {"LightCoral", LightCoral},
+        {"RosyBrown", RosyBrown},
+        {"IndianRed", IndianRed},
+        {"Red", Red},
+        {"Brown", Brown},
+        {"FireBrick", FireBrick},
+        {"DarkRed", DarkRed},
+        {"Maroon", Maroon},
+        {"White", White},
+        {"WhiteSmoke", WhiteSmoke},
+        {"Gainsboro", Gainsboro},
+        {"LightGrey", LightGrey},
+        {"Silver", Silver},
+        {"DarkGray", DarkGray},
+        {"Gray", Gray},
+        {"DimGray", DimGray},
+        {"Black", Black},
+    };
+}
 } // namespace X11
 
 namespace Dracula {
