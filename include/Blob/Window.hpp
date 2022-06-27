@@ -26,8 +26,8 @@ private:
     std::chrono::time_point<std::chrono::system_clock> lastFrameTime;
     uint32_t m_currFrame;
     ImGuiContext imGuiContext;
-    uint32_t resetFlags = BGFX_RESET_NONE;
-    // uint32_t resetFlags = BGFX_RESET_VSYNC;
+    // uint32_t resetFlags = BGFX_RESET_NONE;
+    uint32_t resetFlags = BGFX_RESET_VSYNC;
 
     void windowResized() final;
 
@@ -38,8 +38,6 @@ private:
     void scrollUpdate(double xoffset, double yoffset) final;
 
 public:
-    // Keyboard keyboard;
-    // Mouse mouse;
     double timeFlow;
     using GLFW::Window::close;
     using GLFW::Window::isOpen;

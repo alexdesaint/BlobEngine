@@ -1,3 +1,4 @@
+#include "Blob/Color.hpp"
 #include <Blob/Exception.hpp>
 #include <Blob/Maths.hpp>
 #include <Blob/Window.hpp>
@@ -18,7 +19,7 @@ Window::Window(const Vec2<unsigned int> &size, std::string windowName) :
     projectionTransform(PI / 4, windowSize, 0.1, 1000, false),
     projectionTransform2D(windowSize.cast<float>()) {
     // Clear the view rect
-    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
+    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, Dracula::Background.code, 1.0f, 0);
 
     windowResized();
 
@@ -78,10 +79,11 @@ double Window::display(const ViewTransform &camera) {
     auto diff = std::chrono::duration_cast<std::chrono::duration<double>>(now - lastFrameTime);
     timeFlow = diff.count();
     lastFrameTime = now;
+    io.DeltaTime = timeFlow;
     // events
-    updateInputs();
 
     Material::applyMaterialStatic();
+    updateInputs();
 
     return timeFlow;
 }
