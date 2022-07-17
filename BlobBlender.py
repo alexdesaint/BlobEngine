@@ -481,7 +481,11 @@ def codeMesh(mesh: bpy.types.Mesh):
     meshConstructor = "return " + Mesh_t.name + "{{\n"
     for matId, indices in indicePerMaterial.items():
         lenIndices = str(len(indices))
-        primitiveName = nameFormat(mesh.materials[matId].name)
+        try:
+            primitiveName = nameFormat(mesh.materials[matId].name)
+        except:
+            print("No material")
+            continue
         meshStruct.localContent.append(
             Parameter(
                 "indices" + primitiveName,

@@ -25,10 +25,8 @@ private:
     static void framebufferSizeCallback(void *window, int w, int h);
     static void windowSizeCallback(void *window, int w, int h);
     static void contentScaleCallback(void *window, float w, float h);
-    static void
-    keyCallback(void *window, int key, int scancode, int action, int mods);
-    static void
-    mouseButtonCallback(void *window, int button, int action, int mods);
+    static void keyCallback(void *window, int key, int scancode, int action, int mods);
+    static void mouseButtonCallback(void *window, int button, int action, int mods);
     static void cursorPosCallback(void *window, double xpos, double ypos);
     static void scrollCallback(void *window, double xoffset, double yoffset);
     static void charCallback(void *window, unsigned int c);
@@ -94,8 +92,7 @@ protected:
 
     static double totalTimeFlow;
 
-    Window(const Vec2<unsigned int> &windowSize,
-           std::string windowName = "BlobEngine");
+    Window(Vec2<unsigned int> windowSize, std::string windowName = "BlobEngine");
     ~Window();
 
     void updateInputs();

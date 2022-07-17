@@ -6,8 +6,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#if __linux__ || __FreeBSD__ || __FreeBSD_kernel__ || __NetBSD__ ||            \
-    __OpenBSD__ || __DragonFly__
+#if __linux__ || __FreeBSD__ || __FreeBSD_kernel__ || __NetBSD__ || __OpenBSD__ || __DragonFly__
 #if ENTRY_CONFIG_USE_WAYLAND
 #include <wayland-egl.h>
 #define GLFW_EXPOSE_NATIVE_WAYLAND
@@ -42,18 +41,18 @@ const float *Window::joystickAxes[joystickCount];
 
 double Window::totalTimeFlow = 0;
 
-Window::Window(const Vec2<unsigned int> &windowSize, std::string windowName) :
-    windowSizeData(windowSize) {
+Window::Window(Vec2<unsigned int> windowSize, std::string windowName) : windowSizeData(windowSize) {
     glfwSetErrorCallback(errorCallback);
 
     if (!glfwInit())
         throw Exception("Can't init Window");
 
-    window = glfwCreateWindow(windowSize.x,
-                              windowSize.y,
-                              "My Title",
-                              nullptr,
-                              nullptr);
+    if (windowSize.isNull()) {
+        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+        windowSize = {1, 1};
+    }
+
+    window = glfwCreateWindow(windowSize.x, windowSize.y, windowName.c_str(), nullptr, nullptr);
 
     if (!window) {
         glfwTerminate();
@@ -74,41 +73,27 @@ Window::Window(const Vec2<unsigned int> &windowSize, std::string windowName) :
 
     // Callback init
     glfwSetWindowUserPointer((GLFWwindow *) window, this);
-    glfwSetFramebufferSizeCallback(
-        (GLFWwindow *) window,
-        (GLFWframebuffersizefun) framebufferSizeCallback);
-    glfwSetWindowSizeCallback((GLFWwindow *) window,
-                              (GLFWwindowsizefun) windowSizeCallback);
+    glfwSetFramebufferSizeCallback((GLFWwindow *) window,
+                                   (GLFWframebuffersizefun) framebufferSizeCallback);
+    glfwSetWindowSizeCallback((GLFWwindow *) window, (GLFWwindowsizefun) windowSizeCallback);
 
     // Cursor init
     if (glfwRawMouseMotionSupported())
-        glfwSetInputMode((GLFWwindow *) window,
-                         GLFW_RAW_MOUSE_MOTION,
-                         GLFW_TRUE);
+        glfwSetInputMode((GLFWwindow *) window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     GLFWerrorfun prev_error_callback = glfwSetErrorCallback(nullptr);
     cursors[MouseCursor::Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-    cursors[MouseCursor::TextInput] =
-        glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
-    cursors[MouseCursor::ResizeNS] =
-        glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
-    cursors[MouseCursor::ResizeEW] =
-        glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+    cursors[MouseCursor::TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+    cursors[MouseCursor::ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
+    cursors[MouseCursor::ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
     cursors[MouseCursor::Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
-    cursors[MouseCursor::ResizeAll] =
-        glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
-    cursors[MouseCursor::ResizeNESW] =
-        glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
-    cursors[MouseCursor::ResizeNWSE] =
-        glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
-    cursors[MouseCursor::NotAllowed] =
-        glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
+    cursors[MouseCursor::ResizeAll] = glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
+    cursors[MouseCursor::ResizeNESW] = glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
+    cursors[MouseCursor::ResizeNWSE] = glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
+    cursors[MouseCursor::NotAllowed] = glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
     glfwSetErrorCallback(prev_error_callback);
-    glfwSetMouseButtonCallback((GLFWwindow *) window,
-                               (GLFWmousebuttonfun) mouseButtonCallback);
-    glfwSetScrollCallback((GLFWwindow *) window,
-                          (GLFWscrollfun) scrollCallback);
-    glfwSetCursorPosCallback((GLFWwindow *) window,
-                             (GLFWcursorposfun) cursorPosCallback);
+    glfwSetMouseButtonCallback((GLFWwindow *) window, (GLFWmousebuttonfun) mouseButtonCallback);
+    glfwSetScrollCallback((GLFWwindow *) window, (GLFWscrollfun) scrollCallback);
+    glfwSetCursorPosCallback((GLFWwindow *) window, (GLFWcursorposfun) cursorPosCallback);
 
     // Keyboard init
     // glfwSetInputMode((GLFWwindow *) window, GLFW_STICKY_KEYS, GLFW_TRUE);
@@ -118,14 +103,12 @@ Window::Window(const Vec2<unsigned int> &windowSize, std::string windowName) :
     // Controller init
     glfwSetJoystickCallback(joystick_callback);
 
-    glfwSetWindowFocusCallback((GLFWwindow *) window,
-                               (GLFWwindowfocusfun) windowFocusCallback);
+    glfwSetWindowFocusCallback((GLFWwindow *) window, (GLFWwindowfocusfun) windowFocusCallback);
 
     for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
         if (glfwJoystickPresent(i))
             joystick_callback(i, GLFW_CONNECTED);
-        joystickButtons[i] =
-            glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
+        joystickButtons[i] = glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
         joystickAxes[i] = glfwGetJoystickAxes(i, &joystickAxesCount[i]);
     }
 }
@@ -160,11 +143,7 @@ void Window::contentScaleCallback(void *window, float width, float height) {
     w.contentScaleData.y = height;
 }
 
-void Window::keyCallback(void *window,
-                         int key,
-                         int scancode,
-                         int action,
-                         int mods) {
+void Window::keyCallback(void *window, int key, int scancode, int action, int mods) {
     if (action == GLFW_REPEAT)
         return;
 
@@ -176,10 +155,7 @@ void Window::keyCallback(void *window,
     w.keyboardUpdate(key, action);
 }
 
-void Window::mouseButtonCallback(void *window,
-                                 int button,
-                                 int action,
-                                 int mods) {
+void Window::mouseButtonCallback(void *window, int button, int action, int mods) {
     Window &w = *reinterpret_cast<Window *>(
         glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
@@ -266,8 +242,7 @@ void Window::updateInputs() {
     glfwPollEvents();
 
     for (int i = 0; i < GLFW_JOYSTICK_LAST + 1; i++) {
-        joystickButtons[i] =
-            glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
+        joystickButtons[i] = glfwGetJoystickButtons(i, &joystickButtonsCount[i]);
         joystickAxes[i] = glfwGetJoystickAxes(i, &joystickAxesCount[i]);
     }
 
@@ -286,26 +261,19 @@ void Window::setMouseCursor(MouseCursor mouseCursor) {
 void Window::setCursorState(CursorState cursorState) {
     switch (cursorState) {
     case CURSOR_HIDDEN:
-        glfwSetInputMode((GLFWwindow *) window,
-                         GLFW_CURSOR,
-                         GLFW_CURSOR_HIDDEN);
+        glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         break;
     case CURSOR_DISABLED:
-        glfwSetInputMode((GLFWwindow *) window,
-                         GLFW_CURSOR,
-                         GLFW_CURSOR_DISABLED);
+        glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         break;
     default:
-        glfwSetInputMode((GLFWwindow *) window,
-                         GLFW_CURSOR,
-                         GLFW_CURSOR_NORMAL);
+        glfwSetInputMode((GLFWwindow *) window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         break;
     }
 }
 
 void *Window::getNativeDisplayType() {
-#if __linux__ || __FreeBSD__ || __FreeBSD_kernel__ || __NetBSD__ ||            \
-    __OpenBSD__ || __DragonFly__
+#if __linux__ || __FreeBSD__ || __FreeBSD_kernel__ || __NetBSD__ || __OpenBSD__ || __DragonFly__
 #if ENTRY_CONFIG_USE_WAYLAND
     return glfwGetWaylandDisplay();
 #else
@@ -316,11 +284,9 @@ void *Window::getNativeDisplayType() {
 }
 
 void *Window::getNativeWindowHandle() {
-#if __linux__ || __FreeBSD__ || __FreeBSD_kernel__ || __NetBSD__ ||            \
-    __OpenBSD__ || __DragonFly__
+#if __linux__ || __FreeBSD__ || __FreeBSD_kernel__ || __NetBSD__ || __OpenBSD__ || __DragonFly__
 #if ENTRY_CONFIG_USE_WAYLAND
-    wl_egl_window *win_impl =
-        (wl_egl_window *) glfwGetWindowUserPointer((GLFWwindow *) window);
+    wl_egl_window *win_impl = (wl_egl_window *) glfwGetWindowUserPointer((GLFWwindow *) window);
     if (!win_impl) {
         int width, height;
         glfwGetWindowSize((GLFWwindow *) window, &width, &height);
@@ -329,8 +295,7 @@ void *Window::getNativeWindowHandle() {
         if (!surface)
             return nullptr;
         win_impl = wl_egl_window_create(surface, width, height);
-        glfwSetWindowUserPointer((GLFWwindow *) window,
-                                 (void *) (uintptr_t) win_impl);
+        glfwSetWindowUserPointer((GLFWwindow *) window, (void *) (uintptr_t) win_impl);
     }
     return (void *) (uintptr_t) win_impl;
 #else
