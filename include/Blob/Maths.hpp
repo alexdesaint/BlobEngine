@@ -37,29 +37,17 @@ public:
     constexpr inline Vec2 operator-() const { return {-x, -y}; }
 
     // operator with Vec2
-    constexpr inline bool operator==(const Vec2 &v) const {
-        return x == v.x && y == v.y;
-    }
+    constexpr inline bool operator==(const Vec2 &v) const { return x == v.x && y == v.y; }
 
-    constexpr inline bool operator!=(const Vec2 &v) const {
-        return x != v.x || y != v.y;
-    }
+    constexpr inline bool operator!=(const Vec2 &v) const { return x != v.x || y != v.y; }
 
-    constexpr inline Vec2 operator-(const Vec2 &v) const {
-        return {x - v.x, y - v.y};
-    }
+    constexpr inline Vec2 operator-(const Vec2 &v) const { return {x - v.x, y - v.y}; }
 
-    constexpr inline Vec2 operator+(const Vec2 &v) const {
-        return {x + v.x, y + v.y};
-    }
+    constexpr inline Vec2 operator+(const Vec2 &v) const { return {x + v.x, y + v.y}; }
 
-    constexpr inline Vec2 operator*(const Vec2 &v) const {
-        return {x * v.x, y * v.y};
-    }
+    constexpr inline Vec2 operator*(const Vec2 &v) const { return {x * v.x, y * v.y}; }
 
-    constexpr inline Vec2 operator/(const Vec2 &v) const {
-        return {x / v.x, y / v.y};
-    }
+    constexpr inline Vec2 operator/(const Vec2 &v) const { return {x / v.x, y / v.y}; }
 
     constexpr inline void operator+=(const Vec2 &v) {
         x += v.x;
@@ -132,15 +120,14 @@ public:
 
     constexpr inline T cross(const Vec2 &B) const { return x * B.y - y * B.x; }
 
-    constexpr inline Vec2 normalize() const {
-        return operator/(std::sqrt(x * x + y * y));
-    }
+    constexpr inline Vec2 normalize() const { return operator/(std::sqrt(x * x + y * y)); }
 
     inline Vec2 setLength(T newLength) {
         return *this = *this / std::sqrt(x * x + y * y) * newLength;
     }
 
     constexpr inline Vec2 rotate() const { return {y, -x}; }
+    constexpr inline Vec2 mirror() const { return {y, x}; }
 
     constexpr inline Vec2 rotate(T angle) const {
         return {std::cos(angle) * x - std::sin(angle) * y,
@@ -153,15 +140,11 @@ public:
 
     constexpr inline double getOrientation() const { return std::atan2(y, x); }
 
-    constexpr inline double getOrientationDeg() const {
-        return std::atan2(y, x) * 180 / PI;
-    }
+    constexpr inline double getOrientationDeg() const { return std::atan2(y, x) * 180 / PI; }
 
     constexpr inline bool isNull() const { return ((x == 0) && (y == 0)); }
 
-    inline Vec2 round() const noexcept {
-        return {std::round(x), std::round(y)};
-    }
+    inline Vec2 round() const noexcept { return {std::round(x), std::round(y)}; }
 
     template<typename U>
     inline Vec2<U> cast() const {
@@ -187,11 +170,9 @@ public:
 
     constexpr inline Vec3(T x, T y, T z) noexcept : x(x), y(y), z(z) {}
 
-    constexpr inline explicit Vec3(T xyz[3]) noexcept :
-        x(xyz[0]), y(xyz[1]), z(xyz[2]) {}
+    constexpr inline explicit Vec3(T xyz[3]) noexcept : x(xyz[0]), y(xyz[1]), z(xyz[2]) {}
 
-    constexpr inline Vec3(const Vec2<T> &v, T u = 0) noexcept :
-        x(v.x), y(v.y), z(u) {}
+    constexpr inline Vec3(const Vec2<T> &v, T u = 0) noexcept : x(v.x), y(v.y), z(u) {}
 
     constexpr inline Vec3(const Vec3 &v) noexcept : x(v.x), y(v.y), z(v.z) {}
 
@@ -268,21 +249,13 @@ public:
     }
 
     // operator with T
-    inline constexpr Vec3 operator+(const T &a) const noexcept {
-        return {a + x, a + y, a + z};
-    }
+    inline constexpr Vec3 operator+(const T &a) const noexcept { return {a + x, a + y, a + z}; }
 
-    inline constexpr Vec3 operator-(const T &a) const noexcept {
-        return {x - a, y - a, a - z};
-    }
+    inline constexpr Vec3 operator-(const T &a) const noexcept { return {x - a, y - a, a - z}; }
 
-    inline constexpr Vec3 operator*(const T &a) const noexcept {
-        return {a * x, a * y, a * z};
-    }
+    inline constexpr Vec3 operator*(const T &a) const noexcept { return {a * x, a * y, a * z}; }
 
-    inline constexpr Vec3 operator/(const T &a) const noexcept {
-        return {x / a, y / a, z / a};
-    }
+    inline constexpr Vec3 operator/(const T &a) const noexcept { return {x / a, y / a, z / a}; }
 
     inline constexpr void operator+=(const T &a) noexcept {
         x += a;
@@ -320,17 +293,11 @@ public:
     // Functions
     inline T length2() const noexcept { return x * x + y * y + z * z; }
 
-    inline double length() const noexcept {
-        return std::sqrt(x * x + y * y + z * z);
-    };
+    inline double length() const noexcept { return std::sqrt(x * x + y * y + z * z); };
 
-    inline T scalar(const Vec3 &B) const noexcept {
-        return x * B.x + y * B.y + z * B.z;
-    }
+    inline T scalar(const Vec3 &B) const noexcept { return x * B.x + y * B.y + z * B.z; }
 
-    inline T dot(const Vec3 &B) const noexcept {
-        return x * B.x + y * B.y + z * B.z;
-    }
+    inline T dot(const Vec3 &B) const noexcept { return x * B.x + y * B.y + z * B.z; }
 
     inline Vec3 cross(const Vec3 &B) const noexcept {
         return {y * B.z - B.y * z, z * B.x - B.z * x, x * B.y - B.x * y};
@@ -341,21 +308,15 @@ public:
         return {x * t, y * t, z * t};
     }
 
-    inline Vec3 getNormal() const noexcept {
-        return operator/(std::sqrt(x * x + y * y + z * z));
-    }
+    inline Vec3 getNormal() const noexcept { return operator/(std::sqrt(x * x + y * y + z * z)); }
 
     inline Vec3<T> setLength(double newLength) noexcept {
         return *this = *this / std::sqrt(x * x + y * y + z * z) * newLength;
     }
 
-    inline bool isNull() const noexcept {
-        return (x == 0) && (y == 0) && (z == 0);
-    }
+    inline bool isNull() const noexcept { return (x == 0) && (y == 0) && (z == 0); }
 
-    inline Vec3 round() const noexcept {
-        return {std::round(x), std::round(y), std::round(z)};
-    }
+    inline Vec3 round() const noexcept { return {std::round(x), std::round(y), std::round(z)}; }
 
     template<typename U>
     inline Vec3<U> cast() const noexcept {
@@ -401,25 +362,15 @@ public:
     constexpr inline Vec4 operator-() const { return {-x, -y, -z, -w}; }
 
     // operator with Vec4
-    bool operator==(const Vec4 &v) const {
-        return x == v.x && y == v.y && z == v.z && w == v.w;
-    }
+    bool operator==(const Vec4 &v) const { return x == v.x && y == v.y && z == v.z && w == v.w; }
 
-    bool operator!=(const Vec4 &v) const {
-        return x != v.x || y != v.y || z != v.z || w != v.w;
-    }
+    bool operator!=(const Vec4 &v) const { return x != v.x || y != v.y || z != v.z || w != v.w; }
 
-    Vec4 operator-(const Vec4 &v) const {
-        return {x - v.x, y - v.y, z - v.z, w - v.w};
-    }
+    Vec4 operator-(const Vec4 &v) const { return {x - v.x, y - v.y, z - v.z, w - v.w}; }
 
-    Vec4 operator+(const Vec4 &v) const {
-        return {x + v.x, y + v.y, z + v.z, w + v.w};
-    }
+    Vec4 operator+(const Vec4 &v) const { return {x + v.x, y + v.y, z + v.z, w + v.w}; }
 
-    Vec4 operator*(const Vec4 &a) const {
-        return {a.x * x, a.y * y, a.z * z, a.w * w};
-    }
+    Vec4 operator*(const Vec4 &a) const { return {a.x * x, a.y * y, a.z * z, a.w * w}; }
 
     void operator+=(const Vec4 &v) {
         x += v.x;
@@ -495,9 +446,7 @@ public:
 
     double length() const { return std::sqrt(x * x + y * y + z * z + w * w); };
 
-    T scalar(const Vec4 &B) const {
-        return x * B.x + y * B.y + z * B.z + w * B.w;
-    }
+    T scalar(const Vec4 &B) const { return x * B.x + y * B.y + z * B.z + w * B.w; }
 
     T dot(const Vec4 &B) const { return x * B.x + y * B.y + z * B.z + w * B.w; }
 
@@ -529,18 +478,17 @@ public:
     }
 };
 
-template<typename T>
+template<typename T = float>
 class Mat2 {
 public:
     T a11 = 1, a12 = 0;
     T a21 = 0, a22 = 1;
 
-    Mat2() noexcept = default;
+    constexpr Mat2() noexcept = default;
 
-    Mat2(T a11, T a12, T a21, T a22) noexcept :
-        a11(a11), a12(a12), a21(a21), a22(a22) {}
+    constexpr Mat2(T a11, T a12, T a21, T a22) noexcept : a11(a11), a12(a12), a21(a21), a22(a22) {}
 
-    explicit Mat2(const std::array<T, 9> &mat) noexcept :
+    constexpr explicit Mat2(const std::array<T, 9> &mat) noexcept :
         a11(mat[0]), a12(mat[1]), a21(mat[2]), a22(mat[3]) {}
 
     void load(const std::array<T, 4> &mat) {
@@ -550,28 +498,31 @@ public:
         a22 = mat[3];
     }
 
-    // operator with nothing
+    constexpr Mat2 inverse() const { return Mat2{a22, -a12, -a21, a11} / (a11 * a22 - a12 * a21); }
 
     constexpr inline Mat2 operator-() const { return {-a11, -a22, -a21, -a22}; }
 
-    Mat2 operator+(const Mat2 &v) const {
+    constexpr Mat2 operator+(const Mat2 &v) const {
         return {a11 + v.a11, a12 + v.a12, a21 + v.a21, a22 + v.a22};
     }
 
-    Mat2 operator-(const Mat2 &v) const {
+    constexpr Mat2 operator-(const Mat2 &v) const {
         return {a11 - v.a11, a12 - v.a12, a21 - v.a21, a22 - v.a22};
     }
 
-    Mat2 operator*(const Mat2 &v) const {
+    constexpr Mat2 operator*(const Mat2 &v) const {
         return {a11 * v.a11 + a12 * v.a21,
                 a11 * v.a12 + a12 * v.a22,
                 a21 * v.a11 + a22 * v.a21,
                 a21 * v.a12 + a22 * v.a22};
     }
 
-    Vec2<T> operator*(const Vec2<T> &v) const {
+    constexpr Vec2<T> operator*(const Vec2<T> &v) const {
         return {a11 * v.x + a12 * v.y, a21 * v.x + a22 * v.y};
     }
+
+    constexpr Mat2 operator*(const T &v) const { return {a11 * v + a12 * v, a21 * v + a22 * v}; }
+    constexpr Mat2 operator/(const T &v) const { return {a11 / v, a12 / v, a21 / v, a22 / v}; }
 
     template<typename U>
     Mat2<U> cast() const {
@@ -602,15 +553,7 @@ public:
          float a31,
          float a32,
          float a33) noexcept :
-        a11(a11),
-        a12(a12),
-        a13(a13),
-        a21(a21),
-        a22(a22),
-        a23(a23),
-        a31(a31),
-        a32(a32),
-        a33(a33) {}
+        a11(a11), a12(a12), a13(a13), a21(a21), a22(a22), a23(a23), a31(a31), a32(a32), a33(a33) {}
 
     Mat3(Vec3<> v1, Vec3<> v2, Vec3<> v3) noexcept :
         a11(v1.x),
@@ -721,10 +664,7 @@ public:
         a34(val),
         a44(val) {}
 
-    Mat4(const Vec4<> &a1,
-         const Vec4<> &a2,
-         const Vec4<> &a3,
-         const Vec4<> &a4) :
+    Mat4(const Vec4<> &a1, const Vec4<> &a2, const Vec4<> &a3, const Vec4<> &a4) :
         // the default convention is row-major for matrix contruction
         a11(a1.x),
         a12(a1.y),
@@ -966,29 +906,14 @@ public:
     }
 
     bool operator==(const Mat4 &v) const {
-        return a11 == v.a11 && a12 == v.a12 && a13 == v.a13 && a14 == v.a14 &&
-               a21 == v.a21 && a22 == v.a22 && a23 == v.a23 && a24 == v.a24 &&
-               a31 == v.a31 && a32 == v.a32 && a33 == v.a33 && a34 == v.a34 &&
-               a41 == v.a41 && a42 == v.a42 && a43 == v.a43 && a44 == v.a44;
+        return a11 == v.a11 && a12 == v.a12 && a13 == v.a13 && a14 == v.a14 && a21 == v.a21
+               && a22 == v.a22 && a23 == v.a23 && a24 == v.a24 && a31 == v.a31 && a32 == v.a32
+               && a33 == v.a33 && a34 == v.a34 && a41 == v.a41 && a42 == v.a42 && a43 == v.a43
+               && a44 == v.a44;
     }
 
     Mat4 transpose() const {
-        return {a11,
-                a21,
-                a31,
-                a41,
-                a12,
-                a22,
-                a32,
-                a42,
-                a13,
-                a23,
-                a33,
-                a43,
-                a14,
-                a24,
-                a34,
-                a44};
+        return {a11, a21, a31, a41, a12, a22, a32, a42, a13, a23, a33, a43, a14, a24, a34, a44};
     }
 
     Mat4 inverse() const {
@@ -1017,8 +942,7 @@ public:
         Inverse.a13 = +a12 * Coef02 - a13 * Coef06 + a14 * Coef10;
         Inverse.a14 = -a12 * Coef03 + a13 * Coef07 - a14 * Coef11;
 
-        float Det = a11 * Inverse.a11 + a21 * Inverse.a12 + a31 * Inverse.a13 +
-                    a41 * Inverse.a14;
+        float Det = a11 * Inverse.a11 + a21 * Inverse.a12 + a31 * Inverse.a13 + a41 * Inverse.a14;
 
         Inverse.a11 /= Det;
         Inverse.a12 /= Det;
@@ -1074,8 +998,7 @@ public:
         setPosition(position);
         setScale(scale);
     }
-    ModelTransform2D(const Vec2<> &position, const Vec2<> &scale, float angle) :
-        scale(scale) {
+    ModelTransform2D(const Vec2<> &position, const Vec2<> &scale, float angle) : scale(scale) {
         setPosition(position);
         setRotation(angle);
     }
@@ -1245,9 +1168,7 @@ public:
 
         auto n = xyz.getNormal();
         float axis[3] = {n.x, n.y, n.z};
-        float temp[3] = {axis[0] * (1.f - c),
-                         axis[1] * (1.f - c),
-                         axis[2] * (1.f - c)};
+        float temp[3] = {axis[0] * (1.f - c), axis[1] * (1.f - c), axis[2] * (1.f - c)};
 
         rotation.a11 = c + temp[0] * axis[0];
         rotation.a12 = temp[0] * axis[1] + s * axis[2];
@@ -1270,9 +1191,7 @@ public:
 
         auto n = xyz.getNormal();
         float axis[3] = {n.x, n.y, n.z};
-        float temp[3] = {axis[0] * (1.f - c),
-                         axis[1] * (1.f - c),
-                         axis[2] * (1.f - c)};
+        float temp[3] = {axis[0] * (1.f - c), axis[1] * (1.f - c), axis[2] * (1.f - c)};
 
         Mat3 Rotate;
         Rotate.a11 = c + temp[0] * axis[0];
@@ -1301,8 +1220,7 @@ public:
         // invs (inverse square length) is only required if quaternion is not
         // already normalised
         float invs = 1 / (sqx + sqy + sqz + sqw);
-        Rotate.a11 = (sqx - sqy - sqz + sqw) *
-                     invs; // since sqw + sqx + sqy + sqz =1/invs*invs
+        Rotate.a11 = (sqx - sqy - sqz + sqw) * invs; // since sqw + sqx + sqy + sqz =1/invs*invs
         Rotate.a22 = (-sqx + sqy - sqz + sqw) * invs;
         Rotate.a33 = (-sqx - sqy + sqz + sqw) * invs;
 
@@ -1334,8 +1252,7 @@ public:
         // already normalised
         float invs = 1 / (sqx + sqy + sqz + sqw);
 
-        rotation.a11 = (sqx - sqy - sqz + sqw) *
-                       invs; // since sqw + sqx + sqy + sqz =1/invs*invs
+        rotation.a11 = (sqx - sqy - sqz + sqw) * invs; // since sqw + sqx + sqy + sqz =1/invs*invs
         rotation.a22 = (-sqx + sqy - sqz + sqw) * invs;
         rotation.a33 = (-sqx - sqy + sqz + sqw) * invs;
 
@@ -1381,8 +1298,7 @@ public:
         compute();
     }
 
-    friend std::ostream &operator<<(std::ostream &out,
-                                    const ModelTransform &vec) {
+    friend std::ostream &operator<<(std::ostream &out, const ModelTransform &vec) {
         out << "ModelTransform: " << std::endl << (Mat4) vec;
         return out;
     }
@@ -1413,8 +1329,7 @@ private:
     }
 
 public:
-    ViewTransform() :
-        cameraPosition(1, 0, 1), forward(-1, 0, -1), cameraUp(0, 0, 1) {
+    ViewTransform() : cameraPosition(1, 0, 1), forward(-1, 0, -1), cameraUp(0, 0, 1) {
         forward = forward.getNormal();
         compute();
     }
@@ -1426,8 +1341,7 @@ public:
         setPosition(cameraPosition, lookAt);
     }
 
-    void setPosition(const Vec3<> &pos,
-                     std::optional<Vec3<float>> lookAt = {}) {
+    void setPosition(const Vec3<> &pos, std::optional<Vec3<float>> lookAt = {}) {
         cameraPosition = pos;
         if (lookAt)
             forward = (cameraPosition - lookAt.value()).getNormal();
@@ -1451,8 +1365,7 @@ public:
         compute();
     }
 
-    friend std::ostream &operator<<(std::ostream &out,
-                                    const ViewTransform &vec) {
+    friend std::ostream &operator<<(std::ostream &out, const ViewTransform &vec) {
         out << "cameraPosition: " << vec.cameraPosition << std::endl;
         out << "cameraLookAt: " << vec.forward << std::endl;
         out << "cameraUp: " << vec.cameraUp << std::endl;
@@ -1468,8 +1381,7 @@ public:
  */
 class ProjectionTransform : public Mat4 {
 private:
-    float cameraAngle = std::numbers::pi_v<float> / 3.f, ratio = 1.f,
-          closeRange, longRange;
+    float cameraAngle = std::numbers::pi_v<float> / 3.f, ratio = 1.f, closeRange, longRange;
     bool ortho = false, homogeneousNdc = false;
 
 public:
@@ -1480,9 +1392,7 @@ public:
                         float closeRange,
                         float longRange,
                         bool homogeneousNdc) :
-        cameraAngle(cameraAngle),
-        ratio(size.x / (float) size.y),
-        homogeneousNdc(homogeneousNdc) {
+        cameraAngle(cameraAngle), ratio(size.x / (float) size.y), homogeneousNdc(homogeneousNdc) {
         setRange(closeRange, longRange);
         setAngle(cameraAngle);
     }
@@ -1501,9 +1411,7 @@ public:
             a34 = -1.f;
         }*/
 
-    void setRange(float _closeRange,
-                  float _longRange,
-                  std::optional<bool> _homogeneousNdc = {}) {
+    void setRange(float _closeRange, float _longRange, std::optional<bool> _homogeneousNdc = {}) {
         closeRange = _closeRange;
         longRange = _longRange;
         if (_homogeneousNdc)
@@ -1568,8 +1476,7 @@ public:
         a43 = 0;
     }
 
-    friend std::ostream &operator<<(std::ostream &out,
-                                    const ProjectionTransform &vec) {
+    friend std::ostream &operator<<(std::ostream &out, const ProjectionTransform &vec) {
         out << "cameraAngle: " << vec.cameraAngle << std::endl;
 
         out << "ratio: " << vec.ratio << std::endl;

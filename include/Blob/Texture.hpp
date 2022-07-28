@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Blob/Image.hpp>
+#include <Blob/Buffer.hpp>
+#include <Blob/Maths.hpp>
 #include <bgfx/bgfx.h>
 
 namespace Blob {
@@ -9,13 +10,17 @@ class Texture {
 public:
     bgfx::TextureHandle textureHandle;
 
+    Texture() = default;
+    Texture(const Buffer &buffer,
+            const Vec2<size_t> &size,
+            bgfx::TextureFormat::Enum textureFormat) {
+        setImage(buffer, size, textureFormat);
+    }
     ~Texture();
-    // explicit Texture(const std::string &path);
-    // Texture(const std::string &path, GL::Sampler sampler);
-    // explicit Texture(const Image &image);
-    // Texture(const Image &image, GL::Sampler sampler);
-    // void setImage(const std::string &path);
-    // void setImage(const Image &image);
+
+    void setImage(const Buffer &buffer,
+                  const Vec2<size_t> &size,
+                  bgfx::TextureFormat::Enum textureFormat);
 
     Vec2<size_t> getTextureSize() const { return {}; }
 };

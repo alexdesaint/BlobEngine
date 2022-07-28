@@ -12,7 +12,9 @@ def print3dData(data):
         "{"
         + ",\n ".join(
             [
-                "{" + ", ".join(["{" + ", ".join(map(str, d2)) + "}" for d2 in d1]) + "}"
+                "{"
+                + ", ".join(["{" + ", ".join(map(str, d2)) + "}" for d2 in d1])
+                + "}"
                 for d1 in data
             ]
         )
@@ -176,7 +178,9 @@ class Struct:
             namespace = ""
 
         ret += "".join([c.getHeader(0) for c in self.localContent])
-        ret += "".join([c.getCore(namespace + self.name + "::") for c in self.localContent])
+        ret += "".join(
+            [c.getCore(namespace + self.name + "::") for c in self.localContent]
+        )
         ret += "".join([c.getCore(namespace + self.name + "::") for c in self.content])
 
         return ret
@@ -229,7 +233,9 @@ class Function:
             else:
                 ret += getIndent(indent) + "{\n"
                 ret += (
-                    getIndent(indent + 1) + ("\n" + getIndent(indent + 1)).join(self.content) + "\n"
+                    getIndent(indent + 1)
+                    + ("\n" + getIndent(indent + 1)).join(self.content)
+                    + "\n"
                 )
                 ret += getIndent(indent) + "}\n"
         else:
@@ -374,7 +380,9 @@ def codeMesh(mesh: bpy.types.Mesh):
             Parameter("uv%dx" % uv_i, float_t),
             Parameter("uv%dy" % uv_i, float_t),
         ]
-        meshGetter.content.append("vertexLayout.add<float>(bgfx::Attrib::TexCoord0, 2);")
+        meshGetter.content.append(
+            "vertexLayout.add<float>(bgfx::Attrib::TexCoord0, 2);"
+        )
     for col_i in range(color_max):
         dataType += [
             ("color%dr" % col_i, np.float32),
@@ -425,8 +433,12 @@ def codeMesh(mesh: bpy.types.Mesh):
                 data[cursor]["ty"] = mesh.loops[loop_index].tangent[1]
                 data[cursor]["tz"] = mesh.loops[loop_index].tangent[2]
             for uv_i in range(tex_coord_max):
-                data[cursor]["uv%dx" % uv_i] = mesh.uv_layers[uv_i].data[loop_index].uv[0]
-                data[cursor]["uv%dy" % uv_i] = mesh.uv_layers[uv_i].data[loop_index].uv[1]
+                data[cursor]["uv%dx" % uv_i] = (
+                    mesh.uv_layers[uv_i].data[loop_index].uv[0]
+                )
+                data[cursor]["uv%dy" % uv_i] = (
+                    mesh.uv_layers[uv_i].data[loop_index].uv[1]
+                )
             for col_i in range(color_max):
                 data[cursor]["color%dr" % col_i] = (
                     mesh.vertex_colors[col_i].data[loop_index].color[0]
@@ -632,7 +644,10 @@ data += Function(
     "",
     [],
     ["return {"]
-    + ["    BlenderProperties{" + name + "::name, &" + name + "::get}," for name in meshes]
+    + [
+        "    BlenderProperties{" + name + "::name, &" + name + "::get},"
+        for name in meshes
+    ]
     + ["};"],
     False,
     True,
@@ -677,8 +692,12 @@ for object in bpy.data.objects:
             childName = nameFormat(child.name)
             childName = "shape_" + childName
             toInclude.append("Shapes/" + childName)
-            shapeStruct.content.append(Parameter(childName, NativeType("Shapes::" + childName)))
-            shapeGetter.content.append("        Shapes::" + typeName + "::get(context),")
+            shapeStruct.content.append(
+                Parameter(childName, NativeType("Shapes::" + childName))
+            )
+            shapeGetter.content.append(
+                "        Shapes::" + typeName + "::get(context),"
+            )
 
     shapeGetter.content.append("    },")
     shapeGetter.content.append("    {")
