@@ -1,20 +1,25 @@
 #pragma once
 
-#include "Blob/Maths.hpp"
-#include "bgfx/bgfx.h"
 #include <Blob/RenderOptions.hpp>
 #include <Blob/Shader.hpp>
 #include <Blob/Texture.hpp>
 #include <Blob/VertexBuffer.hpp>
+#include <bgfx/bgfx.h>
+#include <bgfx/platform.h>
 #include <memory>
 #include <string>
 #include <unordered_map>
-
-#include <bgfx/platform.h>
+#include <unordered_set>
 
 namespace Blob {
 class Context : private bgfx::CallbackI {
 public:
+    ProjectionTransform projectionTransform;
+    ProjectionTransform2D projectionTransform2D;
+
+    std::unordered_set<class MouseEvents *> mouseEventsSubscribers;
+    std::unordered_set<class KeyboardEvents *> keyboardEventsSubscribers;
+
     std::unordered_map<std::string, std::unique_ptr<Shader>> shaders;
     std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
     std::unordered_map<std::string, std::unique_ptr<RenderOptions>> renderOptions;
@@ -22,7 +27,11 @@ public:
     std::unordered_map<std::string, std::unique_ptr<UniformSampler>> uniformSamplers;
     std::unordered_map<std::string, std::unique_ptr<Uniform>> uniforms;
 
-    Context(void *ndt, void *nwh) {
+    Context(void *ndt,
+            void *nwh,
+            ProjectionTransform projectionTransform,
+            ProjectionTransform2D projectionTransform2D) :
+        projectionTransform(projectionTransform), projectionTransform2D(projectionTransform2D) {
         bgfx::PlatformData pd;
         pd.ndt = ndt;
         pd.nwh = nwh;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Blob/Maths.hpp>
+#include <Blob/Context.hpp>
 #include <cstddef>
 #include <functional>
 #include <list>
@@ -176,42 +176,44 @@ struct GamepadAxis {
 };
 
 class KeyboardEvents {
-    friend class Window;
-
 private:
-    static std::list<KeyboardEvents *> subscribers;
+    friend class Window;
+    Context &context;
 
 protected:
-    KeyboardEvents() { subscribers.push_back(this); }
+    KeyboardEvents(Context &context) : context(context) {
+        context.keyboardEventsSubscribers.emplace(this);
+    }
 
-    ~KeyboardEvents() { subscribers.remove(this); }
+    ~KeyboardEvents() { context.keyboardEventsSubscribers.erase(this); }
 
     virtual void keyUpdate(const Key &key, const bool &state){};
 
 public:
     KeyboardEvents(const KeyboardEvents &) = delete;
+    KeyboardEvents(KeyboardEvents &&) = delete;
 };
 
 class MouseEvents {
-    friend class Window;
-
 private:
-    static std::list<MouseEvents *> subscribers;
+    friend class Window;
+    Context &context;
 
 protected:
-    MouseEvents() { subscribers.push_back(this); }
+    MouseEvents(Context &context) : context(context) {
+        context.mouseEventsSubscribers.emplace(this);
+    }
 
-    ~MouseEvents() { subscribers.remove(this); }
+    ~MouseEvents() { context.mouseEventsSubscribers.erase(this); }
 
     virtual void mouseButtonUpdate(int button, bool pressed) {}
 
-    virtual void cursorPosUpdate(double xpos, double ypos) {}
+    virtual void cursorPosUpdate(const Vec2<> &position) {}
 
     virtual void scrollUpdate(double xoffset, double yoffset) {}
 
 public:
     MouseEvents(const MouseEvents &) = delete;
-
     MouseEvents(MouseEvents &&) = delete;
 };
 

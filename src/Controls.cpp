@@ -184,7 +184,4 @@ void Controller::controllerOut() const {
 }
 */
 
-std::list<KeyboardEvents *> KeyboardEvents::subscribers;
-std::list<MouseEvents *> MouseEvents::subscribers;
-
 } // namespace Blob

@@ -9,8 +9,6 @@
 #include <cstring>
 #include <functional>
 
-#define PI 3.141592653589793238462643383279502884L
-
 namespace Blob {
 
 template<typename T = float>
@@ -140,7 +138,9 @@ public:
 
     constexpr inline double getOrientation() const { return std::atan2(y, x); }
 
-    constexpr inline double getOrientationDeg() const { return std::atan2(y, x) * 180 / PI; }
+    constexpr inline double getOrientationDeg() const {
+        return std::atan2(y, x) * 180 / std::numbers::pi;
+    }
 
     constexpr inline bool isNull() const { return ((x == 0) && (y == 0)); }
 
@@ -479,83 +479,26 @@ public:
 };
 
 template<typename T = float>
-class Mat2 {
-public:
-    T a11 = 1, a12 = 0;
-    T a21 = 0, a22 = 1;
-
-    constexpr Mat2() noexcept = default;
-
-    constexpr Mat2(T a11, T a12, T a21, T a22) noexcept : a11(a11), a12(a12), a21(a21), a22(a22) {}
-
-    constexpr explicit Mat2(const std::array<T, 9> &mat) noexcept :
-        a11(mat[0]), a12(mat[1]), a21(mat[2]), a22(mat[3]) {}
-
-    void load(const std::array<T, 4> &mat) {
-        a11 = mat[0];
-        a12 = mat[1];
-        a21 = mat[2];
-        a22 = mat[3];
-    }
-
-    constexpr Mat2 inverse() const { return Mat2{a22, -a12, -a21, a11} / (a11 * a22 - a12 * a21); }
-
-    constexpr inline Mat2 operator-() const { return {-a11, -a22, -a21, -a22}; }
-
-    constexpr Mat2 operator+(const Mat2 &v) const {
-        return {a11 + v.a11, a12 + v.a12, a21 + v.a21, a22 + v.a22};
-    }
-
-    constexpr Mat2 operator-(const Mat2 &v) const {
-        return {a11 - v.a11, a12 - v.a12, a21 - v.a21, a22 - v.a22};
-    }
-
-    constexpr Mat2 operator*(const Mat2 &v) const {
-        return {a11 * v.a11 + a12 * v.a21,
-                a11 * v.a12 + a12 * v.a22,
-                a21 * v.a11 + a22 * v.a21,
-                a21 * v.a12 + a22 * v.a22};
-    }
-
-    constexpr Vec2<T> operator*(const Vec2<T> &v) const {
-        return {a11 * v.x + a12 * v.y, a21 * v.x + a22 * v.y};
-    }
-
-    constexpr Mat2 operator*(const T &v) const { return {a11 * v + a12 * v, a21 * v + a22 * v}; }
-    constexpr Mat2 operator/(const T &v) const { return {a11 / v, a12 / v, a21 / v, a22 / v}; }
-
-    template<typename U>
-    Mat2<U> cast() const {
-        return {(U) a11, (U) a12, (U) a21, (U) a22};
-    }
-
-    friend std::ostream &operator<<(std::ostream &os, const Mat2 &m) {
-        os << m.a11 << ", " << m.a12 << std::endl;
-        os << m.a21 << ", " << m.a22 << std::endl;
-        return os;
-    }
-};
-
 class Mat3 {
 public:
-    float a11 = 1, a12 = 0, a13 = 0;
-    float a21 = 0, a22 = 1, a23 = 0;
-    float a31 = 0, a32 = 0, a33 = 1;
+    T a11 = 1, a12 = 0, a13 = 0;
+    T a21 = 0, a22 = 1, a23 = 0;
+    T a31 = 0, a32 = 0, a33 = 1;
 
-    Mat3() noexcept = default;
+    constexpr Mat3() noexcept = default;
 
-    Mat3(float a11,
-         float a12,
-         float a13,
-         float a21,
-         float a22,
-         float a23,
-         float a31,
-         float a32,
-         float a33) noexcept :
+    constexpr Mat3(float a11,
+                   float a12,
+                   float a13,
+                   float a21,
+                   float a22,
+                   float a23,
+                   float a31,
+                   float a32,
+                   float a33) noexcept :
         a11(a11), a12(a12), a13(a13), a21(a21), a22(a22), a23(a23), a31(a31), a32(a32), a33(a33) {}
 
-    Mat3(Vec3<> v1, Vec3<> v2, Vec3<> v3) noexcept :
+    constexpr Mat3(Vec3<> v1, Vec3<> v2, Vec3<> v3) noexcept :
         a11(v1.x),
         a12(v1.y),
         a13(v1.z),
@@ -566,7 +509,7 @@ public:
         a32(v3.y),
         a33(v3.z) {}
 
-    explicit Mat3(const std::array<float, 9> &mat) noexcept :
+    constexpr explicit Mat3(const std::array<float, 9> &mat) noexcept :
         a11(mat[0]),
         a12(mat[1]),
         a13(mat[2]),
@@ -577,15 +520,7 @@ public:
         a32(mat[7]),
         a33(mat[8]) {}
 
-    constexpr inline Mat3 &operator=(const Mat2<float> &v) {
-        a11 = v.a11;
-        a21 = v.a21;
-        a12 = v.a12;
-        a22 = v.a22;
-        return *this;
-    }
-
-    Mat3 operator+(const Mat3 &v) const {
+    constexpr Mat3 operator+(const Mat3 &v) const {
         return {a11 + v.a11,
                 a12 + v.a12,
                 a13 + v.a13,
@@ -597,7 +532,7 @@ public:
                 a33 + v.a33};
     }
 
-    Mat3 operator-(const Mat3 &v) const {
+    constexpr Mat3 operator-(const Mat3 &v) const {
         return {a11 - v.a11,
                 a12 - v.a12,
                 a13 - v.a13,
@@ -609,7 +544,7 @@ public:
                 a33 - v.a33};
     }
 
-    Mat3 operator*(const Mat3 &v) const {
+    constexpr Mat3 operator*(const Mat3 &v) const {
         return {a11 * v.a11 + a12 * v.a21 + a13 * v.a31,
                 a11 * v.a12 + a12 * v.a22 + a13 * v.a32,
                 a11 * v.a13 + a12 * v.a23 + a13 * v.a33,
@@ -619,6 +554,22 @@ public:
                 a31 * v.a11 + a32 * v.a21 + a33 * v.a31,
                 a31 * v.a12 + a32 * v.a22 + a33 * v.a32,
                 a31 * v.a13 + a32 * v.a23 + a33 * v.a33};
+    }
+
+    constexpr Vec3<T> operator*(const Vec2<T> &val) const {
+        Vec3<> ret;
+        ret.x = a11 * val.x + a12 * val.y + a13;
+        ret.y = a21 * val.x + a22 * val.y + a23;
+        ret.z = a31 * val.x + a32 * val.y + a33;
+        return ret;
+    }
+
+    constexpr Vec3<T> operator*(const Vec3<T> &val) const {
+        Vec3<> ret;
+        ret.x = a11 * val.x + a12 * val.y + a13 * val.z;
+        ret.y = a21 * val.x + a22 * val.y + a23 * val.z;
+        ret.z = a31 * val.x + a32 * val.y + a33 * val.z;
+        return ret;
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Mat3 &m) {
@@ -976,16 +927,16 @@ public:
     }
 };
 
-class ModelTransform2D : public Mat3 {
+class ModelTransform2D : public Mat3<> {
 private:
     Vec2<> scale = {1, 1};
-    Mat2<float> rotation;
+    Vec2<float> rotationX, rotationY;
 
     void compute() {
-        a11 = rotation.a11 * scale.x;
-        a12 = rotation.a12 * scale.x;
-        a21 = rotation.a21 * scale.y;
-        a22 = rotation.a22 * scale.y;
+        a11 = rotationX.x * scale.x;
+        a12 = rotationX.y * scale.x;
+        a21 = rotationY.x * scale.y;
+        a22 = rotationY.y * scale.y;
     }
 
 public:
@@ -1008,18 +959,13 @@ public:
         a32 = xy.y;
     }
 
-    void setRotation(const Mat2<float> &rotation) {
-        ModelTransform2D::rotation = rotation;
-        compute();
-    };
-
     void setRotation(float angle) {
         const float c = std::cos(angle);
         const float s = std::sin(angle);
-        rotation.a11 = c;
-        rotation.a12 = -s;
-        rotation.a21 = s;
-        rotation.a22 = c;
+        rotationX.x = c;
+        rotationX.y = -s;
+        rotationY.x = s;
+        rotationY.y = c;
         compute();
     };
 
@@ -1044,15 +990,15 @@ public:
     }
 };
 
-class ViewTransform2D : public Mat3 {
+class ViewTransform2D : public Mat3<> {
 private:
-    Mat2<float> rotation;
+    Vec2<float> rotationX, rotationY;
 
     void compute() {
-        a11 = rotation.a11;
-        a12 = rotation.a12;
-        a21 = rotation.a21;
-        a22 = rotation.a22;
+        a11 = rotationX.x;
+        a12 = rotationX.y;
+        a21 = rotationY.x;
+        a22 = rotationY.y;
     }
 
 public:
@@ -1071,23 +1017,18 @@ public:
         a32 = -xy.y;
     }
 
-    void setRotation(const Mat2<float> &rotation) {
-        ViewTransform2D::rotation = -rotation;
-        compute();
-    };
-
     void setRotation(float angle) {
-        const float c = std::cos(-angle);
-        const float s = std::sin(-angle);
-        rotation.a11 = c;
-        rotation.a12 = -s;
-        rotation.a21 = s;
-        rotation.a22 = c;
+        const float c = std::cos(angle);
+        const float s = std::sin(angle);
+        rotationX.x = c;
+        rotationX.y = -s;
+        rotationY.x = s;
+        rotationY.y = c;
         compute();
     };
 };
 
-class ProjectionTransform2D : public Mat3 {
+class ProjectionTransform2D : public Mat3<> {
 private:
     float height = 1, ratio = 1;
 
@@ -1109,8 +1050,8 @@ public:
 
 class ModelTransform : public Mat4 {
 private:
-    Vec3<float> scale = {1, 1, 1};
-    Mat3 rotation;
+    Vec3<> scale = {1, 1, 1};
+    Mat3<> rotation;
 
     void compute() {
         a11 = rotation.a11 * scale.x;
@@ -1151,16 +1092,6 @@ public:
         a24 += xyz.y;
         a34 += xyz.z;
     }
-
-    void setRotation(const Mat3 &rotation) {
-        ModelTransform::rotation = rotation;
-        compute();
-    };
-
-    void setRotation(const Mat2<float> &rotation) {
-        ModelTransform::rotation = rotation;
-        compute();
-    };
 
     void setRotation(float angle, const Vec3<float> &xyz) {
         const float c = std::cos(angle);
