@@ -176,7 +176,7 @@ void Window::cursorPositionUpdate(double xpos, double ypos) {
         * Vec2<>(xpos, ypos);
 
     for (auto &k : context.mouseEventsSubscribers)
-        k->cursorPosUpdate(screenPos);
+        k->cursorPosUpdate(Vec2<>(xpos, ypos), screenPos);
 }
 
 void Window::scrollUpdate(double xoffset, double yoffset) {

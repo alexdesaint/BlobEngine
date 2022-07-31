@@ -30,7 +30,7 @@ int main() {
     float width = 10, height = 10;
 
     window.setRatio({1, 1});
-    window.setAngle(PI / 4);
+    window.setAngle(std::numbers::pi / 4);
     window.setOrthoProjection(10);
     window.setRange(40, 100);
 

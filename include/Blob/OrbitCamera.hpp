@@ -14,26 +14,28 @@ private:
     MouseKey moveKey = MouseKeys::LEFT;
 
     Vec3<> lookAt;
-    Vec2<> mousePos, oldMousePos, oldMouseWorldPos, oldCameraLookAt;
+    Vec2<> mouseScreenPosition, mouseCameraPosition, oldMousePos, oldMouseWorldPos, oldCameraLookAt;
     float zAngle = 1, xyAngle = 1;
     Vec3<> up{0, 0, 1}, backward{-0.5, -0.5, 0.5};
     float zAngleOld = zAngle, xyAngleOld = xyAngle, dist = 10;
-    float minZ = 0.001, maxZ = std::numbers::pi, sensibility = 1;
-    float minDist = 5, maxDist = 40;
 
 public:
+    float minDist = 5, maxDist = 40;
+    float minZ = 0.001, maxZ = std::numbers::pi;
+    float sensibility = 400;
+
     void mouseButtonUpdate(MouseKey button, bool pressed) final {
         if (ImGui::GetIO().WantCaptureMouse)
             return;
 
         if (mode == Nothing && button == rotateKey && pressed) {
-            oldMousePos = mousePos;
+            oldMousePos = mouseScreenPosition;
             xyAngleOld = xyAngle;
             zAngleOld = zAngle;
 
             mode = Rotate;
         } else if (mode == Nothing && button == moveKey && pressed) {
-            oldMouseWorldPos = screenToWorldCoordinate(mousePos, 0);
+            oldMouseWorldPos = screenToWorldCoordinate(mouseCameraPosition, 0);
             oldCameraLookAt = lookAt;
 
             mode = Move;
@@ -41,18 +43,19 @@ public:
             mode = Nothing;
     }
 
-    void cursorPosUpdate(const Vec2<> &pos) final {
-        mousePos = pos;
+    void cursorPosUpdate(const Vec2<> &screenPosition, const Vec2<> &cameraPosition) final {
+        mouseScreenPosition = screenPosition;
+        mouseCameraPosition = cameraPosition;
 
         if (mode == Rotate) {
-            auto diff = mousePos - oldMousePos;
+            auto diff = screenPosition - oldMousePos;
 
-            zAngle = zAngleOld + diff.y * sensibility;
+            zAngle = zAngleOld - diff.y / sensibility;
             if (zAngle > maxZ)
                 zAngle = maxZ;
             if (zAngle < minZ)
                 zAngle = minZ;
-            xyAngle = xyAngleOld - diff.x * sensibility;
+            xyAngle = xyAngleOld - diff.x / sensibility;
             backward = Vec3{std::cos(xyAngle) * std::sin(zAngle),
                             std::sin(xyAngle) * std::sin(zAngle),
                             std::cos(zAngle)};
@@ -66,7 +69,7 @@ public:
             setPosition(backward * dist + lookAt, lookAt);
         } else if (mode == Move) {
             oldCameraLookAt +=
-                oldMouseWorldPos - ((Blob::Vec2<>) screenToWorldCoordinate(mousePos, 0));
+                oldMouseWorldPos - ((Blob::Vec2<>) screenToWorldCoordinate(mouseCameraPosition, 0));
             setLookAt(oldCameraLookAt);
         }
     }
@@ -105,7 +108,6 @@ public:
     void info() {
         auto camPos = backward * dist + lookAt;
         ImGui::Begin("OrbitCamera");
-        ImGui::Text("mousePos: %f %f", mousePos.x, mousePos.y);
         ImGui::Text("forward: %f %f %f", backward.x, backward.y, backward.z);
         ImGui::Text("dist: %f", dist);
         ImGui::Text("lookAt: %f %f %f", lookAt.x, lookAt.y, lookAt.z);

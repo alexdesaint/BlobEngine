@@ -208,7 +208,7 @@ protected:
 
     virtual void mouseButtonUpdate(int button, bool pressed) {}
 
-    virtual void cursorPosUpdate(const Vec2<> &position) {}
+    virtual void cursorPosUpdate(const Vec2<> &screenPosition, const Vec2<> &cameraPosition) {}
 
     virtual void scrollUpdate(double xoffset, double yoffset) {}
 

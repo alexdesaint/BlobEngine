@@ -31,7 +31,7 @@ int main() {
 
     auto parent = blenderTest::Shapes::Parent::get(context);
 
-    Blob::OrbitCamera camera{{}, 5};
+    Blob::OrbitCamera camera{window.context, {}, 5};
     camera.sensibility = 200;
 
     while (window.isOpen) {

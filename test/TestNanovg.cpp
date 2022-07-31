@@ -9,16 +9,13 @@
 
 int main() {
     Blob::Window window;
-    Blob::Camera camera;
+    Blob::Camera camera{window.context};
     NVGcontext *m_nvg = nvgCreate(1, 0);
 
     while (window.isOpen) {
         ImGui::ShowDemoWindow();
 
-        nvgBeginFrame(m_nvg,
-                      float(window.windowSize.x),
-                      float(window.windowSize.y),
-                      1.0f);
+        nvgBeginFrame(m_nvg, float(window.windowSize.x), float(window.windowSize.y), 1.0f);
 
         nvgStrokeWidth(m_nvg, 2.0f);
         nvgStrokeColor(m_nvg, nvgRGBA(0, 192, 255, 255));
