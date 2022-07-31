@@ -12,15 +12,13 @@
 
 HAS_FUNCTION(draw, void(NVGcontext *nvgContext))
 
-using namespace Blob;
-
-class PointShape : public Collider<Point> {
+class PointShape : public Blob::Collider<Blob::Point> {
 public:
     float rayon = 2;
-    Point position;
-    Color color;
+    Blob::Point position;
+    Blob::Color color;
 
-    PointShape(const Point &position, Color color = X11::White) :
+    PointShape(const Blob::Point &position, Blob::Color color = Blob::X11::White) :
         position(position), color(color) {}
 
     void draw(NVGcontext *nvgContext) const {
@@ -32,15 +30,16 @@ public:
         nvgFill(nvgContext);
     }
 
-    void enableStatic() { enableStaticCollision(Point{position}); }
+    void enableStatic() { enableStaticCollision(Blob::Point{position}); }
 };
 
-class RectangleShape : public Collider<Box> {
+class RectangleShape : public Blob::Collider<Blob::Box> {
 public:
-    Box box;
-    Color color;
+    Blob::Box box;
+    Blob::Color color;
 
-    RectangleShape(const Box &box, Color color = X11::White) : box(box), color(color) {}
+    RectangleShape(const Blob::Box &box, Blob::Color color = Blob::X11::White) :
+        box(box), color(color) {}
 
     void draw(NVGcontext *nvgContext) const {
         if (!enabled)
@@ -51,15 +50,16 @@ public:
         nvgFill(nvgContext);
     }
 
-    void enableStatic() { enableStaticCollision(Box{box}); }
+    void enableStatic() { enableStaticCollision(Blob::Box{box}); }
 };
 
-class LineShape : public Collider<Segment> {
+class LineShape : public Blob::Collider<Blob::Segment> {
 public:
-    Segment segment;
-    Color color;
+    Blob::Segment segment;
+    Blob::Color color;
 
-    LineShape(const Segment &segment, Color color = X11::White) : segment(segment), color(color) {}
+    LineShape(const Blob::Segment &segment, Blob::Color color = Blob::X11::White) :
+        segment(segment), color(color) {}
 
     void draw(NVGcontext *nvgContext) const {
         if (!enabled)
@@ -72,15 +72,15 @@ public:
         nvgStroke(nvgContext);
     }
 
-    void enableStatic() { enableStaticCollision(Segment{segment}); }
+    void enableStatic() { enableStaticCollision(Blob::Segment{segment}); }
 };
 
 class PolygonShape {
 public:
-    std::vector<Point> points;
-    Color color;
+    std::vector<Blob::Point> points;
+    Blob::Color color;
 
-    PolygonShape(const std::vector<Point> &points, Color color = X11::White) :
+    PolygonShape(const std::vector<Blob::Point> &points, Blob::Color color = Blob::X11::White) :
         points(points), color(color) {}
 
     void draw(NVGcontext *nvgContext) const {}
@@ -88,65 +88,65 @@ public:
 
 class PointCursor : public PointShape {
 public:
-    explicit PointCursor(const Point &position = {}) : PointShape(position) {}
+    explicit PointCursor(const Blob::Point &position = {}) : PointShape(position) {}
 
-    Point preCollisionUpdate(Point currentForm, double timeFlow) final {
+    Blob::Point preCollisionUpdate(Blob::Point currentForm, double timeFlow) final {
         currentForm = position;
         return currentForm;
     }
 
-    void setPosition(const Point &p) { position = p; }
+    void setPosition(const Blob::Point &p) { position = p; }
 
-    void hitStart(RectangleShape *object) { color = X11::Blue; }
-    void hitStart(PointShape *object) { color = X11::Yellow; }
-    void hitStart(LineShape *object) { color = X11::Orange; }
+    void hitStart(RectangleShape *object) { color = Blob::X11::Blue; }
+    void hitStart(PointShape *object) { color = Blob::X11::Yellow; }
+    void hitStart(LineShape *object) { color = Blob::X11::Orange; }
 
     template<class Collider>
     void hitEnd(Collider *object) {
-        color = X11::Green;
+        color = Blob::X11::Green;
     }
 };
 
 class RectangleCursor : public RectangleShape {
 public:
-    RectangleCursor(const Box &box = {}, Color fillColor = X11::White) :
+    RectangleCursor(const Blob::Box &box = {}, Blob::Color fillColor = Blob::X11::White) :
         RectangleShape(box, fillColor) {}
 
-    Box preCollisionUpdate(Box currentForm, double timeFlow) final {
+    Blob::Box preCollisionUpdate(Blob::Box currentForm, double timeFlow) final {
         currentForm = box;
         return currentForm;
     }
 
-    void setPosition(const Box &p) { box = p; }
+    void setPosition(const Blob::Box &p) { box = p; }
 
-    void hitStart(RectangleShape *object) { color = X11::Blue; }
-    void hitStart(PointShape *object) { color = X11::Yellow; }
-    void hitStart(LineShape *object) { color = X11::Orange; }
+    void hitStart(RectangleShape *object) { color = Blob::X11::Blue; }
+    void hitStart(PointShape *object) { color = Blob::X11::Yellow; }
+    void hitStart(LineShape *object) { color = Blob::X11::Orange; }
 
     template<class Collider>
     void hitEnd(Collider *object) {
-        color = X11::Green;
+        color = Blob::X11::Green;
     }
 };
 
 class LineCursor : public LineShape {
 public:
-    LineCursor(const Segment &seg = {}) : LineShape(seg) {}
+    LineCursor(const Blob::Segment &seg = {}) : LineShape(seg) {}
 
-    Segment preCollisionUpdate(Segment currentForm, double timeFlow) final {
+    Blob::Segment preCollisionUpdate(Blob::Segment currentForm, double timeFlow) final {
         currentForm = segment;
         return currentForm;
     }
 
-    void setPosition(const Segment &seg) { segment = seg; }
+    void setPosition(const Blob::Segment &seg) { segment = seg; }
 
-    void hitStart(RectangleShape *object) { color = X11::Blue; }
-    void hitStart(PointShape *object) { color = X11::Yellow; }
-    void hitStart(LineShape *object) { color = X11::Orange; }
+    void hitStart(RectangleShape *object) { color = Blob::X11::Blue; }
+    void hitStart(PointShape *object) { color = Blob::X11::Yellow; }
+    void hitStart(LineShape *object) { color = Blob::X11::Orange; }
 
     template<class Collider>
     void hitEnd(Collider *object) {
-        color = X11::Green;
+        color = Blob::X11::Green;
     }
 };
 
@@ -168,26 +168,28 @@ private:
         switch (state) {
         case 0:
             lineCursor.disableDynamicCollision();
-            rectangleCursor.enableDynamicCollision(Box(rectangleCursor.box));
+            rectangleCursor.enableDynamicCollision(Blob::Box(rectangleCursor.box));
             break;
         case 1:
             rectangleCursor.disableDynamicCollision();
-            pointCursor.enableDynamicCollision(Point(pointCursor.position));
+            pointCursor.enableDynamicCollision(Blob::Point(pointCursor.position));
             break;
         case 2:
             pointCursor.disableDynamicCollision();
-            lineCursor.enableDynamicCollision(Segment(lineCursor.segment));
+            lineCursor.enableDynamicCollision(Blob::Segment(lineCursor.segment));
             break;
         }
     }
 
-    void cursorPosUpdate(double xpos, double ypos) final {
-        rectangleCursor.setPosition(Box(Point(xpos, ypos), 20, 20));
-        pointCursor.setPosition(Point(xpos, ypos));
-        lineCursor.setPosition(Segment(Point(xpos + (20 * std::cos(mouseOrientation / 20.f)),
-                                             ypos + (20 * std::sin(mouseOrientation / 20.f))),
-                                       Point(xpos - (20 * std::cos(mouseOrientation / 20.f)),
-                                             ypos - (20 * std::sin(mouseOrientation / 20.f)))));
+    void cursorPosUpdate(const Blob::Vec2<> &screenPosition,
+                         const Blob::Vec2<> &cameraPosition) final {
+        rectangleCursor.setPosition(Blob::Box(Blob::Point(screenPosition), 20, 20));
+        pointCursor.setPosition(Blob::Point(screenPosition));
+        lineCursor.setPosition(Blob::Segment(
+            Blob::Point(screenPosition.x + (20 * std::cos(mouseOrientation / 20.f)),
+                        screenPosition.y + (20 * std::sin(mouseOrientation / 20.f))),
+            Blob::Point(screenPosition.x - (20 * std::cos(mouseOrientation / 20.f)),
+                        screenPosition.y - (20 * std::sin(mouseOrientation / 20.f)))));
     }
 
     void scrollUpdate(double xoffset, double yoffset) final { mouseOrientation += yoffset; }
@@ -200,45 +202,63 @@ public:
     PointCursor &pointCursor;
     LineCursor &lineCursor;
 
-    Cursor(RectangleCursor &rectangleCursor, PointCursor &pointCursor, LineCursor &lineCursor) :
-        rectangleCursor(rectangleCursor), pointCursor(pointCursor), lineCursor(lineCursor) {
-        rectangleCursor.enableDynamicCollision(Box(rectangleCursor.box));
+    Cursor(Blob::Context &context,
+           RectangleCursor &rectangleCursor,
+           PointCursor &pointCursor,
+           LineCursor &lineCursor) :
+        Blob::MouseEvents(context),
+        rectangleCursor(rectangleCursor),
+        pointCursor(pointCursor),
+        lineCursor(lineCursor) {
+        rectangleCursor.enableDynamicCollision(Blob::Box(rectangleCursor.box));
     }
 };
 
 int main(int argc, char *args[]) {
     Blob::Window window;
-    Blob::Camera camera;
+    Blob::Camera camera{window.context};
 
     NVGcontext *nvgContext = nvgCreate(1, 0);
     bgfx::setViewMode(0, bgfx::ViewMode::Sequential);
 
-    CollisionDetector<PointShape,
-                      PointCursor,
-                      LineShape,
-                      LineCursor,
-                      RectangleShape,
-                      RectangleCursor>
+    Blob::CollisionDetector<PointShape,
+                            PointCursor,
+                            LineShape,
+                            LineCursor,
+                            RectangleShape,
+                            RectangleCursor>
         collisionDetector;
 
     RectangleCursor &rectangleCursor = collisionDetector.emplace<RectangleCursor>();
     PointCursor &pointCursor = collisionDetector.emplace<PointCursor>();
     LineCursor &lineCursor = collisionDetector.emplace<LineCursor>();
 
-    Cursor cursor{rectangleCursor, pointCursor, lineCursor};
+    Cursor cursor{window.context, rectangleCursor, pointCursor, lineCursor};
 
-    collisionDetector.emplace<RectangleShape>(Box{Point{100, 300}, 20, 200}).enableStatic();
-    collisionDetector.emplace<RectangleShape>(Box{Point{300, 300}, 40, 40}).enableStatic();
-    collisionDetector.emplace<RectangleShape>(Box{Point{500, 300}, 100, 60}).enableStatic();
-    collisionDetector.emplace<RectangleShape>(Box{Point{700, 300}, 60, 100}).enableStatic();
-    collisionDetector.emplace<PointShape>(Point{100, 500}).enableStatic();
-    collisionDetector.emplace<PointShape>(Point{300, 500}).enableStatic();
-    collisionDetector.emplace<PointShape>(Point{500, 500}).enableStatic();
-    collisionDetector.emplace<PointShape>(Point{700, 500}).enableStatic();
-    collisionDetector.emplace<LineShape>(Segment{Point{100, 690}, Point{100, 710}}).enableStatic();
-    collisionDetector.emplace<LineShape>(Segment{Point{280, 700}, Point{320, 700}}).enableStatic();
-    collisionDetector.emplace<LineShape>(Segment{Point{470, 670}, Point{530, 730}}).enableStatic();
-    collisionDetector.emplace<LineShape>(Segment{Point{720, 680}, Point{680, 720}}).enableStatic();
+    collisionDetector.emplace<RectangleShape>(Blob::Box{Blob::Point{100, 300}, 20, 200})
+        .enableStatic();
+    collisionDetector.emplace<RectangleShape>(Blob::Box{Blob::Point{300, 300}, 40, 40})
+        .enableStatic();
+    collisionDetector.emplace<RectangleShape>(Blob::Box{Blob::Point{500, 300}, 100, 60})
+        .enableStatic();
+    collisionDetector.emplace<RectangleShape>(Blob::Box{Blob::Point{700, 300}, 60, 100})
+        .enableStatic();
+    collisionDetector.emplace<PointShape>(Blob::Point{100, 500}).enableStatic();
+    collisionDetector.emplace<PointShape>(Blob::Point{300, 500}).enableStatic();
+    collisionDetector.emplace<PointShape>(Blob::Point{500, 500}).enableStatic();
+    collisionDetector.emplace<PointShape>(Blob::Point{700, 500}).enableStatic();
+    collisionDetector
+        .emplace<LineShape>(Blob::Segment{Blob::Point{100, 690}, Blob::Point{100, 710}})
+        .enableStatic();
+    collisionDetector
+        .emplace<LineShape>(Blob::Segment{Blob::Point{280, 700}, Blob::Point{320, 700}})
+        .enableStatic();
+    collisionDetector
+        .emplace<LineShape>(Blob::Segment{Blob::Point{470, 670}, Blob::Point{530, 730}})
+        .enableStatic();
+    collisionDetector
+        .emplace<LineShape>(Blob::Segment{Blob::Point{720, 680}, Blob::Point{680, 720}})
+        .enableStatic();
 
     // polygones.emplace_back(std::vector<Point>{{{860, 880}, {940, 880}, {930, 920}, {870, 920}}});
 

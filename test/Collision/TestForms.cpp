@@ -102,13 +102,15 @@ private:
             state = 0;
     }
 
-    void cursorPosUpdate(double xpos, double ypos) final {
-        rectangleCursor.setPosition(Box(Point(xpos, ypos), 20, 20));
-        pointCursor.setPosition(Point(xpos, ypos));
-        lineCursor.setPosition(Segment(Point(xpos + (20 * std::cos(mouseOrientation / 20.f)),
-                                             ypos + (20 * std::sin(mouseOrientation / 20.f))),
-                                       Point(xpos - (20 * std::cos(mouseOrientation / 20.f)),
-                                             ypos - (20 * std::sin(mouseOrientation / 20.f)))));
+    void cursorPosUpdate(const Blob::Vec2<> &screenPosition,
+                         const Blob::Vec2<> &cameraPosition) final {
+        rectangleCursor.setPosition(Blob::Box(Blob::Point(screenPosition), 20, 20));
+        pointCursor.setPosition(Blob::Point(screenPosition));
+        lineCursor.setPosition(Blob::Segment(
+            Blob::Point(screenPosition.x + (20 * std::cos(mouseOrientation / 20.f)),
+                        screenPosition.y + (20 * std::sin(mouseOrientation / 20.f))),
+            Blob::Point(screenPosition.x - (20 * std::cos(mouseOrientation / 20.f)),
+                        screenPosition.y - (20 * std::sin(mouseOrientation / 20.f)))));
     }
 
     void scrollUpdate(double xoffset, double yoffset) final { mouseOrientation += yoffset; }
@@ -121,8 +123,14 @@ public:
     PointCursor &pointCursor;
     LineCursor &lineCursor;
 
-    Cursor(RectangleCursor &rectangleCursor, PointCursor &pointCursor, LineCursor &lineCursor) :
-        rectangleCursor(rectangleCursor), pointCursor(pointCursor), lineCursor(lineCursor) {}
+    Cursor(Context &context,
+           RectangleCursor &rectangleCursor,
+           PointCursor &pointCursor,
+           LineCursor &lineCursor) :
+        Blob::MouseEvents(context),
+        rectangleCursor(rectangleCursor),
+        pointCursor(pointCursor),
+        lineCursor(lineCursor) {}
 
     void update(NVGcontext *nvgContext) {
         switch (state) {
@@ -141,7 +149,7 @@ public:
 
 int main(int argc, char *args[]) {
     Window window;
-    Blob::Camera camera;
+    Blob::Camera camera{window.context};
 
     NVGcontext *nvgContext = nvgCreate(1, 0);
     bgfx::setViewMode(0, bgfx::ViewMode::Sequential);
@@ -153,7 +161,7 @@ int main(int argc, char *args[]) {
     PointCursor pointCursor;
     LineCursor lineCursor;
 
-    Cursor cursor{rectangleCursor, pointCursor, lineCursor};
+    Cursor cursor{window.context, rectangleCursor, pointCursor, lineCursor};
 
     rectangles.emplace_back(Box{Point{100, 300}, 20, 200});
     rectangles.emplace_back(Box{Point{300, 300}, 40, 40});

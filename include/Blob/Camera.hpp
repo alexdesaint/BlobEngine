@@ -36,12 +36,12 @@ public:
         return worldPos / worldPos.w;
     }
 
-    std::unordered_map<Vec2<>, Vec3<>> getCameraCornersInWorld(float zWorld = 0) {
+    std::array<Vec3<>, 4> getCameraCornersInWorld(float zWorld = 0) {
         return {
-            {{+1, +1}, screenToWorldCoordinate({+1, +1}, zWorld)},
-            {{-1, +1}, screenToWorldCoordinate({-1, +1}, zWorld)},
-            {{-1, -1}, screenToWorldCoordinate({-1, -1}, zWorld)},
-            {{+1, -1}, screenToWorldCoordinate({+1, -1}, zWorld)},
+            screenToWorldCoordinate({+1, +1}, zWorld),
+            screenToWorldCoordinate({-1, +1}, zWorld),
+            screenToWorldCoordinate({-1, -1}, zWorld),
+            screenToWorldCoordinate({+1, -1}, zWorld),
         };
     }
 };

@@ -49,7 +49,7 @@ Window::Window(Vec2<unsigned int> windowSize, std::string windowName) : windowSi
 
     if (windowSize.isNull()) {
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-        windowSize = {1, 1};
+        windowSize = {1366, 768};
     }
 
     window = glfwCreateWindow(windowSize.x, windowSize.y, windowName.c_str(), nullptr, nullptr);
