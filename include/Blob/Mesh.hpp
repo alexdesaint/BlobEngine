@@ -42,6 +42,9 @@ struct Mesh {
         s << "}";
         return s;
     }
+
+    Mesh &operator=(const Mesh &) = default;
+    Mesh &operator=(Mesh &&) = default;
 };
 
 } // namespace Blob

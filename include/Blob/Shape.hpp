@@ -16,6 +16,9 @@ struct Shape : public ModelTransform {
     Shape(Mesh &&r, std::vector<Shape> &&shapes = {}, ModelTransform &&modelTransform = {});
 
     friend std::ostream &operator<<(std::ostream &s, const Shape &a);
+
+    Shape &operator=(const Shape &) = default;
+    Shape &operator=(Shape &&) = default;
 };
 
 } // namespace Blob
