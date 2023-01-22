@@ -181,9 +181,7 @@ private:
     Context &context;
 
 protected:
-    KeyboardEvents(Context &context) : context(context) {
-        context.keyboardEventsSubscribers.emplace(this);
-    }
+    KeyboardEvents(Context &context) : context(context) { context.keyboardEventsSubscribers.emplace(this); }
 
     ~KeyboardEvents() { context.keyboardEventsSubscribers.erase(this); }
 
@@ -200,9 +198,7 @@ private:
     Context &context;
 
 protected:
-    MouseEvents(Context &context) : context(context) {
-        context.mouseEventsSubscribers.emplace(this);
-    }
+    MouseEvents(Context &context) : context(context) { context.mouseEventsSubscribers.emplace(this); }
 
     ~MouseEvents() { context.mouseEventsSubscribers.erase(this); }
 
@@ -223,10 +219,7 @@ public:
     const bool (&buttons)[5];
     const float &scrollOffsetW, &scrollOffsetH;
 
-    Mouse(const Vec2<> &position,
-          const float &scrollOffsetW,
-          const float &scrollOffsetH,
-          const bool (&buttons)[5]) :
+    Mouse(const Vec2<> &position, const float &scrollOffsetW, const float &scrollOffsetH, const bool (&buttons)[5]) :
         position(position),
         scrollOffsetW(scrollOffsetW),
         scrollOffsetH(scrollOffsetH),

@@ -12,8 +12,7 @@ public:
     bgfx::VertexBufferHandle vertexBufferHandle;
 
     VertexBuffer(const Buffer &buffer, const VertexLayout &vertexLayout) {
-        vertexBufferHandle =
-            bgfx::createVertexBuffer(buffer.memory, vertexLayout.vertexLayout);
+        vertexBufferHandle = bgfx::createVertexBuffer(buffer.memory, vertexLayout.vertexLayout);
     }
 
     ~VertexBuffer() { bgfx::destroy(vertexBufferHandle); }

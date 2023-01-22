@@ -17,8 +17,7 @@ public:
     bgfx::VertexLayout vertexLayout;
 
     VertexLayout() = default;
-    VertexLayout(
-        const std::vector<std::tuple<Type, size_t, size_t, bool>> &layout) {
+    VertexLayout(const std::vector<std::tuple<Type, size_t, size_t, bool>> &layout) {
         begin();
         for (const auto &element : layout) {
             auto [type, outPosition, numValuePerArray, normalized] = element;
@@ -37,25 +36,15 @@ public:
     }
 
     template<typename T>
-    VertexLayout &
-    add(size_t outPosition, size_t numValuePerArray, bool normalized = false);
+    VertexLayout &add(size_t outPosition, size_t numValuePerArray, bool normalized = false);
 
-    VertexLayout &add(Type type,
-                      size_t outPosition,
-                      size_t numValuePerArray,
-                      bool normalized = false);
+    VertexLayout &add(Type type, size_t outPosition, size_t numValuePerArray, bool normalized = false);
 };
 
 template<>
-VertexLayout &VertexLayout::add<float>(size_t outPosition,
-                                       size_t numValuePerArray,
-                                       bool normalized);
+VertexLayout &VertexLayout::add<float>(size_t outPosition, size_t numValuePerArray, bool normalized);
 template<>
-VertexLayout &VertexLayout::add<uint8_t>(size_t outPosition,
-                                         size_t numValuePerArray,
-                                         bool normalized);
+VertexLayout &VertexLayout::add<uint8_t>(size_t outPosition, size_t numValuePerArray, bool normalized);
 template<>
-VertexLayout &VertexLayout::add<int16_t>(size_t outPosition,
-                                         size_t numValuePerArray,
-                                         bool normalized);
+VertexLayout &VertexLayout::add<int16_t>(size_t outPosition, size_t numValuePerArray, bool normalized);
 } // namespace Blob

@@ -22,7 +22,8 @@ struct Box {
     Box() = default;
     Box(const Point &p1, const Point &p2) : p1(p1), p2(p2) {}
     Box(const Point &center, const float &sizeX, const float &sizeY) :
-        p1(center - Point{sizeX, sizeY} / 2), p2(center + Point{sizeX, sizeY} / 2) {}
+        p1(center - Point{sizeX, sizeY} / 2),
+        p2(center + Point{sizeX, sizeY} / 2) {}
 };
 
 Raster toRaster(const Point &point);

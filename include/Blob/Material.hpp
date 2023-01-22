@@ -41,7 +41,9 @@ private:
         Uniform &lightPosRadius;
 
         UniformElements(Uniform &color, Uniform &pbr, Uniform &lightPosRadius) :
-            color(color), pbr(pbr), lightPosRadius(lightPosRadius) {}
+            color(color),
+            pbr(pbr),
+            lightPosRadius(lightPosRadius) {}
     };
     inline static std::unique_ptr<UniformElements> uniformElements;
     inline static Vec4<> lightPosRadius = {0, 0, 100, 10000};

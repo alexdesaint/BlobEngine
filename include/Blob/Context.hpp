@@ -31,17 +31,15 @@ public:
             void *nwh,
             ProjectionTransform projectionTransform,
             ProjectionTransform2D projectionTransform2D) :
-        projectionTransform(projectionTransform), projectionTransform2D(projectionTransform2D) {
-        bgfx::PlatformData pd;
-        pd.ndt = ndt;
-        pd.nwh = nwh;
-        bgfx::setPlatformData(pd);
-
-        bgfx::renderFrame();
+        projectionTransform(projectionTransform),
+        projectionTransform2D(projectionTransform2D) {
 
         bgfx::Init init;
         init.debug = false;
+        init.profile = false;
         init.callback = this;
+        init.platformData.ndt = ndt;
+        init.platformData.nwh = nwh;
 
         if (!bgfx::init(init))
             throw Blob::Exception("Failed to init bgfx");
@@ -64,10 +62,7 @@ private:
 
     void profilerBegin(const char *name, uint32_t abgr, const char *filePath, uint16_t line) final;
 
-    void profilerBeginLiteral(const char *name,
-                              uint32_t abgr,
-                              const char *filePath,
-                              uint16_t line) final;
+    void profilerBeginLiteral(const char *name, uint32_t abgr, const char *filePath, uint16_t line) final;
 
     void profilerEnd() final;
 
@@ -85,11 +80,8 @@ private:
                     uint32_t size,
                     bool yflip) final;
 
-    void captureBegin(uint32_t width,
-                      uint32_t height,
-                      uint32_t pitch,
-                      bgfx::TextureFormat::Enum format,
-                      bool yflip) final;
+    void
+    captureBegin(uint32_t width, uint32_t height, uint32_t pitch, bgfx::TextureFormat::Enum format, bool yflip) final;
 
     void captureEnd() final;
 

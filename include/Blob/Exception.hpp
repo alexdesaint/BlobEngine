@@ -14,8 +14,6 @@ public:
 
     explicit Exception(std::string errorMsg) : errorMsg(std::move(errorMsg)) {}
 
-    const char *what() const noexcept override {
-        return errorMsg.c_str();
-    }
+    const char *what() const noexcept override { return errorMsg.c_str(); }
 };
 } // namespace Blob

@@ -50,15 +50,15 @@ vec3 calculateLight(
 	vec3 lightDir = mul( normalize(lp), _tbn );
 	vec2 bln = blinn(lightDir, _normal, _view);
 	vec4 lc = lit(bln.x, bln.y, 1.0);
-	vec3 rgb = saturate(lc.y) * attn;
-	return rgb;
+	float rgb = saturate(lc.y) * attn;
+	return vec3(rgb, rgb, rgb);
 }
 
 void main()
 {
 	mat3 tbn = mtxFromCols(v_tangent, v_bitangent, v_normal);
 
-	vec3 lightColor = calculateLight(u_lightPosRadius.xyz, u_lightPosRadius.w, 1, tbn, v_wpos, v_normal, v_view);
+	vec3 lightColor = calculateLight(u_lightPosRadius.xyz, u_lightPosRadius.w, 1.0, tbn, v_wpos, v_normal, v_view);
 
 	gl_FragColor.xyz = max(vec3_splat(0.05), lightColor.xyz) * u_color.xyz;
 	//gl_FragColor = u_color;

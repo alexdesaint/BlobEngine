@@ -4,8 +4,8 @@
 #include <bgfx/embedded_shader.h>
 #include <bx/math.h>
 #include <memory>
-#include <shaders/fs_ocornut_imgui.h>
-#include <shaders/vs_ocornut_imgui.h>
+#include <shaders/fs_ocornut_imgui.sc.spv.bin.h>
+#include <shaders/vs_ocornut_imgui.sc.spv.bin.h>
 
 namespace Blob {
 
@@ -228,8 +228,7 @@ ImGuiContext::ImGuiContext() {
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
 
-    shader = std::make_unique<Shader>(Buffer{vs_ocornut_imgui},
-                                      Buffer{fs_ocornut_imgui});
+    shader = std::make_unique<Shader>(Buffer{vs_ocornut_imgui_spv}, Buffer{fs_ocornut_imgui_spv});
     ImGuiIO &io = ImGui::GetIO();
 
     m_layout.begin()
@@ -245,28 +244,23 @@ ImGuiContext::ImGuiContext() {
     io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
 
     texture = std::make_unique<Texture>();
-    texture->textureHandle =
-        bgfx::createTexture2D((uint16_t) width,
-                              (uint16_t) height,
-                              false,
-                              1,
-                              bgfx::TextureFormat::BGRA8,
-                              0,
-                              bgfx::copy(data, width * height * 4));
+    texture->textureHandle = bgfx::createTexture2D((uint16_t) width,
+                                                   (uint16_t) height,
+                                                   false,
+                                                   1,
+                                                   bgfx::TextureFormat::BGRA8,
+                                                   0,
+                                                   bgfx::copy(data, width * height * 4));
     io.Fonts->SetTexID((ImTextureID) texture.get());
 }
 
-ImGuiContext::~ImGuiContext() {
-    ImGui::DestroyContext();
-}
+ImGuiContext::~ImGuiContext() { ImGui::DestroyContext(); }
 
 void ImGuiContext::RenderDrawData(ImDrawData *draw_data) {
     // Avoid rendering when minimized, scale coordinates for retina displays
     // (screen coordinates != framebuffer coordinates)
-    int fb_width =
-        (int) (draw_data->DisplaySize.x * draw_data->FramebufferScale.x);
-    int fb_height =
-        (int) (draw_data->DisplaySize.y * draw_data->FramebufferScale.y);
+    int fb_width = (int) (draw_data->DisplaySize.x * draw_data->FramebufferScale.x);
+    int fb_height = (int) (draw_data->DisplaySize.y * draw_data->FramebufferScale.y);
     if (fb_width <= 0 || fb_height <= 0)
         return;
 
@@ -281,15 +275,7 @@ void ImGuiContext::RenderDrawData(ImDrawData *draw_data) {
         float width = draw_data->DisplaySize.x;
         float height = draw_data->DisplaySize.y;
 
-        bx::mtxOrtho(ortho,
-                     x,
-                     x + width,
-                     y + height,
-                     y,
-                     0.0f,
-                     1000.0f,
-                     0.0f,
-                     caps->homogeneousDepth);
+        bx::mtxOrtho(ortho, x, x + width, y + height, y, 0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
         bgfx::setViewTransform(m_viewId, NULL, ortho);
         bgfx::setViewRect(m_viewId, 0, 0, uint16_t(width), uint16_t(height));
     }
@@ -307,26 +293,18 @@ void ImGuiContext::RenderDrawData(ImDrawData *draw_data) {
         uint32_t numIndices = (uint32_t) drawList->IdxBuffer.size();
 
         bgfx::allocTransientVertexBuffer(&tvb, numVertices, m_layout);
-        bgfx::allocTransientIndexBuffer(&tib,
-                                        numIndices,
-                                        sizeof(ImDrawIdx) == 4);
+        bgfx::allocTransientIndexBuffer(&tib, numIndices, sizeof(ImDrawIdx) == 4);
 
         ImDrawVert *verts = (ImDrawVert *) tvb.data;
-        bx::memCopy(verts,
-                    drawList->VtxBuffer.begin(),
-                    numVertices * sizeof(ImDrawVert));
+        bx::memCopy(verts, drawList->VtxBuffer.begin(), numVertices * sizeof(ImDrawVert));
 
         ImDrawIdx *indices = (ImDrawIdx *) tib.data;
-        bx::memCopy(indices,
-                    drawList->IdxBuffer.begin(),
-                    numIndices * sizeof(ImDrawIdx));
+        bx::memCopy(indices, drawList->IdxBuffer.begin(), numIndices * sizeof(ImDrawIdx));
 
         bgfx::Encoder *encoder = bgfx::begin();
 
         uint32_t offset = 0;
-        for (const ImDrawCmd *cmd = drawList->CmdBuffer.begin(),
-                             *cmdEnd = drawList->CmdBuffer.end();
-             cmd != cmdEnd;
+        for (const ImDrawCmd *cmd = drawList->CmdBuffer.begin(), *cmdEnd = drawList->CmdBuffer.end(); cmd != cmdEnd;
              ++cmd) {
             if (cmd->UserCallback) {
                 cmd->UserCallback(drawList, cmd);
@@ -337,24 +315,18 @@ void ImGuiContext::RenderDrawData(ImDrawData *draw_data) {
                 clipRect.z = (cmd->ClipRect.z - clipPos.x) * clipScale.x;
                 clipRect.w = (cmd->ClipRect.w - clipPos.y) * clipScale.y;
 
-                if (clipRect.x < fb_width && clipRect.y < fb_height &&
-                    clipRect.z >= 0.0f && clipRect.w >= 0.0f) {
+                if (clipRect.x < fb_width && clipRect.y < fb_height && clipRect.z >= 0.0f && clipRect.w >= 0.0f) {
                     const uint16_t xx = uint16_t(bx::max(clipRect.x, 0.0f));
                     const uint16_t yy = uint16_t(bx::max(clipRect.y, 0.0f));
-                    encoder->setScissor(
-                        xx,
-                        yy,
-                        uint16_t(bx::min(clipRect.z, 65535.0f) - xx),
-                        uint16_t(bx::min(clipRect.w, 65535.0f) - yy));
+                    encoder->setScissor(xx,
+                                        yy,
+                                        uint16_t(bx::min(clipRect.z, 65535.0f) - xx),
+                                        uint16_t(bx::min(clipRect.w, 65535.0f) - yy));
 
                     encoder->setState(
-                        BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A |
-                        BGFX_STATE_MSAA |
-                        BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA,
-                                              BGFX_STATE_BLEND_INV_SRC_ALPHA));
-                    encoder->setTexture(0,
-                                        uniformSampler->uniformHandle,
-                                        cmd->GetTexID()->textureHandle);
+                        BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA |
+                        BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA));
+                    encoder->setTexture(0, uniformSampler->uniformHandle, cmd->GetTexID()->textureHandle);
                     encoder->setVertexBuffer(0, &tvb, 0, numVertices);
                     encoder->setIndexBuffer(&tib, offset, cmd->ElemCount);
                     encoder->submit(m_viewId, shader->shaderHandle);
@@ -367,11 +339,7 @@ void ImGuiContext::RenderDrawData(ImDrawData *draw_data) {
         bgfx::end(encoder);
     }
 
-    bgfx::setViewRect(m_viewId,
-                      0,
-                      0,
-                      uint16_t(draw_data->DisplaySize.x),
-                      uint16_t(draw_data->DisplaySize.y));
+    bgfx::setViewRect(m_viewId, 0, 0, uint16_t(draw_data->DisplaySize.x), uint16_t(draw_data->DisplaySize.y));
 }
 
 } // namespace Blob

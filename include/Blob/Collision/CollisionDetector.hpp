@@ -5,34 +5,33 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#define HAS_FUNCTION(function, functionType)                                                       \
-    namespace has {                                                                                \
-    namespace name {                                                                               \
-    template<typename, typename T>                                                                 \
-    struct function {                                                                              \
-        static_assert(std::integral_constant<T, false>::value,                                     \
-                      "Second template parameter needs to be of function type.");                  \
-    };                                                                                             \
-    template<typename C, typename Ret, typename... Args>                                           \
-    struct function<C, Ret(Args...)> {                                                             \
-    private:                                                                                       \
-        template<typename T>                                                                       \
-        static constexpr auto check(T *) ->                                                        \
-            typename std::is_same<decltype(std::declval<T>().function(std::declval<Args>()...)),   \
-                                  Ret>::type;                                                      \
-                                                                                                   \
-        template<typename>                                                                         \
-        static constexpr std::false_type check(...);                                               \
-                                                                                                   \
-        typedef decltype(check<C>(0)) type;                                                        \
-                                                                                                   \
-    public:                                                                                        \
-        static constexpr bool value = type::value;                                                 \
-        static Ret call(C &c, Args... args) { return c.function(args...); }                        \
-    };                                                                                             \
-    }                                                                                              \
-    template<class T>                                                                              \
-    using function = name::function<T, functionType>;                                              \
+#define HAS_FUNCTION(function, functionType)                                                                           \
+    namespace has {                                                                                                    \
+    namespace name {                                                                                                   \
+    template<typename, typename T>                                                                                     \
+    struct function {                                                                                                  \
+        static_assert(std::integral_constant<T, false>::value,                                                         \
+                      "Second template parameter needs to be of function type.");                                      \
+    };                                                                                                                 \
+    template<typename C, typename Ret, typename... Args>                                                               \
+    struct function<C, Ret(Args...)> {                                                                                 \
+    private:                                                                                                           \
+        template<typename T>                                                                                           \
+        static constexpr auto check(T *) ->                                                                            \
+            typename std::is_same<decltype(std::declval<T>().function(std::declval<Args>()...)), Ret>::type;           \
+                                                                                                                       \
+        template<typename>                                                                                             \
+        static constexpr std::false_type check(...);                                                                   \
+                                                                                                                       \
+        typedef decltype(check<C>(0)) type;                                                                            \
+                                                                                                                       \
+    public:                                                                                                            \
+        static constexpr bool value = type::value;                                                                     \
+        static Ret call(C &c, Args... args) { return c.function(args...); }                                            \
+    };                                                                                                                 \
+    }                                                                                                                  \
+    template<class T>                                                                                                  \
+    using function = name::function<T, functionType>;                                                                  \
     }
 
 namespace Blob {
@@ -117,9 +116,7 @@ protected:
      * @param timeFlow Time in second sins list frame
      * @return the fianl form
      */
-    virtual Form postCollisionUpdate(const Form &currentForm, Form nextForm, double timeFlow) {
-        return nextForm;
-    }
+    virtual Form postCollisionUpdate(const Form &currentForm, Form nextForm, double timeFlow) { return nextForm; }
 };
 
 template<class ColliderType, class... Colliders>
@@ -134,8 +131,7 @@ protected:
     std::vector<std::unique_ptr<ColliderType>> data;
 
     template<class U>
-    std::unordered_set<ColliderType *> overlapRasters(const U &form,
-                                                      const RasterArea &rasters) const {
+    std::unordered_set<ColliderType *> overlapRasters(const U &form, const RasterArea &rasters) const {
         std::unordered_set<ColliderType *> collidingObjects;
 
         for (const Raster &position : rasters) {
@@ -143,8 +139,8 @@ protected:
             if (colliderIt == spacialHash.end())
                 continue;
             for (ColliderType *target : colliderIt->second) {
-                if constexpr (ColliderType::isRaster() || ColliderType::isRasterArea()
-                              || std::is_same_v<U, Raster> || std::is_same_v<U, RasterArea>)
+                if constexpr (ColliderType::isRaster() || ColliderType::isRasterArea() || std::is_same_v<U, Raster> ||
+                              std::is_same_v<U, RasterArea>)
                     collidingObjects.emplace(target);
                 else if (overlap(form, target->form))
                     collidingObjects.emplace(target);
@@ -169,10 +165,9 @@ private:
         static_assert(!std::is_const_v<ColliderType>,
                       "Collider is const qualified."
                       "Collider need to be modified by the CollisionDetector.");
-        static_assert(
-            std::is_convertible_v<ColliderType *, Collider<typename ColliderType::Form> *>,
-            "Colliders need to have DynamicCollider or StaticCollider as "
-            "accessible parent. ");
+        static_assert(std::is_convertible_v<ColliderType *, Collider<typename ColliderType::Form> *>,
+                      "Colliders need to have DynamicCollider or StaticCollider as "
+                      "accessible parent. ");
         static_assert(isCollider<ColliderType>(),
                       "Colliders need to have DynamicCollider or StaticCollider as "
                       "accessible parent.");
@@ -184,11 +179,10 @@ private:
 public:
 private:
     template<class TestedCollider, class ColliderType, class Form>
-    std::unordered_set<TestedCollider *>
-    testColliderDatabase(std::unordered_set<TestedCollider *> &hitting,
-                         ColliderType *dynamicCollider,
-                         const Form &form,
-                         const RasterArea &rasters) const {
+    std::unordered_set<TestedCollider *> testColliderDatabase(std::unordered_set<TestedCollider *> &hitting,
+                                                              ColliderType *dynamicCollider,
+                                                              const Form &form,
+                                                              const RasterArea &rasters) const {
 
         std::unordered_set<TestedCollider *> collidingObjects =
             ColliderDatabase<TestedCollider>::template overlapRasters<Form>(form, rasters);
@@ -209,36 +203,29 @@ private:
         auto rasters = rasterize(nextForm);
 
         ((std::get<std::unordered_set<CollidersType *>>(hitting) =
-              testColliderDatabase<CollidersType>(
-                  std::get<std::unordered_set<CollidersType *>>(hitting),
-                  dynamicCollider,
-                  nextForm,
-                  rasters)),
+              testColliderDatabase<CollidersType>(std::get<std::unordered_set<CollidersType *>>(hitting),
+                                                  dynamicCollider,
+                                                  nextForm,
+                                                  rasters)),
          ...);
 
-        dynamicCollider->privateForm =
-            dynamicCollider->postCollisionUpdate(dynamicCollider->form, nextForm, timeFlow);
+        dynamicCollider->privateForm = dynamicCollider->postCollisionUpdate(dynamicCollider->form, nextForm, timeFlow);
     }
 
     template<class ColliderType>
     void testDynamicColliderDatabase(double timeFlow) {
         for (auto &[dynamicCollider, hitting] : ColliderDatabase<ColliderType>::colliders) {
             for (const auto &position : rasterize(dynamicCollider->form))
-                if (ColliderDatabase<ColliderType>::spacialHash[position].erase(dynamicCollider)
-                    == 0)
-                    throw std::runtime_error(
-                        std::string("erase ") + typeid(dynamicCollider).name()
-                        + " in dynamic Spacial Hash but element does not exist");
+                if (ColliderDatabase<ColliderType>::spacialHash[position].erase(dynamicCollider) == 0)
+                    throw std::runtime_error(std::string("erase ") + typeid(dynamicCollider).name() +
+                                             " in dynamic Spacial Hash but element does not exist");
 
             updateOneCollider(dynamicCollider, hitting, timeFlow);
 
             for (const auto &position : rasterize(dynamicCollider->form))
-                if (!ColliderDatabase<ColliderType>::spacialHash[position]
-                         .insert(dynamicCollider)
-                         .second)
-                    throw std::runtime_error(
-                        std::string("insert ") + typeid(dynamicCollider).name()
-                        + " in dynamic Spacial Hash but element already exist");
+                if (!ColliderDatabase<ColliderType>::spacialHash[position].insert(dynamicCollider).second)
+                    throw std::runtime_error(std::string("insert ") + typeid(dynamicCollider).name() +
+                                             " in dynamic Spacial Hash but element already exist");
         }
         for (auto &[ghostCollider, hitting] : ColliderDatabase<ColliderType>::ghostColliders)
             updateOneCollider(ghostCollider, hitting, timeFlow);
@@ -306,8 +293,7 @@ public:
             collider->privateEnableStaticCollision(std::move(collider->privateForm));
 
         // Dynamic collision
-        collider->privateEnableDynamicCollision = [&,
-                                                   collider](typename ColliderType::Form &&form) {
+        collider->privateEnableDynamicCollision = [&, collider](typename ColliderType::Form &&form) {
             collider->privateEnabled = true;
             collider->privateForm = std::move(form);
             auto &localHash = ColliderDatabase<ColliderType>::spacialHash;

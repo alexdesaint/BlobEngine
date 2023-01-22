@@ -1,6 +1,6 @@
 #include <Blob/GLFW.hpp>
 
-//#define ENTRY_CONFIG_USE_WAYLAND 1
+// #define ENTRY_CONFIG_USE_WAYLAND 1
 
 // glfw3
 #define GLFW_INCLUDE_NONE
@@ -73,8 +73,7 @@ Window::Window(Vec2<unsigned int> windowSize, std::string windowName) : windowSi
 
     // Callback init
     glfwSetWindowUserPointer((GLFWwindow *) window, this);
-    glfwSetFramebufferSizeCallback((GLFWwindow *) window,
-                                   (GLFWframebuffersizefun) framebufferSizeCallback);
+    glfwSetFramebufferSizeCallback((GLFWwindow *) window, (GLFWframebuffersizefun) framebufferSizeCallback);
     glfwSetWindowSizeCallback((GLFWwindow *) window, (GLFWwindowsizefun) windowSizeCallback);
 
     // Cursor init
@@ -118,8 +117,7 @@ void Window::errorCallback(int error, const char *description) {
 }
 
 void Window::framebufferSizeCallback(void *window, int width, int height) {
-    Window &w = *reinterpret_cast<Window *>(
-        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.framebufferSizeData.x = width;
     w.framebufferSizeData.y = height;
@@ -127,8 +125,7 @@ void Window::framebufferSizeCallback(void *window, int width, int height) {
 }
 
 void Window::windowSizeCallback(void *window, int width, int height) {
-    Window &w = *reinterpret_cast<Window *>(
-        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.windowSizeData.x = width;
     w.windowSizeData.y = height;
@@ -136,8 +133,7 @@ void Window::windowSizeCallback(void *window, int width, int height) {
 }
 
 void Window::contentScaleCallback(void *window, float width, float height) {
-    Window &w = *reinterpret_cast<Window *>(
-        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.contentScaleData.x = width;
     w.contentScaleData.y = height;
@@ -147,8 +143,7 @@ void Window::keyCallback(void *window, int key, int scancode, int action, int mo
     if (action == GLFW_REPEAT)
         return;
 
-    Window &w = *reinterpret_cast<Window *>(
-        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.keysData[key] = action;
 
@@ -156,8 +151,7 @@ void Window::keyCallback(void *window, int key, int scancode, int action, int mo
 }
 
 void Window::mouseButtonCallback(void *window, int button, int action, int mods) {
-    Window &w = *reinterpret_cast<Window *>(
-        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     if (button < 5)
         w.mouseButtonData[button] = action != GLFW_RELEASE;
@@ -166,8 +160,7 @@ void Window::mouseButtonCallback(void *window, int button, int action, int mods)
 }
 
 void Window::cursorPosCallback(void *window, double xpos, double ypos) {
-    Window &w = *reinterpret_cast<Window *>(
-        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.cursorPositionData.x = (float) xpos;
     w.cursorPositionData.y = (float) ypos;
@@ -176,8 +169,7 @@ void Window::cursorPosCallback(void *window, double xpos, double ypos) {
 }
 
 void Window::scrollCallback(void *window, double xoffset, double yoffset) {
-    Window &w = *reinterpret_cast<Window *>(
-        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.scrollOffsetHData = (float) xoffset;
     w.scrollOffsetWData = (float) yoffset;
@@ -186,8 +178,7 @@ void Window::scrollCallback(void *window, double xoffset, double yoffset) {
 }
 
 void Window::charCallback(void *window, unsigned int c) {
-    Window &w = *reinterpret_cast<Window *>(
-        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
 
     w.characterInput(c);
 }
@@ -201,8 +192,7 @@ void Window::joystick_callback(int joy, int event) {
 }
 
 void Window::windowFocusCallback(void *window, int c) {
-    Window &w = *reinterpret_cast<Window *>(
-        glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
+    Window &w = *reinterpret_cast<Window *>(glfwGetWindowUserPointer(reinterpret_cast<GLFWwindow *>(window)));
     w.windowFocusedData = c == GLFW_TRUE;
 }
 
@@ -222,21 +212,13 @@ Window::~Window() {
     glfwTerminate();
 }
 
-void Window::setTitle(const std::string &name) {
-    glfwSetWindowTitle((GLFWwindow *) window, name.c_str());
-}
+void Window::setTitle(const std::string &name) { glfwSetWindowTitle((GLFWwindow *) window, name.c_str()); }
 
-void Window::close() {
-    glfwSetWindowShouldClose((GLFWwindow *) window, GLFW_TRUE);
-}
+void Window::close() { glfwSetWindowShouldClose((GLFWwindow *) window, GLFW_TRUE); }
 
-const char *Window::getClipboardText() {
-    return glfwGetClipboardString((GLFWwindow *) window);
-}
+const char *Window::getClipboardText() { return glfwGetClipboardString((GLFWwindow *) window); }
 
-void Window::setClipboardText(const std::string &text) {
-    glfwSetClipboardString((GLFWwindow *) window, text.c_str());
-}
+void Window::setClipboardText(const std::string &text) { glfwSetClipboardString((GLFWwindow *) window, text.c_str()); }
 
 void Window::updateInputs() {
     glfwPollEvents();
@@ -250,9 +232,7 @@ void Window::updateInputs() {
     totalTimeFlow = glfwGetTime();
 }
 
-double Window::getTime() {
-    return glfwGetTime();
-}
+double Window::getTime() { return glfwGetTime(); }
 
 void Window::setMouseCursor(MouseCursor mouseCursor) {
     glfwSetCursor((GLFWwindow *) window, (GLFWcursor *) cursors[mouseCursor]);
@@ -290,8 +270,7 @@ void *Window::getNativeWindowHandle() {
     if (!win_impl) {
         int width, height;
         glfwGetWindowSize((GLFWwindow *) window, &width, &height);
-        struct wl_surface *surface =
-            (struct wl_surface *) glfwGetWaylandWindow((GLFWwindow *) window);
+        struct wl_surface *surface = (struct wl_surface *) glfwGetWaylandWindow((GLFWwindow *) window);
         if (!surface)
             return nullptr;
         win_impl = wl_egl_window_create(surface, width, height);

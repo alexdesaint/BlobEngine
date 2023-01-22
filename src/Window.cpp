@@ -1,11 +1,10 @@
-#include "Blob/Color.hpp"
+#include <Blob/Color.hpp>
 #include <Blob/Exception.hpp>
 #include <Blob/Maths.hpp>
 #include <Blob/Window.hpp>
 
 #include <bgfx/platform.h>
 
-// Blob
 #include <chrono>
 #include <cstddef>
 #include <imgui.h>
@@ -33,9 +32,7 @@ Window::Window(const Vec2<unsigned int> &size, std::string windowName) :
     io.SetClipboardTextFn = [](void *userData, const char *text) {
         ((Blob::Window *) userData)->setClipboardText(text);
     };
-    io.GetClipboardTextFn = [](void *userData) {
-        return ((Blob::Window *) userData)->getClipboardText();
-    };
+    io.GetClipboardTextFn = [](void *userData) { return ((Blob::Window *) userData)->getClipboardText(); };
     io.ClipboardUserData = nullptr;
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
@@ -172,8 +169,8 @@ void Window::cursorPositionUpdate(double xpos, double ypos) {
             {1.f / windowSize.x * 2.f, 0.f, -1.f},
             {0.f, -1.f / windowSize.y * 2.f, 1.f},
             {0.f, 0.f, 1.f},
-        }
-        * Vec2<>(xpos, ypos);
+        } *
+        Vec2<>(xpos, ypos);
 
     for (auto &k : context.mouseEventsSubscribers)
         k->cursorPosUpdate(Vec2<>(xpos, ypos), screenPos);
@@ -185,12 +182,8 @@ void Window::scrollUpdate(double xoffset, double yoffset) {
         k->scrollUpdate(xoffset, yoffset);
 }
 
-void Window::disableMouseCursor() {
-    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
-}
+void Window::disableMouseCursor() { ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse; }
 
-void Window::enableMouseCursor() {
-    ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-}
+void Window::enableMouseCursor() { ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse; }
 
 } // namespace Blob

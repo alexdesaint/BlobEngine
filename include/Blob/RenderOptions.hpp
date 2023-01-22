@@ -15,9 +15,7 @@ struct RenderOptions {
     RenderOptions(const RenderOptions &) = delete;
     RenderOptions(RenderOptions &&) = delete;
 
-    RenderOptions(const Buffer &buffer) {
-        indexBufferHandle = bgfx::createIndexBuffer(buffer.memory);
-    }
+    RenderOptions(const Buffer &buffer) { indexBufferHandle = bgfx::createIndexBuffer(buffer.memory); }
 
     ~RenderOptions() { bgfx::destroy(indexBufferHandle); }
 };

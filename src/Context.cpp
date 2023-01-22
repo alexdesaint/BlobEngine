@@ -5,10 +5,7 @@
 
 namespace Blob {
 
-void Context::fatal(const char *_filePath,
-                    uint16_t _line,
-                    bgfx::Fatal::Enum _code,
-                    const char *_str) {
+void Context::fatal(const char *_filePath, uint16_t _line, bgfx::Fatal::Enum _code, const char *_str) {
     bx::debugPrintf("Fatal error: 0x%08x: %s", _code, _str);
 
     if (bgfx::Fatal::DebugCheck == _code) {
@@ -18,30 +15,20 @@ void Context::fatal(const char *_filePath,
     }
 }
 
-void Context::traceVargs(const char *_filePath,
-                         uint16_t _line,
-                         const char *_format,
-                         va_list _argList) {
+void Context::traceVargs(const char *_filePath, uint16_t _line, const char *_format, va_list _argList) {
     // bx::debugPrintf("%s (%d): ", _filePath, _line);
     // bx::debugPrintfVargs(_format, _argList);
 }
 
 void Context::profilerBegin(const char *name, uint32_t abgr, const char *filePath, uint16_t line) {}
 
-void Context::profilerBeginLiteral(const char *name,
-                                   uint32_t abgr,
-                                   const char *filePath,
-                                   uint16_t line) {}
+void Context::profilerBeginLiteral(const char *name, uint32_t abgr, const char *filePath, uint16_t line) {}
 
 void Context::profilerEnd() {}
 
-uint32_t Context::cacheReadSize(uint64_t id) {
-    return 0;
-}
+uint32_t Context::cacheReadSize(uint64_t id) { return 0; }
 
-bool Context::cacheRead(uint64_t id, void *data, uint32_t size) {
-    return false;
-}
+bool Context::cacheRead(uint64_t id, void *data, uint32_t size) { return false; }
 
 void Context::cacheWrite(uint64_t id, const void *data, uint32_t size) {}
 

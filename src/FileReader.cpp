@@ -17,9 +17,7 @@ FileReader::FileReader(const std::string &FilePath) {
     inFile.seekg(0, std::ios::beg);
 }
 
-FileReader::~FileReader() {
-    inFile.close();
-}
+FileReader::~FileReader() { inFile.close(); }
 
 void FileReader::load(const std::string &FilePath) {
     if (!inFile.is_open())
@@ -33,9 +31,7 @@ void FileReader::load(const std::string &FilePath) {
     inFile.seekg(0, std::ios::beg);
 }
 
-unsigned char FileReader::readNextByte() {
-    return static_cast<unsigned char>(inFile.get());
-}
+unsigned char FileReader::readNextByte() { return static_cast<unsigned char>(inFile.get()); }
 
 std::string FileReader::getString(int length) {
 
@@ -51,8 +47,7 @@ std::string FileReader::getString(int length) {
 std::vector<uint8_t> FileReader::loadBinaryFile(const std::string &filename) {
     std::vector<uint8_t> buffer;
 
-    std::ifstream file(filename,
-                       std::ios::in | std::ios::binary | std::ios::ate);
+    std::ifstream file(filename, std::ios::in | std::ios::binary | std::ios::ate);
     if (file.is_open()) {
         std::streampos size = file.tellg();
         buffer.resize(size);
@@ -80,21 +75,13 @@ std::string FileReader::getLine() {
     return str;
 }
 
-bool FileReader::EOFReached() {
-    return inFile.tellg() >= size;
-}
+bool FileReader::EOFReached() { return inFile.tellg() >= size; }
 
-void FileReader::restart() {
-    inFile.seekg(0, std::ios::beg);
-}
+void FileReader::restart() { inFile.seekg(0, std::ios::beg); }
 
-void FileReader::goTo(size_t pos) {
-    inFile.seekg(pos);
-}
+void FileReader::goTo(size_t pos) { inFile.seekg(pos); }
 
-size_t FileReader::getSize() const {
-    return static_cast<size_t>(size);
-}
+size_t FileReader::getSize() const { return static_cast<size_t>(size); }
 
 std::ostream &operator<<(std::ostream &s, FileReader &a) {
     auto pos = a.inFile.tellg();
@@ -102,8 +89,7 @@ std::ostream &operator<<(std::ostream &s, FileReader &a) {
 
     int cpt = 0;
     while (!a.EOFReached()) {
-        s << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
-          << (unsigned int) a.readNextByte();
+        s << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << (unsigned int) a.readNextByte();
 
         cpt++;
 

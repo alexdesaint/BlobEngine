@@ -22,9 +22,7 @@ class Uniform {
 private:
 public:
     Uniform(const std::string &name, UniformType uniformType) {
-        uniformHandle =
-            bgfx::createUniform(name.c_str(),
-                                (bgfx::UniformType::Enum) uniformType);
+        uniformHandle = bgfx::createUniform(name.c_str(), (bgfx::UniformType::Enum) uniformType);
     }
 
     bgfx::UniformHandle uniformHandle;
@@ -35,8 +33,7 @@ class UniformSampler {
 private:
 public:
     UniformSampler(const std::string &name) {
-        uniformHandle =
-            bgfx::createUniform(name.c_str(), bgfx::UniformType::Sampler);
+        uniformHandle = bgfx::createUniform(name.c_str(), bgfx::UniformType::Sampler);
     }
 
     bgfx::UniformHandle uniformHandle;

@@ -16,7 +16,6 @@ void Buffer::setData(const std::string &file) {
         bx::close(&reader);
         memory->data[memory->size - 1] = '\0';
     } else
-        throw Blob::Exception(std::string("Could not read file ") +
-                              error.getMessage().getPtr() + " " + file);
+        throw Blob::Exception(std::string("Could not read file ") + error.getMessage().getPtr() + " " + file);
 }
 } // namespace Blob

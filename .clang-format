@@ -1,34 +1,52 @@
 Language: Cpp
 BasedOnStyle: LLVM
-AlwaysBreakTemplateDeclarations: Yes
+
+# Indent
 IndentWidth: 4
 AccessModifierOffset: -4
+ColumnLimit: 120
+
+# Space
 SpaceAfterCStyleCast: true
 SpaceAfterTemplateKeyword: false
-ColumnLimit: 100
+SpacesInCStyleCastParentheses: false
+SpacesInAngles: false
+SpacesInConditionalStatement: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+Cpp11BracedListStyle: true
 
 # Funcion
 BinPackParameters: false
 BinPackArguments: false
-AllowAllArgumentsOnNextLine: false
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortFunctionsOnASingleLine: Inline
 
-# Code
+# Next line
+AllowAllArgumentsOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+
+# Single line
 AllowShortBlocksOnASingleLine: Always
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All # Inline
+AllowShortLambdasOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: false 
 
 # Constructor
-BreakConstructorInitializers: AfterColon
-BreakInheritanceList: AfterColon
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
-AllowShortCaseLabelsOnASingleLine: false
-AllowShortEnumsOnASingleLine: true
-AllowShortIfStatementsOnASingleLine: Never
-AllowShortLambdasOnASingleLine: All
-AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterReturnType: None
-BreakBeforeBinaryOperators: NonAssignment
-# BreakBeforeConceptDeclarations: Always
-BreakBeforeTernaryOperators: true
-ExperimentalAutoDetectBinPacking: true
-# PackConstructorInitializers: Never
+
+# Align
+PointerAlignment: Right
+ReferenceAlignment: Right
+AlignAfterOpenBracket: Align
+AlignOperands: Align
+AlignEscapedNewlines: Right
+
+# Break 
+BreakBeforeBinaryOperators: None
+AlwaysBreakTemplateDeclarations: Yes
+BreakInheritanceList: AfterColon # BeforeComma
+BreakConstructorInitializers: AfterColon # BeforeComma
+
+# Braces
+BreakBeforeBraces: Attach

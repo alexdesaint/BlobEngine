@@ -30,8 +30,7 @@ struct Mesh {
     Mesh(Mesh &&) = default;
     Mesh(Material &&material, VertexBuffer *vertexBuffer, RenderOptions *renderOptions) :
         primitives({Primitive{std::move(material), vertexBuffer, renderOptions}}) {}
-    explicit Mesh(std::vector<Primitive> &&primitives,
-                  std::vector<Primitive> &&transparentPrimitives = {}) :
+    explicit Mesh(std::vector<Primitive> &&primitives, std::vector<Primitive> &&transparentPrimitives = {}) :
         primitives(std::move(primitives)),
         transparentPrimitives(std::move(transparentPrimitives)) {}
 

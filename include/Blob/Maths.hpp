@@ -120,16 +120,13 @@ public:
 
     constexpr inline Vec2 normalize() const { return operator/(std::sqrt(x * x + y * y)); }
 
-    inline Vec2 setLength(T newLength) {
-        return *this = *this / std::sqrt(x * x + y * y) * newLength;
-    }
+    inline Vec2 setLength(T newLength) { return *this = *this / std::sqrt(x * x + y * y) * newLength; }
 
     constexpr inline Vec2 rotate() const { return {y, -x}; }
     constexpr inline Vec2 mirror() const { return {y, x}; }
 
     constexpr inline Vec2 rotate(T angle) const {
-        return {std::cos(angle) * x - std::sin(angle) * y,
-                std::sin(angle) * x + std::cos(angle) * y};
+        return {std::cos(angle) * x - std::sin(angle) * y, std::sin(angle) * x + std::cos(angle) * y};
     }
 
     constexpr inline Vec2 negate() const { return {-x, -y}; }
@@ -138,9 +135,7 @@ public:
 
     constexpr inline double getOrientation() const { return std::atan2(y, x); }
 
-    constexpr inline double getOrientationDeg() const {
-        return std::atan2(y, x) * 180 / std::numbers::pi;
-    }
+    constexpr inline double getOrientationDeg() const { return std::atan2(y, x) * 180 / std::numbers::pi; }
 
     constexpr inline bool isNull() const { return ((x == 0) && (y == 0)); }
 
@@ -187,29 +182,17 @@ public:
     constexpr inline Vec3 operator-() const { return {-x, -y, -z}; }
 
     // operator with Vec3
-    inline constexpr bool operator==(const Vec3 &v) const noexcept {
-        return x == v.x && y == v.y && z == v.z;
-    }
+    inline constexpr bool operator==(const Vec3 &v) const noexcept { return x == v.x && y == v.y && z == v.z; }
 
-    inline constexpr bool operator!=(const Vec3 &v) const noexcept {
-        return x != v.x || y != v.y || z != v.z;
-    }
+    inline constexpr bool operator!=(const Vec3 &v) const noexcept { return x != v.x || y != v.y || z != v.z; }
 
-    inline constexpr Vec3 operator-(const Vec3 &v) const noexcept {
-        return {x - v.x, y - v.y, z - v.z};
-    }
+    inline constexpr Vec3 operator-(const Vec3 &v) const noexcept { return {x - v.x, y - v.y, z - v.z}; }
 
-    inline constexpr Vec3 operator+(const Vec3 &v) const noexcept {
-        return {x + v.x, y + v.y, z + v.z};
-    }
+    inline constexpr Vec3 operator+(const Vec3 &v) const noexcept { return {x + v.x, y + v.y, z + v.z}; }
 
-    inline constexpr Vec3 operator*(const Vec3 &v) const noexcept {
-        return {x * v.x, y * v.y, z * v.z};
-    }
+    inline constexpr Vec3 operator*(const Vec3 &v) const noexcept { return {x * v.x, y * v.y, z * v.z}; }
 
-    inline constexpr Vec3 operator/(const Vec3 &v) const noexcept {
-        return {x / v.x, y / v.y, z / v.z};
-    }
+    inline constexpr Vec3 operator/(const Vec3 &v) const noexcept { return {x / v.x, y / v.y, z / v.z}; }
 
     inline constexpr void operator+=(const Vec3 &v) noexcept {
         x += v.x;
@@ -496,7 +479,15 @@ public:
                    float a31,
                    float a32,
                    float a33) noexcept :
-        a11(a11), a12(a12), a13(a13), a21(a21), a22(a22), a23(a23), a31(a31), a32(a32), a33(a33) {}
+        a11(a11),
+        a12(a12),
+        a13(a13),
+        a21(a21),
+        a22(a22),
+        a23(a23),
+        a31(a31),
+        a32(a32),
+        a33(a33) {}
 
     constexpr Mat3(Vec3<> v1, Vec3<> v2, Vec3<> v3) noexcept :
         a11(v1.x),
@@ -857,15 +848,12 @@ public:
     }
 
     bool operator==(const Mat4 &v) const {
-        return a11 == v.a11 && a12 == v.a12 && a13 == v.a13 && a14 == v.a14 && a21 == v.a21
-               && a22 == v.a22 && a23 == v.a23 && a24 == v.a24 && a31 == v.a31 && a32 == v.a32
-               && a33 == v.a33 && a34 == v.a34 && a41 == v.a41 && a42 == v.a42 && a43 == v.a43
-               && a44 == v.a44;
+        return a11 == v.a11 && a12 == v.a12 && a13 == v.a13 && a14 == v.a14 && a21 == v.a21 && a22 == v.a22 &&
+               a23 == v.a23 && a24 == v.a24 && a31 == v.a31 && a32 == v.a32 && a33 == v.a33 && a34 == v.a34 &&
+               a41 == v.a41 && a42 == v.a42 && a43 == v.a43 && a44 == v.a44;
     }
 
-    Mat4 transpose() const {
-        return {a11, a21, a31, a41, a12, a22, a32, a42, a13, a23, a33, a43, a14, a24, a34, a44};
-    }
+    Mat4 transpose() const { return {a11, a21, a31, a41, a12, a22, a32, a42, a13, a23, a33, a43, a14, a24, a34, a44}; }
 
     Mat4 inverse() const {
         float Coef00 = (a33 * a44 - a43 * a34);
@@ -1265,9 +1253,7 @@ public:
         compute();
     }
 
-    ViewTransform(const Vec3<> &cameraPosition,
-                  const Vec3<> &lookAt,
-                  const Vec3<> &cameraUp = {0, 0, 1}) :
+    ViewTransform(const Vec3<> &cameraPosition, const Vec3<> &lookAt, const Vec3<> &cameraUp = {0, 0, 1}) :
         cameraUp(cameraUp) {
         setPosition(cameraPosition, lookAt);
     }
@@ -1323,7 +1309,9 @@ public:
                         float closeRange,
                         float longRange,
                         bool homogeneousNdc) :
-        cameraAngle(cameraAngle), ratio(size.x / (float) size.y), homogeneousNdc(homogeneousNdc) {
+        cameraAngle(cameraAngle),
+        ratio(size.x / (float) size.y),
+        homogeneousNdc(homogeneousNdc) {
         setRange(closeRange, longRange);
         setAngle(cameraAngle);
     }
@@ -1475,7 +1463,5 @@ struct std::hash<Blob::Vec4<uint16_t>> {
 
 template<>
 struct std::hash<Blob::Vec2<float_t>> {
-    inline std::size_t operator()(const Blob::Vec2<> &k) const {
-        return *reinterpret_cast<const std::size_t *>(&k);
-    }
+    inline std::size_t operator()(const Blob::Vec2<> &k) const { return *reinterpret_cast<const std::size_t *>(&k); }
 };

@@ -16,7 +16,10 @@ union Color {
     constexpr Color() noexcept : R(0.f), G(0.f), B(0.f), A(1.f){};
 
     constexpr Color(uint8_t R, uint8_t G, uint8_t B, uint8_t A = 255) noexcept :
-        R(R / 255.f), G(G / 255.f), B(B / 255.f), A(A / 255.f) {}
+        R(R / 255.f),
+        G(G / 255.f),
+        B(B / 255.f),
+        A(A / 255.f) {}
 
     /// Float Color Constructor. Values range is from 0.f to 1.f.
     /// \param R Red channel
@@ -25,8 +28,7 @@ union Color {
     /// \param A Alpha channel (transparency)
     constexpr Color(float R, float G, float B, float A = 1.f) noexcept : R(R), G(G), B(B), A(A) {}
 
-    constexpr Color(double R, double G, double B, double A = 1.f) noexcept :
-        R(R), G(G), B(B), A(A) {}
+    constexpr Color(double R, double G, double B, double A = 1.f) noexcept : R(R), G(G), B(B), A(A) {}
 
     /// Hex Color Code Constructor
     /// \param RGB Hexadecimal color representation
@@ -47,13 +49,11 @@ struct NativeColor {
     constexpr operator Color() const noexcept { return color; }
     constexpr operator ImU32() const noexcept { return imGuiColor; }
 
-    constexpr NativeColor(uint32_t code,
-                          std::string_view name,
-                          uint32_t transparency = 0xFF) noexcept :
+    constexpr NativeColor(uint32_t code, std::string_view name, uint32_t transparency = 0xFF) noexcept :
         color(code, transparency),
         code((code << 8) | transparency),
-        imGuiColor(((code >> 16) & 0x000000FF) | ((code << 16) & 0x00FF0000) | (code & 0x0000FF00)
-                   | ((transparency << 24) & 0xFF000000)),
+        imGuiColor(((code >> 16) & 0x000000FF) | ((code << 16) & 0x00FF0000) | (code & 0x0000FF00) |
+                   ((transparency << 24) & 0xFF000000)),
         name(name) {}
 
     constexpr NativeColor withTransparency(float transparency) const {

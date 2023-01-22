@@ -1,4 +1,5 @@
 .idea/
+include/shaders
 bin/
 lib/
 build/

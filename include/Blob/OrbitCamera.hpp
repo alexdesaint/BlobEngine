@@ -56,9 +56,8 @@ public:
             if (zAngle < minZ)
                 zAngle = minZ;
             xyAngle = xyAngleOld - diff.x / sensibility;
-            backward = Vec3{std::cos(xyAngle) * std::sin(zAngle),
-                            std::sin(xyAngle) * std::sin(zAngle),
-                            std::cos(zAngle)};
+            backward =
+                Vec3{std::cos(xyAngle) * std::sin(zAngle), std::sin(xyAngle) * std::sin(zAngle), std::cos(zAngle)};
 
             if ((unsigned int) (zAngle / std::numbers::pi + 10000) % 2 == 0)
                 up.z = 1;
@@ -68,8 +67,7 @@ public:
             setCameraUp(up);
             setPosition(backward * dist + lookAt, lookAt);
         } else if (mode == Move) {
-            oldCameraLookAt +=
-                oldMouseWorldPos - ((Blob::Vec2<>) screenToWorldCoordinate(mouseCameraPosition, 0));
+            oldCameraLookAt += oldMouseWorldPos - ((Blob::Vec2<>) screenToWorldCoordinate(mouseCameraPosition, 0));
             setLookAt(oldCameraLookAt);
         }
     }
@@ -91,9 +89,7 @@ public:
         MouseEvents(context),
         lookAt(lookAt),
         dist(dist),
-        backward{std::cos(xyAngle) * std::sin(zAngle),
-                 std::sin(xyAngle) * std::sin(zAngle),
-                 std::cos(zAngle)} {
+        backward{std::cos(xyAngle) * std::sin(zAngle), std::sin(xyAngle) * std::sin(zAngle), std::cos(zAngle)} {
         setCameraUp(up);
         setPosition(backward * dist + lookAt, lookAt);
     }

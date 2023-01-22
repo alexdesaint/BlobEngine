@@ -16,9 +16,7 @@ namespace Blob {
 class DynamicDrawCallList {
 private:
 public:
-    std::unordered_map<std::type_index,
-                       std::pair<std::vector<Mat4>, std::deque<size_t>>>
-        drawCallList;
+    std::unordered_map<std::type_index, std::pair<std::vector<Mat4>, std::deque<size_t>>> drawCallList;
     std::unordered_map<size_t, std::unordered_set<std::type_index>> typeIdperId;
 
     void add(std::type_index type_id, size_t id, const Mat4 &pos) {
@@ -51,16 +49,12 @@ public:
         typeIdperId.erase(id);
     }
 
-    friend std::ostream &
-    operator<<(std::ostream &os,
-               const DynamicDrawCallList &dynamicDrawCallList) {
-        for (const auto &[typeId, posIdsPair] :
-             dynamicDrawCallList.drawCallList) {
+    friend std::ostream &operator<<(std::ostream &os, const DynamicDrawCallList &dynamicDrawCallList) {
+        for (const auto &[typeId, posIdsPair] : dynamicDrawCallList.drawCallList) {
             os << typeId.hash_code() << " {" << std::endl;
             auto &[positions, ids] = posIdsPair;
             if (ids.size() != positions.size())
-                std::cout << "Error, ids and pos are of different size"
-                          << std::endl;
+                std::cout << "Error, ids and pos are of different size" << std::endl;
             for (size_t i = 0; i < ids.size(); i++)
                 std::cout << ids[i] << " " << positions[i];
             os << "}" << std::endl;

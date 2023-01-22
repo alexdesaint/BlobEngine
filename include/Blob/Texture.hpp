@@ -11,16 +11,12 @@ public:
     bgfx::TextureHandle textureHandle;
 
     Texture() = default;
-    Texture(const Buffer &buffer,
-            const Vec2<size_t> &size,
-            bgfx::TextureFormat::Enum textureFormat) {
+    Texture(const Buffer &buffer, const Vec2<size_t> &size, bgfx::TextureFormat::Enum textureFormat) {
         setImage(buffer, size, textureFormat);
     }
     ~Texture();
 
-    void setImage(const Buffer &buffer,
-                  const Vec2<size_t> &size,
-                  bgfx::TextureFormat::Enum textureFormat);
+    void setImage(const Buffer &buffer, const Vec2<size_t> &size, bgfx::TextureFormat::Enum textureFormat);
 
     Vec2<size_t> getTextureSize() const { return {}; }
 };
