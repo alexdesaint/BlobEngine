@@ -84,11 +84,13 @@ public:
     }
 
 public:
-    OrbitCamera(Context &context, Vec3<float> lookAt = {}, float dist = 32) :
+    OrbitCamera(Context &context, Vec3<float> lookAt = {}, float dist = 30, float minDist = 5, float maxDist = 40) :
         Camera(context),
         MouseEvents(context),
         lookAt(lookAt),
         dist(dist),
+        minDist(minDist),
+        maxDist(maxDist),
         backward{std::cos(xyAngle) * std::sin(zAngle), std::sin(xyAngle) * std::sin(zAngle), std::cos(zAngle)} {
         setCameraUp(up);
         setPosition(backward * dist + lookAt, lookAt);

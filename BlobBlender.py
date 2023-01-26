@@ -10,14 +10,7 @@ from pathlib import Path
 def print3dData(data):
     return (
         "{"
-        + ",\n ".join(
-            [
-                "{"
-                + ", ".join(["{" + ", ".join(map(str, d2)) + "}" for d2 in d1])
-                + "}"
-                for d1 in data
-            ]
-        )
+        + ",\n ".join(["{" + ", ".join(["{" + ", ".join(map(str, d2)) + "}" for d2 in d1]) + "}" for d1 in data])
         + "}"
     )
 
@@ -31,13 +24,7 @@ def print1dData(data):
 
 
 def nameFormat(name):
-    ret = (
-        name.replace(".", "_")
-        .replace(" ", "_")
-        .replace("(", "_")
-        .replace(")", "_")
-        .replace("-", "_")
-    )
+    ret = name.replace(".", "_").replace(" ", "_").replace("(", "_").replace(")", "_").replace("-", "_")
     if ret[0].isdigit():
         ret = "_" + ret
     return ret
@@ -164,9 +151,7 @@ class Struct:
 
         if self.parents:
             ret += " : "
-        ret += ", ".join(
-            [str(access) + " " + str(parent) for parent, access in self.parents.items()]
-        )
+        ret += ", ".join([str(access) + " " + str(parent) for parent, access in self.parents.items()])
         ret += " {\n"
         ret += "".join([c.getHeader(indent + 1) for c in self.content])
         ret += getIndent(indent) + "};\n"
@@ -178,9 +163,7 @@ class Struct:
             namespace = ""
 
         ret += "".join([c.getHeader(0) for c in self.localContent])
-        ret += "".join(
-            [c.getCore(namespace + self.name + "::") for c in self.localContent]
-        )
+        ret += "".join([c.getCore(namespace + self.name + "::") for c in self.localContent])
         ret += "".join([c.getCore(namespace + self.name + "::") for c in self.content])
 
         return ret
@@ -232,11 +215,7 @@ class Function:
                 ret += "{}\n"
             else:
                 ret += getIndent(indent) + "{\n"
-                ret += (
-                    getIndent(indent + 1)
-                    + ("\n" + getIndent(indent + 1)).join(self.content)
-                    + "\n"
-                )
+                ret += getIndent(indent + 1) + ("\n" + getIndent(indent + 1)).join(self.content) + "\n"
                 ret += getIndent(indent) + "}\n"
         else:
             ret += ";\n"
@@ -380,9 +359,7 @@ def codeMesh(mesh: bpy.types.Mesh):
             Parameter("uv%dx" % uv_i, float_t),
             Parameter("uv%dy" % uv_i, float_t),
         ]
-        meshGetter.content.append(
-            "vertexLayout.add<float>(bgfx::Attrib::TexCoord0, 2);"
-        )
+        meshGetter.content.append("vertexLayout.add<float>(bgfx::Attrib::TexCoord0, 2);")
     for col_i in range(color_max):
         dataType += [
             ("color%dr" % col_i, np.float32),
@@ -433,25 +410,13 @@ def codeMesh(mesh: bpy.types.Mesh):
                 data[cursor]["ty"] = mesh.loops[loop_index].tangent[1]
                 data[cursor]["tz"] = mesh.loops[loop_index].tangent[2]
             for uv_i in range(tex_coord_max):
-                data[cursor]["uv%dx" % uv_i] = (
-                    mesh.uv_layers[uv_i].data[loop_index].uv[0]
-                )
-                data[cursor]["uv%dy" % uv_i] = (
-                    mesh.uv_layers[uv_i].data[loop_index].uv[1]
-                )
+                data[cursor]["uv%dx" % uv_i] = mesh.uv_layers[uv_i].data[loop_index].uv[0]
+                data[cursor]["uv%dy" % uv_i] = mesh.uv_layers[uv_i].data[loop_index].uv[1]
             for col_i in range(color_max):
-                data[cursor]["color%dr" % col_i] = (
-                    mesh.vertex_colors[col_i].data[loop_index].color[0]
-                )
-                data[cursor]["color%dg" % col_i] = (
-                    mesh.vertex_colors[col_i].data[loop_index].color[1]
-                )
-                data[cursor]["color%db" % col_i] = (
-                    mesh.vertex_colors[col_i].data[loop_index].color[2]
-                )
-                data[cursor]["color%da" % col_i] = (
-                    mesh.vertex_colors[col_i].data[loop_index].color[3]
-                )
+                data[cursor]["color%dr" % col_i] = mesh.vertex_colors[col_i].data[loop_index].color[0]
+                data[cursor]["color%dg" % col_i] = mesh.vertex_colors[col_i].data[loop_index].color[1]
+                data[cursor]["color%db" % col_i] = mesh.vertex_colors[col_i].data[loop_index].color[2]
+                data[cursor]["color%da" % col_i] = mesh.vertex_colors[col_i].data[loop_index].color[3]
             cursor += 1
 
     indiceData, indice = np.unique(data, return_inverse=True, axis=0)
@@ -473,13 +438,7 @@ def codeMesh(mesh: bpy.types.Mesh):
     )
 
     meshGetter.content.append(
-        Attribute_t.getType()
-        + " &"
-        + name
-        + "VertexBuffer"
-        + ' = context.vertexBuffers["'
-        + name
-        + '"];'
+        Attribute_t.getType() + " &" + name + "VertexBuffer" + ' = context.vertexBuffers["' + name + '"];'
     )
     meshGetter.content.append("if(!" + name + "VertexBuffer)")
     meshGetter.content.append(
@@ -511,21 +470,11 @@ def codeMesh(mesh: bpy.types.Mesh):
         )
         roName = primitiveName + "Ro"
         meshGetter.content.append(
-            RenderOptions_t.getType()
-            + " &"
-            + roName
-            + ' = context.renderOptions["'
-            + name
-            + primitiveName
-            + '"];'
+            RenderOptions_t.getType() + " &" + roName + ' = context.renderOptions["' + name + primitiveName + '"];'
         )
         meshGetter.content.append("if(!" + roName + ")")
         meshGetter.content.append(
-            "    "
-            + roName
-            + " = std::make_unique<Blob::RenderOptions>(Blob::Buffer{indices"
-            + primitiveName
-            + "});"
+            "    " + roName + " = std::make_unique<Blob::RenderOptions>(Blob::Buffer{indices" + primitiveName + "});"
         )
 
         meshConstructor += (
@@ -561,13 +510,85 @@ def codeMesh(mesh: bpy.types.Mesh):
     return meshStruct.getHeader(), meshStruct.getCore()
 
 
+def codeShape(name: str, matrix, meshName, childs, items):
+    name = nameFormat(name)
+
+    shapeStruct = Struct(name, {}, [], [], [])
+    shapeStruct.content += setGetNameProperties(name)
+    shapeStruct.content += setGetStringProperties(items)
+    toInclude = []
+
+    shapeGetter = Function(
+        "get",
+        Shape_t,
+        ["Blob::Context &context"],
+        "",
+        [],
+        [],
+        True,
+        True,
+    )
+    shapeGetter.content.append("return {")
+    if meshName != None:
+        typeName = nameFormat(meshName)
+        shapeGetter.content.append("    Meshes::" + typeName + "::get(context),")
+
+    shapeGetter.content.append("    {")
+
+    for child in childs:
+        typeName = nameFormat(child)
+        toInclude.append("Shapes/" + typeName)
+        shapeGetter.content.append("        Shapes::" + typeName + "::get(context),")
+
+    shapeGetter.content.append("    },")
+    shapeGetter.content.append("    {")
+    for vec in matrix:
+        shapeGetter.content.append("        {" + ", ".join(map(str, vec)) + "},")
+    shapeGetter.content.append("    },")
+    shapeGetter.content.append("};")
+    shapeStruct.content.append(shapeGetter)
+
+    data = ""
+    data += "#pragma once\n"
+    data += "#include <Blob/Shape.hpp>\n"
+    data += "#include <" + projectName + "/Meshes.hpp>\n"
+    for include in toInclude:
+        data += "#include <" + projectName + "/" + include + ".hpp>\n"
+    data += "namespace " + projectName + "::Shapes {\n"
+    data += shapeStruct.getHeader()
+    data += "}\n"
+
+    return data
+
+
+def handleObject(object: bpy.types.Object):
+    childs = []
+    for child in object.children:
+        childs.append(child.name)
+    if object.instance_collection:
+        for child in object.instance_collection.objects:
+            childs.append(child.name)
+    meshName = None
+    if type(object.data) == bpy.types.Mesh:
+        meshName = nameFormat(object.data.name)
+    return codeShape(object.name, object.matrix_local, meshName, childs, object.items())
+
+
+def HandleCollection(collection: bpy.types.Collection):
+    childs = []
+    for child in collection.children:
+        childs.append(child.name)
+    for child in collection.objects:
+        childs.append(child.name)
+    return codeShape(collection.name, object.matrix_local, None, childs, {})
+
+
 def updateIfDifferent(filename, data, allFiles):
     allFiles.discard(Path(filename))
     if os.path.isfile(filename):
         with open(filename, "r") as f:
             if data == f.read():
                 return
-    print("Updating ", filename)
     with open(filename, "w") as f:
         f.write(data)
 
@@ -597,8 +618,8 @@ for file in Path(mainFolder).rglob("*"):
 
 meshes = []
 for mesh in bpy.data.meshes:
-    if "BlobEnabled" in mesh and not mesh["BlobEnabled"]:
-        continue
+    # if "BlobEnabled" in mesh and not mesh["BlobEnabled"]:
+    #     continue
 
     name = nameFormat(mesh.name)
     meshes.append(name)
@@ -643,12 +664,7 @@ data += Function(
     [],
     "",
     [],
-    ["return {"]
-    + [
-        "    BlenderProperties{" + name + "::name, &" + name + "::get},"
-        for name in meshes
-    ]
-    + ["};"],
+    ["return {"] + ["    BlenderProperties{" + name + "::name, &" + name + "::get}," for name in meshes] + ["};"],
     False,
     True,
     True,
@@ -657,65 +673,14 @@ data += "}\n"
 updateIfDifferent(headerFolder + "Meshes.hpp", data, existingFiles)
 
 for object in bpy.data.objects:
-    args = []
     name = nameFormat(object.name)
+    data = handleObject(object)
+    updateIfDifferent(shapeHeaderFolder + name + ".hpp", data, existingFiles)
 
-    shapeStruct = Struct(name, {}, [], [], [])
-    shapeStruct.content += setGetNameProperties(name)
-    shapeStruct.content += setGetStringProperties(object.items())
-    toInclude = []
 
-    shapeGetter = Function(
-        "get",
-        Shape_t,
-        ["Blob::Context &context"],
-        "",
-        [],
-        [],
-        True,
-        True,
-    )
-    shapeGetter.content.append("return {")
-    if type(object.data) == bpy.types.Mesh:
-        typeName = nameFormat(object.data.name)
-        attributeName = "mesh_" + typeName
-        shapeGetter.content.append("    Meshes::" + typeName + "::get(context),")
-
-    shapeGetter.content.append("    {")
-
-    for child in object.children:
-        typeName = nameFormat(child.name)
-        toInclude.append("Shapes/" + typeName)
-        shapeGetter.content.append("        Shapes::" + typeName + "::get(context),")
-    if object.instance_collection:
-        for child in object.instance_collection.objects:
-            childName = nameFormat(child.name)
-            childName = "shape_" + childName
-            toInclude.append("Shapes/" + childName)
-            shapeStruct.content.append(
-                Parameter(childName, NativeType("Shapes::" + childName))
-            )
-            shapeGetter.content.append(
-                "        Shapes::" + typeName + "::get(context),"
-            )
-
-    shapeGetter.content.append("    },")
-    shapeGetter.content.append("    {")
-    for vec in object.matrix_local:
-        shapeGetter.content.append("        {" + ", ".join(map(str, vec)) + "},")
-    shapeGetter.content.append("    },")
-    shapeGetter.content.append("};")
-    shapeStruct.content.append(shapeGetter)
-
-    data = ""
-    data += "#pragma once\n"
-    data += "#include <Blob/Shape.hpp>\n"
-    data += "#include <" + projectName + "/Meshes.hpp>\n"
-    for include in toInclude:
-        data += "#include <" + projectName + "/" + include + ".hpp>\n"
-    data += "namespace " + projectName + "::Shapes {\n"
-    data += shapeStruct.getHeader()
-    data += "}\n"
+for collection in bpy.data.collections:
+    name = nameFormat(collection.name)
+    data = HandleCollection(collection)
     updateIfDifferent(shapeHeaderFolder + name + ".hpp", data, existingFiles)
 
 for scene in bpy.data.scenes:
