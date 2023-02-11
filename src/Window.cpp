@@ -12,12 +12,12 @@
 
 namespace Blob {
 
-Window::Window(const Vec2<unsigned int> &size, std::string windowName) :
+Window::Window(std::string windowName, float closeRange, float longRange) :
     context(getNativeDisplayType(),
             getNativeWindowHandle(),
-            {std::numbers::pi / 4, windowSize, 0.1, 1000, false},
+            {std::numbers::pi / 4, windowSize, closeRange, longRange, false},
             ProjectionTransform2D{windowSize.cast<float>()}),
-    GLFW::Window(size) {
+    GLFW::Window({}, windowName) {
     // Clear the view rect
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, Dracula::Background.code, 1.0f, 0);
 

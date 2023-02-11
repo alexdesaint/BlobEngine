@@ -43,7 +43,7 @@ public:
     using GLFW::Window::totalTimeFlow;
     using GLFW::Window::windowSize;
 
-    explicit Window(const Vec2<unsigned int> &size = {}, std::string windowName = "BlobEngine");
+    explicit Window(std::string windowName, float closeRange, float longRange);
 
     void draw(const Mesh::Primitive &primitive, const Mat4 &modelTransform = {}) const;
     void draw(const Mesh &mesh, const Mat4 &modelTransform = {}) const;

@@ -75,7 +75,7 @@ public:
     void scrollUpdate(double, double yoffset) final {
         if (ImGui::GetIO().WantCaptureMouse)
             return;
-        dist -= yoffset * 2;
+        dist -= yoffset * dist * 0.2;
         if (dist < minDist)
             dist = minDist;
         if (dist > maxDist)
