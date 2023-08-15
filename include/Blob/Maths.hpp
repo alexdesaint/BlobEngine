@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <numbers>
 #include <optional>
 #include <ostream>
@@ -1434,7 +1435,7 @@ mat4
 */
 
 template<>
-struct std::hash<Blob::Vec2<uint32_t>> {
+struct std::hash<Blob::Vec2<std::uint32_t>> {
     inline std::size_t operator()(const Blob::Vec2<uint32_t> &k) const {
         return *reinterpret_cast<const std::size_t *>(&k);
     }
